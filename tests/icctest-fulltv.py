@@ -21,10 +21,9 @@ for icol in range(0, 256):
 source_image = os.path.join(rootpath, "greyscale-raw.png")
 img.save(source_image)
 #source_image = os.path.join(rootpath, "greyscale-srgb-photoshop.png")
-source_image = "radialgrad.png"
+source_image = "../sourceimages/radialgrad.png"
 listimages = []
 listimages.append({'id': 'greypng', 'label': 'raw png', 'image': os.path.join("..", source_image)})
-listimages.append({'id': 'greymp4', 'label': 'raw mp4 Media encoder', 'video': os.path.join("..", "radialgrad.mp4")})
 # Now lets make the mp4's.
 
 cmd = 'ffmpeg -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range={outrange}:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 {rootpath}/greyscale-{fileext}.mp4'.format(outrange="tv", source_image=source_image, fileext="tv", rootpath=rootpath)
@@ -50,10 +49,10 @@ listimages.append({'id': 'greytv10', 'label': 'yuv444p10le 10-bit mp4', 'video':
 
 cmd = 'ffmpeg -y -i {source_image}  -c:v libx264rgb -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" {rootpath}/greyscale-raw-rgb.mp4'.format(source_image=source_image, rootpath=rootpath)
 os.system(cmd)
-listimages.append({'id': 'greyrgb', 'label': 'libx264rgb 8-bit mp4', 'video': "greyscale-raw-rgb.mp4", 'cmd': cmd})
+listimages.append({'id': 'greyrgb', 'label': 'libx264rgb 8-bit mp4 (not supported)', 'video': "greyscale-raw-rgb.mp4", 'cmd': cmd})
 
 
-source_image = "Digital_LAD_sRGB.png"
+source_image = "../sourceimages/Digital_LAD_sRGB.png"
 cmd = 'ffmpeg -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range={outrange}:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 {rootpath}/marcie-{fileext}.mp4'.format(outrange="tv", source_image=source_image, fileext="tv", rootpath=rootpath)
 os.system(cmd)
 listimages.append({'id': 'marcietv', 'label': 'marcie out_range=tv -pix_fmt yuv420p 16-235 range', 'video': "marcie-tv.mp4", 'cmd': cmd})

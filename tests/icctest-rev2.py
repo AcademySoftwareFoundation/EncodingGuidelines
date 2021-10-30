@@ -56,7 +56,7 @@ for trc in trc_types:
 		imgpaste = Image.new( mode = "RGB", size = (colwidth, height), color=(ocol, ocol, ocol) )
 		img.paste(imgpaste, box=(icol*colwidth, 0))
 
-	source_image = os.path.join(rootpath, "greyscale-source-{fileext}.png".format(**trc))
+	source_image = os.path.join('..', 'sourceimages', "greyscale-source-{fileext}.png".format(**trc))
 	#img.save(source_image)
 	# TODO Confirm we have the right one.
 	trc['source_image'] = source_image

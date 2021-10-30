@@ -28,12 +28,12 @@ header = """
 
 image_template = """
 <TR class="index">
-	<TD><img width=25 src="../static/reorder.png"></td><TD >{label}</TD><td><img src="{image}"/></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >{label}</TD><td><img src="{image}"/></td>
 </TR>
 """
 video_template = """
 <TR class="index">
-	<TD><img width=25 src="../static/reorder.png"></td><TD>{label} mp4</TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} mp4</TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
 </TR>
 """
 
