@@ -1,0 +1,152 @@
+
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  .grid tbody tr td { cursor: grab }
+  .ui-button {margin: 5px; border-radius: 8px}
+  </style>
+  <script>
+$(document).ready(function(){
+
+
+        $("#buttonchipchartpng").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#chipchartpng" ).show();
+           }
+        );
+
+        $("#buttonbasic").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#basic" ).show();
+           }
+        );
+
+        $("#buttonnospline").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#nospline" ).show();
+           }
+        );
+
+        $("#buttoncolormatrix").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#colormatrix" ).show();
+           }
+        );
+
+        $("#buttonsplinecolorspace").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#splinecolorspace" ).show();
+           }
+        );
+
+        $("#buttonsplinecolormatrix").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#splinecolormatrix" ).show();
+           }
+        );
+
+        $("#buttonspline444colorspace").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#spline444colorspace" ).show();
+           }
+        );
+
+        $("#buttonspline444colormatrix").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#spline444colormatrix" ).show();
+           }
+        );
+
+        $("#buttonspline444colormatrix2").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#spline444colormatrix2" ).show();
+           }
+        );
+
+		$( ".videogroup" ).hide();
+		$( "#chipchartpng" ).show();
+});
+    </script>
+
+</head>
+
+<body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
+<H1>Comparing YUV conversion approaches.</H1><p> Recommended to use firefox, otherwise png is wrong. The code to generate these files is <a href='../chip-color-test.py'>here</a>. </p>
+
+    <div data-role="page" data-theme='a'>
+
+      <div data-role="content"><TABLE><TR><TD width='300' align='center' valign="top">
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonchipchartpng" data-role="button">orig png</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonbasic" data-role="button">yuv420p default ffmpeg</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonnospline" data-role="button">yuv420p bt709</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttoncolormatrix" data-role="button">yuv420p spline+accurate_rnd+full_chroma_int + bt709</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonsplinecolorspace" data-role="button">yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colorspace</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonsplinecolormatrix" data-role="button">yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 in_color_matrix</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colorspace" data-role="button">yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colorspace</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colormatrix" data-role="button">yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 in_color_matrix</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colormatrix2" data-role="button">yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colormatrix</button><BR/>
+</div></TD><TD align='left' valign='top'>
+<div id="chipchartpng" class="videogroup"><h2>orig png</h2><img   width=1920  src='../chip-chart-1080-noicc.png'/></div>
+
+<div id="basic" class="videogroup"><h2>yuv420p default ffmpeg</h2><video  width=1920  ><source src='basic.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/basic.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.0212507<BR/>  RMS error = 0.0388912<BR/>  Peak SNR = 28.203<BR/>  Max error  = 0.556863 @ (1815, 1004, B)  values are 0, 0, 0.952941 vs 0.0705882, 0.0901961, 0.396078<BR/>  1792353 pixels (86.4%) over 1e-06<BR/>  1792353 pixels (86.4%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="nospline" class="videogroup"><h2>yuv420p bt709</h2><video  width=1920  ><source src='nospline.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"   -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/nospline.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00260681<BR/>  RMS error = 0.0133867<BR/>  Peak SNR = 37.4665<BR/>  Max error  = 0.596079 @ (1815, 1004, B)  values are 0, 0, 0.952941 vs 0.0509804, 0.0470588, 0.356863<BR/>  1319674 pixels (63.6%) over 1e-06<BR/>  1319674 pixels (63.6%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="colormatrix" class="videogroup"><h2>yuv420p spline+accurate_rnd+full_chroma_int + bt709</h2><video  width=1920  ><source src='colormatrix.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/colormatrix.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00307147<BR/>  RMS error = 0.0124281<BR/>  Peak SNR = 38.1119<BR/>  Max error  = 0.568627 @ (1904, 1040, B)  values are 0, 0, 1 vs 0.0666667, 0.0588235, 0.431373<BR/>  1482440 pixels (71.5%) over 1e-06<BR/>  1482440 pixels (71.5%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="splinecolorspace" class="videogroup"><h2>yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colorspace</h2><video  width=1920  ><source src='splinecolorspace.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/splinecolorspace.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 3.76283e-05<BR/>  RMS error = 0.000384138<BR/>  Peak SNR = 68.3103<BR/>  Max error  = 0.00392163 @ (1446, 309, B)  values are 0, 0.74902, 0.74902 vs 0, 0.74902, 0.752941<BR/>  59578 pixels (2.87%) over 1e-06<BR/>  59578 pixels (2.87%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="splinecolormatrix" class="videogroup"><h2>yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 in_color_matrix</h2><video  width=1920  ><source src='splinecolormatrix.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/splinecolormatrix.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00260479<BR/>  RMS error = 0.0130982<BR/>  Peak SNR = 37.6557<BR/>  Max error  = 0.584314 @ (1815, 1004, B)  values are 0, 0, 0.952941 vs 0.0470588, 0.0431373, 0.368627<BR/>  1344389 pixels (64.8%) over 1e-06<BR/>  1344389 pixels (64.8%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="spline444colorspace" class="videogroup"><h2>yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colorspace</h2><video  width=1920  ><source src='spline444colorspace.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colorspace.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 3.76283e-05<BR/>  RMS error = 0.000384138<BR/>  Peak SNR = 68.3103<BR/>  Max error  = 0.00392163 @ (1446, 309, B)  values are 0, 0.74902, 0.74902 vs 0, 0.74902, 0.752941<BR/>  59578 pixels (2.87%) over 1e-06<BR/>  59578 pixels (2.87%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="spline444colormatrix" class="videogroup"><h2>yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 in_color_matrix</h2><video  width=1920  ><source src='spline444colormatrix.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colormatrix.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 2.25745e-06<BR/>  RMS error = 9.40889e-05<BR/>  Peak SNR = 80.5292<BR/>  Max error  = 0.00392163 @ (1446, 309, B)  values are 0, 0.74902, 0.74902 vs 0, 0.74902, 0.752941<BR/>  3526 pixels (0.17%) over 1e-06<BR/>  3526 pixels (0.17%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+<div id="spline444colormatrix2" class="videogroup"><h2>yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colormatrix</h2><video  width=1920  ><source src='spline444colormatrix2.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colormatrix2.mp4<BR>
+idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00153754<BR/>  RMS error = 0.00270403<BR/>  Peak SNR = 51.3598<BR/>  Max error  = 0.0156863 @ (1627, 311, B)  values are 0, 0.858824, 0.858824 vs 0.00392157, 0.862745, 0.87451<BR/>  1435029 pixels (69.2%) over 1e-06<BR/>  1435029 pixels (69.2%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
+
+      </TD></TR></TABLE>
+      </div>
+
+   </div>
+</body>
+</html>
+
+
+
