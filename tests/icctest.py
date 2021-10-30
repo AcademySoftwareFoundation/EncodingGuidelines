@@ -1,3 +1,6 @@
+import sys
+sys.path.append("python")
+
 from PIL import Image
 from PIL import ImageCms
 import os
