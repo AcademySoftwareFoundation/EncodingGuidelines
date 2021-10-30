@@ -29,7 +29,7 @@ profile = ImageCms.getOpenProfile("/usr/share/color/icc/sRGB.icc")
 img.save(os.path.join(rootpath, "greyscale-srgb.png"), icc_profile=profile.tobytes())
 listimages.append({'label': 'srgb png', 'image': "greyscale-srgb.png"})
 
-profile = ImageCms.getOpenProfile(r"ICC Profiles - hbrendel.com/Rec709-Rec1886.icc")
+profile = ImageCms.getOpenProfile(r"../ICC/Rec709-Rec1886.icc")
 img.save(os.path.join(rootpath, "greyscale-rec1886.png"), icc_profile=profile.tobytes())
 listimages.append({'label': 'rec1886 png', 'image': "greyscale-rec1886.png"})
 
