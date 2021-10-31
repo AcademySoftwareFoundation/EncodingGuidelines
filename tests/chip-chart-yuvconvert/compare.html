@@ -107,7 +107,7 @@ $(document).ready(function(){
 
         <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colormatrix2" data-role="button">yuv444p10le spline+accurate_rnd+full_chroma_int + bt709 colormatrix</button><BR/>
 </div></TD><TD align='left' valign='top'>
-<div id="chipchartpng" class="videogroup"><h2>orig png</h2><img   width=1920  src='../sourceimages/chip-chart-1080-noicc.png'/></div>
+<div id="chipchartpng" class="videogroup"><h2>orig png</h2><img   width=1920  src='../../sourceimages/chip-chart-1080-noicc.png'/></div>
 
 <div id="basic" class="videogroup"><h2>yuv420p default ffmpeg</h2><video  width=1920  ><source src='basic.mp4' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/basic.mp4<BR>
 idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
