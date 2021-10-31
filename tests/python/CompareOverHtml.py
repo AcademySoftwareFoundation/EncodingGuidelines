@@ -50,7 +50,7 @@ image_template = """
 """
 
 video_template = """
-<div id="{id}" class="videogroup"><h2>{label}</h2><video {videohtml} ><source src='{video}' type='video/mp4'/></video><canvas id="canvas" ></canvas><p>{cmd}</p></div>
+<div id="{id}" class="videogroup"><h2>{label}</h2><video {videohtml} ><source src='{video}' type='video/mp4'/></video><p>{cmd}</p></div>
 """
 
 tail = """
