@@ -12,7 +12,7 @@ if not os.path.exists(rootpath):
 source_image = os.path.join("..", "sourceimages", "chip-chart-1080-noicc.png")
 
 listimages = []
-listimages.append({'id': 'chipchartpng', 'label': 'orig png', 'image': os.path.join("..", 'sourceimages', os.path.basename(source_image))})
+listimages.append({'id': 'chipchartpng', 'label': 'orig png', 'image': os.path.join("..", "..", 'sourceimages', os.path.basename(source_image))})
 print(listimages)
 
 processes = [{'id': 'basic', 'label': 'yuv420p default ffmpeg', 'conv': '', 'pix_fmt': 'yuv420p'},
