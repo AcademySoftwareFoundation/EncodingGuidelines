@@ -1,0 +1,81 @@
+
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  .grid tbody tr td { cursor: grab }
+  </style>
+  <script>
+  $( function() {
+    $( "#sort tbody" ).sortable();
+    $( "#sort2 tbody" ).sortable();
+
+  } );
+  </script>
+</head>
+
+<body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
+<H1>Color_trc comparison</H1><p> This is trying to reverse out what we think is the gamma for each TRC file, with the hope that if the browser is correctly obaying the flag, that all the ramps would approximately match. The code to generate these files is <a href='../icctest-rev-ps.py'>here</a>. However, the source images were generated in photoshop, by taking the raw.png file, assigning a sRGB profile to it, and then converting to a custom profile, adjusting the gamma but sticking with D65 and HDTV primaries..</p>
+<table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">
+<tbody>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >raw png</TD><td><img src="greyscale-raw.png"/></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >srgb png</TD><td><img src="../../sourceimages/greyscale-source-srgb-ps.png"/></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >gamma1.95 png</TD><td><img src="../../sourceimages/greyscale-source-gamma195-ps.png"/></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >gamma2.2 png</TD><td><img src="../../sourceimages/greyscale-source-gamma22-ps.png"/></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >gamma2.8 png</TD><td><img src="../../sourceimages/greyscale-source-gamma28-ps.png"/></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >lin png</TD><td><img src="../../sourceimages/greyscale-source-lin-ps.png"/></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>raw mp4</TD><td><video    ><source src='greyscale-raw.mp4' type='video/mp4'></video></td><td></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc = 2 = undefined mp4</TD><td><video    ><source src='greyscale-undefined.mp4' type='video/mp4'></video></td><td></td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 mp4</TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-rec709-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-rev-ps/greyscale-rec709.mp4</td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB mp4</TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-srgb-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-rev-ps/greyscale-srgb.mp4</td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 mp4</TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma22-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 4 ./greyramp-rev-ps/greyscale-gamma22.mp4</td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 mp4</TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma28-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 5 ./greyramp-rev-ps/greyscale-gamma28.mp4</td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear mp4</TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev-ps/greyscale-lin.mp4</td>
+</TR>
+
+</tbody>
+</table>
+
+</body>
+</html>
+
