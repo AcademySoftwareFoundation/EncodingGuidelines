@@ -64,5 +64,5 @@ listimages.append({'label': 'gamma 2.4 mov (OSX only)', 'video': "h264-ffmpeg-ga
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
 					introduction="<H1>Color_trc comparison</H1><p> This is comparing a png file written with different ICC profiles (i.e. the underlying data is identical in all png files), and comparing it to mp4's where the only change is the -color_trc flag setting. The code to generate these files is <a href='../%s'>here</a>. You can reorder the wedges to help with comparison by drag and drop.</p>" % os.path.basename(__file__),
-                                        videohtml = '  ')
+                                    videohtml = '  '
                                         )
