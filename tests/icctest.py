@@ -57,6 +57,7 @@ for trc in trc_types:
 
 
 cmd = 'ffmpeg -y -i  {source_image} -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.4 {rootpath}/h264-ffmpeg-gamma24alt.mov'.format(source_image = source_image, rootpath=rootpath)
+os.system(cmd)
 listimages.append({'label': 'gamma 2.4 mov (OSX only)', 'video': "h264-ffmpeg-gamma24alt.mov", 'cmd': cmd})
 
 
