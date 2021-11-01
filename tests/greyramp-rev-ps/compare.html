@@ -70,10 +70,6 @@
 </TR>
 
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear mp4</TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev-ps/greyscale-lin.mp4</td>
-</TR>
-
-<TR class="index">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear-ps mp4</TD><td><video    ><source src='greyscale-lin-ps.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev-ps/greyscale-lin-ps.mp4</td>
 </TR>
 
