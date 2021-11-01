@@ -23,11 +23,12 @@ img.save(source_image)
 #source_image = os.path.join(rootpath, "greyscale-srgb-photoshop.png")
 
 listimages = []
-# listimages.append({'label': 'raw png', 'image': os.path.basename(source_image)})
+listimages.append({'label': 'raw png', 'image': os.path.basename(source_image)})
 
 profile = ImageCms.getOpenProfile("/usr/share/color/icc/sRGB.icc")
 img.save(os.path.join(rootpath, "greyscale-srgb.png"), icc_profile=profile.tobytes())
 listimages.append({'label': 'srgb png', 'image': "greyscale-srgb.png"})
+listimages.append({'label': 'srgb png ps', 'image': "../../sourceimages/greyscale-source-srgb-ps.png"})
 
 #profile = ImageCms.getOpenProfile(r"ICC Profiles - hbrendel.com/Rec709-Rec1886.icc")
 #img.save(os.path.join(rootpath, "greyscale-rec1886.png"), icc_profile=profile.tobytes())
