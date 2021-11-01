@@ -54,23 +54,27 @@
 </TR>
 
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 mp4</TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-rec709-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-rev-ps/greyscale-rec709.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 mp4</TD><td><video    ><source src='greyscale-rec709-ps.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-rec709-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-rev-ps/greyscale-rec709-ps.mp4</td>
 </TR>
 
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB mp4</TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-srgb-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-rev-ps/greyscale-srgb.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB mp4</TD><td><video    ><source src='greyscale-srgb-ps.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-srgb-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-rev-ps/greyscale-srgb-ps.mp4</td>
 </TR>
 
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 mp4</TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma22-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 4 ./greyramp-rev-ps/greyscale-gamma22.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 mp4</TD><td><video    ><source src='greyscale-gamma22-ps.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma22-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 4 ./greyramp-rev-ps/greyscale-gamma22-ps.mp4</td>
 </TR>
 
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 mp4</TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma28-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 5 ./greyramp-rev-ps/greyscale-gamma28.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 mp4</TD><td><video    ><source src='greyscale-gamma28-ps.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma28-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 5 ./greyramp-rev-ps/greyscale-gamma28-ps.mp4</td>
 </TR>
 
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear mp4</TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev-ps/greyscale-lin.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear mp4</TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev-ps/greyscale-lin.mp4</td>
+</TR>
+
+<TR class="index">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear-ps mp4</TD><td><video    ><source src='greyscale-lin-ps.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin-ps.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev-ps/greyscale-lin-ps.mp4</td>
 </TR>
 
 </tbody>
