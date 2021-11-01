@@ -1,0 +1,175 @@
+#! C:/Program Files/Nuke12.2v2/nuke-12.2.2.dll -nx
+version 12.2 v2
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="2557" h="1368" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1894" stretch="1"/>
+            <splitter orientation="2">
+                <split size="778"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="548"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name D:/encodingTests/ffmpeg-tests/tests/greyramp-rev2.nk
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ OCIO_config aces_1.1
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Read {
+ inputs 0
+ file_type mov
+ file D:/encodingTests/ICCTest/greyramp-rev/greyscale-gamma28.mp4
+ format "1024 150 0 0 1024 150 1 "
+ origset true
+ colorspace linear
+ raw true
+ name Read4
+ xpos 267
+ ypos -182
+}
+Colorspace {
+ colorspace_in BT1886
+ colorspace_out 2.20
+ name Colorspace3
+ xpos 267
+ ypos -44
+}
+Read {
+ inputs 0
+ file_type png
+ file D:/encodingTests/ICCTest/greyramp-rev2/greyscale-source-lin.png
+ format "1024 150 0 0 1024 150 1 "
+ origset true
+ colorspace linear
+ raw true
+ name Read1
+ xpos -40
+ ypos -187
+}
+Colorspace {
+ colorspace_out 2.20
+ name Colorspace1
+ xpos -40
+ ypos -48
+}
+Read {
+ inputs 0
+ file_type png
+ file D:/encodingTests/ICCTest/greyramp-rev2/greyscale-rec1886.png
+ format "1024 150 0 0 1024 150 1 "
+ origset true
+ colorspace linear
+ raw true
+ name Read2
+ xpos 85
+ ypos -183
+}
+set N6bb2f000 [stack 0]
+Colorspace {
+ colorspace_in BT1886
+ colorspace_out rec709
+ name Colorspace4
+ xpos 577
+ ypos -3
+}
+Write {
+ file greyramp-rev2/greyscale-source-rec709.png
+ raw true
+ file_type png
+ checkHashOnRead false
+ name Write3
+ xpos 577
+ ypos 54
+}
+push $N6bb2f000
+Colorspace {
+ colorspace_in BT1886
+ colorspace_out 2.20
+ name Colorspace2
+ xpos 744
+ ypos -3
+}
+Write {
+ file greyramp-rev2/greyscale-source-gamma22.png
+ raw true
+ file_type png
+ checkHashOnRead false
+ name Write4
+ xpos 744
+ ypos 53
+}
+push $N6bb2f000
+Colorspace {
+ colorspace_in BT1886
+ name Colorspace5
+ xpos -173
+}
+Write {
+ file greyramp-rev2/greyscale-source-lin.png
+ raw true
+ file_type png
+ checkHashOnRead false
+ name Write1
+ xpos -173
+ ypos 58
+}
+push $N6bb2f000
+Colorspace {
+ colorspace_in BT1886
+ colorspace_out sRGB
+ name Colorspace6
+ xpos 402
+ ypos -3
+}
+set N6bac3400 [stack 0]
+push $N6bb2f000
+Viewer {
+ inputs 2
+ frame 1
+ frame_range 1-100
+ input_number 1
+ viewerProcess None
+ name Viewer1
+ xpos 109
+ ypos 179
+}
+push $N6bac3400
+Write {
+ file greyramp-rev2/greyscale-source-srgb.png
+ raw true
+ file_type png
+ checkHashOnRead false
+ name Write2
+ xpos 402
+ ypos 54
+}

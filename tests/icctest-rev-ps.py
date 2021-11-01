@@ -5,7 +5,7 @@ from PIL import Image
 from PIL import ImageCms
 import os
 from CompareHtml import createCompareHtml
-rootpath = "./greyramp-rev2"
+rootpath = "./greyramp-rev-ps"
 if not os.path.exists(rootpath):
 	os.makedirs(rootpath)
 
@@ -25,14 +25,17 @@ img.save(source_image)
 listimages = []
 listimages.append({'label': 'raw png', 'image': os.path.basename(source_image)})
 
-profile = ImageCms.getOpenProfile("/usr/share/color/icc/sRGB.icc")
-img.save(os.path.join(rootpath, "greyscale-srgb.png"), icc_profile=profile.tobytes())
-listimages.append({'label': 'srgb png', 'image': "greyscale-srgb.png"})
-listimages.append({'label': 'srgb png ps', 'image': "../../sourceimages/greyscale-source-srgb-ps.png"})
+#profile = ImageCms.getOpenProfile("/usr/share/color/icc/sRGB.icc")
+#img.save(os.path.join(rootpath, "greyscale-srgb.png"), icc_profile=profile.tobytes())
+listimages.append({'label': 'srgb png', 'image': "../../sourceimages/greyscale-source-srgb-ps.png"})
 
 #profile = ImageCms.getOpenProfile(r"ICC Profiles - hbrendel.com/Rec709-Rec1886.icc")
 #img.save(os.path.join(rootpath, "greyscale-rec1886.png"), icc_profile=profile.tobytes())
-# listimages.append({'label': 'rec1886 png', 'image': "greyscale-rec1886.png"})
+#listimages.append({'label': 'rec1886 png', 'image': "greyscale-rec1886.png"})
+listimages.append({'label': 'gamma1.95 png', 'image': "../../sourceimages/greyscale-source-gamma195-ps.png"})
+listimages.append({'label': 'gamma2.2 png', 'image': "../../sourceimages/greyscale-source-gamma22-ps.png"})
+listimages.append({'label': 'gamma2.8 png', 'image': "../../sourceimages/greyscale-source-gamma28-ps.png"})
+listimages.append({'label': 'lin png', 'image': "../../sourceimages/greyscale-source-lin-ps.png"})
 
 #imgtst = Image.open(os.path.join(rootpath, "greyscale-sRGB.png"))
 #print("ICC - sRGB test:", imgtst.info["icc_profile"])
@@ -48,7 +51,7 @@ listimages.append({'label': '-color_trc = 2 = undefined', 'video': "greyscale-un
 trc_types = [{'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': 1, 'gamma': 1.95},
 			{'label': "-color_trc 13 = sRGB", 'fileext': "srgb", 'trcnum': 13, 'gamma': 2.2},
 			{'label': "-color_trc 4 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 4, 'gamma': 2.2},
-			#{'label': "-color_trc 5 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 5, 'gamma': 2.8},
+			{'label': "-color_trc 5 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 5, 'gamma': 2.8},
 			{'label': "-color_trc 8 = linear", 'fileext': "lin", 'trcnum': 8, 'gamma': 1},
 			]
 for trc in trc_types:
@@ -59,7 +62,7 @@ for trc in trc_types:
 		imgpaste = Image.new( mode = "RGB", size = (colwidth, height), color=(ocol, ocol, ocol) )
 		img.paste(imgpaste, box=(icol*colwidth, 0))
 
-	source_image = os.path.join('..', 'sourceimages', "greyscale-source-{fileext}.png".format(**trc))
+	source_image = os.path.join('..', 'sourceimages', "greyscale-source-{fileext}-ps.png".format(**trc))
 	#img.save(source_image)
 	# TODO Confirm we have the right one.
 	trc['source_image'] = source_image
@@ -73,7 +76,7 @@ for trc in trc_types:
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
-					introduction="<H1>Color_trc comparison</H1><p> This is trying to reverse out what we think is the gamma for each TRC file, with the hope that if the browser is correctly obaying the flag, that all the ramps would approximately match. The code to generate these files is <a href='../%s'>here</a>. However, the source images were generated in nuke.</p>" % os.path.basename(__file__),
+					introduction="<H1>Color_trc comparison</H1><p> This is trying to reverse out what we think is the gamma for each TRC file, with the hope that if the browser is correctly obaying the flag, that all the ramps would approximately match. The code to generate these files is <a href='../%s'>here</a>. However, the source images were generated in photoshop, by taking the raw.png file, assigning a sRGB profile to it, and then converting to a custom profile, adjusting the gamma but sticking with D65 and HDTV primaries..</p>" % os.path.basename(__file__),
 					videohtml = '  ')
 
 #os.system('ffmpeg -y -i  ' + source_image + '  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 4 ' + rootpath+'/greyscale-raw.mp4')
