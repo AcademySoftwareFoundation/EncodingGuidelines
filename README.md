@@ -6,10 +6,27 @@ The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.act
 
 ## Encoding Cheat sheet
 
-If you are encoding from an image sequence to h264 using ffmpeg, if you are doing one thing, please use the yuv conversion correctly:
+If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 ```
-ffmpeg -y -r 24 -i inputfile.%04d.png -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -preset slow  -pix_fmt yuv420p -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 outputfile.mp4
+ffmpeg -r 24 -i inputfile.%04d.png -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -preset slower  -pix_fmt yuv420p -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 outputfile.mp4
 ```
+
+Where:
+   * **-r 24** means 24 fps
+   * ** -i inputfile.%04d.png means **  will be padded to 4 digits, i.e. 0000, 0001, 0002, etc.
+   *  ** -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  ** means use the sw-scale filter, setting:
+      * ** in_range=full ** means Full range 0-255 video coming in.
+      * ** out_range=tv ** means tv-range (35-235) video going out.
+      * ** in_color_matrix=rec709 ** means color space bt709 video coming in (normal for TV/Desktop video).
+      * ** out_color_matrix=rec709 ** means color space bt709 video going out. The combination of this and in_color_matrix will mean the color encoding will match the source media. If you are only adding one set of flags, this is the one, otherwise it will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays.
+   * ** -c:v libx264 ** means use the h264 encoding library (libx264)
+   * ** -preset slower ** a reasonably high quality preset, which will run slow, but not terribly slow.
+   * ** -pix_fmt yuv420p ** use yuv420 video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le 
+   * ** -qscale:v 1 ** TODO NOT SURE WHAT THIS IS DOING.
+   * ** -color_range 1 ** - mp4 metadata - specifying color range as 16-235 (which is default for web playback).
+   * ** -colorspace 1 ** - mp4 metadata - specifying rec709 yuv color pixel format 
+   * ** -color_primaries 1** - mp4 metadata - rec709 color gamut primaries
+   * ** -color_trc 2** -- mp4 metadata color transfer = unknown - See tests below.
 
 The crutial part is:
 '''
