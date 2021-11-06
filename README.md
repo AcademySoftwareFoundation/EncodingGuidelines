@@ -8,15 +8,13 @@ The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.act
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 ```
-ffmpeg -r 24 -i inputfile.%04d.png -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -preset slower  -pix_fmt yuv420p -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 outputfile.mp4
+ffmpeg -r 24 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -c:v libx264 -preset slower  -pix_fmt yuv420p -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 outputfile.mp4
 ```
 
 Where:
    * **-r 24** means 24 fps
    * **-i inputfile.%04d.png means**  will be padded to 4 digits, i.e. 0000, 0001, 0002, etc.
-   *  **-vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"** means use the sw-scale filter, setting:
-      * **in_range=full** means Full range 0-255 video coming in.
-      * **out_range=tv** means tv-range (35-235) video going out.
+   *  **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
       * **in_color_matrix=rec709** means color space bt709 video coming in (normal for TV/Desktop video).
       * **out_color_matrix=rec709** means color space bt709 video going out. The combination of this and in_color_matrix will mean the color encoding will match the source media. If you are only adding one set of flags, this is the one, otherwise it will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays.
    * **-c:v libx264** means use the h264 encoding library (libx264)
@@ -30,7 +28,7 @@ Where:
 
 The crutial part is:
 '''
--vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
+-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" 
 '''
 Which is specifying the input and output colorspaces to be bt709.
 
