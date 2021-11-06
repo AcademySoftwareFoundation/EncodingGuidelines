@@ -34,12 +34,12 @@ The crutial part is:
 '''
 Which is specifying the input and output colorspaces to be bt709.
 
-Separately, if you are converting from exr's in other colorspaces, please use OCIO to do the color space conversions. oiiotool is an excellent open-source tool for this.
+Separately, if you are converting from exr's in other colorspaces, please use [OCIO](https://opencolorio.org/) to do the color space conversions. [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
 
 Links:
-   * [Comparing approaches to do the YUV conversion correctly](https://richardssam.github.io/ffmpeg-tests/tests/chip-chart-yuvconvert/compare.html)
-   * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
-   * [Comparing different outputs for -color_trc](https://richardssam.github.io/ffmpeg-tests/tests/greyramp/compare.html)
-   * [Comparing different outputs for -color trc part2](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-rev2/compare.html)
+   * [Comparing approaches to do the YUV conversion correctly](https://richardssam.github.io/ffmpeg-tests/tests/chip-chart-yuvconvert/compare.html) this shows the right way to do the yuv conversion, comparing the three different ways you can do it in ffmpeg.
+   * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html) - reviews how you can get an extended range in your yuv conversion, including on web browsers.
+   * [Comparing different outputs for -color_trc](https://richardssam.github.io/ffmpeg-tests/tests/greyramp/compare.html) - Showing what the -color_trc flag is doing.
+   * [Comparing different outputs for -color trc part2](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-rev2/compare.html) - Showing how messed up web browers are.
 
 
