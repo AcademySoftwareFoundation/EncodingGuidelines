@@ -13,9 +13,10 @@ header = """
   </style>
   <script>
   $( function() {{
-    $( "#sort tbody" ).sortable();
+    if( ! /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent) ) {{
+        $( "#sort tbody" ).sortable();
     $( "#sort2 tbody" ).sortable();
-
+    }}
   }} );
   </script>
 </head>
