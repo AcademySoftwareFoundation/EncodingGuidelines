@@ -13,9 +13,10 @@ header = """
   </style>
   <script>
   $( function() {{
-    $( "#sort tbody" ).sortable();
+    if( ! /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent) ) {{
+        $( "#sort tbody" ).sortable();
     $( "#sort2 tbody" ).sortable();
-
+    }}
   }} );
   </script>
 </head>
@@ -33,7 +34,7 @@ image_template = """
 """
 video_template = """
 <TR class="index">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} mp4</TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} {ext}</TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
 </TR>
 """
 
@@ -61,6 +62,7 @@ def createCompareHtml(outputpath="compare.html", listimages=[], introduction="",
 			html += image_template.format(**output)
 		else:
 			output['videohtml'] = videohtml
+			output['ext'] = output['video'][-3:]
 			html += video_template.format(**output)
 
 	html += tail

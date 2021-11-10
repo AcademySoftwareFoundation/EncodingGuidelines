@@ -5,7 +5,7 @@ from PIL import Image
 from PIL import ImageCms
 import os
 from CompareHtml import createCompareHtml
-rootpath = "./greyramp"
+rootpath = "./greyramp-osx"
 if not os.path.exists(rootpath):
 	os.makedirs(rootpath)
 
@@ -38,31 +38,36 @@ os.system('ffmpeg -r 1 -y -i  ' + source_image + '  -sws_flags spline+accurate_r
 listimages.append({'label': 'raw', 'video': "greyscale-raw.mp4"})
 
 trc_types = [{'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': 1},
+                        {'label': "-color_trc 2 = gamma 1.95", 'fileext': "gamma195", 'trcnum': 2, 'gamma': 1.95},
 			{'label': "-color_trc 2 = unknown", 'fileext': "unknown", 'trcnum': 2},
 			{'label': "-color_trc 13 = sRGB", 'fileext': "srgb", 'trcnum': 13},
 			#{'label': "-color_trc 14 = rec2020", 'fileext': "rec2020", 'trcnum': 14},
 			#{'label': "-color_trc 15 = rec2020", 'fileext': "rec2020b", 'trcnum': 15},
 			{'label': "-color_trc 4 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 4},
+                        {'label': "-color_trc 2 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 2, 'gamma': 2.2},
+                        #{'label': "-color_trc 2 = gamma 2.4", 'fileext': "gamma24", 'trcnum': 2, 'gamma': 2.4},
 			{'label': "-color_trc 5 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 5},
+                        {'label': "-color_trc 2 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 2, 'gamma': 2.8},
 			{'label': "-color_trc 8 = linear", 'fileext': "lin", 'trcnum': 8},
+                        {'label': "-color_trc 2 = gamma 1", 'fileext': "gamma1", 'trcnum': 2, 'gamma': 1},
 			]
 for trc in trc_types:
 	# TODO Confirm we have the right one.
 	trc['source_image'] = source_image
 	trc['rootpath'] = rootpath
 
-	cmd = 'ffmpeg -r 1 -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} {rootpath}/greyscale-{fileext}.mp4'.format(**trc)
+	cmd = 'ffmpeg -r 1 -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} {rootpath}/greyscale-{fileext}.mp4'.format(**trc); ext="mp4"
+	if "gamma" in trc:
+	   cmd = 'ffmpeg -r 1 -y -i  {source_image} -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} -movflags write_colr+write_gama -mov_gamma {gamma} {rootpath}/greyscale-{fileext}.mov'.format(**trc); ext="mov"
+
 	os.system(cmd)
-	listimages.append({'label': trc['label'], 'video': "greyscale-{fileext}.mp4".format(**trc), 'cmd': cmd})
+	trc['ext'] = ext
+	listimages.append({'label': trc['label'], 'video': "greyscale-{fileext}.{ext}".format(**trc), 'cmd': cmd})
 
-
-cmd = 'ffmpeg -r 1 -y -i  {source_image} -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.4 {rootpath}/h264-ffmpeg-gamma24alt.mov'.format(source_image = source_image, rootpath=rootpath)
-os.system(cmd)
-listimages.append({'label': 'gamma 2.4 mov (OSX only)', 'video': "h264-ffmpeg-gamma24alt.mov", 'cmd': cmd})
 
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
-					introduction="<H1>Color_trc comparison</H1><p> This is comparing a png file written with different ICC profiles (i.e. the underlying data is identical in all png files), and comparing it to mp4's where the only change is the -color_trc flag setting. The code to generate these files is <a href='../%s'>here</a>. You can reorder the wedges to help with comparison by drag and drop.</p>" % os.path.basename(__file__),
+					introduction="<H1>Color_trc comparison for OSX</H1><p> This is comparing a png file written with different ICC profiles (i.e. the underlying data is identical in all png files), and comparing it to mp4's where the only change is the -color_trc flag setting, along with mov files with different gamma values. The code to generate these files is <a href='../%s'>here</a>. You can reorder the wedges to help with comparison by drag and drop.</p>" % os.path.basename(__file__),
                                     videohtml = '  '
                                         )
