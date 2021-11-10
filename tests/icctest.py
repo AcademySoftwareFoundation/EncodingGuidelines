@@ -34,7 +34,7 @@ img.save(os.path.join(rootpath, "greyscale-rec1886.png"), icc_profile=profile.to
 listimages.append({'label': 'rec1886 png', 'image': "greyscale-rec1886.png"})
 
 # Now lets make the mp4's.
-os.system('ffmpeg -y -i  ' + source_image + '  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1 ' + rootpath+'/greyscale-raw.mp4')
+os.system('ffmpeg -r 1 -y -i  ' + source_image + '  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1 ' + rootpath+'/greyscale-raw.mp4')
 listimages.append({'label': 'raw', 'video': "greyscale-raw.mp4"})
 
 trc_types = [{'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': 1},
@@ -51,12 +51,12 @@ for trc in trc_types:
 	trc['source_image'] = source_image
 	trc['rootpath'] = rootpath
 
-	cmd = 'ffmpeg -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} {rootpath}/greyscale-{fileext}.mp4'.format(**trc)
+	cmd = 'ffmpeg -r 1 -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} {rootpath}/greyscale-{fileext}.mp4'.format(**trc)
 	os.system(cmd)
 	listimages.append({'label': trc['label'], 'video': "greyscale-{fileext}.mp4".format(**trc), 'cmd': cmd})
 
 
-cmd = 'ffmpeg -y -i  {source_image} -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.4 {rootpath}/h264-ffmpeg-gamma24alt.mov'.format(source_image = source_image, rootpath=rootpath)
+cmd = 'ffmpeg -r 1 -y -i  {source_image} -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.4 {rootpath}/h264-ffmpeg-gamma24alt.mov'.format(source_image = source_image, rootpath=rootpath)
 os.system(cmd)
 listimages.append({'label': 'gamma 2.4 mov (OSX only)', 'video': "h264-ffmpeg-gamma24alt.mov", 'cmd': cmd})
 
