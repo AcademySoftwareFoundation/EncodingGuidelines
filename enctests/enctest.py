@@ -120,6 +120,7 @@ for testfile in testfiles:
         if "vframes" in testfile:
            duration = " -vframes %s " % testfile['vframes']
 
+        # Do the initial media encode - i.e. what we are testing.
         cmd = ffmpeg_cmd + " " + ffmpeg_startup +" -i " + testfile['file'] + duration + " " + testconfig['ffmpeg_args'] + " " + outfile
         print("ffmpeg cmd:", cmd)
         t = time.time()
@@ -129,6 +130,8 @@ for testfile in testfiles:
             print("Warning file: %s is missing, skipping test." % outfile)
             continue
         
+        # The VMAF testing. NOTE, you will need to get vmaf compiled into ffmpeg for this.
+        # see: https://jina-liu.medium.com/a-practical-guide-for-vmaf-481b4d420d9c
         vmafoutput = ""
         vmafscore = ""
         if testfile['vmaf_compare'] != testconfig['test']:
@@ -142,6 +145,7 @@ for testfile in testfiles:
                 vmafoutput = str(e.output) + "ERROR!"
             print("VMAF Output:", vmafoutput)
         
+        # Try to do a idiff on the result. Currently this only works on a still frame, ideally we modify this to work on an image sequence.
         diffhtml = "Undefined"
         if testfile['stillframe']:
             # Now we extract the file
@@ -162,6 +166,8 @@ for testfile in testfiles:
                 oiiocmd = oiiotool_cmd + " "+testfile['file'] + " " + testconfig['testmask'] + " --mul -o " + outsourcemask
                 print(oiiocmd)
                 os.system(oiiocmd)
+                
+                # The mask is used to help with comparisons of 444 vs. 422, perhaps a better approach is to compare it to a "raw" 422p/420p image.
                 sourceimage = outsourcemask
                 outmask = outfile[:-4]+"mask.png"
                 oiiocmd = oiiotool_cmd + " "+extractfile + " " + testconfig['testmask'] + " --mul -o " + outmask
