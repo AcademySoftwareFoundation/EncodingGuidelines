@@ -1,6 +1,7 @@
 # Test configs
 
 import os
+import time
 import subprocess
 
 testdir = "results"
@@ -10,45 +11,26 @@ testconfigs = [
      'description': 'scale (yuv444p10le)',
      'ffmpeg_args': '-c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2',
     },
-    {'test': 'colormatrix_yuv444p10le',
-     'description': 'colormatrix (yuv444p10le) from https://trac.ffmpeg.org/wiki/colorspace',
-     'ffmpeg_args': '-c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1',
-    },
-    {'test': 'colorspace_yuv444p10le',
-     'description': 'colorspace (yuv444p10le) from https://trac.ffmpeg.org/wiki/colorspace',
-     'ffmpeg_args': '-c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1',
-    },
-    {'test': 'colorspace_yuv444p10le_nomd',
-     'description': 'colorspace (yuv444p10le) from https://trac.ffmpeg.org/wiki/colorspace without the metadata',
-     'ffmpeg_args': '-c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ',
-    },
-    {'test': 'yuv444p',
-     'description': ' yuv444p from https://trac.ffmpeg.org/wiki/colorspace',
-     'ffmpeg_args': ' -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p -sws_flags spline+accurate_rnd+full_chroma_int -color_range 1 -colorspace 5 -color_primaries 5 -color_trc 6 ',
-    },
-    {'test': 'colorspace_yuv444p',
-     'description': ' yuv444p from https://trac.ffmpeg.org/wiki/colorspace',
-     'ffmpeg_args': ' -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p -sws_flags spline+accurate_rnd+full_chroma_int  -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ',
-    },
-    {'test': 'colorspace_yuv420p10le',
-     'description': 'colorspace_yuv420p10le from https://trac.ffmpeg.org/wiki/colorspace',
-     'ffmpeg_args': '-c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv420p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1',
-    'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
-    },
-    {'test': 'colorspace_yuv420p',
-     'description': 'colorspace_yuv420p',
-     'ffmpeg_args': '-c:v libx264 -preset slow -crf 18 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1',
-    'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
-    },
     {'test': 'colorspace_rgb',
      'description': 'colorspace_rgb',
      'ffmpeg_args': '-c:v libx264 -preset slow -crf 18 -x264-params "keyint=15:no-deblock=1" ',
     'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
     },
+    {'test': 'colorspace_yuv420p_slow_crf_23',
+     'description': 'colorspace_yuv420p crf 23',
+     'ffmpeg_args': '-c:v libx264 -preset slow -crf 18 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2',
+    },
+    {'test': 'colorspace_yuv420p_slower_crf_18',
+     'description': 'colorspace_yuv420p slower crf 18',
+     'ffmpeg_args': '-c:v libx264 -preset slower -crf 18 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2',
+    },
+    {'test': 'colorspace_yuv420p_slower_film_crf_18',
+     'description': 'colorspace_yuv420p tune=film crf 18',
+     'ffmpeg_args': '-c:v libx264 -preset slower -tune film -crf 18 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2',
+    },
     {'test': 'colorspace_yuv420pfull',
      'description': 'colorspace_yuv420p',
      'ffmpeg_args': '-c:v libx264 -preset slow -crf 18 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1',
-    'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
     },
     {'test': 'shotgun_diy_encode',
     'description': 'From https://support.shotgunsoftware.com/hc/en-us/articles/219030418-Do-it-yourself-DIY-transcoding',
@@ -58,12 +40,6 @@ testconfigs = [
     {'test': 'wdi-mpeg2',
     'ffmpeg_args': ' -vcodec mpeg2video -profile:v 4 -level:v 4 -b:v 38M -bt 38M -q:v 1 -maxrate 38M -pix_fmt yuv420p -vf colormatrix=bt601:bt709',
     'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
-    },
-    {'test': 'wdi-prores_colormatrix',
-    'ffmpeg_args': ' -c:v prores_ks -profile:v 4444 -qscale:v 1 -vendor ap10 -pix_fmt yuv444p10le -vf colormatrix=bt601:bt709', # 
-    },
-    {'test': 'wdi-prores2',
-    'ffmpeg_args': ' -c:v prores_ks -profile:v 4444 -qscale:v 1 -vendor ap10 -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1', # 
     },
     {'test': 'wdi-prores444_scale',
     'ffmpeg_args': ' -c:v prores_ks -profile:v 4444 -qscale:v 1 -vendor ap10 -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2', # 
@@ -88,7 +64,7 @@ testfiles = [
     {#'file': 'Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%%04d.png',
     'file': 'sources/1080p/sintel_trailer_2k_%04d.png',
     'ffmpeg_startup': ' -r 24 -start_number 600 ', #-vframes 25 ',
-    'vframes': 25,
+    'vframes': 75,
      'vmaf_compare': 'scale_yuv444p10le',
      'testfilename': 'trailer.mov',
      'stillframe': False,
@@ -124,7 +100,7 @@ img {
 <body>""")
 results.write("<TABLE border=1>")
 
-fields = ['test', 'testfile', 'testoutput', 'vmafoutput', 'filesize']
+fields = ['test', 'testfile', 'testoutput', 'vmafoutput', 'filesize', 'duration']
 results.write("<TR>")
 for field in fields:
     results.write("<TH>"+field+"</TH>")
@@ -146,7 +122,9 @@ for testfile in testfiles:
 
         cmd = ffmpeg_cmd + " " + ffmpeg_startup +" -i " + testfile['file'] + duration + " " + testconfig['ffmpeg_args'] + " " + outfile
         print("ffmpeg cmd:", cmd)
+        t = time.time()
         os.system(cmd)
+        ffmpegduration = time.time() - t
         if not os.path.exists(outfile):
             print("Warning file: %s is missing, skipping test." % outfile)
             continue
@@ -159,7 +137,7 @@ for testfile in testfiles:
             vmafcmd = ffmpeg_cmd + " -i " + comparefile + " -i "+outfile+' -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=xml:log_path=foo:model_path=/usr/local/share/model/vmaf_v0.6.1.json" -f null -'
             try:
                 vmafoutput = subprocess.check_output(vmafcmd, stderr=subprocess.STDOUT, shell=True)
-                vmafoutput = str(vmafoutput).split("VMAF score: ")[1][:-2]
+                vmafoutput = str(vmafoutput).split("VMAF score: ")[1][:-3]
             except Exception as e:
                 vmafoutput = str(e.output) + "ERROR!"
             print("VMAF Output:", vmafoutput)
@@ -209,7 +187,8 @@ for testfile in testfiles:
             diffhtml = "<video width='200' height='112' controls><source src='"+os.path.basename(difffile)+"' type='video/mp4'>Your browser does not support the video tag.</video>"
             output = ""
         encodesize = os.path.getsize(outfile)
-        testresult = {'testfile': testfile['file'], 'test': testconfig['test'], 'testoutput': output, 'filesize':encodesize, 'vmafoutput': vmafoutput}
+        testresult = {'testfile': testfile['file'], 'test': testconfig['test'], 'testoutput': output, 
+                      'filesize':encodesize, 'vmafoutput': vmafoutput, 'duration': ffmpegduration}
         results.write("<TR>")
         for field in fields:
             if field == "testoutput":
