@@ -13,6 +13,13 @@
         $( "#sort tbody" ).sortable();
     $( "#sort2 tbody" ).sortable();
     }
+    var urlargs = document.location.href.split("?")
+    if (urlargs.length > 1){
+        $(".index").hide();
+        showgroups = urlargs[1].split("+");
+        for(i = 0; i < showgroups.length; i++)
+            $(showgroups[i]).show();
+     }
   } );
   </script>
 </head>
@@ -22,39 +29,39 @@
 <table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">
 <tbody>
 
-<TR class="index">
+<TR class="index group"  id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD >raw png</TD><td><img src="greyscale-raw.png"/></td>
 </TR>
 
-<TR class="index">
+<TR class="index group"  id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD >srgb png</TD><td><img src="greyscale-srgb.png"/></td>
 </TR>
 
-<TR class="index">
+<TR class="index group"  id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD >srgb png ps</TD><td><img src="../../sourceimages/greyscale-source-srgb-ps.png"/></td>
 </TR>
 
-<TR class="index">
+<TR class="index group" id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>raw mp4</TD><td><video    ><source src='greyscale-raw.mp4' type='video/mp4'></video></td><td></td>
 </TR>
 
-<TR class="index">
+<TR class="index group" id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc = 2 = undefined mp4</TD><td><video    ><source src='greyscale-undefined.mp4' type='video/mp4'></video></td><td></td>
 </TR>
 
-<TR class="index">
+<TR class="index group" id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 mp4</TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-rec709.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-rev2/greyscale-rec709.mp4</td>
 </TR>
 
-<TR class="index">
+<TR class="index group" id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB mp4</TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-srgb.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-rev2/greyscale-srgb.mp4</td>
 </TR>
 
-<TR class="index">
+<TR class="index group" id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 mp4</TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-gamma22.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 4 ./greyramp-rev2/greyscale-gamma22.mp4</td>
 </TR>
 
-<TR class="index">
+<TR class="index group" id="button">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear mp4</TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td>ffmpeg -y -i  ../sourceimages/greyscale-source-lin.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-rev2/greyscale-lin.mp4</td>
 </TR>
 
