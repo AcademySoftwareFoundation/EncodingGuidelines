@@ -20,7 +20,9 @@ header = """
     var urlargs = document.location.href.split("?")
     if (urlargs.length > 1){{
         $(".index").hide();
-        $(urlargs[1]).show();
+        showgroups = urlargs[1].split("+");
+        for(i = 0; i < showgroups.length; i++)
+            $(showgroups[i]).show();
      }}
   }} );
   </script>
