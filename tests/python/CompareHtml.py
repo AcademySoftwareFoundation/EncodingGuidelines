@@ -17,6 +17,11 @@ header = """
         $( "#sort tbody" ).sortable();
     $( "#sort2 tbody" ).sortable();
     }}
+    var urlargs = document.location.href.split("?")
+    if (urlargs.length > 1){{
+        $(".index").hide();
+        $(urlargs[1]).show();
+     }}
   }} );
   </script>
 </head>
@@ -28,12 +33,12 @@ header = """
 """
 
 image_template = """
-<TR class="index">
+<TR class="index group{group}"  id="button{id}">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD >{label}</TD><td><img src="{image}"/></td>
 </TR>
 """
 video_template = """
-<TR class="index">
+<TR class="index group{group}" id="button{id}">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} {ext}</TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
 </TR>
 """
@@ -56,6 +61,10 @@ def createCompareHtml(outputpath="compare.html", listimages=[], introduction="",
 
 	html = header.format(introduction=introduction)
 	for output in listimages:
+		if 'group' not in output:
+			output['group'] = ""
+		if 'id' not in output:
+			output['id'] = ""
 		if 'cmd' not in output:
 			output['cmd'] = ""
 		if "image" in output:

@@ -1,0 +1,7 @@
+Current requirements include installing ffmpeg with VMAF. Examples using homebrew are here:
+https://jina-liu.medium.com/a-practical-guide-for-vmaf-481b4d420d9c
+
+Downloading source media from here:
+https://s3.amazonaws.com/senkorasic.com/test-media/video/sintel/source/Sintel-trailer-1080p-png.zip
+
+
