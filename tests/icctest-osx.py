@@ -29,6 +29,10 @@ profile = ImageCms.getOpenProfile("/usr/share/color/icc/sRGB.icc")
 img.save(os.path.join(rootpath, "greyscale-srgb.png"), icc_profile=profile.tobytes())
 listimages.append({'id': 'srgbpng', 'label': 'srgb png', 'image': "greyscale-srgb.png", 'group': 'srgb'})
 
+profile = ImageCms.getOpenProfile(r"../ICC/Simplified-sRGB.icc")
+img.save(os.path.join(rootpath, "greyscale-g22.png"), icc_profile=profile.tobytes())
+listimages.append({'id': 'g22png', 'label': 'gamma2.2 png', 'image': "greyscale-g22.png", 'group': 'gamma22'})
+
 profile = ImageCms.getOpenProfile(r"../ICC/Rec709-Rec1886.icc")
 img.save(os.path.join(rootpath, "greyscale-rec1886.png"), icc_profile=profile.tobytes())
 listimages.append({'id': 'rec1886png', 'label': 'rec1886 png', 'image': "greyscale-rec1886.png", 'group': 'bt1886'})
