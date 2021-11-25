@@ -33,6 +33,14 @@ profile = ImageCms.getOpenProfile(r"../ICC/Simplified-sRGB.icc")
 img.save(os.path.join(rootpath, "greyscale-g22.png"), icc_profile=profile.tobytes())
 listimages.append({'id': 'g22png', 'label': 'gamma2.2', 'ext': 'png', 'image': "greyscale-g22.png", 'group': 'gamma22'})
 
+profile = ImageCms.getOpenProfile(r"../ICC/gamma28.icc")
+img.save(os.path.join(rootpath, "greyscale-g28.png"), icc_profile=profile.tobytes())
+listimages.append({'id': 'g28png', 'label': 'gamma2.8', 'ext': 'png', 'image': "greyscale-g28.png", 'group': 'gamma28'})
+
+profile = ImageCms.getOpenProfile(r"../ICC/linear.icc")
+img.save(os.path.join(rootpath, "greyscale-lin.png"), icc_profile=profile.tobytes())
+listimages.append({'id': 'linpng', 'label': 'Linear', 'ext': 'png', 'image': "greyscale-lin.png", 'group': 'lin'})
+
 profile = ImageCms.getOpenProfile(r"../ICC/Rec709-Rec1886.icc")
 img.save(os.path.join(rootpath, "greyscale-rec1886.png"), icc_profile=profile.tobytes())
 listimages.append({'id': 'rec1886png', 'label': 'rec1886', 'ext': 'png', 'image': "greyscale-rec1886.png", 'group': 'bt1886'})
@@ -77,6 +85,7 @@ introduction = """
 Filtered views:
 <p>
 <bl>
+<li><A href="compare.html">See all</a></li>
 <li><A href="compare.html?.groupbt1886">bt1886</a></li>
 <li><A href="compare.html?.groupsrgb">sRGB</a></li>
 <li><A href="compare.html?.groupgamma22">gamma 2.2</a></li>
