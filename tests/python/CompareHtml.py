@@ -10,6 +10,12 @@ header = """
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <style>
   .grid tbody tr td {{ cursor: grab }}
+  a:link {{ 
+        color:rgb(150, 150, 255);
+   }}
+     a:visited {{ 
+        color:rgb(120, 120, 255);
+   }}
   </style>
   <script>
   $( function() {{
@@ -28,7 +34,7 @@ header = """
   </script>
 </head>
 
-<body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
+<body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
 {introduction}
 <table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">
 <tbody>
@@ -36,12 +42,12 @@ header = """
 
 image_template = """
 <TR class="index group{group}"  id="button{id}">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD >{label}</TD><td><img src="{image}"/></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >{label} <B>png</B></TD><td><img src="{image}"/></td>
 </TR>
 """
 video_template = """
 <TR class="index group{group}" id="button{id}">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} {ext}</TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} <B>{ext}</B></TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
 </TR>
 """
 
