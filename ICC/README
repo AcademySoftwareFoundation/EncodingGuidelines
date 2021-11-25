@@ -1,1 +1,7 @@
-THese files are sourced from http://color.support/iccprofiles.html
+Some of these files are sourced from http://color.support/iccprofiles.html
+
+The files below are generated from photoshop, by creating a custom ICC profile, and then saving it out.
+gamma28.icc
+linear.icc
+Simplified-sRGB.icc
+
