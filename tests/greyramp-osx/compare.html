@@ -37,6 +37,7 @@
 Filtered views:
 <p>
 <bl>
+<li><A href="compare.html">See all</a></li>
 <li><A href="compare.html?.groupbt1886">bt1886</a></li>
 <li><A href="compare.html?.groupsrgb">sRGB</a></li>
 <li><A href="compare.html?.groupgamma22">gamma 2.2</a></li>
@@ -70,12 +71,20 @@ Filtered views:
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.2 <B>mov</B></TD><td><video    ><source src='greyscale-gamma22.mov' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.2 ./greyramp-osx/greyscale-gamma22.mov</td>
 </TR>
 
+<TR class="index groupgamma28"  id="buttong28png">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >gamma2.8 <B>png</B></TD><td><img src="greyscale-g28.png"/></td>
+</TR>
+
 <TR class="index groupgamma28" id="buttongamma28mp4">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 5 ./greyramp-osx/greyscale-gamma28.mp4</td>
 </TR>
 
 <TR class="index groupgamma28" id="buttongamma28mov">
 	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.8 <B>mov</B></TD><td><video    ><source src='greyscale-gamma28.mov' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.8 ./greyramp-osx/greyscale-gamma28.mov</td>
+</TR>
+
+<TR class="index grouplin"  id="buttonlinpng">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >Linear <B>png</B></TD><td><img src="greyscale-lin.png"/></td>
 </TR>
 
 <TR class="index grouplin" id="buttongammalinmp4">
