@@ -1,20 +1,47 @@
 # Test configs
-
 import os
+import sys
 import time
+import shlex
 import subprocess
 
 from config import testconfigs, testfiles
 
+# Were to store all rendered files
+TEST_DIR = 'results'
+
+# OpenImageIO
+OIIOTOOL_BIN = os.getenv(
+    "OIIOTOOL_BIN",
+    "oiiotool"
+)
+
+IDIFF_BIN = os.getenv(
+    "IDIFF_BIN",
+    "idiff"
+)
+
+# We assume macos and linux both have the same binary name
+FFMPEG_BIN = os.getenv(
+    'FFMPEG_BIN',
+    'win' in sys.platform and 'ffmpeg.exe' or 'ffmpeg'
+)
+
+# Which vmaf model to use
+VMAF_MODEL = os.getenv(
+    'VMAF_MODEL',
+    "vmaf_v0.6.1.json"
+)
+
 
 def write_html(test_results):
     fields = [
-        'test',
+        'testname',
         'testfile',
         'testoutput',
-        'vmafoutput',
+        'vmaf_output',
         'filesize',
-        'duration'
+        'ffmpeg_duration'
     ]
 
     head = """\
@@ -40,7 +67,7 @@ def write_html(test_results):
         for field in fields:
             results.write("<TH>{field}</TH>".format(field=field))
         results.write("<TH>Image Diff x 10</TH>")
-        results.write("</TR>")
+        results.write("</TR>\n")
 
         # Write rows with results
         for test_result in test_results:
@@ -73,120 +100,326 @@ def write_html(test_results):
                     ffmpeg_cmd=test_result['ffmpeg_encode_cmd']   # cmd
                 )
             )
-            results.write("</TR>")
-        results.write("</TABLE></BODY></HTML>")
+            results.write("</TR>\n")
+        results.write("</TABLE>\n</BODY>\n</HTML>")
+
+
+def ffmpeg_convert(source_config, test_config, outfile):
+    ffmpeg_cmd = "\
+{ffmpeg_bin} \
+{input_args} \
+-i {source} \
+{duration} \
+{compression_args} \
+-y {outfile}\
+"
+    source = source_config.get('source_file')
+    input_args = ' '.join(source_config.get('input_args', []))
+    duration = source_config.get('duration', '')
+    cmd = ffmpeg_cmd.format(
+                ffmpeg_bin=FFMPEG_BIN,
+                input_args=input_args,
+                source=source,
+                duration=duration,
+                compression_args=' '.join(test_config.get('ffmpeg_args')),
+                outfile=outfile
+            )
+
+    print('ffmpeg command:', cmd)
+    rc = subprocess.call(shlex.split(cmd))
+
+    return cmd, rc
+
+
+def ffmpeg_diff(outfile, test_config):
+    compare_cmd = "\
+{ffmpeg_bin} \
+{input_args} \
+-i {reference} \
+-i {source} \
+{duration} \
+-filter_complex \
+[1:v]format=yuva444p,lut=c3=128,negate[video2withAlpha],\
+[0:v][video2withAlpha]overlay[out] -map [out] \
+-y {diff}\
+"
+    duration = test_config.get('duration', '')
+
+    # Movie compare from http://dericed.com/2012/display-video-difference-with-ffmpegs-overlay-filter/
+    base, ext = os.path.splitext(outfile)
+
+    # Do the diff movies in mp4 so that they can load in a browser.
+    diff_file = f"{base}-diff{ext}"
+
+    cmd = compare_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN,
+        input_args=' '.join(test_config.get('input_args', [])),
+        reference=test_config['source_file'],
+        source=outfile,
+        duration=duration,
+        diff=diff_file
+    )
+    print("FFmpeg Compare command:", cmd)
+    subprocess.call(shlex.split(cmd))
+
+    diff_html = "<video width='200' height='112' controls>" \
+                "<source src='{diff}' type='video/mp4'>" \
+                "Your browser does not support the video tag." \
+                "</video>".format(diff=os.path.basename(diff_file))
+
+    return diff_html
+
+
+def extract_png(outfile, source_config):
+    extract_cmd = "\
+{ffmpeg_bin} \
+-i {source} \
+{extract_args} \
+-y {extract_file}\
+"
+    _, source_ext = os.path.splitext(outfile)
+    extract_file = outfile.replace(source_ext, '.png')
+
+    if os.path.exists(extract_file):
+        os.remove(extract_file)
+
+    cmd = extract_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN,
+        source=outfile,
+        extract_args=' '.join(source_config.get('ffmpeg_extract')),
+        extract_file=extract_file
+    )
+    print("Extract command:", cmd)
+    subprocess.call(cmd, shell=True)
+
+    return extract_file
+
+
+def vmaf_compare(reference, outfile):
+    vmaf_cmd = '\
+{ffmpeg_bin} \
+-i {reference} \
+-i {outfile} \
+-lavfi \
+\"[0:v]setpts=PTS-STARTPTS[reference]; \
+[1:v]setpts=PTS-STARTPTS[distorted]; \
+[distorted][reference]\
+libvmaf=log_fmt=xml:log_path=foo:\
+model_path={vmaf_model}\" \
+-f null -\
+'
+    cmd = vmaf_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN,
+        reference=reference,
+        outfile=outfile,
+        vmaf_model=VMAF_MODEL
+    )
+    print('VMAF command:', cmd)
+
+    try:
+        proc = subprocess.run(
+            shlex.split(cmd),
+            capture_output=True,
+            check=True,
+            text=True
+        )
+
+        # ffmpeg sends output to stderr
+        result = float(proc.stderr.split('VMAF score: ')[1])
+
+    except subprocess.CalledProcessError as err:
+        print(
+            "VMAF compare failed! {msg}".format(msg=err.stderr)
+        )
+        result = '{msg} ERROR!'.format(msg=err.stderr)
+
+    return result
+
+
+def create_mask(outfile, extract_file, source_config, test_config):
+    # We have a mask that we need to use before comparing.
+    base, _ = os.path.splitext(outfile)
+    out_source_mask = f'{base}-sourcemask.png'
+
+    oiio_cmd = "\
+{oiio_bin} \
+{source} \
+--mul \
+-o {out_source_mask}\
+"
+    cmd = oiio_cmd.format(
+        oiio_bin=OIIOTOOL_BIN,
+        source=source_config.get('source_file'),
+        out_source_mask=out_source_mask
+    )
+
+    print("oiiotool command:", cmd)
+    subprocess.call(shlex.split(cmd))
+
+    # The mask is used to help with comparisons of 444 vs. 422,
+    # perhaps a better approach is to compare it to a "raw" 422p/420p image.
+    outmask = f"{base}-mask.png"
+
+    oiio_cmd1 = '\
+{oiio_bin} \
+{source} \
+{testmask} \
+--mul \
+-o {outmask}\
+'
+    cmd1 = oiio_cmd1.format(
+        oiio_bin=OIIOTOOL_BIN,
+        source=extract_file,
+        testmask=test_config.get('testmask'),
+        outmask=outmask
+    )
+
+    print("oiiotool command1:", cmd1)
+    subprocess.call(shlex.split(cmd1))
+
+    return outmask, out_source_mask
+
+
+def idiff_compare(outfile, sourceimage, extractfile):
+    base, _ = os.path.splitext(outfile)
+    diff_file = f"{base}. diff.png"
+
+    idiff_cmd = "\
+{idiff_bin} \
+-o {diff_file} \
+{source} \
+{extract_file}\
+"
+    cmd = idiff_cmd.format(
+        idiff_bin=IDIFF_BIN,
+        diff_file=diff_file,
+        source=sourceimage,
+        extract_file=extractfile
+    )
+    try:
+        proc = subprocess.run(
+            shlex.split(cmd),
+            capture_output=True,
+            check=True,
+            text=True
+        )
+        output = f'{cmd}\n{proc.stdout}'
+
+    except subprocess.CalledProcessError as err:
+        output = f"{err.stderr} ERROR!"
+
+    return output, diff_file
+
+
+def is_video_output(testfile):
+    _, ext = os.path.splitext(testfile['output_file'])
+    return ext in ['.mov', '.mp4']
 
 
 def main():
-    testdir = "results"
+    # Make sure we have a place to render files
+    if not os.path.exists(TEST_DIR):
+        os.makedirs(TEST_DIR)
 
-    ffmpeg_cmd = "ffmpeg"
-    oiiotool_cmd = "oiiotool"
-    idiff_cmd = "idiff"
-
-    if not os.path.exists(testdir):
-        os.makedirs(testdir)
+    oiiotool_bin = "oiiotool"
+    idiff_bin = "idiff"
 
     test_results = []
+    reference = None
 
     for testfile in testfiles[1:2]:
-        outputfiles = {}
         for testconfig in testconfigs:
-            outfile = os.path.join(testdir, testfile['testfilename'][:-4]+"-"+testconfig['test']+testfile['testfilename'][-4:])
-            outputfiles[testconfig['test']] = outfile
-            if os.path.exists(outfile):
-                print("REMOVING:", outfile)
-                os.remove(outfile)
-            ffmpeg_startup = testfile.get("ffmpeg_startup", "")
-            duration = ""
-            if "vframes" in testfile:
-               duration = " -vframes %s " % testfile['vframes']
+            # Used for creating result page later
+            test_result = {
+                'testfile': testfile['source_file'],
+                'testname': testconfig['testname']
+            }
 
-            # Do the initial media encode - i.e. what we are testing.
-            cmd = ffmpeg_cmd + " " + ffmpeg_startup +" -i " + testfile['file'] + duration + " " + testconfig['ffmpeg_args'] + " " + outfile
-            print("ffmpeg cmd:", cmd)
-            t = time.time()
-            os.system(cmd)
-            ffmpegduration = time.time() - t
-            if not os.path.exists(outfile):
-                print("Warning file: %s is missing, skipping test." % outfile)
+            # Outfile
+            base, source_ext = os.path.splitext(
+                testfile.get('output_file')
+            )
+            outfile = os.path.join(
+                TEST_DIR,
+                f'{base}-{testconfig["testname"]}{source_ext}'
+            )
+
+            # Setup timer
+            t_start = time.perf_counter()
+
+            # Convert file
+            ffmpeg_cmd, rc = ffmpeg_convert(testfile, testconfig, outfile)
+            t_end = time.perf_counter()
+
+            # Update test_result
+            test_result['ffmpeg_encode_cmd'] = ffmpeg_cmd
+            test_result['ffmpeg_duration'] = t_end - t_start
+
+            if rc != 0:
+                print(
+                    "ffmpeg FAILED!, return code: {rc}. Skipping the rest"
+                    .format(rc=rc)
+                )
                 continue
+
+            # Update test_result
+            test_result['filesize'] = os.path.getsize(outfile)
+
+            # This use the lossless compressed file as vmaf reference
+            if testfile['vmaf_reference'] == testconfig['testname']:
+                reference = outfile
 
             # The VMAF testing. NOTE, you will need to get vmaf compiled into ffmpeg for this.
             # see: https://jina-liu.medium.com/a-practical-guide-for-vmaf-481b4d420d9c
-            vmafoutput = ""
-            vmafscore = ""
-            if testfile['vmaf_compare'] != testconfig['test']:
-                comparefile = outputfiles[testfile['vmaf_compare']]
-                # We assume that the testconfig.
-                vmafcmd = ffmpeg_cmd + " -i " + comparefile + " -i "+outfile+' -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=xml:log_path=foo:model_path=/usr/local/share/model/vmaf_v0.6.1.json" -f null -'
-                try:
-                    vmafoutput = subprocess.check_output(vmafcmd, stderr=subprocess.STDOUT, shell=True)
-                    vmafoutput = str(vmafoutput).split("VMAF score: ")[1][:-3]
-                except Exception as e:
-                    vmafoutput = str(e.output) + "ERROR!"
-                print("VMAF Output:", vmafoutput)
+            vmaf_output = ''
+            if testfile['vmaf_reference'] != testconfig['testname']:
+                vmaf_output = vmaf_compare(reference, outfile)
+                print("VMAF Output:", vmaf_output)
 
-            # Try to do a idiff on the result. Currently this only works on a still frame, ideally we modify this to work on an image sequence.
+            test_result['vmaf_output'] = vmaf_output
+
+            # Try to do a idiff on the result.
+            # Currently this only works on a still frame,
+            # ideally we modify this to work on an image sequence.
             diffhtml = "Undefined"
             if testfile['stillframe']:
-                # Now we extract the file
-                extractfile = outfile[:-3]+"png"
-                if os.path.exists(extractfile):
-                    os.remove(extractfile)
-                extractcmd = ffmpeg_cmd + " -i " + outfile + " " + testfile['ffmpeg_extract'] + " " + extractfile
-                print("Extract cmd:", extractcmd)
-                os.system(extractcmd)
+                # Now we extract a file for comparison
+                extractfile = extract_png(outfile, testfile)
 
-                sourceimage = testfile['file']
+                # Fetch original for comparison
+                sourceimage = testfile['source_file']
 
-                # If the conversion isnt 444, we make a mask of the overlap, so the chroma dont affect the image comparison.
-                # However, for movies we dont do that (for now).
-                if 'testmask' in testconfig and ("mov" in testfile['testfilename'] or "mp4" in testfile['testfilename']):
-                    # We have a mask that we need to use before doing the compare.
-                    outsourcemask = outfile[:-4]+"sourcemask.png"
-                    oiiocmd = oiiotool_cmd + " "+testfile['file'] + " " + testconfig['testmask'] + " --mul -o " + outsourcemask
-                    print(oiiocmd)
-                    os.system(oiiocmd)
+                # If the conversion isn't 444, we make a mask of the overlap,
+                # so the chroma don't affect the image comparison.
+                # However, for movies we don't do that (for now).
+                if 'testmask' in testconfig and is_video_output(testfile):
+                    # We have a mask that we need to use before comparing.
+                    extractfile, sourceimage = create_mask(
+                        outfile,
+                        extractfile,
+                        testfile,
+                        testconfig
+                    )
 
-                    # The mask is used to help with comparisons of 444 vs. 422, perhaps a better approach is to compare it to a "raw" 422p/420p image.
-                    sourceimage = outsourcemask
-                    outmask = outfile[:-4]+"mask.png"
-                    oiiocmd = oiiotool_cmd + " "+extractfile + " " + testconfig['testmask'] + " --mul -o " + outmask
-                    print(oiiocmd)
-                    os.system(oiiocmd)
-                    extractfile = outmask
-                difffile = outfile[:-4]+"diff.png"
-                oiiocmd = idiff_cmd + " -o " + difffile + " "+sourceimage + " " + extractfile
-                try:
-                    output = subprocess.check_output(oiiocmd, shell=True)
-                except Exception as e:
-                    output = str(e.output) + "ERROR!"
-                output = str(oiiocmd)+"\n"+str(output).replace("\\n", "\n")
-                diffhtml = "<IMG width='200px' SRC='%s' />" % os.path.basename(difffile)
+                output, diff_file = idiff_compare(
+                    outfile,
+                    sourceimage,
+                    extractfile
+                )
+                diffhtml = "<IMG width='200px' SRC='{base}' />".format(
+                    base=os.path.basename(diff_file)
+                )
+
             else:
                 # Movie compare from http://dericed.com/2012/display-video-difference-with-ffmpegs-overlay-filter/
-                difffile = outfile[:-4]+"diff.mp4" # Do the diff movies in mp4 so that they can load in a browser.
-
-                comparecmd = ffmpeg_cmd + " -y "+ " " + ffmpeg_startup +" -i "+testfile['file']+" -i "+outfile+duration+" -filter_complex [1:v]format=yuva444p,lut=c3=128,negate[video2withAlpha],[0:v][video2withAlpha]overlay[out] -map [out] "+difffile
-                #comparecmd = ffmpeg_cmd + " -y "+ " " + ffmpeg_startup +" -i "+testfile['file']+" -i "+outfile+" -filter_complex blend=all_mode=difference,hue=s=0 "+difffile
-                print("Comparecmd:", comparecmd)
-                os.system(comparecmd)
-                diffhtml = "<video width='200' height='112' controls><source src='"+os.path.basename(difffile)+"' type='video/mp4'>Your browser does not support the video tag.</video>"
+                diffhtml = ffmpeg_diff(outfile, testfile)
                 output = ""
 
-            encodesize = os.path.getsize(outfile)
-            testresult = {
-                'testfile': testfile['file'],
-                'test': testconfig['test'],
-                'testoutput': output,
-                'filesize': encodesize,
-                'vmafoutput': vmafoutput,
-                'duration': ffmpegduration,
-                'ffmpeg_encode_cmd': cmd,
-                'diff_html': diffhtml
-            }
-            test_results.append(testresult)
+            test_result['testoutput'] = output
+            test_result['diff_html'] = diffhtml
+
+            # Add test_result to result collection
+            test_results.append(test_result)
 
     # Create a web page with results
     write_html(test_results)
