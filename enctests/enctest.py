@@ -283,6 +283,15 @@ def create_mask(outfile, extract_file, source_config, test_config):
 
 
 def idiff_compare(outfile, sourceimage, extractfile):
+    # Pulled from OpenImageIO's documentation
+    error_map = {
+        0: "OK: the images match within the warning and error thresholds.",
+        1: "WARNING: the errors differ a little, but within error thresholds.",
+        2: "FAILURE: the errors differ a lot, outside error thresholds.",
+        3: "FAILURE: The images weren’t the same size and couldn’t be compared.",
+        4: "FAILURE: Could not find or open input files, etc."
+    }
+
     base, _ = os.path.splitext(outfile)
     diff_file = f"{base}-idiff.png"
 
@@ -308,7 +317,7 @@ def idiff_compare(outfile, sourceimage, extractfile):
         output = f'{cmd}\n{proc.stdout}'
 
     except subprocess.CalledProcessError as err:
-        output = f"{err.stderr} ERROR!"
+        output = error_map[err.returncode]
 
     return output, diff_file
 
