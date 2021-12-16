@@ -297,6 +297,7 @@ def idiff_compare(outfile, sourceimage, extractfile):
 
     idiff_cmd = "\
 {idiff_bin} \
+-scale 10 \
 -o {diff_file} \
 {source} \
 {extract_file}\
@@ -319,7 +320,7 @@ def idiff_compare(outfile, sourceimage, extractfile):
     except subprocess.CalledProcessError as err:
         output = error_map[err.returncode]
 
-    return output, diff_file
+    return output, diff_file, cmd
 
 
 def oiio_compare(outfile, sourceimage, extractfile):
@@ -413,13 +414,18 @@ def main():
                         testconfig
                     )
 
-                output, diff_file = idiff_compare(
+                output, diff_file, cmd = idiff_compare(
                     outfile,
                     sourceimage,
                     extractfile
                 )
-                diffhtml = "<img width='200px' src='{base}'/>".format(
-                    base=os.path.basename(diff_file)
+                diffhtml = "<img " \
+                           "width='200px' " \
+                           "src='{base}' " \
+                           "title='{cmd}'" \
+                           "/>".format(
+                    base=os.path.basename(diff_file),
+                    cmd=cmd
                 )
 
             else:
