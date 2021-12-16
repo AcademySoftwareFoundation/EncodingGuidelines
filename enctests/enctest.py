@@ -244,12 +244,14 @@ def create_mask(outfile, extract_file, source_config, test_config):
     oiio_cmd = "\
 {oiio_bin} \
 {source} \
+{testmask} \
 --mul \
 -o {out_source_mask}\
 "
     cmd = oiio_cmd.format(
         oiio_bin=OIIOTOOL_BIN,
         source=source_config.get('source_file'),
+        testmask=test_config.get('testmask'),
         out_source_mask=out_source_mask
     )
 
@@ -282,7 +284,7 @@ def create_mask(outfile, extract_file, source_config, test_config):
 
 def idiff_compare(outfile, sourceimage, extractfile):
     base, _ = os.path.splitext(outfile)
-    diff_file = f"{base}. diff.png"
+    diff_file = f"{base}-idiff.png"
 
     idiff_cmd = "\
 {idiff_bin} \
@@ -311,6 +313,10 @@ def idiff_compare(outfile, sourceimage, extractfile):
     return output, diff_file
 
 
+def oiio_compare(outfile, sourceimage, extractfile):
+    pass
+
+
 def is_video_output(testfile):
     _, ext = os.path.splitext(testfile['output_file'])
     return ext in ['.mov', '.mp4']
@@ -321,15 +327,12 @@ def main():
     if not os.path.exists(TEST_DIR):
         os.makedirs(TEST_DIR)
 
-    oiiotool_bin = "oiiotool"
-    idiff_bin = "idiff"
-
     test_results = []
     reference = None
 
-    for testfile in testfiles[1:2]:
+    for testfile in testfiles[1:]:
         for testconfig in testconfigs:
-            # Used for creating result page later
+            # Used for creating results.html page later
             test_result = {
                 'testfile': testfile['source_file'],
                 'testname': testconfig['testname']
@@ -365,7 +368,7 @@ def main():
             # Update test_result
             test_result['filesize'] = os.path.getsize(outfile)
 
-            # This use the lossless compressed file as vmaf reference
+            # This uses the lossless compressed file as vmaf reference
             if testfile['vmaf_reference'] == testconfig['testname']:
                 reference = outfile
 
@@ -406,7 +409,7 @@ def main():
                     sourceimage,
                     extractfile
                 )
-                diffhtml = "<IMG width='200px' SRC='{base}' />".format(
+                diffhtml = "<img width='200px' src='{base}'/>".format(
                     base=os.path.basename(diff_file)
                 )
 
