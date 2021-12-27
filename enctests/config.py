@@ -19,7 +19,7 @@ testconfigs = [
     {
         'testname': 'colorspace_rgb',
         'description': 'colorspace_rgb',
-        'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
+        'testmask': '../sourceimages/1920px-SMPTE_Color_Bars_16x9-edges.png',
         'ffmpeg_args': [
             '-c:v libx264',
             '-preset slow',
@@ -98,7 +98,7 @@ testconfigs = [
     {
         'testname': 'shotgun_diy_encode',
         'description': 'From https://support.shotgunsoftware.com/hc/en-us/articles/219030418-Do-it-yourself-DIY-transcoding',
-        'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
+        'testmask': '../sourceimages/1920px-SMPTE_Color_Bars_16x9-edges.png',
         'ffmpeg_args': [
             '-vcodec libx264',
             '-pix_fmt yuv420p',
@@ -110,7 +110,7 @@ testconfigs = [
     },
     {
         'testname': 'wdi-mpeg2',
-        'testmask': 'sources/1920px-SMPTE_Color_Bars_16x9-edges.png',
+        'testmask': '../sourceimages/1920px-SMPTE_Color_Bars_16x9-edges.png',
         'ffmpeg_args': [
             '-vcodec mpeg2video',
             '-profile:v 4',
