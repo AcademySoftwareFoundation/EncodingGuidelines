@@ -8,7 +8,7 @@ The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.act
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 ```
-ffmpeg -r 24 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -c:v libx264 -preset slower  -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 outputfile.mp4
+ffmpeg -r 24 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -c:v libx264 -preset slower  -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
 ```
 
 Where:
@@ -23,7 +23,7 @@ Where:
    * **-color_range 1** - mp4 metadata - specifying color range as 16-235 (which is default for web playback).
    * **-colorspace 1** - mp4 metadata - specifying rec709 yuv color pixel format 
    * **-color_primaries 1** - mp4 metadata - rec709 color gamut primaries
-   * **-color_trc 2** -- mp4 metadata color transfer = unknown - See tests below.
+   * **-color_trc 13** -- mp4 metadata color transfer = sRGB - See tests below.
 
 The crutial part is:
 '''
