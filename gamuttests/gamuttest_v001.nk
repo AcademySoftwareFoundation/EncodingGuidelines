@@ -1,0 +1,322 @@
+#! C:/Program Files/Nuke12.2v2/nuke-12.2.2.dll -nx
+version 12.2 v2
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="1916" h="1008" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1043" stretch="1"/>
+            <splitter orientation="2">
+                <split size="407"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="559"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="825"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name D:/encodingTests/ffmpeg-tests/gamuttests/gamuttest_v001.nk
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement OCIO
+ OCIO_config aces_1.1
+ defaultViewerLUT "OCIO LUTs"
+ workingSpaceLUT "Output - P3-DCI (D65 simulation)"
+ monitorLut ACES/sRGB
+ int8Lut matte_paint
+ int16Lut texture_paint
+ logLut compositing_log
+ floatLut scene_linear
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {0 0 1 1}
+ color_panelDropped true
+ format "480 90 0 0 480 90 1 ThirdHD"
+ name Constant3
+ xpos -23
+ ypos -361
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {0 1 0 1}
+ color_panelDropped true
+ format "480 90 0 0 480 90 1 ThirdHD"
+ name Constant2
+ xpos -121
+ ypos -364
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {1 0 0 1}
+ color_panelDropped true
+ format "480 90 0 0 480 90 1 ThirdHD"
+ name Constant1
+ xpos -223
+ ypos -363
+}
+ContactSheet {
+ inputs 3
+ width 480
+ height 270
+ columns 1
+ roworder TopBottom
+ name ContactSheet2
+ xpos -121
+ ypos -272
+}
+Dot {
+ name Dot1
+ xpos -87
+ ypos -199
+}
+set Nd7e68400 [stack 0]
+OCIOColorSpace {
+ in_colorspace "Utility - Linear - P3-D65"
+ out_colorspace scene_linear
+ name OCIOColorSpace1
+ xpos -500
+ ypos -106
+}
+Constant {
+ inputs 0
+ channels rgb
+ format "480 270 0 0 480 270 1 quarterhd"
+ name Constant4
+ xpos -339
+ ypos -303
+}
+set Nfdda9800 [stack 0]
+Text2 {
+ font_size_toolbar 100
+ font_width_toolbar 100
+ font_height_toolbar 100
+ message "Rec2020\n\nRec2020\n\nRec2020"
+ old_message {{82 101 99 50 48 50 48 10 10 82 101 99 50 48 50 48 10 10 82 101 99 50 48 50 48}
+   }
+ box {127 870 1500 1000.5}
+ transforms {{0 2}
+   }
+ cursor_position 16
+ font {{ Russo One : Regular : RussoOne-Regular.ttf : 0 }}
+ global_font_scale 2
+ center {1024 778}
+ cursor_initialised true
+ autofit_bbox false
+ initial_cursor_position {{127 970.5}
+   }
+ group_animations {{0} imported: 0 selected: items: "root transform/"}
+ animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+   }
+ name Text1
+ xpos -339
+ ypos -198
+}
+Merge2 {
+ inputs 2
+ operation in
+ name Merge1
+ xpos -454
+ ypos -32
+}
+push $Nd7e68400
+OCIOColorSpace {
+ in_colorspace "Utility - Linear - sRGB"
+ out_colorspace scene_linear
+ name OCIOColorSpace2
+ xpos -121
+ ypos -143
+}
+push $Nfdda9800
+Text2 {
+ font_size_toolbar 100
+ font_width_toolbar 100
+ font_height_toolbar 100
+ message "P3-D65\n\nP3-D65\n\nP3-D65"
+ old_message {{80 51 45 68 54 53 10 10 80 51 45 68 54 53 10 10 80 51 45 68 54 53}
+   }
+ box {1064.8825 879.75 2435.1175 1010.25}
+ transforms {{0 2}
+   }
+ cursor_position 22
+ font {{ Russo One : Regular : RussoOne-Regular.ttf : 0 }}
+ global_font_scale 2
+ center {1024 778}
+ cursor_initialised true
+ autofit_bbox false
+ initial_cursor_position {{128 950.5}
+   }
+ group_animations {{0} imported: 0 selected: items: "root transform/"}
+ animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+   }
+ name Text2
+ xpos -213
+ ypos -145
+}
+Merge2 {
+ inputs 2
+ operation in
+ name Merge3
+ xpos -131
+ ypos -46
+}
+set Nfdda8800 [stack 0]
+Merge2 {
+ inputs 2
+ name Merge2
+ xpos -231
+ ypos 21
+}
+push $Nd7e68400
+Merge2 {
+ inputs 2
+ name Merge4
+ xpos -178
+ ypos 116
+}
+set N91e5f800 [stack 0]
+OCIOColorSpace {
+ in_colorspace scene_linear
+ out_colorspace "Utility - Linear - P3-D65"
+ name dcip3
+ xpos 109
+ ypos 186
+}
+set N91e5d800 [stack 0]
+Write {
+ channels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ file D:/encodingTests/ffmpeg-tests/gamuttests/combined-dcip3.png
+ colorspace "Utility - Linear - Rec.2020"
+ raw true
+ file_type png
+ datatype "16 bit"
+ checkHashOnRead false
+ version 5
+ name Write2
+ xpos 62
+ ypos 243
+}
+push $N91e5f800
+OCIOColorSpace {
+ in_colorspace scene_linear
+ out_colorspace "Utility - Linear - sRGB"
+ name srgb
+ xpos 273
+ ypos 183
+}
+set N91e5cc00 [stack 0]
+Write {
+ channels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ file D:/encodingTests/ffmpeg-tests/gamuttests/combined-rec709.png
+ colorspace "Utility - Linear - Rec.2020"
+ raw true
+ file_type png
+ datatype "16 bit"
+ checkHashOnRead false
+ version 5
+ name Write3
+ xpos 319
+ ypos 248
+}
+push $Nfdda8800
+CheckerBoard2 {
+ inputs 0
+ name CheckerBoard1
+ xpos 547
+ ypos -82
+}
+LensDistortion2 {
+ distortionDenominator0 0.03
+ output Undistort
+ outputBBox {26 10 2022 1546}
+ featuresKnob "
+version 1
+entries 0
+entries 0
+"
+ distortionModelDisplayX "xu = xd / (1 + k0 * rd^2 + k1 * rd^4)"
+ distortionModelDisplayY "yu = yd / (1 + k0 * rd^2 + k1 * rd^4)"
+ name LensDistortion1
+ xpos 547
+ ypos 8
+}
+LensDistortion2 {
+ output Undistort
+ outputBBox {0 0 2048 1556}
+ featuresKnob "
+version 1
+entries 0
+entries 0
+"
+ distortionModelDisplayX "xu = xd / (1 + k0 * rd^2 + k1 * rd^4)"
+ distortionModelDisplayY "yu = yd / (1 + k0 * rd^2 + k1 * rd^4)"
+ name LensDistortion2
+ xpos 547
+ ypos 68
+}
+Viewer {
+ inputs 3
+ frame 1
+ frame_range 1-100
+ viewerProcess "Raw (ACES)"
+ name Viewer1
+ xpos -77
+ ypos 492
+}
+push $N91e5cc00
+push $N91e5d800
+push $N91e5f800
+OCIOColorSpace {
+ in_colorspace scene_linear
+ out_colorspace "Utility - Linear - Rec.2020"
+ name rec2020
+ xpos -41
+ ypos 185
+}
+set N91e5e800 [stack 0]
+ContactSheet {
+ inputs 3
+ width 1440
+ height 270
+ rows 1
+ columns 3
+ gap 10
+ name ContactSheet1
+ xpos 109
+ ypos 417
+}
+push $N91e5e800
+Write {
+ channels {rgba.red rgba.green rgba.blue -rgba.alpha}
+ file D:/encodingTests/ffmpeg-tests/gamuttests/combined-rec2020.png
+ colorspace "Utility - Linear - Rec.2020"
+ raw true
+ file_type png
+ datatype "16 bit"
+ checkHashOnRead false
+ version 5
+ name Write1
+ xpos -80
+ ypos 244
+}
