@@ -26,13 +26,6 @@ $(document).ready(function(){
            }
         );
 
-        $("#buttongreyfullj").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#greyfullj" ).show();
-           }
-        );
-
         $("#buttongreyfull").click( function()
            {
              $( ".videogroup" ).hide();
@@ -40,24 +33,59 @@ $(document).ready(function(){
            }
         );
 
-        $("#buttongreyfull0").click( function()
+        $("#buttonradialgradpng").click( function()
            {
              $( ".videogroup" ).hide();
-			 $( "#greyfull0" ).show();
+			 $( "#radialgradpng" ).show();
            }
         );
 
-        $("#buttongreytv10").click( function()
+        $("#buttonradialgradtv").click( function()
            {
              $( ".videogroup" ).hide();
-			 $( "#greytv10" ).show();
+			 $( "#radialgradtv" ).show();
            }
         );
 
-        $("#buttongreyrgb").click( function()
+        $("#buttonradialgradfullj").click( function()
            {
              $( ".videogroup" ).hide();
-			 $( "#greyrgb" ).show();
+			 $( "#radialgradfullj" ).show();
+           }
+        );
+
+        $("#buttonradialgradfull").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfull" ).show();
+           }
+        );
+
+        $("#buttonradialgradfull0").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfull0" ).show();
+           }
+        );
+
+        $("#buttonradialgradfull444").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfull444" ).show();
+           }
+        );
+
+        $("#buttonradialgradtv10").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradtv10" ).show();
+           }
+        );
+
+        $("#buttonradialgradrgb").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradrgb" ).show();
            }
         );
 
@@ -96,19 +124,27 @@ $(document).ready(function(){
 
       <div data-role="content"><TABLE><TR><TD width='300' align='center' valign="top">
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreypng" data-role="button">raw png</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreypng" data-role="button">raw greyramp png</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreytv" data-role="button">out_range=tv -pix_fmt yuv420p 16-235 range</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreytv" data-role="button">greyramp out_range=tv -pix_fmt yuv420p 16-235 range</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreyfullj" data-role="button">out_range=full yuvj420p 0-255 range</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreyfull" data-role="button">greyramp out_range=full -pix_fmt yuv420p color_range=2</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreyfull" data-role="button">out_range=full -pix_fmt yuv420p color_range=2</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradpng" data-role="button">raw png</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreyfull0" data-role="button">out_range=full -pix_fmt yuv420p color_range=0</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradtv" data-role="button">out_range=tv -pix_fmt yuv420p 16-235 range</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreytv10" data-role="button">yuv444p10le 10-bit mp4</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfullj" data-role="button">out_range=full yuvj420p 0-255 range</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreyrgb" data-role="button">libx264rgb 8-bit mp4 (not supported)</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull" data-role="button">out_range=full -pix_fmt yuv420p color_range=2</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull0" data-role="button">out_range=full -pix_fmt yuv420p color_range=0</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull444" data-role="button">out_range=full -pix_fmt yuv444p color_range=2</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradtv10" data-role="button">yuv444p10le 10-bit mp4</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradrgb" data-role="button">libx264rgb 8-bit mp4 (not supported)</button><BR/>
 
         <button class="ui-button ui-widget ui-corner-all" id="buttonmarcietv" data-role="button">marcie out_range=tv -pix_fmt yuv420p 16-235 range</button><BR/>
 
@@ -116,25 +152,33 @@ $(document).ready(function(){
 
         <button class="ui-button ui-widget ui-corner-all" id="buttonmarciefull" data-role="button">marcie out_range=full -pix_fmt yuv420p -color_range 2</button><BR/>
 </div></TD><TD align='left' valign='top'>
-<div id="greypng" class="videogroup"><h2>raw png</h2><img   width=920  src='../../sourceimages/radialgrad.png'/></div>
+<div id="greypng" class="videogroup"><h2>raw greyramp png</h2><img   width=920  src='.././greyramp-fulltv/greyscale-raw.png'/></div>
 
-<div id="greytv" class="videogroup"><h2>out_range=tv -pix_fmt yuv420p 16-235 range</h2><video  width=920  ><source src='greyscale-tv.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/greyscale-tv.mp4</p></div>
+<div id="greytv" class="videogroup"><h2>greyramp out_range=tv -pix_fmt yuv420p 16-235 range</h2><video  width=920  ><source src='greyscale-tv.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/greyscale-tv.mp4</p></div>
 
-<div id="greyfullj" class="videogroup"><h2>out_range=full yuvj420p 0-255 range</h2><video  width=920  ><source src='greyscale-fullj.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuvj420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/greyscale-fullj.mp4</p></div>
+<div id="greyfull" class="videogroup"><h2>greyramp out_range=full -pix_fmt yuv420p color_range=2</h2><video  width=920  ><source src='greyscale-full.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/greyscale-full.mp4</p></div>
 
-<div id="greyfull" class="videogroup"><h2>out_range=full -pix_fmt yuv420p color_range=2</h2><video  width=920  ><source src='greyscale-full.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/greyscale-full.mp4</p></div>
+<div id="radialgradpng" class="videogroup"><h2>raw png</h2><img   width=920  src='../../sourceimages/radialgrad.png'/></div>
 
-<div id="greyfull0" class="videogroup"><h2>out_range=full -pix_fmt yuv420p color_range=0</h2><video  width=920  ><source src='greyscale0-full.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 0 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/greyscale0-full.mp4</p></div>
+<div id="radialgradtv" class="videogroup"><h2>out_range=tv -pix_fmt yuv420p 16-235 range</h2><video  width=920  ><source src='radialgrad-tv.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/radialgrad-tv.mp4</p></div>
 
-<div id="greytv10" class="videogroup"><h2>yuv444p10le 10-bit mp4</h2><video  width=920  ><source src='greyscale-raw-10bit.mp4' type='video/mp4'/></video><p>ffmpeg -y -i ../sourceimages/radialgrad.png  -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ./greyramp-fulltv/greyscale-raw-10bit.mp4</p></div>
+<div id="radialgradfullj" class="videogroup"><h2>out_range=full yuvj420p 0-255 range</h2><video  width=920  ><source src='radialgrad-fullj.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuvj420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/radialgrad-fullj.mp4</p></div>
 
-<div id="greyrgb" class="videogroup"><h2>libx264rgb 8-bit mp4 (not supported)</h2><video  width=920  ><source src='greyscale-raw-rgb.mp4' type='video/mp4'/></video><p>ffmpeg -y -i ../sourceimages/radialgrad.png  -c:v libx264rgb -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" ./greyramp-fulltv/greyscale-raw-rgb.mp4</p></div>
+<div id="radialgradfull" class="videogroup"><h2>out_range=full -pix_fmt yuv420p color_range=2</h2><video  width=920  ><source src='radialgrad-full.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/radialgrad-full.mp4</p></div>
 
-<div id="marcietv" class="videogroup"><h2>marcie out_range=tv -pix_fmt yuv420p 16-235 range</h2><video  width=920  ><source src='marcie-tv.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/Digital_LAD_sRGB.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/marcie-tv.mp4</p></div>
+<div id="radialgradfull0" class="videogroup"><h2>out_range=full -pix_fmt yuv420p color_range=0</h2><video  width=920  ><source src='radialgrad-full0.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 0 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/radialgrad-full0.mp4</p></div>
 
-<div id="marciefullj" class="videogroup"><h2>marcie out_range=full yuvj420p 0-255 range</h2><video  width=920  ><source src='marcie-fullj.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/Digital_LAD_sRGB.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuvj420p -qscale:v 1  -color_range 0 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/marcie-fullj.mp4</p></div>
+<div id="radialgradfull444" class="videogroup"><h2>out_range=full -pix_fmt yuv444p color_range=2</h2><video  width=920  ><source src='radialgrad-full444.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv444p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/radialgrad-full444.mp4</p></div>
 
-<div id="marciefull" class="videogroup"><h2>marcie out_range=full -pix_fmt yuv420p -color_range 2</h2><video  width=920  ><source src='marcie-full.mp4' type='video/mp4'/></video><p>ffmpeg -y -i  ../sourceimages/Digital_LAD_sRGB.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/marcie-full.mp4</p></div>
+<div id="radialgradtv10" class="videogroup"><h2>yuv444p10le 10-bit mp4</h2><video  width=920  ><source src='radialgrad-raw-10bit.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264 -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ./greyramp-fulltv/radialgrad-raw-10bit.mp4</p></div>
+
+<div id="radialgradrgb" class="videogroup"><h2>libx264rgb 8-bit mp4 (not supported)</h2><video  width=920  ><source src='radialgrad-raw-rgb.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264rgb -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" ./greyramp-fulltv/radialgrad-raw-rgb.mp4</p></div>
+
+<div id="marcietv" class="videogroup"><h2>marcie out_range=tv -pix_fmt yuv420p 16-235 range</h2><video  width=920  ><source src='marcie-tv.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_sRGB.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/marcie-tv.mp4</p></div>
+
+<div id="marciefullj" class="videogroup"><h2>marcie out_range=full yuvj420p 0-255 range</h2><video  width=920  ><source src='marcie-fullj.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_sRGB.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuvj420p -qscale:v 1  -color_range 0 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/marcie-fullj.mp4</p></div>
+
+<div id="marciefull" class="videogroup"><h2>marcie out_range=full -pix_fmt yuv420p -color_range 2</h2><video  width=920  ><source src='marcie-full.mp4' type='video/mp4'/></video><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_sRGB.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-fulltv/marcie-full.mp4</p></div>
 
       </TD></TR></TABLE>
       </div>
