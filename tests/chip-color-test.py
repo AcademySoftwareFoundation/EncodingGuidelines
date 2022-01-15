@@ -12,6 +12,8 @@ if not os.path.exists(rootpath):
 source_image = os.path.join("..", "sourceimages", "chip-chart-1080-noicc.png")
 
 listimages = []
+listimages.append({'id': 'none', 'label': ''})
+
 listimages.append({'id': 'chipchartpng', 'label': 'Reference PNG', 'image': os.path.join("..", "..", 'sourceimages', os.path.basename(source_image)), 'cmd': "Source PNG file"})
 print(listimages)
 
@@ -63,7 +65,7 @@ for proc in processes:
     except Exception as e:
         output = str(e.output) + "ERROR!"
     output = str(oiiocmd)+"\n"+str(output).replace("\\n", "<BR/>")
-    proc['cmd'] = "<h3>%s</H3><p>%s</p><H3>OIIO idiff output</H3>%s" % (proc['conv'], proc['cmd'], output)
+    proc['cmd'] = "<h3>ffmpeg flags to add: %s</H3><p>Full creation commandline:<BR/>%s</p><H3>OIIO idiff output</H3>%s" % (proc['conv'], proc['cmd'], output)
 
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 

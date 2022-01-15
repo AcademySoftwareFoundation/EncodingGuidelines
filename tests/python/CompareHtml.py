@@ -36,18 +36,18 @@ header = """
 <a href="/ffmpeg-tests">Testing Home</a>
 <body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
 {introduction}
-<table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">
+<table id="sort" class="grid"  border=0 cellspacing="{cellspacing}" cellpadding="0">
 <tbody>
 """
 
 image_template = """
 <TR class="index group{group}"  id="button{id}">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD >{label} <B>png</B></TD><td><img src="{image}"/></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >{label} <B>png</B></TD><td><img src="{image}"/></td><td><p>{description}</p><p>{cmd}</p></td>
 </TR>
 """
 video_template = """
 <TR class="index group{group}" id="button{id}">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} <B>{ext}</B></TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td>{cmd}</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>{label} <B>{ext}</B></TD><td><video {videohtml} ><source src='{video}' type='video/mp4'></video></td><td><p>{description}<p\><p>{cmd}</p></td>
 </TR>
 """
 
@@ -60,14 +60,14 @@ tail = """
 
 """
 
-def createCompareHtml(outputpath="compare.html", listimages=[], introduction="", videohtml=" width='1024' height='150' "):
+def createCompareHtml(outputpath="compare.html", listimages=[], introduction="", videohtml=" width='1024' height='150' ", cellspacing=1):
 	"""
 	:param outputpath: output path for htmlfile
 	:param listimages: list of dictionaries of things to output. Each item has a "label", and either a "image" or a "video" key.
 	:param introduction: An introduction for the top of the file.
 	"""
 
-	html = header.format(introduction=introduction)
+	html = header.format(introduction=introduction, cellspacing=cellspacing)
 	for output in listimages:
 		if 'group' not in output:
 			output['group'] = ""
