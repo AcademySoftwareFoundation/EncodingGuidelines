@@ -33,7 +33,7 @@ header = """
   }} );
   </script>
 </head>
-
+<a href="/ffmpeg-tests">Testing Home</a>
 <body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
 {introduction}
 <table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">

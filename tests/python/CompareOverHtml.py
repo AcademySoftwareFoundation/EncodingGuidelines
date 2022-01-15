@@ -9,6 +9,12 @@ header = """
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <style>
+  a:link {{ 
+        color:rgb(150, 150, 255);
+   }}
+     a:visited {{ 
+        color:rgb(120, 120, 255);
+   }}
   .grid tbody tr td {{ cursor: grab }}
   .ui-button {{margin: 5px; border-radius: 8px}}
   </style>
@@ -35,6 +41,8 @@ body_begin = """
 </head>
 
 <body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
+<a href="/ffmpeg-tests">Testing Home</a>
+
 {introduction}
 
     <div data-role="page" data-theme='a'>
@@ -45,12 +53,18 @@ button_template = """
         <button class="ui-button ui-widget ui-corner-all" id="button{id}" data-role="button">{label}</button><BR/>
 """
 
+label_maintemplate = """
+        <div >{label}</div><BR/>
+"""
 image_template = """
 <div id="{id}" class="videogroup"><h2>{label}</h2><img  {videohtml} src='{image}'/></div>
 """
 
 video_template = """
-<div id="{id}" class="videogroup"><h2>{label}</h2><video {videohtml} ><source src='{video}' type='video/mp4'/></video><p>{cmd}</p></div>
+<div id="{id}" class="videogroup"><h2>{label}</h2><video {videohtml} ><source src='{video}' type='video/mp4'/></video><p>{description}</p><p>{cmd}</p></div>
+"""
+label_template = """
+<div id="{id}" class="videogroup"><h2>{label}</h2><p>{description}</p><p>{cmd}</p></div>
 """
 
 tail = """
@@ -78,14 +92,21 @@ def createCompareHtml(outputpath="compare.html", listimages=[], introduction="",
 	listimages[0]['introduction'] = introduction
 	html += body_begin.format(**listimages[0])
 	for output in listimages:
+		if "video" not in output and 'image' not in output:
+			html += label_maintemplate.format(**output)
+			continue
 		html += button_template.format(**output)
 	html += "</div></TD><TD align='left' valign='top'>"
 	for output in listimages:
 		output['videohtml'] = videohtml
+		if 'description' not in output:
+			output['description'] = ''
 		if 'cmd' not in output:
 			output['cmd'] = ''
 		if "image" in output:
 			html += image_template.format(**output)
+		if "video" not in output:
+			html += label_template.format(**output)
 		else:
 			output['videohtml'] = videohtml
 			html += video_template.format(**output)

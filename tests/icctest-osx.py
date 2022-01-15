@@ -68,9 +68,9 @@ for trc in trc_types:
 	trc['source_image'] = source_image
 	trc['rootpath'] = rootpath
 
-	cmd = 'ffmpeg -loop 1 -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} {rootpath}/greyscale-{fileext}.mp4'.format(**trc); ext="mp4"
+	cmd = 'ffmpeg -loop 1 -y -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 0 -colorspace 1 -color_primaries 1 -color_trc {trcnum} {rootpath}/greyscale-{fileext}.mp4'.format(**trc); ext="mp4"
 	if "gamma" in trc:
-	   cmd = 'ffmpeg -loop 1 -y -i  {source_image} -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc {trcnum} -movflags write_colr+write_gama -mov_gamma {gamma} {rootpath}/greyscale-{fileext}.mov'.format(**trc); ext="mov"
+	   cmd = 'ffmpeg -loop 1 -y -i  {source_image} -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 0 -colorspace 1 -color_primaries 1 -color_trc {trcnum} -movflags write_colr+write_gama -mov_gamma {gamma} {rootpath}/greyscale-{fileext}.mov'.format(**trc); ext="mov"
 
 	os.system(cmd)
 	trc['ext'] = ext
