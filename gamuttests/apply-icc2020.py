@@ -16,13 +16,13 @@ listimages = []
 with Image.open(source_image) as im:
     profile = ImageCms.getOpenProfile("../ICC/rec2020.icc")
     im.save(os.path.join(rootpath, "combined-iccrec2020.png"), icc_profile=profile.tobytes())
-listimages.append({'label': 'rec2020 gamma 2.2', 'image': os.path.basename(source_image), 'group': 'rec2020 png'})
+listimages.append({'label': 'REC2020 PNG file - ', 'image': os.path.basename(source_image), 'group': 'rec2020 png', 'description': 'rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).'})
 shutil.copyfile(source_image, os.path.join(rootpath, source_image))
 #listimages.append({'label': 'rec2020', 'image': "combined-iccrec2020.png", 'group': 'rec2020 png'})
 
 source_image_p3 = "ps-combined-displayp3-g2.2.png"
 shutil.copyfile(source_image_p3, os.path.join(rootpath, source_image_p3))
-listimages.append({'label': 'display-p3 gamma2.2 png', 'image': os.path.basename(source_image_p3), 'group': 'displayp3 png'})
+listimages.append({'label': 'Display P3 PNG file ', 'image': os.path.basename(source_image_p3), 'group': 'displayp3 png', 'description': 'P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).'})
 
 with Image.open(source_image) as im:
     profile = ImageCms.getOpenProfile("../ICC/P3D65.icc")
@@ -37,9 +37,9 @@ with Image.open(source_image) as im:
 
 
 trc_types = [#{'id': 'rec709', 'label': "-color_primaries 1 = rec709", 'fileext': "rec709", 'primnum': 1,   'group': 'rec709 colortrc', 'source': 'combined-srgb.png'},
-             {'id': 'diosplayp3', 'label': "-color_primaries 12 = display p3", 'fileext': "displayp3", 'primnum': 12, 'group': 'displayp3 mp4', 'source': source_image_p3},
+             {'id': 'diosplayp3', 'label': "-color_primaries 12 = display p3", 'fileext': "displayp3", 'primnum': 12, 'group': 'displayp3 mp4', 'source': source_image_p3, 'description': 'P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).'},
              #{'id': 'dcip3', 'label': "-color_primaries 11 = DCI p3", 'fileext': "dcip3", 'primnum': 11, #'group': 'rec709 colortrc', 'source': 'combined-dcip3.png'},
-             {'id': 'rec2020', 'label': "-color_primaries 9 = rec2020", 'fileext': "rec2020", 'primnum': 9, 'group': 'rec2020 mp4', 'source': source_image},
+             {'id': 'rec2020', 'label': "-color_primaries 9 = rec2020", 'fileext': "rec2020", 'primnum': 9, 'group': 'rec2020 mp4', 'source': source_image, 'description': 'rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).',}
      ]
 for trc in trc_types:
 	# TODO Confirm we have the right one.
@@ -49,7 +49,7 @@ for trc in trc_types:
 
 	os.system(cmd)
 	trc['ext'] = ext
-	listimages.append({'id': trc['id'], 'group': trc.get('group', 'unknown'), 'label': trc['label'], 'video': "greyscale-{fileext}.{ext}".format(**trc), 'cmd': cmd})
+	listimages.append({'id': trc['id'], 'group': trc.get('group', 'unknown'), 'label': trc['label'], 'video': "greyscale-{fileext}.{ext}".format(**trc), 'cmd': cmd, 'description': trc.get("description", "")})
 
 # Sort images by group.
 listimages = sorted(listimages, key=lambda k:k['group'])
@@ -72,5 +72,6 @@ Filtered views:
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
 					introduction=introduction,
+                    cellspacing=10,
                                     videohtml = '  '
                                         )

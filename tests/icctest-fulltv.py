@@ -22,8 +22,8 @@ source_image = os.path.join(rootpath, "greyscale-raw.png")
 img.save(source_image)
 #source_image = os.path.join(rootpath, "greyscale-srgb-photoshop.png")
 listimages = []
-listimages.append({'id': 'greypng', 'label': 'Test-1: Greyramp PNG file', 'image': os.path.join("..", source_image), 'description': 'Procedurally created grey-ramp. No ICC Profile defined'})
 # Now lets make the mp4's.
+listimages.append({'id': 'none', 'label': 'Test-1: Greyramp'})
 cmd = 'ffmpeg -y -loop 1 -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range={outrange}:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/greyscale-{fileext}.mp4'.format(outrange="tv", source_image=source_image, fileext="tv", rootpath=rootpath)
 os.system(cmd)
 listimages.append({'id': 'greytv', 'label': 'Normal encode', 'video': "greyscale-tv.mp4", 'description': 'Using the PNG greyramp, with the normal "TV" out range of 16-235, and using yuv420p encoding. ', 'cmd': cmd})
@@ -33,7 +33,8 @@ os.system(cmd)
 listimages.append({'id': 'greyfull', 'label': 'Full range encoding.', 'description': 'Greyramp encoded using out_range=full yuv420p encoding, here we also set color_range=2 to let the decoder know to process it correctly.', 'video': "greyscale-full.mp4", 'cmd': cmd})
 
 source_image = "../sourceimages/radialgrad.png"
-listimages.append({'id': 'radialgradpng', 'label': 'Test-2: Radial gradent source png file', 'description': 'This is a less forgiving test image', 'image': os.path.join("..", source_image)})
+listimages.append({'id': 'none', 'label': 'Test-2: Radial gradent'})
+listimages.append({'id': 'radialgradpng', 'label': 'Source png file', 'description': 'This is a less forgiving test image', 'image': os.path.join("..", source_image)})
 
 
 cmd = 'ffmpeg -y -loop 1 -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range={outrange}:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/radialgrad-{fileext}.mp4'.format(outrange="tv", source_image=source_image, fileext="tv", rootpath=rootpath)
@@ -71,7 +72,9 @@ listimages.append({'id': 'radialgradrgb', 'label': 'This is using RGB encoding',
 
 
 source_image = "../sourceimages/Digital_LAD_raw.png"
-listimages.append({'id': 'marcieraw', 'label': 'Test-3: marcie png file', 'image': os.path.join("..", source_image), 'cmd': cmd})
+listimages.append({'id': 'none', 'label': 'Test-3: Marcie'})
+
+listimages.append({'id': 'marcieraw', 'label': 'Source png file', 'image': os.path.join("..", source_image), 'cmd': cmd})
 
 cmd = 'ffmpeg -y -loop 1 -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range={outrange}:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/marcie-{fileext}.mp4'.format(outrange="tv", source_image=source_image, fileext="tv", rootpath=rootpath)
 os.system(cmd)
@@ -83,6 +86,6 @@ listimages.append({'id': 'marciefull', 'label': 'Full Range', 'video': "marcie-f
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
-					introduction="<H1>Full range vs TV Range</H1><p> Comparing full range encoding vs. tv range, but also yuv420p vs. yuvj420p. The code to generate these files is <a href='../%s'>here</a>. </p>" % os.path.basename(__file__),
+					introduction="<H1>Full range vs TV Range</H1><p> Comparing full range encoding vs. tv range, but also yuv420p vs. yuvj420p. We believe that this is well supported on web browsers, and dont see a downside to it. There may be cases where other applications do not read it. The code to generate these files is <a href='../%s'>here</a>. </p>" % os.path.basename(__file__),
 					videohtml = ' width=920 ')
 
