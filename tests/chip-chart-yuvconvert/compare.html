@@ -5,6 +5,12 @@
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <style>
+  a:link { 
+        color:rgb(150, 150, 255);
+   }
+     a:visited { 
+        color:rgb(120, 120, 255);
+   }
   .grid tbody tr td { cursor: grab }
   .ui-button {margin: 5px; border-radius: 8px}
   </style>
@@ -16,6 +22,13 @@ $(document).ready(function(){
            {
              $( ".videogroup" ).hide();
 			 $( "#chipchartpng" ).show();
+           }
+        );
+
+        $("#buttonnone").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#none" ).show();
            }
         );
 
@@ -40,17 +53,17 @@ $(document).ready(function(){
            }
         );
 
-        $("#buttonnospline").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#nospline" ).show();
-           }
-        );
-
         $("#buttonsplinecolormatrix").click( function()
            {
              $( ".videogroup" ).hide();
 			 $( "#splinecolormatrix" ).show();
+           }
+        );
+
+        $("#buttonnone").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#none" ).show();
            }
         );
 
@@ -75,20 +88,6 @@ $(document).ready(function(){
            }
         );
 
-        $("#button444out_color_matrix").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#444out_color_matrix" ).show();
-           }
-        );
-
-        $("#button444out_color_matrix2").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#444out_color_matrix2" ).show();
-           }
-        );
-
         $("#buttonspline444out_color_matrix").click( function()
            {
              $( ".videogroup" ).hide();
@@ -104,69 +103,66 @@ $(document).ready(function(){
 </head>
 
 <body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
-<H1>Comparing YUV conversion approaches.</H1><p> Recommended to use firefox, otherwise png is wrong. The code to generate these files is <a href='../chip-color-test.py'>here</a>. </p>
+<a href="/ffmpeg-tests">Testing Home</a>
+
+<H1>Comparing YUV conversion approaches.</H1><p> This is comparing different ways to do the YUV conversion. We are doing it in both 420p and 444p since 444p is a fairer binary image comparison. The takeaway should be to use the libswscale filter. The code to generate these files is <a href='../chip-color-test.py'>here</a>. </p>
 
     <div data-role="page" data-theme='a'>
 
       <div data-role="content"><TABLE><TR><TD width='300' align='center' valign="top">
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonchipchartpng" data-role="button">orig png</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonchipchartpng" data-role="button">Reference PNG</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonbasic" data-role="button">yuv420p default ffmpeg</button><BR/>
+        <div >YUV420p encodes</div><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttoncolormatrix" data-role="button">yuv420p colormatrix=bt709</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonbasic" data-role="button">Default Encode (terrible)</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttoncolorspace" data-role="button">yuv420p colorspace=bt709</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttoncolormatrix" data-role="button">Colormatrix filter (close)</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonnospline" data-role="button">yuv420p bt709 no sws_flags out_color_matrix=bt709</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttoncolorspace" data-role="button">Colorspace filter</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonsplinecolormatrix" data-role="button">yuv420p sws_flags out_color_matrix=bg709</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonsplinecolormatrix" data-role="button">libswscale filter + flags (best)</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonbasic444" data-role="button">yuv444p10le default ffmpeg (chrome only)</button><BR/>
+        <div >YUV444p encodes (Chrome Only)</div><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colormatrix2" data-role="button">yuv444p10le colormatrix=bt709 (chrome only)</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonbasic444" data-role="button">Default Encode (terrible)</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colorspace" data-role="button">yuv444p10le colorspace=bt709 (chrome only)</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colormatrix2" data-role="button">Colormatrix filter (close)</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="button444out_color_matrix" data-role="button">yuv444p10le no sws_flags out_color_matrix=bt709 (chrome only)</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444colorspace" data-role="button">Colorspace filter</button><BR/>
 
-        <button class="ui-button ui-widget ui-corner-all" id="button444out_color_matrix2" data-role="button">yuv444p10le no sws_flags no range out_color_matrix=bt709 (chrome only)</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444out_color_matrix" data-role="button">yuv444p10le out_color_matrix=bt709 (chrome only)</button><BR/>
+        <button class="ui-button ui-widget ui-corner-all" id="buttonspline444out_color_matrix" data-role="button">libswscale filter + flags (Match)</button><BR/>
 </div></TD><TD align='left' valign='top'>
-<div id="chipchartpng" class="videogroup"><h2>orig png</h2><img   width=960  src='../../sourceimages/chip-chart-1080-noicc.png'/></div>
+<div id="chipchartpng" class="videogroup"><h2>Reference PNG</h2><img   width=960  src='../../sourceimages/chip-chart-1080-noicc.png'/></div>
 
-<div id="basic" class="videogroup"><h2>yuv420p default ffmpeg</h2><video  width=960  ><source src='basic.mp4' type='video/mp4'/></video><p><h3></H3><p>Basic ffmpeg conversion, no colorspace specified, ffmpeg assumes bt601 colorspace</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/basic.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="chipchartpng" class="videogroup"><h2>Reference PNG</h2><p></p><p>Source PNG file</p></div>
+
+<div id="none" class="videogroup"><h2>YUV420p encodes</h2><p></p><p></p></div>
+
+<div id="basic" class="videogroup"><h2>Default Encode (terrible)</h2><video  width=960  ><source src='basic.mp4' type='video/mp4'/></video><p>Basic ffmpeg conversion, no colorspace specified, ffmpeg assumes bt601 colorspace. This is a terrible filter, significant color changes from PNG file.</p><p><h3></H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/basic.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.0212507<BR/>  RMS error = 0.0388912<BR/>  Peak SNR = 28.203<BR/>  Max error  = 0.556863 @ (1815, 1004, B)  values are 0, 0, 0.952941 vs 0.0705882, 0.0901961, 0.396078<BR/>  1792353 pixels (86.4%) over 1e-06<BR/>  1792353 pixels (86.4%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="colormatrix" class="videogroup"><h2>yuv420p colormatrix=bt709</h2><video  width=960  ><source src='colormatrix.mp4' type='video/mp4'/></video><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" </H3><p>Using colormatrix filter. colormatrix only supports 8-bit per component images. </p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/colormatrix.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="colormatrix" class="videogroup"><h2>Colormatrix filter (close)</h2><video  width=960  ><source src='colormatrix.mp4' type='video/mp4'/></video><p>Using colormatrix filter. colormatrix only supports 8-bit per component images. Visually its getting pretty close. </p><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" </H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/colormatrix.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00307147<BR/>  RMS error = 0.0124281<BR/>  Peak SNR = 38.1119<BR/>  Max error  = 0.568627 @ (1904, 1040, B)  values are 0, 0, 1 vs 0.0666667, 0.0588235, 0.431373<BR/>  1482440 pixels (71.5%) over 1e-06<BR/>  1482440 pixels (71.5%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="colorspace" class="videogroup"><h2>yuv420p colorspace=bt709</h2><video  width=960  ><source src='colorspace.mp4' type='video/mp4'/></video><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" </H3><p>Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too.</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/colorspace.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="colorspace" class="videogroup"><h2>Colorspace filter</h2><video  width=960  ><source src='colorspace.mp4' type='video/mp4'/></video><p>Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too. Visually pretty close to colormatrix, but slight improvement based on colormatrix values.</p><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" </H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/colorspace.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.002964<BR/>  RMS error = 0.0123796<BR/>  Peak SNR = 38.1459<BR/>  Max error  = 0.564706 @ (1904, 963, B)  values are 0, 0, 1 vs 0.0627451, 0.0588235, 0.435294<BR/>  1473078 pixels (71%) over 1e-06<BR/>  1473078 pixels (71%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="nospline" class="videogroup"><h2>yuv420p bt709 no sws_flags out_color_matrix=bt709</h2><video  width=960  ><source src='nospline.mp4' type='video/mp4'/></video><p><h3> -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  </H3><p>Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"   -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/nospline.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
-b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00260681<BR/>  RMS error = 0.0133867<BR/>  Peak SNR = 37.4665<BR/>  Max error  = 0.596079 @ (1815, 1004, B)  values are 0, 0, 0.952941 vs 0.0509804, 0.0470588, 0.356863<BR/>  1319674 pixels (63.6%) over 1e-06<BR/>  1319674 pixels (63.6%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
-
-<div id="splinecolormatrix" class="videogroup"><h2>yuv420p sws_flags out_color_matrix=bg709</h2><video  width=960  ><source src='splinecolormatrix.mp4' type='video/mp4'/></video><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" </H3><p>Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters.</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/splinecolormatrix.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="splinecolormatrix" class="videogroup"><h2>libswscale filter + flags (best)</h2><video  width=960  ><source src='splinecolormatrix.mp4' type='video/mp4'/></video><p>Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Visually this is close to the above two, but slight improvement based on colormatrix results.</p><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" </H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 1 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/splinecolormatrix.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00260747<BR/>  RMS error = 0.0131948<BR/>  Peak SNR = 37.592<BR/>  Max error  = 0.627451 @ (1904, 963, B)  values are 0, 0, 1 vs 0.054902, 0.0470588, 0.372549<BR/>  1341240 pixels (64.7%) over 1e-06<BR/>  1341240 pixels (64.7%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="basic444" class="videogroup"><h2>yuv444p10le default ffmpeg (chrome only)</h2><video  width=960  ><source src='basic444.mp4' type='video/mp4'/></video><p><h3></H3><p>Basic ffmpeg conversion, ffmpeg assumes bt601 colorspace, now at 444</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/basic444.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="none" class="videogroup"><h2>YUV444p encodes (Chrome Only)</h2><p></p><p></p></div>
+
+<div id="basic444" class="videogroup"><h2>Default Encode (terrible)</h2><video  width=960  ><source src='basic444.mp4' type='video/mp4'/></video><p>Basic ffmpeg conversion, ffmpeg assumes bt601 colorspace, now at 444. Results look terrible.</p><p><h3></H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/basic444.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.0202582<BR/>  RMS error = 0.0371307<BR/>  Peak SNR = 28.6053<BR/>  Max error  = 0.156863 @ (1891, 618, G)  values are 1, 0, 1 vs 1, 0.156863, 1<BR/>  1718054 pixels (82.9%) over 1e-06<BR/>  1718054 pixels (82.9%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="spline444colormatrix2" class="videogroup"><h2>yuv444p10le colormatrix=bt709 (chrome only)</h2><video  width=960  ><source src='spline444colormatrix2.mp4' type='video/mp4'/></video><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" </H3><p>Using colormatrix filter. colormatrix only supports 8-bit per component images. </p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colormatrix2.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="spline444colormatrix2" class="videogroup"><h2>Colormatrix filter (close)</h2><video  width=960  ><source src='spline444colormatrix2.mp4' type='video/mp4'/></video><p>Using colormatrix filter. colormatrix only supports 8-bit per component images. Visually pretty close, but still off.</p><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" </H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/spline444colormatrix2.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 0.00153716<BR/>  RMS error = 0.00270346<BR/>  Peak SNR = 51.3616<BR/>  Max error  = 0.0117647 @ (1389, 462, R)  values are 0, 0.733333, 0.690196 vs 0.0117647, 0.737255, 0.694118<BR/>  1434882 pixels (69.2%) over 1e-06<BR/>  1434882 pixels (69.2%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="spline444colorspace" class="videogroup"><h2>yuv444p10le colorspace=bt709 (chrome only)</h2><video  width=960  ><source src='spline444colorspace.mp4' type='video/mp4'/></video><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" </H3><p>Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too.</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colorspace.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="spline444colorspace" class="videogroup"><h2>Colorspace filter</h2><video  width=960  ><source src='spline444colorspace.mp4' type='video/mp4'/></video><p>Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too. Visually slight differences, but getting closer.</p><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" </H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/spline444colorspace.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>  Mean error = 3.52001e-05<BR/>  RMS error = 0.000371537<BR/>  Peak SNR = 68.6<BR/>  Max error  = 0.00392163 @ (870, 967, R)  values are 0.74902, 0.74902, 0.862745 vs 0.752941, 0.74902, 0.862745<BR/>  55838 pixels (2.69%) over 1e-06<BR/>  55838 pixels (2.69%) over 1e-06<BR/>FAILURE<BR/>'ERROR!</p></div>
 
-<div id="444out_color_matrix" class="videogroup"><h2>yuv444p10le no sws_flags out_color_matrix=bt709 (chrome only)</h2><video  width=960  ><source src='444out_color_matrix.mp4' type='video/mp4'/></video><p><h3> -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" </H3><p>Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. </p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/444out_color_matrix.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
-b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>PASS<BR/>'</p></div>
-
-<div id="444out_color_matrix2" class="videogroup"><h2>yuv444p10le no sws_flags no range out_color_matrix=bt709 (chrome only)</h2><video  width=960  ><source src='444out_color_matrix2.mp4' type='video/mp4'/></video><p><h3> -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" </H3><p>Using the libswscale library. Seems similar to colorspace, but with image resizing. </p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png  -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/444out_color_matrix2.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
-b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>PASS<BR/>'</p></div>
-
-<div id="spline444out_color_matrix" class="videogroup"><h2>yuv444p10le out_color_matrix=bt709 (chrome only)</h2><video  width=960  ><source src='spline444out_color_matrix.mp4' type='video/mp4'/></video><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" </H3><p>Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters.</p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444out_color_matrix.mp4<H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
+<div id="spline444out_color_matrix" class="videogroup"><h2>libswscale filter + flags (Match)</h2><video  width=960  ><source src='spline444out_color_matrix.mp4' type='video/mp4'/></video><p>Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.</p><p><h3>-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" </H3><p>ffmpeg -y -i  ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  -c:v libx264  -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1"  -pix_fmt yuv444p10le -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./chip-chart-yuvconvert/spline444out_color_matrix.mp4</p><H3>OIIO idiff output</H3>idiff -o ./chip-chart-yuvconvert/chip-chart-1080-noiccdiff.png ../sourceimages/chip-chart-1080-noicc.png ./chip-chart-yuvconvert/chip-chart-1080-noicc.png
 b'Comparing "../sourceimages/chip-chart-1080-noicc.png" and "./chip-chart-yuvconvert/chip-chart-1080-noicc.png"<BR/>PASS<BR/>'</p></div>
 
       </TD></TR></TABLE>
