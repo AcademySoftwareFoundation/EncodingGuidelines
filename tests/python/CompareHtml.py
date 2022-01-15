@@ -75,6 +75,8 @@ def createCompareHtml(outputpath="compare.html", listimages=[], introduction="",
 			output['id'] = ""
 		if 'cmd' not in output:
 			output['cmd'] = ""
+		if 'description' not in output:
+			output['description'] = ""
 		if "image" in output:
 			html += image_template.format(**output)
 		else:
