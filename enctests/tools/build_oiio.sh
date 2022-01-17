@@ -20,6 +20,7 @@ cmake .. \
 -DCMAKE_INSTALL_PREFIX=./dist \
 -DUSE_PYTHON=1 \
 -DUSE_QT=0 \
+-DENABLE_FFmpeg=1 \
 -DOIIO_BUILD_TESTS=0 \
 -DUSE_BUILD_SCRIPTS=1 && \
 make -j $(nproc) && make install
