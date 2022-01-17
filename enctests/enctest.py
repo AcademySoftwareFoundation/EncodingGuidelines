@@ -380,7 +380,7 @@ def main():
     test_results = []
     reference = None
 
-    for testfile in testfiles[1:2]:
+    for testfile in testfiles:
         for testconfig in testconfigs:
             # Used for creating results.html page later
             test_result = {
