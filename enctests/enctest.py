@@ -353,7 +353,7 @@ def oiio_diff(reference, distorted, failthresh=0.00001, warnthresh=0.00001):
             print('DISTORT:', buf_b.geterror())
             continue
 
-        print('Comparing frame:', frame, subimage,)
+        print('Comparing frame: {0:03d}'.format(frame))
         comp = oiio.ImageBufAlgo.compare(
             buf_a,
             buf_b,
@@ -362,7 +362,8 @@ def oiio_diff(reference, distorted, failthresh=0.00001, warnthresh=0.00001):
             roi=buf_a.roi_full
         )
         mean_errors.append(comp.meanerror)
-        print('phew!')
+
+    print('Done!')
 
     return mean_errors
 
@@ -467,6 +468,7 @@ def main():
                     base=os.path.basename(diff_file),
                     cmd=cmd
                 )
+                test_result['oiio_diff_average'] = ''
 
             else:
                 # Movie compare from http://dericed.com/2012/display-video-difference-with-ffmpegs-overlay-filter/
