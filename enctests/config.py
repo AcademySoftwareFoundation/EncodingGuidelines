@@ -161,9 +161,11 @@ testfiles = [
             '-r 24',
             '-start_number 600'
         ],
-        'duration': "-vframes 75",
+        'vframes': '-vframes 75',
         'output_file': 'trailer.mov',
         'stillframe': False,
+        'start_number': 600,
+        'duration': 75,
         'vmaf_reference': 'scale_yuv444p10le',
         'ffmpeg_extract': [
             '-compression_level 10',

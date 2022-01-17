@@ -5,6 +5,8 @@ import time
 import shlex
 import subprocess
 
+import OpenImageIO as oiio
+
 from config import testconfigs, testfiles
 
 # Were to store all rendered files
@@ -40,6 +42,7 @@ def write_html(test_results):
         'testfile',
         'testoutput',
         'vmaf_output',
+        'oiio_diff_average',
         'filesize',
         'ffmpeg_duration'
     ]
@@ -115,7 +118,7 @@ def ffmpeg_convert(source_config, test_config, outfile):
 "
     source = source_config.get('source_file')
     input_args = ' '.join(source_config.get('input_args', []))
-    duration = source_config.get('duration', '')
+    duration = source_config.get('vframes', '')
     cmd = ffmpeg_cmd.format(
                 ffmpeg_bin=FFMPEG_BIN,
                 input_args=input_args,
@@ -131,7 +134,7 @@ def ffmpeg_convert(source_config, test_config, outfile):
     return cmd, rc
 
 
-def ffmpeg_diff(outfile, test_config):
+def ffmpeg_diff(test_config, outfile):
     compare_cmd = "\
 {ffmpeg_bin} \
 {input_args} \
@@ -143,7 +146,7 @@ def ffmpeg_diff(outfile, test_config):
 [0:v][video2withAlpha]overlay[out] -map [out] \
 -y {diff}\
 "
-    duration = test_config.get('duration', '')
+    duration = test_config.get('vframes', '')
 
     # Movie compare from http://dericed.com/2012/display-video-difference-with-ffmpegs-overlay-filter/
     base, ext = os.path.splitext(outfile)
@@ -323,8 +326,45 @@ def idiff_compare(outfile, sourceimage, extractfile):
     return output, diff_file, cmd
 
 
-def oiio_compare(outfile, sourceimage, extractfile):
-    pass
+def oiio_diff(reference, distorted, failthresh=0.00001, warnthresh=0.00001):
+    mean_errors = []
+
+    start_number = reference.get('start_number', 0)
+    end_number = start_number + reference.get('duration', 0)
+
+    buf_a = oiio.ImageBuf()
+    buf_b = oiio.ImageBuf()
+    print('Comparing:', reference.get('source_file'), distorted)
+    for subimage, frame in enumerate(range(start_number, end_number)):
+        ref_file = reference.get('source_file')
+        if not reference.get('stillframe', True):
+            ref_file = ref_file % frame
+
+        # Set to new frame
+        buf_a.reset(ref_file)
+
+        if buf_a.has_error:
+            print('REF:', buf_a.geterror())
+            continue
+
+        # Assuming distorted is always a movie file
+        buf_b.reset(distorted, subimage=subimage)
+        if buf_b.has_error:
+            print('DISTORT:', buf_b.geterror())
+            continue
+
+        print('Comparing frame:', frame, subimage,)
+        comp = oiio.ImageBufAlgo.compare(
+            buf_a,
+            buf_b,
+            failthresh=failthresh,
+            warnthresh=warnthresh,
+            roi=buf_a.roi_full
+        )
+        mean_errors.append(comp.meanerror)
+        print('phew!')
+
+    return mean_errors
 
 
 def is_video_output(testfile):
@@ -340,7 +380,7 @@ def main():
     test_results = []
     reference = None
 
-    for testfile in testfiles[1:]:
+    for testfile in testfiles[1:2]:
         for testconfig in testconfigs:
             # Used for creating results.html page later
             test_result = {
@@ -430,8 +470,15 @@ def main():
 
             else:
                 # Movie compare from http://dericed.com/2012/display-video-difference-with-ffmpegs-overlay-filter/
-                diffhtml = ffmpeg_diff(outfile, testfile)
+                diffhtml = ffmpeg_diff(testfile, outfile)
                 output = ""
+
+                # OIIO diff
+                res = oiio_diff(testfile, outfile)
+                average_diff = sum(res) / len(res)
+                print('OIIO average diff:', average_diff)
+
+                test_result['oiio_diff_average'] = average_diff
 
             test_result['testoutput'] = output
             test_result['diff_html'] = diffhtml
