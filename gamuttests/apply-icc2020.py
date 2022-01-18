@@ -45,7 +45,7 @@ for trc in trc_types:
 	# TODO Confirm we have the right one.
 	trc['rootpath'] = rootpath
 
-	cmd = 'ffmpeg -loop 1 -y -i  {source}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries {primnum} -color_trc 13 {rootpath}/greyscale-{fileext}.mp4'.format(**trc); ext="mp4"
+	cmd = 'ffmpeg -loop 1 -y -i  {source}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries {primnum} -color_trc 13 {rootpath}/greyscale-{fileext}.mp4'.format(**trc); ext="mp4"
 
 	os.system(cmd)
 	trc['ext'] = ext
