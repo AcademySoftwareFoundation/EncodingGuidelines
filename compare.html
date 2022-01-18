@@ -4,6 +4,14 @@
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+<<<<<<< HEAD
+=======
+	   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://richardssam.github.io/ffmpeg-tests/assets/css/style.css?v=eb7a8d46959b08f02c5b4fbacd610174dc28d59a">
+>>>>>>> main
   <style>
   a:link {
         text-decoration-line: none;
@@ -49,7 +57,7 @@
 <a href="/ffmpeg-tests">Testing Home</a>
 <body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
     <div id="header_wrap" class="outer">
-        <header class="inner">
+        <header class="inner main-content"">
 <H1>Web browser color management for Video</H1>
 <p>We will be doing a number of tests comparing PNG files with ICC profiles against video files with NCLC tags. In theory they should match.</P>
 <p>There are four possible tags that you can apply to movies:
@@ -80,8 +88,9 @@ Your monitor reports:
 							<table>
 <table>
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
-<TR><TD><img width=400 src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width=400   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'></video></td></TR>
+<TR><TD><img width=406 src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width=406   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'></video></td></TR>
 </table>
+
 <table>
 <TR><TD><img width=400 src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
 <TR><TD><img width=400 src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
