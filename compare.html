@@ -1,0 +1,159 @@
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  a:link {
+        text-decoration-line: none;
+        color:rgb(150, 150, 255);
+   }
+     a:visited { 
+        text-decoration-line: none;
+
+        color:rgb(120, 120, 255);
+   }
+   .hidden {
+       display: none;
+	   }
+   body {
+   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Helvetica Neue", Helvetica, Verdana, Tahoma, sans-serif;
+   }
+.outer {
+    width: 100%;
+}
+.inner {
+    position: relative;
+    max-width: 900px;
+    padding: 20px 10px;
+    margin: 0 auto;
+}
+  </style>
+  <script>
+  $( function() {{
+    if( ! /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent) ) {{
+        $( "#sort tbody" ).sortable();
+    $( "#sort2 tbody" ).sortable();
+    }}
+    var urlargs = document.location.href.split("?")
+    if (urlargs.length > 1){{
+        $(".index").hide();
+        showgroups = urlargs[1].split("+");
+        for(i = 0; i < showgroups.length; i++)
+            $(showgroups[i]).show();
+     }}
+  }} );
+  </script>
+</head>
+<a href="/ffmpeg-tests">Testing Home</a>
+<body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+<H1>Web browser color management for Video</H1>
+<p>We will be doing a number of tests comparing PNG files with ICC profiles against video files with NCLC tags. In theory they should match.</P>
+<p>There are four possible tags that you can apply to movies:
+<nl>
+<li><a href='#colorprimaries'>color_primaries</a> - e.g. rec709, rec2020, display-p3</li>
+<li><a href='#color_trc'>color_trc</a> - The transfer function (e.g. gamma)</li>
+<li><a href="#color_range">color_range</a> - Is it tv vs. full range</li>
+<li><a href="#color_space">color_space</a> - Is it YUV vs. RGB</li>
+</nl>
+
+For a detailed breakdown of what browsers support what flags see: <a href="https://wiki.aswf.io/display/PRWG/Color+fidelity+for+Web+Browsers">here</a>
+
+<H2 id='colorprimaries'>Gamut Tests (color_primaries flag)</H2>
+<p>How good is your browser at remapping source media of an expanded gamut (e.g. rec2020 or Display-p3) to your display.</p>
+Your monitor reports:
+<div x-data="">
+	<div x-show='window.matchMedia("(color-gamut: srgb)").matches && !window.matchMedia("(color-gamut: p3)").matches && !window.matchMedia("(color-gamut: rec2020)").matches' >
+	Supports SRGB
+	</div>
+    <div x-show='window.matchMedia("(color-gamut: p3)").matches && !window.matchMedia("(color-gamut: rec2020)").matches' >
+	Supports Display-P3
+	</div>
+    <div x-show='window.matchMedia("(color-gamut: rec2020)").matches' >
+	Supports rec2020
+	</div>
+
+</div>
+							<table>
+<table>
+<TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
+<TR><TD><img width=400 src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width=400   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'></video></td></TR>
+</table>
+<table>
+<TR><TD><img width=400 src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
+<TR><TD><img width=400 src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
+</table>
+
+<p>Chrome on windows, and Safari and Chrome on IOS will always assume the display is sRGB. In theory <a href="chrome://flags/#force-color-profile">chrome://flags/#force-color-profile</a> should give you some settings for this, but it seems to be ignored.</p>
+
+<H2 id='color_trc'>Transfer function tests (color_trc flag)</H2>
+<p>This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. rec709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, rec709 is frankly rather useless, consequently we recommend using sRGB as a default.</p>
+<p>
+For more details see: <a href="https://richardssam.github.io/ffmpeg-tests/tests/greyramp-osx/compare.html">here</a>
+</p>
+<H3>SRGB</H3>
+<p>Using the -color_trc 13 flag. This appears to be the most reliable one, working across all machines and browsers that support it.
+<table>
+<TR><TD><img width=400 src="tests/greyramp-osx/greyscale-srgb.png"/></TD><TD>Source SRGB PNG</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
+</table>
+
+<H3>rec709</H3>
+<p>Using the -color_trc 1 flag. This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera rec709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
+</p>
+<div x-data="">
+<table >
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the rec709 mp4.</TD></TR>
+<TR x-show="/^((?!chrome|android).)*safari/i.test(navigator.userAgent)"><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma195.mov"></video></TD><TD>This is a quicktime with a gamma of 1.95. This should be nearly identical to the above rec709 mp4, which implies OSX is correctly interpreting camera rec709.</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>This is the srgb.mp4 which may match the rec709 result. For chrome on windows, this should match rec709, which implies its treating it as sRGB.</TD></TR>
+</table>
+</div>
+Screenshots
+<table>
+<TR><TD><img width=400 src="browsercompare/chrome-rec709-windows-color_trc1.png"/></TD><TD>Screenshot of mp4 of chrome on windows</TD></TR>
+<TR><TD><img width=400 src="browsercompare/safari-rec709-osx-color_trc1.png"/></TD><TD>Screenshot of mp4 of safari on OSX</TD></TR>
+</table>
+
+<H3>Gamma 2.2</H3>
+<p>Using the -color_trc 2 flag. This does not work correctly on safari.
+<table>
+<TR><TD><img width=400 src="tests/greyramp-osx/greyscale-g22.png"/></TD><TD>Source gamma 2.2 PNG</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma22.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
+</table>
+
+<H3>Gamma linear</H3>
+<p>Using the -color_trc 8 flag. This is unlikely to ever be used for video, however it does make for a good test that something is working.
+<table>
+<TR><TD><img width=400 src="tests/greyramp-osx/greyscale-lin.png"/></TD><TD>Source linear PNG</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-lin.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
+</table>
+
+<H2 id="color_range">Color Range</H2>
+Normal RGB to YUV conversion will end up using the TV range of 16-235 values (using the -color_range 1 parameter) however you can encode your media using the full-range 0-255 values, which is specified with the -color_range 2 parameter, NOTE this does require you to do a different scaling in ffmpeg. This does seem fairly reliable on all web browsers, but there may be applications that may not interpret this correctly.
+For more details see: <a href="tests/greyramp-fulltv/compare.html">here</a>
+<table>
+<TR><TD><img width=400 src="tests/greyramp-fulltv/greyscale-raw.png"/></TD><TD>Source PNG</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-fulltv/greyscale-tv.mp4"></video></TD><TD>Conventional tv range 16-235</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-fulltv/greyscale-full.mp4"></video></TD><TD>Conventional full range 0-255</TD></TR>
+</table>
+
+<H2 id="color_space">Color space</H2>
+Currently all web browsers only support YUV as a source for video. There are 3rd party apps that support RGB, e.g. RV. This can be a useful option for eliminating any RGB to YUV conversions.
+
+
+<H2>Browser testing</H2>
+This is a summary of browser compatibility. For a detailed breakdown of what browsers support what flags see: <a href="https://wiki.aswf.io/display/PRWG/Color+fidelity+for+Web+Browsers">here</a>
+
+<table>
+<TR><TD><B>Firefox</TD><TD>Has no support for color_trc or color_primaries flags on any platform.</TD></TR>
+<TR><TD width=150><B>Safari on OSX</TD><TD>Has the best support of any browser, but its not complete. Gamma 2.2 is completely wrong, as is gamma 2.8, the rec709 support is questionable.</TD></TR>
+<TR><TD><B>Safari on IOS</TD><TD>Has no support for color_trc or color_primaries flags on any platform.</TD></TR>
+<TR><TD><B>Chrome</TD><TD>Has no support on linux, some support on OSX and limited support on windows. The windows support is hit and miss since they have disabled any direct support for monitor ICC profiles and appear to rely on you setting <a href="chrome://flags/#force-color-profile">chrome://flags/#force-color-profile</a>. </TD></TR>
+</table>
+      </section>
+    </div>
+</body>
+</html>
