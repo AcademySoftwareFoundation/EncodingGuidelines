@@ -49,7 +49,7 @@ Filtered views:
 <tbody>
 
 <TR class="index groupdisplayp3 mp4" id="buttondiosplayp3">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_primaries 12 = display p3 <B>mp4</B></TD><td><video    ><source src='greyscale-displayp3.mp4' type='video/mp4'></video></td><td><p>P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).<p\><p>ffmpeg -loop 1 -y -i  ps-combined-displayp3-g2.2.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 12 -color_trc 13 ./iccgamut/greyscale-displayp3.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_primaries 12 = display p3 <B>mp4</B></TD><td><video    ><source src='greyscale-displayp3.mp4' type='video/mp4'></video></td><td><p>P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).<p\><p>ffmpeg -loop 1 -y -i  ps-combined-displayp3-g2.2.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 12 -color_trc 13 ./iccgamut/greyscale-displayp3.mp4</p></td>
 </TR>
 
 <TR class="index groupdisplayp3 png"  id="button">
@@ -57,7 +57,7 @@ Filtered views:
 </TR>
 
 <TR class="index grouprec2020 mp4" id="buttonrec2020">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_primaries 9 = rec2020 <B>mp4</B></TD><td><video    ><source src='greyscale-rec2020.mp4' type='video/mp4'></video></td><td><p>rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).<p\><p>ffmpeg -loop 1 -y -i  ps-combined-rec2020-g2.2.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 9 -color_trc 13 ./iccgamut/greyscale-rec2020.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_primaries 9 = rec2020 <B>mp4</B></TD><td><video    ><source src='greyscale-rec2020.mp4' type='video/mp4'></video></td><td><p>rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).<p\><p>ffmpeg -loop 1 -y -i  ps-combined-rec2020-g2.2.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 9 -color_trc 13 ./iccgamut/greyscale-rec2020.mp4</p></td>
 </TR>
 
 <TR class="index grouprec2020 png"  id="button">

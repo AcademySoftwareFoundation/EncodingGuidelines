@@ -25,6 +25,13 @@ $(document).ready(function(){
            }
         );
 
+        $("#buttongreyramppng").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#greyramppng" ).show();
+           }
+        );
+
         $("#buttongreytv").click( function()
            {
              $( ".videogroup" ).hide();
@@ -131,7 +138,7 @@ $(document).ready(function(){
         );
 
 		$( ".videogroup" ).hide();
-		$( "#greytv" ).show();
+		$( "#greyramppng" ).show();
 });
     </script>
 
@@ -147,6 +154,8 @@ $(document).ready(function(){
       <div data-role="content"><TABLE><TR><TD width='300' align='center' valign="top">
 
         <div ><B>Test-1: Greyramp</B></div><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreyramppng" data-role="button">Source png file</button><BR/>
 
         <button class="ui-button ui-widget ui-corner-all" id="buttongreytv" data-role="button">Normal encode</button><BR/>
 
@@ -179,6 +188,10 @@ $(document).ready(function(){
         <button class="ui-button ui-widget ui-corner-all" id="buttonmarciefull" data-role="button">Full Range</button><BR/>
 </div></TD><TD align='left' valign='top'>
 <div id="none" class="videogroup"><h2>Test-1: Greyramp</h2><p></p><p></p></div>
+
+<div id="greyramppng" class="videogroup"><h2>Source png file</h2><img   width=920  src='.././greyramp-fulltv/greyscale-raw.png'/></div>
+
+<div id="greyramppng" class="videogroup"><h2>Source png file</h2><p></p><p></p></div>
 
 <div id="greytv" class="videogroup"><h2>Normal encode</h2><video  width=920  ><source src='greyscale-tv.mp4' type='video/mp4'/></video><p>Using the PNG greyramp, with the normal "TV" out range of 16-235, and using yuv420p encoding. </p><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-fulltv/greyscale-tv.mp4</p></div>
 
