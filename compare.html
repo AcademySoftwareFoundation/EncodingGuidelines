@@ -34,6 +34,11 @@
     padding: 20px 10px;
     margin: 0 auto;
 }
+.compare th, .compare td {
+    background-color: #222 !important;
+    padding: 2px 2px !important;
+    border: 0px solid #e9ebec !important;
+}
   </style>
   <script>
   $( function() {{
@@ -88,7 +93,7 @@ Your monitor reports:
 <TR><TD><img width=406 src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width=406   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'></video></td></TR>
 </table>
 
-<table>
+<table class='compare'>
 <TR><TD><img width=400 src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
 <TR><TD><img width=400 src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
 </table>
@@ -102,7 +107,7 @@ For more details see: <a href="https://richardssam.github.io/ffmpeg-tests/tests/
 </p>
 <H3>SRGB</H3>
 <p>Using the -color_trc 13 flag. This appears to be the most reliable one, working across all machines and browsers that support it.
-<table>
+<table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-srgb.png"/></TD><TD>Source SRGB PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
@@ -111,28 +116,28 @@ For more details see: <a href="https://richardssam.github.io/ffmpeg-tests/tests/
 <p>Using the -color_trc 1 flag. This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera rec709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
 </p>
 <div x-data="">
-<table >
+<table  class='compare'>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the rec709 mp4.</TD></TR>
 <TR x-show="/^((?!chrome|android).)*safari/i.test(navigator.userAgent)"><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma195.mov"></video></TD><TD>This is a quicktime with a gamma of 1.95. This should be nearly identical to the above rec709 mp4, which implies OSX is correctly interpreting camera rec709.</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>This is the srgb.mp4 which may match the rec709 result. For chrome on windows, this should match rec709, which implies its treating it as sRGB.</TD></TR>
 </table>
 </div>
 Screenshots
-<table>
+<table class='compare'>
 <TR><TD><img width=400 src="browsercompare/chrome-rec709-windows-color_trc1.png"/></TD><TD>Screenshot of mp4 of chrome on windows</TD></TR>
 <TR><TD><img width=400 src="browsercompare/safari-rec709-osx-color_trc1.png"/></TD><TD>Screenshot of mp4 of safari on OSX</TD></TR>
 </table>
 
 <H3>Gamma 2.2</H3>
 <p>Using the -color_trc 2 flag. This does not work correctly on safari.
-<table>
+<table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-g22.png"/></TD><TD>Source gamma 2.2 PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma22.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
 
 <H3>Gamma linear</H3>
 <p>Using the -color_trc 8 flag. This is unlikely to ever be used for video, however it does make for a good test that something is working.
-<table>
+<table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-lin.png"/></TD><TD>Source linear PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-lin.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
@@ -140,7 +145,7 @@ Screenshots
 <H2 id="color_range">Color Range</H2>
 Normal RGB to YUV conversion will end up using the TV range of 16-235 values (using the -color_range 1 parameter) however you can encode your media using the full-range 0-255 values, which is specified with the -color_range 2 parameter, NOTE this does require you to do a different scaling in ffmpeg. This does seem fairly reliable on all web browsers, but there may be applications that may not interpret this correctly.
 For more details see: <a href="tests/greyramp-fulltv/compare.html">here</a>
-<table>
+<table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-fulltv/greyscale-raw.png"/></TD><TD>Source PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-fulltv/greyscale-tv.mp4"></video></TD><TD>Conventional tv range 16-235</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-fulltv/greyscale-full.mp4"></video></TD><TD>Conventional full range 0-255</TD></TR>
