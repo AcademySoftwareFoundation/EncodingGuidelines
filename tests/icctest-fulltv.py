@@ -24,6 +24,8 @@ img.save(source_image)
 listimages = []
 # Now lets make the mp4's.
 listimages.append({'id': 'none', 'label': 'Test-1: Greyramp'})
+listimages.append({'id': 'greyramppng', 'label': 'Source png file', 'description': '', 'image': os.path.join("..", source_image)})
+
 cmd = 'ffmpeg -y -loop 1 -i  {source_image}  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range={outrange}:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/greyscale-{fileext}.mp4'.format(outrange="tv", source_image=source_image, fileext="tv", rootpath=rootpath)
 os.system(cmd)
 listimages.append({'id': 'greytv', 'label': 'Normal encode', 'video': "greyscale-tv.mp4", 'description': 'Using the PNG greyramp, with the normal "TV" out range of 16-235, and using yuv420p encoding. ', 'cmd': cmd})
