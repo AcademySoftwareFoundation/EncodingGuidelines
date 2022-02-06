@@ -100,6 +100,9 @@ Your monitor reports:
 
 <p>Chrome on windows, and Safari and Chrome on IOS will always assume the display is sRGB. In theory <a href="chrome://flags/#force-color-profile">chrome://flags/#force-color-profile</a> should give you some settings for this, but it seems to be ignored.</p>
 
+<H3>Summary</H3>
+<p>Outside of Safari on OSX there is no support for wide-gamut media. </p>
+
 <H2 id='color_trc'>Transfer function tests (color_trc flag)</H2>
 <p>This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. rec709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, rec709 is frankly rather useless, consequently we recommend using sRGB as a default.</p>
 <p>
@@ -142,6 +145,9 @@ Screenshots
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-lin.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
 
+<H3>Summary</H3>
+<p>We recommend the use of -color_trc 13 to use sRGB. There is no support for a gamma 2.4, if you still need it, we recommend that you use -color_trc 2 (meaning undefined) and ensure that your monitor is set correctly</p>
+
 <H2 id="color_range">Color Range</H2>
 Normal RGB to YUV conversion will end up using the TV range of 16-235 values (using the -color_range 1 parameter) however you can encode your media using the full-range 0-255 values, which is specified with the -color_range 2 parameter, NOTE this does require you to do a different scaling in ffmpeg. This does seem fairly reliable on all web browsers, but there may be applications that may not interpret this correctly.
 For more details see: <a href="tests/greyramp-fulltv/compare.html">here</a>
@@ -150,6 +156,9 @@ For more details see: <a href="tests/greyramp-fulltv/compare.html">here</a>
 <TR><TD><video width=400><source src="tests/greyramp-fulltv/greyscale-tv.mp4"></video></TD><TD>Conventional tv range 16-235</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-fulltv/greyscale-full.mp4"></video></TD><TD>Conventional full range 0-255</TD></TR>
 </table>
+
+<H3>Summary</H3>
+<p>We recommend using extended range, which will give you a little more range, particularly for web review. For app review, most apps support it correctly, but this does need further testing.</p>
 
 <H2 id="color_space">Color space</H2>
 Currently all web browsers only support YUV as a source for video. There are 3rd party apps that support RGB, e.g. RV. This can be a useful option for eliminating any RGB to YUV conversions.
