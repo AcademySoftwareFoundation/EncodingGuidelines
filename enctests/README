@@ -15,3 +15,7 @@ Running the encoding tests you may pass environment variables to help use the
 correct tools and libraries
 
 PATH=./tools/oiio-2.3.11.0/build/dist/bin:$PATH PYTHONPATH=./tools/oiio-2.3.11.0/build/dist/lib/python3.8/site-packages python enctest.py
+
+Examples for downloading:
+https://github.com/darbyjohnston/otio-oc-examples
+
