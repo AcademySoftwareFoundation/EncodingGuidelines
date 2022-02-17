@@ -53,14 +53,18 @@ for proc in processes:
     proc['cmd'] = cmd
     listimages.append(proc)
     encodeimage = os.path.join(rootpath, proc['video'])
-    extractfile = os.path.join(rootpath, os.path.basename(source_image[:-3])+"png")
+    extractfile = os.path.join(rootpath, os.path.basename(source_image[:-4])+"-"+proc['id']+".png")
     if os.path.exists(extractfile):
         os.remove(extractfile)
-    extractcmd = ffmpeg_cmd + " -i " + encodeimage + " " + proc['ffmpeg_extract'] + " " + extractfile
-    print(extractcmd)
+    extractcmd = ffmpeg_cmd + " -i " + encodeimage + " " + proc['ffmpeg_extract'] + " -vframes 1 " + extractfile
+    print("\nExtractcmd:", extractcmd)
     os.system(extractcmd)
+    del proc['video']
+    proc['image'] = os.path.basename(extractfile)
+    print("IMAGE = ", proc['image'])
     difffile = os.path.join(rootpath, os.path.basename(source_image[:-4])+"diff.png")
     oiiocmd = idiff_cmd + " -o " + difffile + " "+source_image + " " + extractfile 
+    print("\nOIIO CHECK:", oiiocmd)
     try:
         output = subprocess.check_output(oiiocmd, shell=True)
     except Exception as e:
