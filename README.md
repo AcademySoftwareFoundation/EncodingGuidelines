@@ -8,12 +8,14 @@ The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.act
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 ```
-ffmpeg -r 24 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -c:v libx264 -preset slower  -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -vframes 100 -c:v libx264 -preset slower  -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
 ```
 
 Where:
    * **-r 24** means 24 fps
+   * **-start_number* means the frame sequence starts from frame 1 (defaults to 0)
    * **-i inputfile.%04d.png means**  will be padded to 4 digits, i.e. 0000, 0001, 0002, etc.
+   * **-vframes 100* This is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range.
    *  **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
       * **in_color_matrix=rec709** means color space bt709 video coming in (normal for TV/Desktop video).
       * **out_color_matrix=rec709** means color space bt709 video going out. The combination of this and in_color_matrix will mean the color encoding will match the source media. If you are only adding one set of flags, this is the one, otherwise it will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays.
