@@ -57,7 +57,7 @@ label_maintemplate = """
         <div ><B>{label}</B></div><BR/>
 """
 image_template = """
-<div id="{id}" class="videogroup"><h2>{label}</h2><img  {videohtml} src='{image}'/></div>
+<div id="{id}" class="videogroup"><h2>{label}</h2><img  {videohtml} src='{image}'/><p>{description}</p><p>{cmd}</p></div>
 """
 
 video_template = """
@@ -105,7 +105,7 @@ def createCompareHtml(outputpath="compare.html", listimages=[], introduction="",
 			output['cmd'] = ''
 		if "image" in output:
 			html += image_template.format(**output)
-		if "video" not in output:
+		elif "video" not in output:
 			html += label_template.format(**output)
 		else:
 			output['videohtml'] = videohtml
