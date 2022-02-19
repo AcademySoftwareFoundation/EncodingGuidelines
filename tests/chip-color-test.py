@@ -31,7 +31,8 @@ processes = [
              {'id': 'spline444colorspace', 'label': 'Colorspace filter', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too. Visually slight differences, but getting closer.', 'qp': "0"},
              #{'id': '444out_color_matrix', 'label': 'yuv444p10le no sws_flags out_color_matrix=bt709 (chrome only)', 'conv': ' -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. ', 'qp': "0"},
              #{'id': '444out_color_matrix2', 'label': 'yuv444p10le no sws_flags no range out_color_matrix=bt709 (chrome only)', 'conv': ' -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing. ', 'qp': "0"},
-             {'id': 'spline444out_color_matrix', 'label': 'libswscale filter + flags (Match)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.', 'qp': "0"},
+             {'id': 'spline444out_color_matrix', 'label': 'libswscale filter + flags (Match)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.', 'qp': "0", 'color_range': "1"},
+             {'id': 'spline444out_color_matrixfull', 'label': 'libswscale filter + flags full-range (Match)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.', 'qp': "0", 'color_range': "2"},
              ]
 
 ffmpeg_cmd = "ffmpeg"
@@ -52,14 +53,18 @@ for proc in processes:
     proc['cmd'] = cmd
     listimages.append(proc)
     encodeimage = os.path.join(rootpath, proc['video'])
-    extractfile = os.path.join(rootpath, os.path.basename(source_image[:-3])+"png")
+    extractfile = os.path.join(rootpath, os.path.basename(source_image[:-4])+"-"+proc['id']+".png")
     if os.path.exists(extractfile):
         os.remove(extractfile)
-    extractcmd = ffmpeg_cmd + " -i " + encodeimage + " " + proc['ffmpeg_extract'] + " " + extractfile
-    print(extractcmd)
+    extractcmd = ffmpeg_cmd + " -i " + encodeimage + " " + proc['ffmpeg_extract'] + " -vframes 1 " + extractfile
+    print("\nExtractcmd:", extractcmd)
     os.system(extractcmd)
+    del proc['video']
+    proc['image'] = os.path.basename(extractfile)
+    print("IMAGE = ", proc['image'])
     difffile = os.path.join(rootpath, os.path.basename(source_image[:-4])+"diff.png")
     oiiocmd = idiff_cmd + " -o " + difffile + " "+source_image + " " + extractfile 
+    print("\nOIIO CHECK:", oiiocmd)
     try:
         output = subprocess.check_output(oiiocmd, shell=True)
     except Exception as e:
