@@ -28,9 +28,9 @@ Where:
    * **-color_trc 13** -- mp4 metadata color transfer = sRGB - See tests below.
 
 The crucial part is:
-'''
+```
 -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" 
-'''
+```
 Which is specifying the input and output colorspaces to be bt709.
 
 Separately, if you are converting from exr's in other colorspaces, please use [OCIO](https://opencolorio.org/) to do the color space conversions. [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
@@ -50,7 +50,7 @@ This document is a result of feedback from many people, in particular I would li
 
 ### Color space conversion.
 
-The color space conversion we are assuming is being done using tools such as [Nuke][https://www.foundry.com/products/nuke-family/nuke] or [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) using [OCIO](https://opencolorio.org/). We strongly recommend using the ACES configuration whenever possible, since it provides a good baseline for colorspace conversion. Note, we may mention the use of Nuke a number of times, there are now a large number of 3rd party tools that will also do great at this color space conversion using OCIO.
+The color space conversion we are assuming is being done using tools such as [Nuke](https://www.foundry.com/products/nuke-family/nuke) or [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) using [OCIO](https://opencolorio.org/). We strongly recommend using the ACES configuration whenever possible, since it provides a good baseline for colorspace conversion. Note, we may mention the use of Nuke a number of times, there are now a large number of 3rd party tools that will also do great at this color space conversion using OCIO.
 
 Typically, we would assume that an intermediate file would get written out, such as PNG, TIF or DPX for processing in ffmpeg. NOTE, by default the nuke PNG writer will have the slow compression enabled, this does add a little time that is unnecessary for the sort of intermediate file we are using. In the nuke SDK they do provide the source for the PNG writer, so it is possible to get this disabled. However, you may find that switching to Tif will have the same result.
 
@@ -69,21 +69,21 @@ As a rule of thumb, we would like ffmpeg to do as little as possible in terms of
 For examples comparing these see: https://richardssam.github.io/ffmpeg-tests/tests/chip-chart-yuvconvert/compare.html
 
 colormatrix filter
-'''
+```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colormatrix2.mp4
 This is the most basic colorspace filtering. bt470bg is essentially part of the bt601 spec.  See: https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix
-'''
+```
 
 colorspace filter
-'''
+```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colorspace.mp4
-'''
+```
 Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too.  The second part -vf "colorspace=bt709:iall=bt601-6-625:fast=1" encodes for the output being bt709, rather than the default bt601 matrix. iall=bt601-6-625 says to treat all the input (colorspace, primaries and transfer function) with the bt601-6-625 label). fast=1 skips gamma/primary conversion in a mathematically correct way.  See:  https://ffmpeg.org/ffmpeg-filters.html#colorspace
 
 libswscale filter
-'''
+```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
-'''
+```
 Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.  https://www.ffmpeg.org/ffmpeg-filters.html#scale-1
 
 This is the recommended filter.
