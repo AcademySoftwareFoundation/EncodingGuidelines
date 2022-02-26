@@ -35,6 +35,28 @@ Which is specifying the input and output colorspaces to be bt709.
 
 Separately, if you are converting from exr's in other colorspaces, please use [OCIO](https://opencolorio.org/) to do the color space conversions. [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
 
+## Encoding Overview
+
+Creating movies for review, should be a simple process where the movie file accurately represents the source media content, so that you can feel confident that issues with the content are not as a result of creating the movie. Sadly, this is not the case, there are many steps that can create an incorrect result, either through a color shift, or encoding artifacts. This frequently means there isnt a single right answer for all cases, so we will attempt to document the different senarios where you could get tripped up. 
+
+We will mostly be focusing on encoding with ffmpeg, however there will be some cases where we will recommend other tools. Splitting the process into two steps:
+   1 Convert the source media to the target color space.
+   2 Encode the target intermediate frames into the resulting movie.
+
+
+## Acknoledgements 
+
+This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patence.
+
+### Color space conversion.
+
+The color space conversion we are assuming is being done using tools such as [Nuke][https://www.foundry.com/products/nuke-family/nuke] or [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) using [OCIO](https://opencolorio.org/). We strongly recommend using the ACES configuration whever possible, since it provides a good baseline for colorspace conversion. Note, we may mention the use of Nuke a number of times, there are now a large number of 3rd party tools that will also do great at this color space conversion.
+
+Typically, we would assume that an intermediate file would get written out, such as PNG, TIF or DPX for processing in ffmpeg. NOTE, by default the nuke PNG writer will have the slow compression enabled, this does add a little time that is un-necessary for the sort of intermediate file we are using. In the nuke SDK they do provide the source for the PNG writer, so it is possible to get this disabled. However, you may find that switching to Tif will have the same result.
+
+
+
+
 Links:
    * [NCLC Testing Overview](https://richardssam.github.io/ffmpeg-tests/compare.html) This is an overview of the NCLC Tag tests for web review.
    * [Comparing approaches to do the YUV conversion correctly](https://richardssam.github.io/ffmpeg-tests/tests/chip-chart-yuvconvert/compare.html) this shows the right way to do the yuv conversion, comparing the three different ways you can do it in ffmpeg.
