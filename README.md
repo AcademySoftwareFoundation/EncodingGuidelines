@@ -251,7 +251,6 @@ Your monitor reports:
 Chrome on windows, and Safari and Chrome on IOS will always assume the display is sRGB. In theory [chrome://flags/#force-color-profile](chrome://flags/#force-color-profile) should give you some settings for this, but it seems to be ignored.
 
 
-
 #### Color Range <a name="range"></a>
 
 
