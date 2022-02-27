@@ -31,7 +31,7 @@ Where:
 * **-start_number** means the frame sequence starts from frame 1 (defaults to 0)
 * **-i inputfile.%04d.png** means the file sequence will be padded to 4 digits, i.e. 0000, 0001, 0002, etc.
 * **-vframes 100** This is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range.
- *   **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
+ *  Â **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
     * **in_color_matrix=rec709** means color space bt709 video coming in (normal for TV/Desktop video).
     * **out_color_matrix=rec709** means color space bt709 video going out. The combination of this and in_color_matrix will mean the color encoding will match the source media. If you are only adding one set of flags, this is the one, otherwise it will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays.
 * **-c:v libx264** means use the h264 encoding library (libx264)
@@ -61,7 +61,7 @@ We will mostly be focusing on encoding with ffmpeg, however there will be some c
 
 ## Acknowledgements  <a name="Acknowledgements"></a>
 
-This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
+This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience. Â 
 
 ### Color space conversion.  <a name="Color-space-conversion"></a>
 
@@ -253,7 +253,6 @@ Chrome on windows, and Safari and Chrome on IOS will always assume the display i
 
 
 #### Color Range <a name="range"></a>
-
 
 
 ### Web Review <a name="webreview"></a>
