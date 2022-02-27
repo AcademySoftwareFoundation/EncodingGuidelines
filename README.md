@@ -17,7 +17,8 @@ The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.act
 	2. [Prores](#prores)
 7. [Metadata NCLC/NCLX](#nclc)
 	1. [Gamut - colorprimaries](#gamut)
-	2. [
+	2. [Color Range](#range)
+8, [Web Review](#webreview)
 ## Encoding Cheat sheet
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
@@ -255,9 +256,9 @@ Chrome on windows, and Safari and Chrome on IOS will always assume the display i
 
 
 
-### Web Review
+### Web Review <a name="webreview"></a>
 See:
-     * [NCLC Testing Overview](https://richardssam.github.io/ffmpeg-tests/compare.html) This is an overview of the NCLC Tag tests for web review.
-     * [Comparing different outputs for -color_trc](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-osx/compare.html) - Showing what the -color_trc flag is doing, compared to embedding in mov and png.
-     * [Comparing different outputs for the -colorprimaries](https://richardssam.github.io/ffmpeg-tests/gamuttests/iccgamut/compare.html) 
+* [NCLC Testing Overview](https://richardssam.github.io/ffmpeg-tests/compare.html) This is an overview of the NCLC Tag tests for web review.
+* [Comparing different outputs for -color_trc](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-osx/compare.html) - Showing what the -color_trc flag is doing, compared to embedding in mov and png.
+* [Comparing different outputs for the -colorprimaries](https://richardssam.github.io/ffmpeg-tests/gamuttests/iccgamut/compare.html) 
 
