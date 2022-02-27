@@ -19,3 +19,5 @@ PATH=./tools/oiio-2.3.11.0/build/dist/bin:$PATH PYTHONPATH=./tools/oiio-2.3.11.0
 Examples for downloading:
 https://github.com/darbyjohnston/otio-oc-examples
 
+Restoring part of sparks:
+"c:\Program Files\Amazon\AWSCLIV2\aws.exe" s3 sync --no-sign-request s3://download.opencontent.netflix.com/sparks/aces_image_sequence_59_94_fps/ . --exclude "*" --include "SPARKS_ACES_06*.exr"
