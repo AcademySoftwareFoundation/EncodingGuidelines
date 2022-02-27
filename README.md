@@ -225,6 +225,29 @@ The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h
 How good is your browser at remapping source media of an expanded gamut (e.g. rec2020 or Display-p3) to your display.</p>
 Your monitor reports:
 
+<div x-data="">
+	<div x-show='window.matchMedia("(color-gamut: srgb)").matches && !window.matchMedia("(color-gamut: p3)").matches && !window.matchMedia("(color-gamut: rec2020)").matches' >
+	Supports SRGB
+	</div>
+    <div x-show='window.matchMedia("(color-gamut: p3)").matches && !window.matchMedia("(color-gamut: rec2020)").matches' >
+	Supports Display-P3
+	</div>
+    <div x-show='window.matchMedia("(color-gamut: rec2020)").matches' >
+	Supports rec2020
+	</div>
+
+</div>
+		
+<table>
+<TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
+<TR><TD><img width=406 src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width=406   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'></video></td></TR>
+</table>
+
+<table class='compare'>
+<TR><TD><img width=400 src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
+<TR><TD><img width=400 src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
+</table>
+
 Chrome on windows, and Safari and Chrome on IOS will always assume the display is sRGB. In theory [chrome://flags/#force-color-profile](chrome://flags/#force-color-profile) should give you some settings for this, but it seems to be ignored.
 
 
