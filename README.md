@@ -59,7 +59,7 @@ We will mostly be focusing on encoding with ffmpeg, however there will be some c
 2. Encode the target intermediate frames into the resulting movie.
 
 
-## Acknowledgements  <a name="Acknowledgements"></a>
+### Acknowledgements  <a name="Acknowledgements"></a>
 
 This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
 
@@ -70,14 +70,14 @@ The color space conversion we are assuming is being done using tools such as [Nu
 Typically, we would assume that an intermediate file would get written out, such as PNG, TIF or DPX for processing in ffmpeg. NOTE, by default the nuke PNG writer will have the slow compression enabled, this does add a little time that is unnecessary for the sort of intermediate file we are using. In the nuke SDK they do provide the source for the PNG writer, so it is possible to get this disabled. However, you may find that switching to Tif will have the same result.
 
 
-### Media Encoding with ffmpeg  <a name="encodestart"></a>
+## Media Encoding with ffmpeg  <a name="encodestart"></a>
 
 We will break the encoding process into three parts:
 1. The RGB to YCrCb conversion.
 2. The encoding process itself.
 3. Metadata tagging.
 
-#### RGB to YCrCb Conversion <a name="yuv"></a>
+### RGB to YCrCb Conversion <a name="yuv"></a>
 This is the area you are most likely to get wrong. By default 
 As a rule of thumb, we would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in goes out. The problem is that most of the codecs are doing some sort of RGB to YUV conversion (technically YCrCb). The notable exception is x264rgb (see below). 
 
@@ -92,7 +92,7 @@ TODO -- Review the SWS_Flags.
 
 For examples comparing these see: [here](https://richardssam.github.io/ffmpeg-tests/tests/chip-chart-yuvconvert/compare.html)
 
-##### colormatrix filter
+#### colormatrix filter
 ```
 -vf "colormatrix=bt470bg:bt709"
 ```
@@ -101,7 +101,7 @@ e.g.
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colormatrix2.mp4
 ```
-##### colorspace filter
+#### colorspace filter
 ```
  -vf "colorspace=bt709:iall=bt601-6-625:fast=1"
  ```
@@ -110,7 +110,7 @@ e.g.
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444colorspace.mp4
 ```
-##### libswscale filter
+#### libswscale filter
 ```
 -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"
 ```
@@ -122,7 +122,7 @@ e.g.
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
 
-#### TV vs. Full range. <a name="tvfull"></a>
+### TV vs. Full range. <a name="tvfull"></a>
 All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantisation artifacts for 8-bit encoding (the standard for web playback).
 
 TODO Get Quantization examples.
@@ -144,7 +144,7 @@ TODO: Do additional testing across all players.
 
 For a detailed breakdown of options see:[Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html) 
 
-#### Encoding as RGB. <a name="rgbencode"></a>
+### Encoding as RGB. <a name="rgbencode"></a>
 You do not *have* to encode into YCrCb, h264 does support RGB encoding, which may be preferable in some situations.
 
 Using the encoder:
@@ -154,12 +154,12 @@ Using the encoder:
 Will skip the conversion completely. Sadly this has no support in web browsers, but is supported by some players (e.g. RV). It is also limited to 8-bit.
 TODO Check about 10-bit encoding.
 
-### Encoding <a name="encode"></a>
+## Encoding <a name="encode"></a>
 We are mainly going to focus on h264 for now, however we hope to expand this in the future.
 NOTE, We do not have any test suites for encoding a this time. This is an area for future development.
 
 A good starting point for encoding options is here: https://trac.ffmpeg.org/wiki/Encode/VFX
-#### H264 <a name="h264"></a>
+### H264 <a name="h264"></a>
 Key flags (see https://trac.ffmpeg.org/wiki/Encode/H.264 ) 
 
 * **-crf 23** - This is the constant rate factor, controlling the default quality (see: https://slhck.info/video/2017/02/24/crf-guide.html ) where -crf 0 is uncompressed. By default this is set to 23, which is a little on the low side, using values closer to 11 is recommended, but this does come at the expense of file-size..
@@ -175,7 +175,7 @@ An example would be:
 ```
 -preset slower -crf 11  -profile:v high -tune film
 ```
-#### ProRes <a name="prores"></a>
+### ProRes <a name="prores"></a>
 There are four Prores encoders, Prores, Prores_ks, Prores_aw and now with ffmpeg 5 VideoToolBox Prores, which is a hardware based OSX M1 encoder/decoder. 
 
 From https://trac.ffmpeg.org/wiki/Encode/VFX the recommendation is to use Prores_ks with -profile:v 3 and the qscale of 11
@@ -209,7 +209,7 @@ TODO:
 * Do some colorspace tests with different qscale values to see where color breaks down.
 * VMAF
 
-### Metadata NCLC/NCLX <a name="nclc"></a>
+## Metadata NCLC/NCLX <a name="nclc"></a>
 There are a number of metadata flags designed to help the player know what colorspace the media is in, so it can correctly interpret it for playback. We do recommend adding the metadata tags to media, particularly if you are reviewing it on a web browser, however there are a lot of gotchas here, please see the section on [Web Review](#review).
 
 The NCLC/NCLX is defined as a ISO spec here (see https://www.iso.org/standard/73412.html). The numbers below are part of the definition. NCLC stands for Non-Consistent Luminance Coding, a brief overview of its history is here. For MP4 files, its also known as NCLX. Additionally this metadata can also be represented in the h264 metadata stream in the video usability Information (VUI) block. 
@@ -220,7 +220,7 @@ NOTE: None of the flags below affect the encoding of the source imagery, they ar
 
 The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h at master](https://github.com/FFmpeg/FFmpeg/blob/master/libavutil/pixfmt.h)
 
-#### Gamut colorprimaries <a name="gamut"></a>
+### Gamut colorprimaries <a name="gamut"></a>
 
 How good is your browser at remapping source media of an expanded gamut (e.g. rec2020 or Display-p3) to your display.</p>
 Your monitor reports:
@@ -238,23 +238,26 @@ Your monitor reports:
 
 </div>
 		
-<table width=100%>
+<table width='100%'>
+>>>>>>> main
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
-<TR><TD><img width=406 src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width=406   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'></video></td></TR>
+<TR><TD><img width='406' src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width='406'   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'/></video></td></TR>
 </table>
 
-<table class='compare' width=100%>
-<TR><TD><img width=400 src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
-<TR><TD><img width=400 src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
+
+<table class='compare' width='100%'>
+<TR><TD><img width='400' src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
+<TR><TD><img width='400' src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
 </table>
 
 Chrome on windows, and Safari and Chrome on IOS will always assume the display is sRGB. In theory [chrome://flags/#force-color-profile](chrome://flags/#force-color-profile) should give you some settings for this, but it seems to be ignored.
 
 
-#### Color Range <a name="range"></a>
+
+### Color Range <a name="range"></a>
 
 
-### Web Review <a name="webreview"></a>
+## Web Review <a name="webreview"></a>
 See:
 * [NCLC Testing Overview](https://richardssam.github.io/ffmpeg-tests/compare.html) This is an overview of the NCLC Tag tests for web review.
 * [Comparing different outputs for -color_trc](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-osx/compare.html) - Showing what the -color_trc flag is doing, compared to embedding in mov and png.
