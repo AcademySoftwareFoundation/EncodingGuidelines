@@ -1,4 +1,6 @@
 This contains a variety of test suites to help pick encoding profiles suitable for VFX/Animation media reviews.
+We are trying to develop best practices, so we will suggest a good starting point, but there isnt a right answer for all cases, so we do also try to explain what the parameters do, and in what situations you might want to choose different parameters.
+We welcome suggestions and improvements.
 
 This is being done as part of the [ASWF Media Review working-group](https://wiki.aswf.io/display/PRWG/Playback+And+Review+Working+Group).
 
@@ -198,7 +200,7 @@ Using this with the usual color space flags, seems to work well with the excepti
 ffmpeg.exe -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be -sws_flags spline+accurate_rnd+full_chroma_int -vframes 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 OUTPUTFILE.png
 
 
-However, other encoders seem to be recognised correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didnt seem to help.
+However, other encoders seem to be recognised correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
 ```
 ffmpeg.exe -i ./chip-chart-yuvconvert\basicnclc.mov -c copy -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 chip-chart-yuvconvert\basicnclcmetadata.mov
 ```
@@ -222,10 +224,10 @@ The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h
 
 ### Gamut colorprimaries <a name="gamut"></a>
 
-How good is your browser at remapping source media of an expanded gamut (e.g. rec2020 or Display-p3) to your display.</p>
+How good is your browser at remapping source media of an expanded gamut (e.g. rec2020 or Display-p3) to your display.
 Your monitor reports:
 
-<table width='100%'>
+<table class='compare' width='100%'>
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
 <TR><TD><img width='406' src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width='406'   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'/></video></td></TR>
 </table>
