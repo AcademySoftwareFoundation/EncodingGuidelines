@@ -2,7 +2,7 @@ This contains a variety of test suites to help pick encoding profiles suitable f
 
 This is being done as part of the [ASWF Media Review working-group](https://wiki.aswf.io/display/PRWG/Playback+And+Review+Working+Group).
 
-The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
+The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
 1. [Encoding Cheat Sheet](#Encoding-Cheat-sheet)
 2. [Encoding Overview](#Encoding-Overview)
@@ -12,8 +12,8 @@ The main page for this for now is [here](https://wiki.aswf.io/pages/viewpage.act
 	1. [RGB to YCrCb Conversion](#yuv)
 	2. [TV vs. Full range.](#tvfull)
 	3. [RGB encode](#rgbencode)
-6. [Encoding][(#encode)
-	1. [h264][(#h264)
+6. [Encoding](#encode)
+	1. [h264](#h264)
 	2. [Prores](#prores)
 7. [Metadata NCLC/NCLX](#nclc)
 	1. [Gamut - colorprimaries](#gamut)
@@ -225,19 +225,6 @@ The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h
 How good is your browser at remapping source media of an expanded gamut (e.g. rec2020 or Display-p3) to your display.</p>
 Your monitor reports:
 
-<div x-data="">
-	<div x-show='window.matchMedia("(color-gamut: srgb)").matches && !window.matchMedia("(color-gamut: p3)").matches && !window.matchMedia("(color-gamut: rec2020)").matches' >
-	Supports SRGB
-	</div>
-    <div x-show='window.matchMedia("(color-gamut: p3)").matches && !window.matchMedia("(color-gamut: rec2020)").matches' >
-	Supports Display-P3
-	</div>
-    <div x-show='window.matchMedia("(color-gamut: rec2020)").matches' >
-	Supports rec2020
-	</div>
-
-</div>
-		
 <table width='100%'>
 >>>>>>> main
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
