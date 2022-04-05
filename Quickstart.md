@@ -13,9 +13,8 @@ This document is a result of feedback from many people, in particular I would li
 ## H264 Encoding from an image sequence for Web Review
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
-```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
-```
+>```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4```
+
 
 | <!-- -->    | <!-- -->    |
 | --- | --- |
@@ -53,9 +52,7 @@ For more details see:
 
 Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
 
-```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 3 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov
-```
+>```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 3 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov```
 
 | <!-- -->    | <!-- -->    |
 | --- | --- |
@@ -72,9 +69,7 @@ For more details see:
 
 As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 
-```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 4444 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov
-```
+>```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 4444 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov```
 
 | <!-- -->            | <!-- -->    |
 | ---------           | ----------- |
