@@ -1,4 +1,11 @@
+---
+title: Encoding Cheatsheet
+parent: Index
+nav_order: 2
+---
+
 # Encoding Cheatsheet
+{:toc}
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
