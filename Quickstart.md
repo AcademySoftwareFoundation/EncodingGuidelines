@@ -5,6 +5,7 @@ nav_order: 2
 ---
 
 # Encoding Cheatsheet
+{:toc}
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
@@ -58,6 +59,7 @@ Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many ca
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 3 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov
 ```
+
 | <!-- -->    | <!-- -->    |
 | --- | --- |
 | **-profile:v 3** | Prores profile |
@@ -76,10 +78,11 @@ As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 4444 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov
 ```
-| <!-- -->    | <!-- -->    |
-| --- | --- |
+
+| <!-- -->            | <!-- -->    |
+| ---------           | ----------- |
 | **-profile:v 4444** | Prores profile for 4444 |
-| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.*  |
+| **-qscale:v 9**     | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.*  |
 | ** -pix_fmt yuv444p10le ** | Convert to 10-bit YUV 4444 |
 
 For more details see:
