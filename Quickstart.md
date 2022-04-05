@@ -10,7 +10,9 @@ This is a cheatsheet for encoding best practices for VFX/Animation production. F
 
 This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
 
-## H264 Encoding from an image sequence for Web Review
+
+
+# H264 Encoding from an image sequence for Web Review
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 >```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4```
@@ -48,7 +50,7 @@ For more details see:
    * [Browser color issues](ColorPreservation.md#nclc)
 
 
-## ProRes 422 encoding with ffmpeg.
+# ProRes 422 encoding with ffmpeg.
 
 Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
 
@@ -65,7 +67,7 @@ For more details see:
    * [Prores](Encoding.md#prores)
    * [YUV Conversion](ColorPreservation.md#yuv)
 
-## ProRes 4444 encoding with ffmpeg.
+# ProRes 4444 encoding with ffmpeg.
 
 As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 
@@ -81,7 +83,7 @@ For more details see:
    * [Prores](Encoding.md#prores)
    * [YUV Conversion](ColorPreservation.md#yuv)
 
-### TV vs. Full range. <a name="tvfull"></a>
+# TV vs. Full range. <a name="tvfull"></a>
 All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantisation artifacts for 8-bit encoding (the standard for web playback).
 
 TODO Get Quantization examples.
@@ -106,7 +108,7 @@ For more details see:
    * [Encoding](Encoding.md#range)
 
 
-### Encoding as RGB. <a name="rgbencode"></a>
+# Encoding as RGB. <a name="rgbencode"></a>
 You do not *have* to encode into YCrCb, h264 does support RGB encoding, which may be preferable in some situations.
 
 Using the encoder:
