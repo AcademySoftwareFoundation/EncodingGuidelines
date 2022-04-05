@@ -15,13 +15,13 @@ A good starting point for encoding options is here: [https://trac.ffmpeg.org/wik
 Key flags (see [https://trac.ffmpeg.org/wiki/Encode/H.264](https://trac.ffmpeg.org/wiki/Encode/H.264) )
 
 * **-crf 23** - This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where -crf 0 is uncompressed. By default this is set to 23, which is a little on the low side, using values closer to 11 is recommended, but this does come at the expense of file-size..
-* **-qp 23** - Quantization Parameter - it is recommended that you do not use this, in preference to -crf above (see: https://slhck.info/video/2017/03/01/rate-control.html )
-* **-preset slower** - https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ
-* **-tune film** - Optionally use the tune option to change settings based on specific inputs - https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ - see also: https://superuser.com/questions/564402/explanation-of-x264-tune I suspect that we would want to use one of:
+* **-qp 23** - Quantization Parameter - it is recommended that you do not use this, in preference to -crf above (see: [https://slhck.info/video/2017/03/01/rate-control.html](https://slhck.info/video/2017/03/01/rate-control.html) )
+* **-preset slower** - [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ)
+* **-tune film** - Optionally use the tune option to change settings based on specific inputs - [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ) - see also: [https://superuser.com/questions/564402/explanation-of-x264-tune](https://superuser.com/questions/564402/explanation-of-x264-tune) I suspect that we would want to use one of:
     * **-tune film**    good for live action content.
     * **-tune animation** good for animated content with areas of flat colors.
     * **-tune grain**   good for live action content where you want to preserve the grain as much as possible.
-* **-qscale:v 9** - Generic quality scale flag: https://www.ffmpeg.org/ffmpeg.html#toc-Main-options - TODO experiment with this.
+* **-qscale:v 9** - Generic quality scale flag: [https://www.ffmpeg.org/ffmpeg.html#toc-Main-options](https://www.ffmpeg.org/ffmpeg.html#toc-Main-options) - TODO experiment with this.
 
 An example would be:
 ```
@@ -30,7 +30,7 @@ An example would be:
 ### ProRes <a name="prores"></a>
 There are four Prores encoders, Prores, Prores_ks, Prores_aw and now with ffmpeg 5 VideoToolBox Prores, which is a hardware based OSX M1 encoder/decoder.
 
-From https://trac.ffmpeg.org/wiki/Encode/VFX the recommendation is to use Prores_ks with -profile:v 3 and the qscale of 11
+From [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) the recommendation is to use Prores_ks with -profile:v 3 and the qscale of 11
 
 Options that can be used include:
 
