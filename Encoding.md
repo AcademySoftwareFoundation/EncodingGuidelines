@@ -1,7 +1,5 @@
 ---
 title: Encoding Overview
-parent: Index
-nav_order: 3
 ---
 
 ## Encoding Overview <a name="Encoding-Overview"></a>
