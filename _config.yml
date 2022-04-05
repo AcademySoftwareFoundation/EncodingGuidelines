@@ -1,5 +1,1 @@
-theme: jekyll-theme-minimal
-plugins:
-- jekyll-paginate
-paginate: 5 # Posts per page
-paginate_path: "page:num/"
+remote_theme: just-the-docs/just-the-docs
