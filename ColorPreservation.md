@@ -6,8 +6,6 @@ nav_order: 4
 
 # Color Preservation with ffmpeg  <a name="encodestart"></a>
 
-{: .no_toc }
-
 <details open markdown="block">
   <summary>
     Table of contents
