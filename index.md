@@ -10,7 +10,7 @@ This is being done as part of the [ASWF Media Review working-group](https://wiki
 The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
 1. [Acknowledgements](#Acknowledgements)
-2. [Encoding Cheat Sheet](Index.html)
+2. [Encoding Cheat Sheet](Quickstart.html)
 3. [Encoding Overview](Encoding.html#Encoding-Overview)
 4. [Color space conversion](ColorPreservation.html#Color-space-conversion)
 5. [Media Encoding with ffmpeg](ColorPreservation.html#encodestart)
