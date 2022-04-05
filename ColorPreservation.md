@@ -1,21 +1,7 @@
 ---
 title: Color Preservation
-parent: Index
-nav_order: 4
 ---
 
-# Color Preservation with ffmpeg  <a name="encodestart"></a>
-
-<details open markdown="block">
-  <summary>
-    Table of contents
-  </summary>
-  {: .text-delta }
-1. TOC
-{:toc}
-</details>
-
----
 # Media Encoding with ffmpeg  <a name="encodestart"></a>
 
 We will break the encoding process into three parts:
