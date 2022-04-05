@@ -1,6 +1,6 @@
 ## Encoding Overview <a name="Encoding-Overview"></a>
 
-Creating movies for review should be a simple process where the movie file accurately represents the source media content, so that you can feel confident that issues with the content are not as a result of creating the movie. Sadly, this is not the case, there are many steps that can create an incorrect result, either through a color shift, or encoding artifacts. This frequently means there isn't a single right answer for all cases, so we will attempt to document the different scenarios where you could get tripped up. 
+Creating movies for review should be a simple process where the movie file accurately represents the source media content, so that you can feel confident that issues with the content are not as a result of creating the movie. Sadly, this is not the case, there are many steps that can create an incorrect result, either through a color shift, or encoding artifacts. This frequently means there isn't a single right answer for all cases, so we will attempt to document the different scenarios where you could get tripped up.
 
 We will mostly be focusing on encoding with ffmpeg, however there will be some cases where we will recommend other tools. Splitting the process into two steps:
 1. Convert the source media to the target color space.
@@ -10,11 +10,11 @@ We will mostly be focusing on encoding with ffmpeg, however there will be some c
 We are mainly going to focus on h264 for now, however we hope to expand this in the future.
 NOTE, We do not have any test suites for encoding a this time. This is an area for future development.
 
-A good starting point for encoding options is here: https://trac.ffmpeg.org/wiki/Encode/VFX
+A good starting point for encoding options is here: [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX)
 ### H264 <a name="h264"></a>
-Key flags (see https://trac.ffmpeg.org/wiki/Encode/H.264 )
+Key flags (see [https://trac.ffmpeg.org/wiki/Encode/H.264](https://trac.ffmpeg.org/wiki/Encode/H.264) )
 
-* **-crf 23** - This is the constant rate factor, controlling the default quality (see: https://slhck.info/video/2017/02/24/crf-guide.html ) where -crf 0 is uncompressed. By default this is set to 23, which is a little on the low side, using values closer to 11 is recommended, but this does come at the expense of file-size..
+* **-crf 23** - This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where -crf 0 is uncompressed. By default this is set to 23, which is a little on the low side, using values closer to 11 is recommended, but this does come at the expense of file-size..
 * **-qp 23** - Quantization Parameter - it is recommended that you do not use this, in preference to -crf above (see: https://slhck.info/video/2017/03/01/rate-control.html )
 * **-preset slower** - https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ
 * **-tune film** - Optionally use the tune option to change settings based on specific inputs - https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ - see also: https://superuser.com/questions/564402/explanation-of-x264-tune I suspect that we would want to use one of:
