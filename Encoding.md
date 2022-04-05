@@ -57,9 +57,7 @@ ffmpeg.exe -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be 
 
 
 However, other encoders seem to be recognised correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
-```
-ffmpeg.exe -i ./chip-chart-yuvconvert\basicnclc.mov -c copy -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 chip-chart-yuvconvert\basicnclcmetadata.mov
-```
+>```ffmpeg.exe -i ./chip-chart-yuvconvert\basicnclc.mov -c copy -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 chip-chart-yuvconvert\basicnclcmetadata.mov```
 
 TODO:
 * Figure out the missing metadata.
