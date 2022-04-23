@@ -36,7 +36,7 @@ Clone/submodule OpenTmelineIO and then:
 python -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install cmake
+pip install cmake pyseq
 git clone git@github.com:PixarAnimationStudios/OpenTimelineIO.git
 cd OpenTimelineIO
 python -m pip install .
