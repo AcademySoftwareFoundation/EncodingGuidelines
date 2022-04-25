@@ -1,4 +1,6 @@
 ---
+layout: default
+nav_order: 2
 title: Encoding Cheatsheet
 ---
 
@@ -8,17 +10,18 @@ This is a cheatsheet for encoding best practices for VFX/Animation production. F
 
 ### Acknowledgements  <a name="Acknowledgements"></a>
 
-This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
-
-
+This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.
 
 # H264 Encoding from an image sequence for Web Review
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
->```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4```
 
+```
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"
+        -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p
+        -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
+```
 
-| <!-- -->    | <!-- -->    |
 | --- | --- |
 | **-r 24**     | means 24 fps |
 | **-start_number** 1 | The frame sequence starts from frame 1 (defaults to 0) |
@@ -35,7 +38,6 @@ If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.00
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
-| <!-- -->    | <!-- -->    |
 | --- | --- |
 | **in_color_matrix=rec709** | color space bt709 video coming in (normal for TV/Desktop video).|
 | **out_color_matrix=rec709** | means color space bt709 video going out.  |
