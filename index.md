@@ -1,3 +1,10 @@
+---
+layout: default
+nav_order: 1
+title: Index
+---
+
+
 # ASWF Encoding recommendations.
 
 This contains a variety of test suites to help pick encoding profiles suitable for VFX/Animation media reviews.

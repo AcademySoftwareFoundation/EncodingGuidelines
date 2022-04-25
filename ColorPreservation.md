@@ -1,5 +1,7 @@
 ---
+layout: default
 title: Color Preservation
+nav_order: 4
 ---
 
 # Media Encoding with ffmpeg  <a name="encodestart"></a>
@@ -76,13 +78,13 @@ Your monitor reports:
 
 <table class='compare' width='100%'>
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
-<TR><TD><img width='406' src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width='406'   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'/></video></td></TR>
+<TR><TD><img width='406' src="/gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width='406'   ><source src='/gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'/></video></td></TR>
 </table>
 
 
 <table class='compare' width='100%'>
-<TR><TD><img width='400' src="browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
-<TR><TD><img width='400' src="browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
+<TR><TD><img width='400' src="../browsercompare/gamut-all.png"/></TD><TD>What the image should look like if nothing is working, or you have a rec2020 monitor.</TD></TR>
+<TR><TD><img width='400' src="../browsercompare/gamut-displayp3-raw.png"/></TD><TD>What the image should look like if you have a display-p3 monitor.</TD></TR>
 </table>
 
 Chrome on windows, and Safari and Chrome on IOS will always assume the display is sRGB. In theory [chrome://flags/#force-color-profile](chrome://flags/#force-color-profile) should give you some settings for this, but it seems to be ignored.
