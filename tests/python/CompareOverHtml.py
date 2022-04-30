@@ -9,10 +9,10 @@ header = """
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <style>
-  a:link {{ 
+  a:link {{
         color:rgb(150, 150, 255);
    }}
-     a:visited {{ 
+     a:visited {{
         color:rgb(120, 120, 255);
    }}
   .grid tbody tr td {{ cursor: grab }}
@@ -40,14 +40,13 @@ body_begin = """
 
 </head>
 
-<body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
-<a href="/ffmpeg-tests">Testing Home</a>
+<body style="background-color:#27262b; color:rgb(200,200,200)">
 
 {introduction}
 
     <div data-role="page" data-theme='a'>
 
-      <div data-role="content"><TABLE><TR><TD width='300' align='center' valign="top">
+      <div data-role="content"><TABLE><TR><TD width='100' align='center' valign="top">
 """
 button_template = """
         <button class="ui-button ui-widget ui-corner-all" id="button{id}" data-role="button">{label}</button><BR/>

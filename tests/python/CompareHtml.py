@@ -10,10 +10,10 @@ header = """
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <style>
   .grid tbody tr td {{ cursor: grab }}
-  a:link {{ 
+  a:link {{
         color:rgb(150, 150, 255);
    }}
-     a:visited {{ 
+     a:visited {{
         color:rgb(120, 120, 255);
    }}
   </style>
@@ -33,8 +33,7 @@ header = """
   }} );
   </script>
 </head>
-<a href="/ffmpeg-tests">Testing Home</a>
-<body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
+<body style="background-color:#27262b; color:rgb(200,200,200); ">
 {introduction}
 <table id="sort" class="grid"  border=0 cellspacing="{cellspacing}" cellpadding="0">
 <tbody>
