@@ -1,7 +1,7 @@
 ---
 layout: default
 nav_order: 6.2
-title: YcRCb Conversion Comparison
+title: Color TRC Comparison
 parent: Test Output
 ---
 

@@ -7,4 +7,4 @@ has_children: true
 
 # Testing Output
 
-The pages below so some of the web pages that are generated based on the testing we have done.
+The pages below show some of the web pages that are generated based on the testing we have done.

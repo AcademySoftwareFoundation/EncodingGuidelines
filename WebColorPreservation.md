@@ -2,6 +2,7 @@
 layout: default
 title: Web Color Preservation
 nav_order: 5
+parent: Encoding Overview
 ---
 
 <style>
@@ -11,8 +12,16 @@ nav_order: 5
 }
 </style>
 
-# Web browser color management for Video
-We will be doing a number of tests comparing PNG files with ICC profiles against video files with NCLC tags. In theory they should match.
+# Color Metadata and Web Color Preservation <a name="nclc"></a>
+There are a number of metadata flags designed to help the player know what colorspace the media is in, so it can correctly interpret it for playback. We do recommend adding the metadata tags to media, particularly if you are reviewing it on a web browser, however there are a lot of gotchas here, please see the section on [Web Review](#review).
+
+The NCLC/NCLX is defined as a ISO spec here (see https://www.iso.org/standard/73412.html). The numbers below are part of the definition. NCLC stands for Non-Consistent Luminance Coding, a brief overview of its history is here. For MP4 files, its also known as NCLX. Additionally this metadata can also be represented in the h264 metadata stream in the video usability Information (VUI) block.
+
+You can read the metadata using [mp4box.js](https://gpac.github.io/mp4box.js/test/filereader.html) which is a visual browser of the mp4 metadata, and look at moov/trak/mdia/minf/stbl/stsd/avc1/colr property.
+
+NOTE: None of the flags below affect the encoding of the source imagery, they are meant to be used to guide how the mp4 file is decoded.
+
+The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h at master](https://github.com/FFmpeg/FFmpeg/blob/master/libavutil/pixfmt.h)
 
 There are four possible tags that you can apply to movies:
   * <a href='#transfer-function-tests-color_trc-flag'>color_trc</a> - The transfer function (e.g. gamma)
@@ -24,21 +33,10 @@ There are four possible tags that you can apply to movies:
 For a detailed breakdown of what browsers support what flags see: [here](https://wiki.aswf.io/display/PRWG/Color+fidelity+for+Web+Browsers)
 
 
-# Metadata NCLC/NCLX <a name="nclc"></a>
-There are a number of metadata flags designed to help the player know what colorspace the media is in, so it can correctly interpret it for playback. We do recommend adding the metadata tags to media, particularly if you are reviewing it on a web browser, however there are a lot of gotchas here, please see the section on [Web Review](#review).
-
-The NCLC/NCLX is defined as a ISO spec here (see https://www.iso.org/standard/73412.html). The numbers below are part of the definition. NCLC stands for Non-Consistent Luminance Coding, a brief overview of its history is here. For MP4 files, its also known as NCLX. Additionally this metadata can also be represented in the h264 metadata stream in the video usability Information (VUI) block.
-
-You can read the metadata using [mp4box.js](https://gpac.github.io/mp4box.js/test/filereader.html) which is a visual browser of the mp4 metadata, and look at moov/trak/mdia/minf/stbl/stsd/avc1/colr property.
-
-NOTE: None of the flags below affect the encoding of the source imagery, they are meant to be used to guide how the mp4 file is decoded.
-
-The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h at master](https://github.com/FFmpeg/FFmpeg/blob/master/libavutil/pixfmt.h)
-
 # Transfer function tests (color_trc flag)
 This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. rec709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, rec709 is frankly rather useless, consequently we recommend using sRGB as a default.
 
-For more details see: <a href="https://richardssam.github.io/ffmpeg-tests/tests/greyramp-osx/compare.html">here</a>
+For more details see: [here](tests/greramp-osx/ycrcbcompare.md)
 
 ## sRGB
 Using the `-color_trc 13` flag. This appears to be the most reliable one, working across all machines and browsers that support it.
@@ -85,7 +83,7 @@ We recommend the use of `-color_trc 13` to use sRGB. There is no support for a g
 
 # Gamut colorprimaries
 
-Normally web browsers use the rec709 color gamut (which is different to the rec709 gamma), but in theory you could define your media as having a wider gamut, e.g. DCI-P3 or rec2020. The files below show a PNG and MP4 file defined using the rec2020 gamut, so depending on which monitor you are using it will show different text. This is similar to the excellent [WIDE>Gamut](https://www.wide-gamut.com/) test page. 
+Normally web browsers use the rec709 color gamut (which is different to the rec709 gamma), but in theory you could define your media as having a wider gamut, e.g. DCI-P3 or rec2020. The files below show a PNG and MP4 file defined using the rec2020 gamut, so depending on which monitor you are using it will show different text. This is similar to the excellent [WIDE>Gamut](https://www.wide-gamut.com/) test page.
 
 <table class='compare' width='100%'>
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
