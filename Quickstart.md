@@ -10,10 +10,6 @@ This is a cheatsheet for encoding best practices for VFX/Animation production. F
 
 This document is based on results from ffmpeg 4.4, we have not tested with 5.0 yet, but do plan to.
 
-### Acknowledgements  <a name="Acknowledgements"></a>
-
-This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.
-
 # H264 Encoding from an image sequence for Web Review
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
