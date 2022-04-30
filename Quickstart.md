@@ -8,6 +8,8 @@ title: Encoding Cheatsheet
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
+This document is based on results from ffmpeg 4.4, we have not tested with 5.0 yet, but do plan to.
+
 ### Acknowledgements  <a name="Acknowledgements"></a>
 
 This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.
@@ -17,8 +19,8 @@ This document is a result of feedback from many people, in particular I would li
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 
 ```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"
-        -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
         -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
 ```
 
@@ -34,7 +36,6 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt
 **-colorspace 1** | mp4 metadata - specifying rec709 yuv color pixel format
 **-color_primaries 1** | mp4 metadata - rec709 color gamut primaries
 **-color_trc 13** | mp4 metadata color transfer = sRGB - See tests below.
-
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
@@ -56,9 +57,12 @@ For more details see:
 
 Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
 
->```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 3 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov```
+```
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
+    -c:v prores_ks -profile:v 3 -qscale:v 9 \
+    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov
+```
 
-| <!-- -->    | <!-- -->    |
 | --- | --- |
 | **-profile:v 3** | Prores profile |
 | **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.* |
@@ -73,13 +77,16 @@ For more details see:
 
 As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 
->```ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 -c:v prores_ks -profile:v 4444 -qscale:v 9 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov```
+```
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
+   -c:v prores_ks -profile:v 4444 -qscale:v 9 \
+   -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov
+```
 
-| <!-- -->            | <!-- -->    |
 | ---------           | ----------- |
 | **-profile:v 4444** | Prores profile for 4444 |
 | **-qscale:v 9**     | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.*  |
-| ** -pix_fmt yuv444p10le ** | Convert to 10-bit YUV 4444 |
+| **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4444 |
 
 For more details see:
    * [Prores](Encoding.md#prores)
@@ -100,7 +107,10 @@ Specifying *out_range=full* forces the output range, but you also need to set th
 ```
 A full example encode would look like:
 ```
-ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-fulltv/radialgrad-full.mp4
+ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
+    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
+    -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 \
+    -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
 TODO: Do additional testing across all players.
