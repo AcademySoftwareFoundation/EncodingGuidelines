@@ -35,3 +35,12 @@ The main confluence page for this for now is [here](https://wiki.aswf.io/pages/v
 ### Acknowledgements  <a name="Acknowledgements"></a>
 
 This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
+
+### Status
+
+This document and project is still a work in progress. We are working on building a more complete testing framework, so that it is easy to confirm that changes to ffmpeg are not breaking existing functionality.
+
+
+### Authors
+
+This document is primarily the work of Sam Richards, with support from Daniel Flehner Heen.
