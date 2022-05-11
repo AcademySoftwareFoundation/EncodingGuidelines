@@ -26,18 +26,19 @@ the media files if desired.
       }
       ``` 
 * Store Clips in a `SerializableCollection`
-* Media linker to execute the test and store the reference(?)
-  * Based on a simple descriptive file (JSON?) perform test matrix
 
-# Setup OTIO
+# Setup Test Environment
 
-Clone/submodule OpenTmelineIO and then:
 ```
+# Create a virtual environment
 python -m venv .venv
 source .venv/bin/activate
+
+# Upgrade pip and install dependencies
 pip install --upgrade pip
 pip install cmake pyseq
+
+# Build OTIO
 git clone git@github.com:PixarAnimationStudios/OpenTimelineIO.git
-cd OpenTimelineIO
-python -m pip install .
+python -m pip install OpenTimelineIO
 ```
