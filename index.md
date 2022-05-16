@@ -40,7 +40,6 @@ This document is a result of feedback from many people, in particular I would li
 
 This document and project is still a work in progress. We are working on building a more complete testing framework, so that it is easy to confirm that changes to ffmpeg are not breaking existing functionality.
 
-
 ### Authors
 
 This document is primarily the work of Sam Richards, with support from Daniel Flehner Heen.

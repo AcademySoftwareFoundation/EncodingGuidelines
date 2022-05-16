@@ -33,6 +33,20 @@ An example would be:
 ```
 -preset slower -crf 11  -profile:v high -tune film
 ```
+
+#### H264 Bitdepth
+
+By default, h264 is created as a yuv420p file format. This is the recommended format for web playback and also playback with the quicktime player on OSX and other apple devices, but the h264 codec can support other formats that are modified with the `-pix_fmt` flag.
+
+TODO Needs more investigation, e.g. do you set pix_fmt and profile, or will one set the other?
+
+|---|---|
+|-pix_fmt yuv444p10le| Defines a YUV 444 image at 10bits per component.|
+|-profile:v high10 | Support for bit depth 8-10. |
+|-profile:v high422 | Support for bit depth 8-10. Support for 4:2:0/4:2:2 chroma subsampling.|
+|-profile:v high444 | Support for bit depth 8-10. for 4:2:0/4:2:2/4:4:4 chroma subsampling.|
+
+
 ### ProRes <a name="prores"></a>
 There are four Prores encoders, Prores, Prores_ks, Prores_aw and now with ffmpeg 5 VideoToolBox Prores, which is a hardware based OSX M1 encoder/decoder.
 
@@ -69,6 +83,7 @@ ffmpeg.exe -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
 
 TODO:
 * Figure out the missing metadata so that ffmpeg can correctly decode a quicktime to still.
+* Add other codecs, e.g. DNxHD, AV1
 * Wedge qscale values
 * Do some colorspace tests with different qscale values to see where color breaks down.
 * VMAF
