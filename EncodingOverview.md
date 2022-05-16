@@ -32,14 +32,16 @@ conda activate aswf-ffmpeg
 conda install -c conda-forge py-openimageio
 pip install PyYAML pillow
 ```
-This should give you py-openimageio, openimageio
+This should give you py-openimageio, openimageio and ffmpeg-4.4
+
+TODO - Provide other approaches for quickly getting going (e.g. vcpkg)
 
 ## Quick introduction to color conversion using oiiotool
 
-
 ```
 export OCIO=~/git/OpenColorIO-Configs/aces_1.2/config.ocio # Or wherever your OCIO is.
-oiiotool --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 1920x0 --colorconvert acescg srgb --dither -o outputimage.#.png
+oiiotool --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 1920x0 \
+       --colorconvert acescg srgb --dither -o outputimage.#.png
 ```
 
 | --- | --- |
@@ -59,7 +61,8 @@ Other flags you might want to use include:
 The above will work well for many of the h264 files, but for generating movies with an extended bit depth (8-16), you may want to do:
 ```
 export OCIO=~/git/OpenColorIO-Configs/aces_1.2/config.ocio # Or wherever your OCIO is.
-oiiotool --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 1920x0 --colorconvert acescg srgb -d uint16 -o outputimage.#.png
+oiiotool --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 1920x0
+         --colorconvert acescg srgb -d uint16 -o outputimage.#.png
 ```
 
 Adding the `-d uint16` flag forces the intermediate file format to be 16-bit, rather than the 8-bit default. Note, we have also removed the dither flag.
