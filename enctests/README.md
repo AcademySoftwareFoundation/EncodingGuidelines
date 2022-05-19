@@ -60,13 +60,15 @@ python -m pip install OpenTimelineIO
     * All media refs contain metadata with:
       ``` JSON
       {
-          "aswf": {
-              "FFMpeg4.4.1": {
-                  "encoding_parameters": {},
-                  "encoding_time": 114.4,
-                  "filesize": 1234,
-                  "VMAF_score" 99.1,
-                  "idiff_score": 1.
+          "aswf_enctests": {
+              "dnxhd_36": {
+                  "FFMpeg4.4.1": {
+                      "encoding_parameters": {},
+                      "encoding_time": 114.4,
+                      "filesize": 1234,
+                      "VMAF_score" 99.1,
+                      "idiff_score": 1.
+                  }
               }
           }
       }

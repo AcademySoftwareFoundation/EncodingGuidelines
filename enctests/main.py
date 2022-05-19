@@ -1,9 +1,6 @@
 import os
 import sys
 import time
-import timeit
-from copy import deepcopy
-
 import pyseq
 import shlex
 import argparse
@@ -11,12 +8,14 @@ import subprocess
 import configparser
 
 from pathlib import Path
+
 import opentimelineio as otio
 
 # Test config files
 from enctests.utils import sizeof_fmt
 
-ENCODE_SETTINGS_SUFFIX = '.enctest'
+ENCODE_TEST_SUFFIX = '.enctest'
+SOURCE_SUFFIX = '.source'
 
 # OpenImageIO
 OIIOTOOL_BIN = os.getenv(
@@ -52,9 +51,9 @@ def parse_args():
     )
 
     parser.add_argument(
-        '--test-config-folder',
+        '--test-config-dir',
         action='store',
-        default='./sources',
+        default='./test_configs',
         help='Where to look for *.enctest files'
     )
 
@@ -102,18 +101,20 @@ def parse_config_file(path):
     return config
 
 
-def create_media_reference(path, config):
-    file_desc = config['SOURCE_INFO']
+def create_media_reference(path, source_clip):
+    config = source_clip.metadata['aswf_enctests'].get('SOURCE_INFO')
+    rate = float(config.get('rate'))
+    duration = float(config.get('duration'))
 
     if path.is_dir():
         # Create ImageSequenceReference
         seq = pyseq.get_sequences(path.as_posix())[0]
         available_range = otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(
-                seq.start(), file_desc.getfloat('rate')
+                seq.start(), rate
             ),
             duration=otio.opentime.RationalTime(
-                seq.length(), file_desc.getfloat('rate')
+                seq.length(), rate
             )
         )
         mr = otio.schema.ImageSequenceReference(
@@ -123,7 +124,7 @@ def create_media_reference(path, config):
             start_frame=seq.start(),
             frame_step=1,
             frame_zero_padding=len(max(seq.digits, key=len)),
-            rate=file_desc.getfloat('rate'),
+            rate=rate,
             available_range=available_range
         )
 
@@ -131,56 +132,59 @@ def create_media_reference(path, config):
         # Create ExternalReference
         available_range = otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(
-                0, file_desc.getfloat('rate')
+                0, rate
             ),
             duration=otio.opentime.RationalTime(
-                file_desc.getint('duration'), file_desc.getfloat('rate')
+                duration, rate
             )
         )
         mr = otio.schema.ExternalReference(
             target_url=path.resolve().as_uri(),
-            available_range=available_range
+            available_range=available_range,
         )
+        mr.name = path.name
 
     return mr
 
 
 def create_clip(args, config):
     path = Path(args.source_folder).joinpath(
-        Path(config.get('SOURCE_INFO', 'path'))
+        Path(config.get('path'))
     )
     clip = otio.schema.Clip(name=path.stem)
+    clip.metadata.update({'aswf_enctests': {config.name: dict(config)}})
 
     # Source range
-    clip.source_range = get_source_range(config, 'SOURCE_INFO')
+    clip.source_range = get_source_range(config)
+
     # The initial MediaReference is stored as default
-    mr = create_media_reference(path, config)
+    mr = create_media_reference(path, clip)
     clip.media_reference = mr
 
     return clip
 
 
-def get_source_range(config, test_name):
+def get_source_range(config):
     source_range = otio.opentime.TimeRange(
         start_time=otio.opentime.RationalTime(
-            config.getint(test_name, 'in'),
-            config.getfloat('SOURCE_INFO', 'rate')
+            config.getint('in'),
+            config.getfloat('rate')
         ),
         duration=otio.opentime.RationalTime.from_seconds(
-            config.getint(test_name, 'duration') /
-            config.getint(test_name, 'rate'),
-            config.getfloat('SOURCE_INFO', 'rate')
+            config.getint('duration') /
+            config.getint('rate'),
+            config.getfloat('rate')
         )
     )
 
     return source_range
 
 
-def create_enctest_files(args):
+def create_source_files(args):
     with os.scandir(args.source_folder) as it:
         for item in it:
             path = Path(item.path)
-            if path.suffix == ENCODE_SETTINGS_SUFFIX:
+            if path.suffix == ENCODE_TEST_SUFFIX:
                 # We only register new media
                 continue
 
@@ -188,18 +192,45 @@ def create_enctest_files(args):
                 seq = pyseq.get_sequences(path.as_posix())[0]
 
 
-def get_test_configs(args):
+def get_configs(root_dir, config_type):
     configs = []
-    with os.scandir(args.source_folder) as it:
+    with os.scandir(root_dir) as it:
         for item in it:
             path = Path(item.path)
-            if path.suffix != ENCODE_SETTINGS_SUFFIX:
-                continue
-
-            config = parse_config_file(path)
-            configs.append(config)
+            if path.suffix == config_type:
+                config = parse_config_file(path)
+                configs.append(config)
 
     return configs
+
+
+def tests_only(test_configs):
+    for config in test_configs:
+        for section in config.sections():
+            if section.lower().startswith('test'):
+                yield config[section]
+
+
+def get_source_path(source_clip):
+    source_mr = source_clip.media_reference
+    symbol = ''
+    path = Path()
+    if isinstance(source_mr, otio.schema.ExternalReference):
+        path = Path(source_mr.target_url)
+
+    elif isinstance(source_mr, otio.schema.ImageSequenceReference):
+        symbol = f'%0{source_mr.frame_zero_padding}d'
+        path = Path(source_mr.abstract_target_url(symbol=symbol))
+
+    return path, symbol
+
+
+def get_test_metadata_dict(otio_item, testname):
+    ffmpeg_version = get_ffmpeg_version()
+    aswf_meta = otio_item.metadata.setdefault('aswf_enctests', {})
+    enc_meta = aswf_meta.setdefault(testname, {})
+
+    return enc_meta.setdefault(ffmpeg_version, {})
 
 
 def get_ffmpeg_version():
@@ -210,74 +241,36 @@ def get_ffmpeg_version():
     return version
 
 
-def tests_only(config):
-    for section in config.sections():
-        if section.lower().startswith('test'):
-            yield section
-
-
-def get_source_path(args, config):
-    path = Path(args.source_folder).joinpath(
-        Path(config.get('path'))
-    )
-    if path.is_dir():
-        return pyseq.get_sequences(path.as_posix())[0]
-
-    return path
-
-
-def get_test_metadata(otio_item, testname):
-    ffmpeg_version = get_ffmpeg_version()
-    aswf_meta = otio_item.metadata.setdefault('aswf', {})
-    enc_meta = aswf_meta.setdefault(ffmpeg_version, {})
-
-    return enc_meta.setdefault(testname, {})
-
-
-def ffmpeg_convert(args, config, testname):
+def ffmpeg_convert(args, source_clip, test_config):
     ffmpeg_cmd = "\
-{ffmpeg_bin} \
+{ffmpeg_bin}\
 {input_args} \
 -i {source} \
 -vframes {duration}\
 {compression_args} \
 -y {outfile}\
 "
-    source_config = config['SOURCE_INFO']
-    test_config = dict(config['BASELINE_SETTINGS'])
-    test_config.update(config[testname])
-    print(test_config)
 
-    source_path = get_source_path(args, source_config)
+    source_path, symbol = get_source_path(source_clip)
 
-    symbol = ''
-    if source_path.length():
-        symbol = f'%0{len(max(source_path.digits, key=len))}d'
-        source_file = Path(
-            source_path.path().replace(source_path.format('%r'), symbol)
-        )
-
-    else:
-        source_file = Path(source_path)
-    
     # Append test name to source filename
-    stem = source_file.stem.replace(symbol, '')
+    stem = source_path.stem.replace(symbol, '')
     out_file = Path(args.encoded_folder).absolute().joinpath(
-        f"{stem}-{testname}{test_config.get('suffix')}"
+        f"{stem}-{test_config.name}{test_config.get('suffix')}"
     )
-    
     input_args = ' '.join(
-        test_config.get('input_args').split('\n')
+        source_clip.metadata['aswf_enctests']['SOURCE_INFO'].get('input_args').split('\n')
     )
     encoding_args = ' '.join(
         test_config.get('encoding_args').split('\n')
     )
 
+    duration = source_clip.source_range.duration.to_frames()
     cmd = ffmpeg_cmd.format(
                 ffmpeg_bin=FFMPEG_BIN,
                 input_args=input_args,
-                source=source_file,
-                duration=source_config.getint('duration'),
+                source=source_path,
+                duration=duration,
                 compression_args=encoding_args,
                 outfile=out_file
             )
@@ -293,10 +286,10 @@ def ffmpeg_convert(args, config, testname):
     enctime = time.perf_counter() - t1
 
     # Create a media reference of output file
-    mr = create_media_reference(out_file, config)
+    mr = create_media_reference(out_file, source_clip)
 
     # Update metadata
-    enc_meta = get_test_metadata(mr, testname)
+    enc_meta = get_test_metadata_dict(mr, test_config.name)
     enc_meta['encode_time'] = round(enctime, 4)
     enc_meta['encode_arguments'] = encoding_args
     enc_meta['filesize'] = sizeof_fmt(out_file)
@@ -304,54 +297,64 @@ def ffmpeg_convert(args, config, testname):
     return mr
 
 
-def run_tests(args, configs):
-    results = otio.schema.SerializableCollection(name='enctests')
+def prep_sources(args, collection):
+    source_configs = get_configs(args.source_folder, SOURCE_SUFFIX)
+    for config in source_configs:
+        source_clip = create_clip(args, config['SOURCE_INFO'])
+        collection.append(source_clip)
 
-    for config in configs:
-        # Create an OTIO clip to hold encoded variations and results metadata
-        source_clip = create_clip(args, config)
+
+def run_tests(args, test_configs, collection):
+    for source_clip in collection:
         references = source_clip.media_references()
 
-        # Create lossless reference for comparisons
-        lossless_ref = ffmpeg_convert(args, config, 'BASELINE_SETTINGS')
-        references.update({'baseline': lossless_ref})
+        # # Create lossless reference for comparisons
+        # lossless_ref = ffmpeg_convert(args, config, 'BASELINE_SETTINGS')
+        # references.update({'baseline': lossless_ref})
 
-        for testname in tests_only(config):
+        for test_config in tests_only(test_configs):
             # perform enctest
+            testname = test_config.name
             print(f'Running "{testname}"')
-            test_ref = ffmpeg_convert(args, config, testname)
+            test_ref = ffmpeg_convert(args, source_clip, test_config)
             references.update({testname: test_ref})
 
         # Add media references to clip
         source_clip.set_media_references(
             references, source_clip.DEFAULT_MEDIA_KEY
         )
-        results.append(source_clip)
-
-    return results
 
 
 def main():
     args = parse_args()
 
     if args.prep_tests:
-        create_enctest_files(args)
+        create_source_files(args)
 
         return
 
-    # Load test config files
-    test_configs = get_test_configs(args)
+    # Make sure we have a folder for test configs
+    Path(args.test_config_dir).mkdir(exist_ok=True)
 
     # Make sure we have a destination folder
     Path(args.encoded_folder).mkdir(exist_ok=True)
 
+    # Load test config files
+    test_configs = get_configs(args.test_config_dir, ENCODE_TEST_SUFFIX)
+
+    # Create a collection object to hold clips
+    collection = otio.schema.SerializableCollection(name='aswf_enctests')
+
+    # Prep source files
+    prep_sources(args, collection)
+
     # Run tests
-    results = run_tests(args, test_configs)
-    print(f'Results: {results}')
-    print(f'Results: {results[0].media_references()}')
+    run_tests(args, test_configs, collection)
+    print(f'Results: {collection}')
+    print(f'Results: {collection[0].media_references()}')
 
     # Store results in an *.otio file
-    otio.adapters.write_to_file(results, args.output)
+    otio.adapters.write_to_file(collection, args.output)
 
 
 if __name__== '__main__':
