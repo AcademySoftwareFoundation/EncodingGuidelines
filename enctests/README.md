@@ -50,12 +50,12 @@ The filename must follow the convention `<source_filename>.source` and reside
 at the same level as the source file. In this case we're looking at an 
 image sequence which must be contained in a folder.</br>
 
-Example configuration file `1080p.source`:
+Example configuration file `Sintel-trailer-1080p-png.source`:
 
 ```
 [SOURCE_INFO]
 # These keys are required and must have values
-path = ./1080p
+path = ./Sintel-trailer-1080p-png/1080p
 
 rate = 24
 in = 600
