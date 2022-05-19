@@ -42,6 +42,33 @@ python -m pip install OpenTimelineIO
 .venv/bin/python main.py
 ```
 
+## Example Source config
+
+INI style config describing where to find media and a few crucial bits of info
+needed to encode it.
+The filename must follow the convention `<source_filename>.source` and reside 
+at the same level as the source file. In this case we're looking at an 
+image sequence which must be contained in a folder.</br>
+
+Example configuration file `1080p.source`:
+
+```
+[SOURCE_INFO]
+# These keys are required and must have values
+path = ./1080p
+
+rate = 24
+in = 600
+duration = 24
+
+# The "input_args" key is required, but the values are optional.
+# These arguments are passed to FFmpeg before the "-i" argument
+input_args =
+    -r 24
+    -start_number 600
+
+```
+
 ## What's been done so far
 - [x] Create an initial application framework
 - [x] Create SerializableCollection
