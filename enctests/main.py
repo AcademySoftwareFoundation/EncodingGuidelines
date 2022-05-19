@@ -12,7 +12,7 @@ from pathlib import Path
 import opentimelineio as otio
 
 # Test config files
-from enctests.utils import sizeof_fmt
+from utils import sizeof_fmt
 
 ENCODE_TEST_SUFFIX = '.enctest'
 SOURCE_SUFFIX = '.source'

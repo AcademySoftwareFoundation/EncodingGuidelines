@@ -37,6 +37,9 @@ pip install cmake pyseq
 # Build OTIO
 git clone git@github.com:PixarAnimationStudios/OpenTimelineIO.git
 python -m pip install OpenTimelineIO
+
+# Run tests (for now)
+.venv/bin/python main.py
 ```
 
 ## What's been done so far
