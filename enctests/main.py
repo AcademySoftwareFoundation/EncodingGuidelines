@@ -350,8 +350,6 @@ def main():
 
     # Run tests
     run_tests(args, test_configs, collection)
-    print(f'Results: {collection}')
-    print(f'Results: {collection[0].media_references()}')
 
     # Store results in an *.otio file
     otio.adapters.write_to_file(collection, args.output)
