@@ -53,6 +53,7 @@ oiiotool --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 19
 
 
 Other flags you might want to use include:
+
 | --- | --- |
 | --missingfile checker | If a frame is missing, put a checkboard frame in its place. |
 | --threads 2 | If you want to limit the number of threads the oiiotool process consumes, the default is as many threads as there are cores present in the hardware |
