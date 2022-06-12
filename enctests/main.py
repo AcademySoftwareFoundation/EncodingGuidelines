@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import time
@@ -37,7 +38,13 @@ FFMPEG_BIN = os.getenv(
 # Which vmaf model to use
 VMAF_MODEL = os.getenv(
     'VMAF_MODEL',
-    "vmaf_v0.6.1.json"
+    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/vmaf_v0.6.1.json'
+)
+
+
+VMAF_LIB_DIR = os.getenv(
+    'VMAF_LIB_DIR',
+    f'{os.path.dirname(__file__)}/.venv/usr/local/lib/x86_64-linux-gnu'
 )
 
 
@@ -267,20 +274,23 @@ def ffmpeg_convert(args, source_clip, test_config):
 
     duration = source_clip.source_range.duration.to_frames()
     cmd = ffmpeg_cmd.format(
-                ffmpeg_bin=FFMPEG_BIN,
-                input_args=input_args,
-                source=source_path,
-                duration=duration,
-                compression_args=encoding_args,
-                outfile=out_file
-            )
+        vmaf_lib_dir=VMAF_LIB_DIR,
+        ffmpeg_bin=FFMPEG_BIN,
+        input_args=input_args,
+        source=source_path,
+        duration=duration,
+        compression_args=encoding_args,
+        outfile=out_file
+    )
 
     print('ffmpeg command:', cmd)
     # Time encoding process
     t1 = time.perf_counter()
 
     # Do encoding
-    subprocess.call(shlex.split(cmd))
+    env = os.environ
+    env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+    subprocess.call(shlex.split(cmd), env=env)
 
     # Store encoding time
     enctime = time.perf_counter() - t1
@@ -295,6 +305,56 @@ def ffmpeg_convert(args, source_clip, test_config):
     enc_meta['filesize'] = sizeof_fmt(out_file)
 
     return mr
+
+
+def vmaf_compare(source_clip, test_ref, testname):
+    vmaf_cmd = '\
+{ffmpeg_bin} \
+{reference} \
+-i {distorted} \
+-vframes {duration} \
+-lavfi \
+\"[0:v]setpts=PTS-STARTPTS[reference]; \
+[1:v]setpts=PTS-STARTPTS[distorted]; \
+[distorted][reference]\
+libvmaf=log_fmt=json:\
+log_path=compare_log.json:\
+psnr=1:\
+model_path={vmaf_model}\" \
+-f null -\
+'
+    # Get settings from metadata used as basis for encoded media
+    config = source_clip.metadata['aswf_enctests'].get('SOURCE_INFO')
+
+    source_path, _ = get_source_path(source_clip)
+    input_args = ' '.join(config.get('input_args').split('\n'))
+    reference = f"{input_args} -i {source_path} "
+
+    # Assuming all encoded files are video files for now
+    distorted = test_ref.target_url
+
+    cmd = vmaf_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN,
+        reference=reference,
+        distorted=distorted,
+        duration=config.get('duration'),
+        vmaf_model=VMAF_MODEL
+    )
+    print('VMAF command:', cmd)
+
+    env = os.environ
+    env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+
+    subprocess.call(shlex.split(cmd), env=env)
+    with open('compare_log.json', 'rb') as f:
+        raw_results = json.load(f)
+
+    results = {
+        'vmaf': raw_results['pooled_metrics'].get('vmaf'),
+        'psnr': raw_results['pooled_metrics'].get('psnr')
+    }
+    enc_meta = get_test_metadata_dict(test_ref, testname)
+    enc_meta['results'] = results
 
 
 def prep_sources(args, collection):
@@ -318,6 +378,7 @@ def run_tests(args, test_configs, collection):
             print(f'Running "{testname}"')
             test_ref = ffmpeg_convert(args, source_clip, test_config)
             references.update({testname: test_ref})
+            vmaf_compare(source_clip, test_ref, testname)
 
         # Add media references to clip
         source_clip.set_media_references(
