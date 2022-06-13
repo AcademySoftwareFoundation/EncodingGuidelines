@@ -13,7 +13,7 @@ from pathlib import Path
 import opentimelineio as otio
 
 # Test config files
-from utils import sizeof_fmt
+from utils import sizeof_fmt, get_media_info
 
 ENCODE_TEST_SUFFIX = '.enctest'
 SOURCE_SUFFIX = '.source'
@@ -125,7 +125,7 @@ def create_media_reference(path, source_clip):
             )
         )
         mr = otio.schema.ImageSequenceReference(
-            target_url_base=Path(seq.directory()).as_uri(),
+            target_url_base=Path(seq.directory()).as_posix(),
             name_prefix=seq.head(),
             name_suffix=seq.tail(),
             start_frame=seq.start(),
@@ -146,7 +146,7 @@ def create_media_reference(path, source_clip):
             )
         )
         mr = otio.schema.ExternalReference(
-            target_url=path.resolve().as_uri(),
+            target_url=path.resolve().as_posix(),
             available_range=available_range,
         )
         mr.name = path.name
@@ -179,7 +179,7 @@ def get_source_range(config):
         ),
         duration=otio.opentime.RationalTime.from_seconds(
             config.getint('duration') /
-            config.getint('rate'),
+            config.getfloat('rate'),
             config.getfloat('rate')
         )
     )
@@ -188,15 +188,29 @@ def get_source_range(config):
 
 
 def create_source_files(args):
+    """ Create source config files based on ffprobe reults. """
+
     with os.scandir(args.source_folder) as it:
         for item in it:
             path = Path(item.path)
-            if path.suffix == ENCODE_TEST_SUFFIX:
+            if path.suffix == SOURCE_SUFFIX:
                 # We only register new media
                 continue
 
             if path.is_dir():
+                # TODO deal with sequences
                 seq = pyseq.get_sequences(path.as_posix())[0]
+
+            info = {'input_args': ''}
+            info.update(get_media_info(path))
+
+            config = configparser.ConfigParser(default_section='SOURCE_INFO')
+            config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
+            with open(config_path, 'w') as f:
+                for key, value in info.items():
+                    config.set('SOURCE_INFO', key, str(value))
+
+                config.write(f)
 
 
 def get_configs(root_dir, config_type):
@@ -232,6 +246,10 @@ def get_source_path(source_clip):
     return path, symbol
 
 
+def get_source_metadata_dict(source_clip):
+    return source_clip.metadata['aswf_enctests']['SOURCE_INFO']
+
+
 def get_test_metadata_dict(otio_item, testname):
     ffmpeg_version = get_ffmpeg_version()
     aswf_meta = otio_item.metadata.setdefault('aswf_enctests', {})
@@ -249,15 +267,14 @@ def get_ffmpeg_version():
 
 
 def ffmpeg_convert(args, source_clip, test_config):
-    ffmpeg_cmd = "\
+    ffmpeg_cmd = '\
 {ffmpeg_bin}\
 {input_args} \
--i {source} \
+-i "{source}" \
 -vframes {duration}\
 {compression_args} \
--y {outfile}\
-"
-
+-y "{outfile}"\
+'
     source_path, symbol = get_source_path(source_clip)
 
     # Append test name to source filename
@@ -265,16 +282,17 @@ def ffmpeg_convert(args, source_clip, test_config):
     out_file = Path(args.encoded_folder).absolute().joinpath(
         f"{stem}-{test_config.name}{test_config.get('suffix')}"
     )
-    input_args = ' '.join(
-        source_clip.metadata['aswf_enctests']['SOURCE_INFO'].get('input_args').split('\n')
-    )
+    source_meta = get_source_metadata_dict(source_clip)
+    input_args = ''
+    if source_meta.get('input_args'):
+        input_args = ' '.join(source_meta.get('input_args').split('\n'))
+
     encoding_args = ' '.join(
         test_config.get('encoding_args').split('\n')
     )
 
     duration = source_clip.source_range.duration.to_frames()
     cmd = ffmpeg_cmd.format(
-        vmaf_lib_dir=VMAF_LIB_DIR,
         ffmpeg_bin=FFMPEG_BIN,
         input_args=input_args,
         source=source_path,
@@ -311,7 +329,7 @@ def vmaf_compare(source_clip, test_ref, testname):
     vmaf_cmd = '\
 {ffmpeg_bin} \
 {reference} \
--i {distorted} \
+-i "{distorted}" \
 -vframes {duration} \
 -lavfi \
 \"[0:v]setpts=PTS-STARTPTS[reference]; \
@@ -324,11 +342,13 @@ model_path={vmaf_model}\" \
 -f null -\
 '
     # Get settings from metadata used as basis for encoded media
-    config = source_clip.metadata['aswf_enctests'].get('SOURCE_INFO')
+    source_meta = get_source_metadata_dict(source_clip)
+    input_args = ''
+    if source_meta.get('input_args'):
+        input_args = ' '.join(source_meta.get('input_args').split('\n'))
 
     source_path, _ = get_source_path(source_clip)
-    input_args = ' '.join(config.get('input_args').split('\n'))
-    reference = f"{input_args} -i {source_path} "
+    reference = f'{input_args} -i "{source_path}" '
 
     # Assuming all encoded files are video files for now
     distorted = test_ref.target_url
@@ -337,7 +357,7 @@ model_path={vmaf_model}\" \
         ffmpeg_bin=FFMPEG_BIN,
         reference=reference,
         distorted=distorted,
-        duration=config.get('duration'),
+        duration=source_meta.get('duration'),
         vmaf_model=VMAF_MODEL
     )
     print('VMAF command:', cmd)
