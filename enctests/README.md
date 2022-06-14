@@ -73,12 +73,12 @@ input_args =
 - [x] Create an initial application framework
 - [x] Create SerializableCollection
 - [x] Support image sequenced source media
-- [ ] Support video based source media
+- [x] Support video based source media
 - [x] Create a clip per soource
 - [x] Create baseline reference media
 - [x] Create encoded media based on config file
 - [x] Store encoded media as media references under clip
-- [ ] Compare encoded media with source
+- [x] Compare encoded media with source
 - [x] Serialize results in an .otio file
 
 
