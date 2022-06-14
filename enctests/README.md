@@ -80,6 +80,8 @@ input_args =
 - [x] Store encoded media as media references under clip
 - [x] Compare encoded media with source
 - [x] Serialize results in an .otio file
+- [x] Create source config file based on video file
+- [ ] Create source config file based on image sequence
 
 
 ## Ideas
