@@ -2,8 +2,7 @@ import os
 import pathlib
 import json
 import shlex
-from subprocess import run, PIPE
-
+from subprocess import run, PIPE, CalledProcessError
 
 VMAF_LIB_DIR = os.getenv(
     'VMAF_LIB_DIR',
@@ -28,7 +27,6 @@ def calculate_rate(rate_str):
     return float(numerator) / float(denominator)
 
 
-#fprobe -hide_banner -print_format json -i Desktop/encoding_test_files/face_HEVC\ 100mbps\ VBR\ High\ -\ Good.mp4
 def get_media_info(path):
     cmd = f'ffprobe ' \
           f'-v quiet ' \
@@ -40,8 +38,13 @@ def get_media_info(path):
     env = os.environ
     env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
     print(cmd)
-    proc = run(shlex.split(cmd), capture_output=True, env=env, check=True)
-    raw_json = json.loads(proc.stdout)
+    try:
+        proc = run(shlex.split(cmd), capture_output=True, env=env, check=True)
+        raw_json = json.loads(proc.stdout)
+
+    except CalledProcessError as err:
+        print(f'Unable to probe "{path.name}, {err}"')
+        return None
 
     stream = None
     for raw_stream in raw_json.get('streams'):
@@ -50,16 +53,15 @@ def get_media_info(path):
             break
 
     if not stream:
-        raise RuntimeError(
-            f'Unable to locate video stream in "{path.name()}"'
-        )
+        print(f'Unable to locate video stream in "{path.name}"')
+        return None
 
     info = {
         'path': path.as_posix(),
         'width': stream.get('width'),
         'heigth': stream.get('height'),
         'in': 0,
-        'duration': stream.get('nb_frames'),
+        'duration': stream.get('nb_frames', stream.get('duration_ts', 1)),
         'rate': calculate_rate(stream.get('r_frame_rate'))
     }
 

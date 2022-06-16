@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 import time
 import pyseq
@@ -65,10 +66,10 @@ def parse_args():
     )
 
     parser.add_argument(
-        '--prep-tests',
+        '--prep-sources',
         action='store_true',
         default=False,
-        help='Create *.enctest files from media in --source-folder'
+        help='Create *.source files for media in --source-folder'
     )
 
     parser.add_argument(
@@ -154,10 +155,9 @@ def create_media_reference(path, source_clip):
     return mr
 
 
-def create_clip(args, config):
-    path = Path(args.source_folder).joinpath(
-        Path(config.get('path'))
-    )
+def create_clip(config):
+    path = Path(config.get('path'))
+
     clip = otio.schema.Clip(name=path.stem)
     clip.metadata.update({'aswf_enctests': {config.name: dict(config)}})
 
@@ -187,40 +187,72 @@ def get_source_range(config):
     return source_range
 
 
-def create_source_files(args):
-    """ Create source config files based on ffprobe reults. """
+def create_config_from_source(path):
+    config_data = {'input_args': ''}
 
-    with os.scandir(args.source_folder) as it:
-        for item in it:
-            path = Path(item.path)
-            if path.suffix == SOURCE_SUFFIX:
-                # We only register new media
+    media_info = get_media_info(path)
+    if not media_info:
+        return
+
+    config_data.update(media_info)
+
+    config = configparser.ConfigParser(default_section='SOURCE_INFO')
+    config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
+    percentage_pat = re.compile(r'%')
+    with open(config_path, 'w') as f:
+        for key, value in config_data.items():
+            config.set('SOURCE_INFO', key, percentage_pat.sub('%%', str(value)))
+
+        config.write(f)
+
+
+def scantree(args, path, suffix=None):
+    """Recursively yield DirEntry objects for given directory."""
+    for entry in os.scandir(path):
+        if entry.is_dir(follow_symlinks=False):
+            sequences = pyseq.get_sequences(entry.path)
+            if args.prep_sources and sequences:
+                for sequence in sequences:
+                    if sequence.length() < 2:
+                        yield from scantree(args, entry.path, suffix)
+                    else:
+                        yield sequence
+            else:
+                yield from scantree(args, entry.path, suffix)
+
+        else:
+            if suffix and not entry.path.endswith(suffix):
                 continue
 
-            if path.is_dir():
-                # TODO deal with sequences
-                seq = pyseq.get_sequences(path.as_posix())[0]
-
-            info = {'input_args': ''}
-            info.update(get_media_info(path))
-
-            config = configparser.ConfigParser(default_section='SOURCE_INFO')
-            config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
-            with open(config_path, 'w') as f:
-                for key, value in info.items():
-                    config.set('SOURCE_INFO', key, str(value))
-
-                config.write(f)
+            yield entry
 
 
-def get_configs(root_dir, config_type):
+def create_source_config_files(args):
+    """ Create source config files based on ffprobe results. """
+
+    # for item in os.scandir(root):
+    for item in scantree(args, args.source_folder):
+        if isinstance(item, pyseq.Sequence):
+            pad = f'%0{len(max(item.digits, key=len))}d'
+            path = Path(item.format('%D%h') + pad + item.format('%t'))
+
+        else:
+            path = Path(str(item.path))
+
+        if path.suffix == SOURCE_SUFFIX:
+            # We only register new media
+            continue
+
+        create_config_from_source(path)
+
+
+def get_configs(args, root_dir, config_type):
     configs = []
-    with os.scandir(root_dir) as it:
-        for item in it:
-            path = Path(item.path)
-            if path.suffix == config_type:
-                config = parse_config_file(path)
-                configs.append(config)
+    for item in scantree(args, root_dir, suffix=config_type):
+        path = Path(item.path)
+        if path.suffix == config_type:
+            config = parse_config_file(path)
+            configs.append(config)
 
     return configs
 
@@ -268,7 +300,7 @@ def get_ffmpeg_version():
 
 def ffmpeg_convert(args, source_clip, test_config):
     ffmpeg_cmd = '\
-{ffmpeg_bin}\
+{ffmpeg_bin} \
 {input_args} \
 -i "{source}" \
 -vframes {duration}\
@@ -378,9 +410,9 @@ model_path={vmaf_model}\" \
 
 
 def prep_sources(args, collection):
-    source_configs = get_configs(args.source_folder, SOURCE_SUFFIX)
+    source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
     for config in source_configs:
-        source_clip = create_clip(args, config['SOURCE_INFO'])
+        source_clip = create_clip(config['SOURCE_INFO'])
         collection.append(source_clip)
 
 
@@ -409,8 +441,8 @@ def run_tests(args, test_configs, collection):
 def main():
     args = parse_args()
 
-    if args.prep_tests:
-        create_source_files(args)
+    if args.prep_sources:
+        create_source_config_files(args)
 
         return
 
@@ -421,7 +453,7 @@ def main():
     Path(args.encoded_folder).mkdir(exist_ok=True)
 
     # Load test config files
-    test_configs = get_configs(args.test_config_dir, ENCODE_TEST_SUFFIX)
+    test_configs = get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
 
     # Create a collection object to hold clips
     collection = otio.schema.SerializableCollection(name='aswf_enctests')
