@@ -14,7 +14,7 @@ from pathlib import Path
 import opentimelineio as otio
 
 # Test config files
-from utils import sizeof_fmt, get_media_info
+from utils import sizeof_fmt, get_media_info, get_nearest_model
 
 ENCODE_TEST_SUFFIX = '.enctest'
 SOURCE_SUFFIX = '.source'
@@ -34,12 +34,6 @@ IDIFF_BIN = os.getenv(
 FFMPEG_BIN = os.getenv(
     'FFMPEG_BIN',
     'win' in sys.platform and 'ffmpeg.exe' or 'ffmpeg'
-)
-
-# Which vmaf model to use
-VMAF_MODEL = os.getenv(
-    'VMAF_MODEL',
-    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/vmaf_v0.6.1.json'
 )
 
 
@@ -390,7 +384,7 @@ model_path={vmaf_model}\" \
         reference=reference,
         distorted=distorted,
         duration=source_meta.get('duration'),
-        vmaf_model=VMAF_MODEL
+        vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
     print('VMAF command:', cmd)
 

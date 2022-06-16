@@ -10,6 +10,19 @@ VMAF_LIB_DIR = os.getenv(
 )
 
 
+# Which vmaf model to use
+VMAF_HD_MODEL = os.getenv(
+    'VMAF_MODEL',
+    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/vmaf_v0.6.1.json'
+)
+
+
+VMAF_4K_MODEL = os.getenv(
+    'VMAF_MODEL',
+    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/vmaf_4k_v0.6.1.json'
+)
+
+
 # Based on accepted answer here:
 # https://stackoverflow.com/questions/1094841/get-human-readable-version-of-file-size
 def sizeof_fmt(path, suffix="B"):
@@ -25,6 +38,16 @@ def sizeof_fmt(path, suffix="B"):
 def calculate_rate(rate_str):
     numerator, denominator = rate_str.split('/')
     return float(numerator) / float(denominator)
+
+
+def get_nearest_model(width):
+    models = {
+        1920: VMAF_HD_MODEL,
+        4096: VMAF_4K_MODEL
+    }
+    diff = lambda list_value: abs(list_value - width)
+
+    return models[min(models, key=diff)]
 
 
 def get_media_info(path):
