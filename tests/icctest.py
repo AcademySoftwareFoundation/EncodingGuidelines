@@ -25,7 +25,7 @@ img.save(source_image)
 listimages = []
 listimages.append({'label': 'raw png', 'image': os.path.basename(source_image)})
 
-profile = ImageCms.getOpenProfile("/usr/share/color/icc/sRGB.icc")
+profile = ImageCms.getOpenProfile("/usr/share/color/icc/OpenICC/sRGB.icc")
 img.save(os.path.join(rootpath, "greyscale-srgb.png"), icc_profile=profile.tobytes())
 listimages.append({'label': 'srgb png', 'image': "greyscale-srgb.png"})
 
