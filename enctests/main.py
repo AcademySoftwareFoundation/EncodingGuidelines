@@ -207,6 +207,9 @@ def scantree(args, path, suffix=None):
             sequences = pyseq.get_sequences(entry.path)
             if args.prep_sources and sequences:
                 for sequence in sequences:
+                    if sequence.name.endswith(".source"):
+                        # Can ignore any .source files.
+                        continue
                     if sequence.length() < 2:
                         yield from scantree(args, entry.path, suffix)
                     else:
