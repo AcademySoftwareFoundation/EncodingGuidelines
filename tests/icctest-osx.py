@@ -49,19 +49,19 @@ listimages.append({'id': 'rec1886png', 'label': 'rec1886', 'ext': 'png', 'image'
 os.system('ffmpeg -r 1 -y -i  ' + source_image + '  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1 ' + rootpath+'/greyscale-raw.mp4')
 listimages.append({'id': 'raw', 'label': 'raw', 'ext': 'mp4', 'video': "greyscale-raw.mp4", 'group': 'raw'})
 
-trc_types = [{'id': 'rec709', 'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': 1, 'group': 'rec709 colortrc'},
-            {'id': 'gamma195', 'label': "(OSX Only) -color_trc 2 = gamma 1.95", 'fileext': "gamma195", 'trcnum': 2, 'gamma': 1.95, 'group': 'rec709'},
-			{'id': 'unknown', 'label': "-color_trc 2 = unknown", 'fileext': "unknown", 'trcnum': 2},
-			{'id': 'srgb', 'label': "-color_trc 13 = sRGB", 'fileext': "srgb", 'trcnum': 13, 'group': 'srgb colortrc'},
+trc_types = [{'id': 'rec709', 'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': 'bt709', 'group': 'rec709 colortrc'},
+            {'id': 'gamma195', 'label': "(OSX Only) -color_trc 2 = gamma 1.95", 'fileext': "gamma195", 'trcnum': 'unknown', 'gamma': 1.95, 'group': 'rec709'},
+			{'id': 'unknown', 'label': "-color_trc 2 = unknown", 'fileext': "unknown", 'trcnum': 'unknown'},
+			{'id': 'srgb', 'label': "-color_trc 13 = sRGB", 'fileext': "srgb", 'trcnum': "iec61966-2-1", 'group': 'srgb colortrc'},
 			#{'label': "-color_trc 14 = rec2020", 'fileext': "rec2020", 'trcnum': 14},
 			#{'label': "-color_trc 15 = rec2020", 'fileext': "rec2020b", 'trcnum': 15},
-			{'id': 'gamma22mp4', 'label': "-color_trc 4 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 4, 'group': 'gamma22 colortrc'},
-            {'id': 'gamma22mov', 'label': "(OSX Only) -color_trc 2 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 2, 'gamma': 2.2, 'group': 'gamma22'},
-            {'id': 'gamma24mov', 'label': "(OSX Only) -color_trc 2 = gamma 2.4 BT1886", 'fileext': "gamma24", 'trcnum': 2, 'gamma': 2.4, 'group': 'bt1886'},
-			{'id': 'gamma28mp4', 'label': "-color_trc 5 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 5, 'group': 'gamma28 colortrc'},
-            {'id': 'gamma28mov', 'label': "(OSX Only) -color_trc 2 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 2, 'gamma': 2.8, 'group': 'gamma28'},
-			{'id': 'gammalinmp4', 'label': "-color_trc 8 = linear", 'fileext': "lin", 'trcnum': 8, 'group': 'lin colortrc'},
-            {'id': 'gammalinmov', 'label': "(OSX Only) -color_trc 2 = gamma 1", 'fileext': "gamma1", 'trcnum': 2, 'gamma': 1, 'group': 'lin'},
+			{'id': 'gamma22mp4', 'label': "-color_trc 4 = gamma 2.2", 'fileext': "gamma22", 'trcnum': "gamma22", 'group': 'gamma22 colortrc'},
+            {'id': 'gamma22mov', 'label': "(OSX Only) -color_trc 2 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 'unknown', 'gamma': 2.2, 'group': 'gamma22'},
+            {'id': 'gamma24mov', 'label': "(OSX Only) -color_trc 2 = gamma 2.4 BT1886", 'fileext': "gamma24", 'trcnum': 'unknown', 'gamma': 2.4, 'group': 'bt1886'},
+			{'id': 'gamma28mp4', 'label': "-color_trc 5 = gamma 2.8", 'fileext': "gamma28", 'trcnum': "gamma28", 'group': 'gamma28 colortrc'},
+            {'id': 'gamma28mov', 'label': "(OSX Only) -color_trc 2 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 'unknown', 'gamma': 2.8, 'group': 'gamma28'},
+			{'id': 'gammalinmp4', 'label': "-color_trc 8 = linear", 'fileext': "lin", 'trcnum': 'linear', 'group': 'lin colortrc'},
+            {'id': 'gammalinmov', 'label': "(OSX Only) -color_trc 2 = gamma 1", 'fileext': "gamma1", 'trcnum': 'unknown', 'gamma': 1, 'group': 'lin'},
 			]
 for trc in trc_types:
 	# TODO Confirm we have the right one.
