@@ -62,8 +62,10 @@ def get_media_info(path, startframe=None):
          cmd = cmd + f' -start_number %d ' % startframe
 
     env = os.environ
-    env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
-    print(cmd)
+    if 'LD_LIBRARY_PATH' in env:
+	    env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+    else:
+        env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
     try:
         proc = run(shlex.split(cmd), capture_output=True, env=env, check=True)
         raw_json = json.loads(proc.stdout)

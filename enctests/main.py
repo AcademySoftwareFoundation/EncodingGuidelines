@@ -338,7 +338,10 @@ def ffmpeg_convert(args, source_clip, test_config):
 
     # Do encoding
     env = os.environ
-    env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+    if 'LD_LIBRARY_PATH' in env:
+	    env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+    else:
+        env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
     subprocess.call(shlex.split(cmd), env=env)
 
     # Store encoding time
