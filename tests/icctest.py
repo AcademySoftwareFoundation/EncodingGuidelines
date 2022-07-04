@@ -56,10 +56,18 @@ for trc in trc_types:
 	print(cmd)
 	os.system(cmd)
 	listimages.append({'label': trc['label'], 'video': "greyscale-{fileext}.mp4".format(**trc), 'cmd': cmd})
+	outputfile = '{rootpath}/greyscale-{fileext}.mp4'.format(**trc)
+	if not os.path.exists(outputfile):
+		print("ERROR: {outputfile} was not created by the command:{cmd}".format(outputfile=outputfile, cmd=cmd))
+		exit(1)
 
 cmd = 'ffmpeg -r 1 -y -i  {source_image} -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 {rootpath}/h264-ffmpeg-gamma24alt.mov'.format(source_image = source_image, rootpath=rootpath)
 os.system(cmd)
 listimages.append({'label': 'gamma 2.4 mov (OSX only)', 'video': "h264-ffmpeg-gamma24alt.mov", 'cmd': cmd})
+outputfile = '{rootpath}/h264-ffmpeg-gamma24alt.mov'.format(**trc)
+if not os.path.exists(outputfile):
+		print("ERROR: {outputfile} was not created by the command:{cmd}".format(outputfile=outputfile, cmd=cmd))
+		exit(1)
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,

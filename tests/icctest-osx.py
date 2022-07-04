@@ -74,6 +74,11 @@ for trc in trc_types:
 
 	os.system(cmd)
 	trc['ext'] = ext
+	outputfile = '{rootpath}/greyscale-{fileext}.{ext}'.format(**trc)
+	if not os.path.exists(outputfile):
+		print("ERROR: {outputfile} was not created by the command:{cmd}".format(outputfile=outputfile, cmd=cmd))
+		exit(1)
+	trc['ext'] = ext
 	listimages.append({'id': trc['id'], 'group': trc.get('group', 'unknown'), 'label': trc['label'], 'video': "greyscale-{fileext}.{ext}".format(**trc), 'cmd': cmd})
 
 # Sort images by group.
