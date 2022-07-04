@@ -50,13 +50,16 @@ def get_nearest_model(width):
     return models[min(models, key=diff)]
 
 
-def get_media_info(path):
+def get_media_info(path, startframe=None):
     cmd = f'ffprobe ' \
           f'-v quiet ' \
           f'-hide_banner ' \
           f'-print_format json ' \
           f'-show_streams ' \
           f'-i "{path.as_posix()}"'
+
+    if startframe:
+         cmd = cmd + f' -start_number %d ' % startframe
 
     env = os.environ
     env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
@@ -83,7 +86,7 @@ def get_media_info(path):
         'path': path.as_posix(),
         'width': stream.get('width'),
         'heigth': stream.get('height'),
-        'in': 0,
+        'in': startframe,
         'duration': stream.get('nb_frames', stream.get('duration_ts', 1)),
         'rate': calculate_rate(stream.get('r_frame_rate'))
     }

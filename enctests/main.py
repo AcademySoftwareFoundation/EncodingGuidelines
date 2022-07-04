@@ -181,10 +181,10 @@ def get_source_range(config):
     return source_range
 
 
-def create_config_from_source(path):
+def create_config_from_source(path, startframe=None):
     config_data = {'input_args': ''}
 
-    media_info = get_media_info(path)
+    media_info = get_media_info(path, startframe)
     if not media_info:
         return
 
@@ -229,7 +229,9 @@ def create_source_config_files(args):
 
     # for item in os.scandir(root):
     for item in scantree(args, args.source_folder):
+        startframe = None
         if isinstance(item, pyseq.Sequence):
+            startframe = item.start()
             pad = f'%0{len(max(item.digits, key=len))}d'
             path = Path(item.format('%D%h') + pad + item.format('%t'))
 
@@ -240,7 +242,7 @@ def create_source_config_files(args):
             # We only register new media
             continue
 
-        create_config_from_source(path)
+        create_config_from_source(path, startframe=startframe)
 
 
 def get_configs(args, root_dir, config_type):
