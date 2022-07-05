@@ -39,7 +39,7 @@ This is setting the transfer function, which is typically going to be related to
 For more details see: [here](tests/greramp-osx/ycrcbcompare.md)
 
 ## sRGB
-Using the `-color_trc 13` flag. This appears to be the most reliable one, working across all machines and browsers that support it.
+Using the `-color_trc iec61966-2-1` flag. This appears to be the most reliable one, working across all machines and browsers that support it. It's a shame that the flag has to be so cryptic. 
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-srgb.png"/></TD><TD>Source SRGB PNG</TD></TR>
@@ -47,7 +47,7 @@ Using the `-color_trc 13` flag. This appears to be the most reliable one, workin
 </table>
 
 ## rec709
-Using the `-color_trc 1` flag. This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera rec709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
+Using the `-color_trc rec709` flag. This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera rec709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
 
 <table  class='compare'>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the rec709 mp4.</TD></TR>
@@ -62,7 +62,7 @@ Screenshots
 </table>
 
 ## Gamma 2.2
-Using the `-color_trc 2` flag. This does not work correctly on safari.
+Using the `-color_trc gamma22` flag. This does not work correctly on safari.
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-g22.png"/></TD><TD>Source gamma 2.2 PNG</TD></TR>
@@ -70,7 +70,7 @@ Using the `-color_trc 2` flag. This does not work correctly on safari.
 </table>
 
 ## Gamma linear
-Using the `-color_trc 8` flag. This is unlikely to ever be used for video, however it does make for a good test that something is working.
+Using the `-color_trc linear` flag. This is unlikely to ever be used for video, however it does make for a good test that something is working.
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-lin.png"/></TD><TD>Source linear PNG</TD></TR>
@@ -78,7 +78,7 @@ Using the `-color_trc 8` flag. This is unlikely to ever be used for video, howev
 </table>
 
 ## Summary
-We recommend the use of `-color_trc 13` to use sRGB. There is no support for a gamma 2.4, if you still need it, we recommend that you use -color_trc 2 (meaning undefined) and ensure that your monitor is set correctly
+We recommend the use of `-color_trc iec61966-2-1` to use sRGB. There is no support for a gamma 2.4, if you still need it, we recommend that you use -color_trc unknown and ensure that your monitor is set correctly
 
 
 # Gamut colorprimaries

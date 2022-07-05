@@ -17,7 +17,7 @@ If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.00
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
-        -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 outputfile.mp4
+        -color_range tv -colorspace rec709 -color_primaries rec709 -color_trc iec61966-2-1 outputfile.mp4
 ```
 
 | --- | --- |
@@ -28,10 +28,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt
 **-c:v libx264** | use the h264 encoding library (libx264)
 **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow.
 **-pix_fmt yuv420p** | use yuv420 video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le
-**-color_range 1** | mp4 metadata - specifying color range as 16-235 (which is default for web playback).
-**-colorspace 1** | mp4 metadata - specifying rec709 yuv color pixel format
-**-color_primaries 1** | mp4 metadata - rec709 color gamut primaries
-**-color_trc 13** | mp4 metadata color transfer = sRGB - See tests below.
+**-color_range tv** | mp4 metadata - specifying color range as 16-235 (which is default for web playback).
+**-colorspace rec709** | mp4 metadata - specifying rec709 yuv color pixel format
+**-color_primaries rec709** | mp4 metadata - rec709 color gamut primaries
+**-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests below.
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
@@ -106,7 +106,7 @@ A full example encode would look like:
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
     -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 \
-    -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-fulltv/radialgrad-full.mp4
+    -color_range pc -colorspace rec709 -color_primaries rec709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
 TODO: Do additional testing across all players.
