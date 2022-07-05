@@ -39,20 +39,20 @@ This is setting the transfer function, which is typically going to be related to
 For more details see: [here](tests/greramp-osx/ycrcbcompare.md)
 
 ## sRGB
-Using the `-color_trc iec61966-2-1` flag. This appears to be the most reliable one, working across all machines and browsers that support it. It's a shame that the flag has to be so cryptic. 
+Using the `-color_trc iec61966-2-1` flag (the sRGB spec is defined as [iec61966-2-1](https://en.wikipedia.org/wiki/SRGB) ). This appears to be the most reliable one, working across all machines and browsers that support it. It's a shame that the flag has to be so cryptic. 
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-srgb.png"/></TD><TD>Source SRGB PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
 
-## rec709
-Using the `-color_trc rec709` flag. This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera rec709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
+## bt709
+Using the `-color_trc bt709` flag (AKA rec709). This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera bt709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
 
 <table  class='compare'>
-<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the rec709 mp4.</TD></TR>
-<TR x-show="/^((?!chrome|android).)*safari/i.test(navigator.userAgent)"><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma195.mov"></video></TD><TD>This is a quicktime with a gamma of 1.95. This should be nearly identical to the above rec709 mp4, which implies OSX is correctly interpreting camera rec709.</TD></TR>
-<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>This is the srgb.mp4 which may match the rec709 result. For chrome on windows, this should match rec709, which implies its treating it as sRGB.</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the bt709 mp4.</TD></TR>
+<TR x-show="/^((?!chrome|android).)*safari/i.test(navigator.userAgent)"><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma195.mov"></video></TD><TD>This is a quicktime with a gamma of 1.95. This should be nearly identical to the above bt709 mp4, which implies OSX is correctly interpreting camera bt709.</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>This is the srgb.mp4 which may match the bt709 result. For chrome on windows, this should match bt709, which implies its treating it as sRGB.</TD></TR>
 </table>
 
 Screenshots
