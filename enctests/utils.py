@@ -13,14 +13,14 @@ VMAF_LIB_DIR = os.getenv(
 # Which vmaf model to use
 VMAF_HD_MODEL = os.getenv(
     'VMAF_MODEL',
-    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/vmaf_v0.6.1.json'
-)
+    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/'
+) + "/vmaf_v0.6.1.json"
 
 
 VMAF_4K_MODEL = os.getenv(
     'VMAF_MODEL',
-    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/vmaf_4k_v0.6.1.json'
-)
+    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model'
+) + "/vmaf_4k_v0.6.1.json"
 
 
 # Based on accepted answer here:
