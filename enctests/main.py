@@ -157,7 +157,7 @@ def create_clip(config):
 
     # Source range
     clip.source_range = get_source_range(config)
-
+    clip.start_frame = config.getint('in')
     # The initial MediaReference is stored as default
     mr = create_media_reference(path, clip)
     clip.media_reference = mr
@@ -301,6 +301,7 @@ def ffmpeg_convert(args, source_clip, test_config):
     ffmpeg_cmd = '\
 {ffmpeg_bin} \
 {input_args} \
+-start_number {start_frame} \
 -i "{source}" \
 -vframes {duration}\
 {compression_args} \
@@ -323,9 +324,11 @@ def ffmpeg_convert(args, source_clip, test_config):
     )
 
     duration = source_clip.source_range.duration.to_frames()
+    start_frame = source_clip.start_frame
     cmd = ffmpeg_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
         input_args=input_args,
+        start_frame=start_frame,
         source=source_path,
         duration=duration,
         compression_args=encoding_args,
@@ -362,6 +365,7 @@ def ffmpeg_convert(args, source_clip, test_config):
 def vmaf_compare(source_clip, test_ref, testname):
     vmaf_cmd = '\
 {ffmpeg_bin} \
+-start_number {start_frame} \
 {reference} \
 -i "{distorted}" \
 -vframes {duration} \
@@ -386,9 +390,11 @@ model_path={vmaf_model}\" \
 
     # Assuming all encoded files are video files for now
     distorted = test_ref.target_url
+    start_frame = source_clip.start_frame
 
     cmd = vmaf_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
+        start_frame=start_frame,
         reference=reference,
         distorted=distorted,
         duration=source_meta.get('duration'),
