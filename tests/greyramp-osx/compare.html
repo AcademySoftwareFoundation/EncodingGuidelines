@@ -52,7 +52,7 @@ Filtered views:
 <tbody>
 
 <TR class="index groupbt1886" id="buttongamma24mov">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.4 BT1886 <B>mov</B></TD><td><video    ><source src='greyscale-gamma24.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.4 ./greyramp-osx/greyscale-gamma24.mov</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.4 BT1886 <B>mov</B></TD><td><video    ><source src='greyscale-gamma24.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 ./greyramp-osx/greyscale-gamma24.mov</p></td>
 </TR>
 
 <TR class="index groupbt1886 png"  id="buttonrec1886png">
@@ -60,11 +60,11 @@ Filtered views:
 </TR>
 
 <TR class="index groupgamma22" id="buttongamma22mov">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.2 <B>mov</B></TD><td><video    ><source src='greyscale-gamma22.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.2 ./greyramp-osx/greyscale-gamma22.mov</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.2 <B>mov</B></TD><td><video    ><source src='greyscale-gamma22.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.2 ./greyramp-osx/greyscale-gamma22.mov</p></td>
 </TR>
 
 <TR class="index groupgamma22 colortrc" id="buttongamma22mp4">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 4 ./greyramp-osx/greyscale-gamma22.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc gamma22 ./greyramp-osx/greyscale-gamma22.mp4</p></td>
 </TR>
 
 <TR class="index groupgamma22 png"  id="buttong22png">
@@ -72,11 +72,11 @@ Filtered views:
 </TR>
 
 <TR class="index groupgamma28" id="buttongamma28mov">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.8 <B>mov</B></TD><td><video    ><source src='greyscale-gamma28.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.8 ./greyramp-osx/greyscale-gamma28.mov</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 2.8 <B>mov</B></TD><td><video    ><source src='greyscale-gamma28.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.8 ./greyramp-osx/greyscale-gamma28.mov</p></td>
 </TR>
 
 <TR class="index groupgamma28 colortrc" id="buttongamma28mp4">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 5 ./greyramp-osx/greyscale-gamma28.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc gamma28 ./greyramp-osx/greyscale-gamma28.mp4</p></td>
 </TR>
 
 <TR class="index groupgamma28 png"  id="buttong28png">
@@ -84,11 +84,11 @@ Filtered views:
 </TR>
 
 <TR class="index grouplin" id="buttongammalinmov">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 1 <B>mov</B></TD><td><video    ><source src='greyscale-gamma1.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 1 ./greyramp-osx/greyscale-gamma1.mov</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 1 <B>mov</B></TD><td><video    ><source src='greyscale-gamma1.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 1 ./greyramp-osx/greyscale-gamma1.mov</p></td>
 </TR>
 
 <TR class="index grouplin colortrc" id="buttongammalinmp4">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear <B>mp4</B></TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp-osx/greyscale-lin.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear <B>mp4</B></TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc linear ./greyramp-osx/greyscale-lin.mp4</p></td>
 </TR>
 
 <TR class="index grouplin png"  id="buttonlinpng">
@@ -104,15 +104,15 @@ Filtered views:
 </TR>
 
 <TR class="index grouprec709" id="buttongamma195">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 1.95 <B>mov</B></TD><td><video    ><source src='greyscale-gamma195.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 1.95 ./greyramp-osx/greyscale-gamma195.mov</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>(OSX Only) -color_trc 2 = gamma 1.95 <B>mov</B></TD><td><video    ><source src='greyscale-gamma195.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 1.95 ./greyramp-osx/greyscale-gamma195.mov</p></td>
 </TR>
 
 <TR class="index grouprec709 colortrc" id="buttonrec709">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 <B>mp4</B></TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp-osx/greyscale-rec709.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 <B>mp4</B></TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc bt709 ./greyramp-osx/greyscale-rec709.mp4</p></td>
 </TR>
 
 <TR class="index groupsrgb colortrc" id="buttonsrgb">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB <B>mp4</B></TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp-osx/greyscale-srgb.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB <B>mp4</B></TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc iec61966-2-1 ./greyramp-osx/greyscale-srgb.mp4</p></td>
 </TR>
 
 <TR class="index groupsrgb png"  id="buttonsrgbpng">
@@ -120,7 +120,7 @@ Filtered views:
 </TR>
 
 <TR class="index groupunknown" id="buttonunknown">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 2 = unknown <B>mp4</B></TD><td><video    ><source src='greyscale-unknown.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc 2 ./greyramp-osx/greyscale-unknown.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 2 = unknown <B>mp4</B></TD><td><video    ><source src='greyscale-unknown.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -loop 1 -y -i  ./greyramp-osx/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 1 -color_trc unknown ./greyramp-osx/greyscale-unknown.mp4</p></td>
 </TR>
 
 </tbody>
