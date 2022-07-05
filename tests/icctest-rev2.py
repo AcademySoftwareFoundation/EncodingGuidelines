@@ -45,7 +45,7 @@ listimages.append({'label': 'raw', 'video': "greyscale-raw.mp4"})
 os.system('ffmpeg -y -i  ' + source_image + '  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 ' + rootpath+'/greyscale-undefined.mp4')
 listimages.append({'label': '-color_trc = 2 = undefined', 'video': "greyscale-undefined.mp4"})
 
-trc_types = [{'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': 1, 'gamma': 1.95},
+trc_types = [{'label': "-color_trc 1 = bt709", 'fileext': "rec709", 'trcnum': 1, 'gamma': 1.95},
 			{'label': "-color_trc 13 = sRGB", 'fileext': "srgb", 'trcnum': 13, 'gamma': 2.2},
 			{'label': "-color_trc 4 = gamma 2.2", 'fileext': "gamma22", 'trcnum': 4, 'gamma': 2.2},
 			#{'label': "-color_trc 5 = gamma 2.8", 'fileext': "gamma28", 'trcnum': 5, 'gamma': 2.8},

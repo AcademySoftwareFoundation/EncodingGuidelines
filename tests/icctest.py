@@ -38,7 +38,7 @@ os.system('ffmpeg -r 1 -y -i  ' + source_image + '  -sws_flags spline+accurate_r
 listimages.append({'label': 'raw', 'video': "greyscale-raw.mp4"})
 
 trc_types = [
-			{'label': "-color_trc 1 = rec709", 'fileext': "rec709", 'trcnum': "bt709"},
+			{'label': "-color_trc 1 = bt709", 'fileext': "rec709", 'trcnum': "bt709"},
 			 {'label': "-color_trc 2 = unknown", 'fileext': "unknown", 'trcnum': "unknown"},
 			 {'label': "-color_trc 13 = sRGB", 'fileext': "srgb", 'trcnum': "iec61966-2-1"},
 			 #{'label': "-color_trc 14 = rec2020", 'fileext': "rec2020", 'trcnum': 14},

@@ -106,7 +106,7 @@ A full example encode would look like:
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
     -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 \
-    -color_range pc -colorspace rec709 -color_primaries rec709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
+    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
 TODO: Do additional testing across all players.
