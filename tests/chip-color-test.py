@@ -48,7 +48,7 @@ for proc in processes:
     if 'ffmpeg_extract' not in proc:
         proc['ffmpeg_extract'] = ' -compression_level 10 -pred mixed -pix_fmt rgb24 -sws_flags spline+accurate_rnd+full_chroma_int'
     proc['video'] = '{id}.mp4'.format(**proc)
-    cmd = 'ffmpeg -y -i  {source_image} {conv} -c:v libx264  -preset placebo -qp {qp} -x264-params "keyint=15:no-deblock=1"  -pix_fmt {pix_fmt} -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/{id}.mp4'.format(**proc)
+    cmd = 'ffmpeg -y -i  {source_image} {conv} -c:v libx264  -preset placebo -qp {qp} -x264-params "keyint=15:no-deblock=1"  -pix_fmt {pix_fmt} -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 {rootpath}/{id}.mp4'.format(**proc)
     os.system(cmd)
     proc['cmd'] = cmd
     listimages.append(proc)
