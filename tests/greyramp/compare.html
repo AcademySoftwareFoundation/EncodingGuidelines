@@ -51,7 +51,7 @@
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 <B>mp4</B></TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 ./greyramp/greyscale-rec709.mp4</p></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = bt709 <B>mp4</B></TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 ./greyramp/greyscale-rec709.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
