@@ -397,7 +397,10 @@ model_path={vmaf_model}\" \
     print('VMAF command:', cmd)
 
     env = os.environ
-    env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+    if 'LD_LIBRARY_PATH' in env:
+	    env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+    else:
+        env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
     subprocess.call(shlex.split(cmd), env=env)
     with open('compare_log.json', 'rb') as f:
