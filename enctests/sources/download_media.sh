@@ -11,7 +11,7 @@ fi
 #if [ ! -f SMPTE_Color_Bars.png ]
 #then
 # 	echo Downloading color bars.
-# 	# from https://commons.wikimedia.org/wiki/File:SMPTE_Color_Bars_16x9.svg  
+# 	# from https://commons.wikimedia.org/wiki/File:SMPTE_Color_Bars_16x9.svg
 # 	curl https://upload.wikimedia.org/wikipedia/commons/6/60/SMPTE_Color_Bars_16x9.svg -o SMPTE_Color_Bars.svg
 # 	convert -verbose -size 1920x1080 SMPTE_Color_Bars.svg SMPTE_Color_Bars.png
 # fi
