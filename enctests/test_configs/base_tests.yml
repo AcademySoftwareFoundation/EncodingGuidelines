@@ -1,0 +1,27 @@
+test_scale_yuv444p10le:
+    name: test_scale_yuv444p10le
+    description: scale (yuv444p10le)
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    wedges:
+        wedge0: &base_args
+            -c:v: libx264
+            -preset: placebo
+            -qp: 0
+            -x264-params: '"keyint=15:no-deblock=1"'
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        wedge1:
+            << : *base_args
+            -color_trc: 3
+
+        wedge2:
+            << : *base_args
+            -preset: slow
+

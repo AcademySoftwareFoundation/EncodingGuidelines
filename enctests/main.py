@@ -1,34 +1,31 @@
-import json
 import os
-import re
 import sys
+import yaml
 import time
+import json
 import pyseq
 import shlex
 import argparse
 import subprocess
-import configparser
 
 from pathlib import Path
+from copy import deepcopy
+
+try:
+    from yaml import CSafeLoader as SafeLoader
+    from yaml import CSafeDumper as SafeDumper
+
+except ImportError:
+    from yaml import SafeLoader, SafeDumper
 
 import opentimelineio as otio
+
 
 # Test config files
 from utils import sizeof_fmt, get_media_info, get_nearest_model
 
-ENCODE_TEST_SUFFIX = '.enctest'
-SOURCE_SUFFIX = '.source'
-
-# OpenImageIO
-OIIOTOOL_BIN = os.getenv(
-    "OIIOTOOL_BIN",
-    "oiiotool"
-)
-
-IDIFF_BIN = os.getenv(
-    "IDIFF_BIN",
-    "idiff"
-)
+ENCODE_TEST_SUFFIX = '.yml'
+SOURCE_SUFFIX = '.yml'
 
 # We assume macos and linux both have the same binary name
 FFMPEG_BIN = os.getenv(
@@ -96,15 +93,15 @@ def parse_args():
 
 
 def parse_config_file(path):
-    encfile = path.as_posix()
-    config = configparser.ConfigParser()
-    config.read(encfile)
+    config_file = path.as_posix()
+    with open(config_file, 'rt') as f:
+        config = yaml.load(f, SafeLoader)
 
     return config
 
 
 def create_media_reference(path, source_clip):
-    config = source_clip.metadata['aswf_enctests'].get('SOURCE_INFO')
+    config = get_source_metadata_dict(source_clip)
     rate = float(config.get('rate'))
     duration = float(config.get('duration'))
 
@@ -153,11 +150,12 @@ def create_clip(config):
     path = Path(config.get('path'))
 
     clip = otio.schema.Clip(name=path.stem)
-    clip.metadata.update({'aswf_enctests': {config.name: dict(config)}})
+    clip.metadata.update({'aswf_enctests': {'source_info': deepcopy(config)}})
 
     # Source range
     clip.source_range = get_source_range(config)
-    clip.start_frame = config.getint('in')
+    clip.start_frame = config.get('in')
+
     # The initial MediaReference is stored as default
     mr = create_media_reference(path, clip)
     clip.media_reference = mr
@@ -168,13 +166,13 @@ def create_clip(config):
 def get_source_range(config):
     source_range = otio.opentime.TimeRange(
         start_time=otio.opentime.RationalTime(
-            config.getint('in'),
-            config.getfloat('rate')
+            config.get('in'),
+            config.get('rate')
         ),
         duration=otio.opentime.RationalTime.from_seconds(
-            config.getint('duration') /
-            config.getfloat('rate'),
-            config.getfloat('rate')
+            config.get('duration') /
+            config.get('rate'),
+            config.get('rate')
         )
     )
 
@@ -182,7 +180,7 @@ def get_source_range(config):
 
 
 def create_config_from_source(path, startframe=None):
-    config_data = {'input_args': ''}
+    config_data = {'source_info': {'input_args': {}}}
 
     media_info = get_media_info(path, startframe)
     if not media_info:
@@ -190,14 +188,14 @@ def create_config_from_source(path, startframe=None):
 
     config_data.update(media_info)
 
-    config = configparser.ConfigParser(default_section='SOURCE_INFO')
-    config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
-    percentage_pat = re.compile(r'%')
-    with open(config_path, 'w') as f:
-        for key, value in config_data.items():
-            config.set('SOURCE_INFO', key, percentage_pat.sub('%%', str(value)))
+    if startframe:
+        config_data['source_info']['input_args'].update(
+            {'-start_number': startframe}
+        )
 
-        config.write(f)
+    config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
+    with open(config_path, 'wt') as f:
+        yaml.dump(config_data, f, SafeDumper, indent=4)
 
 
 def scantree(args, path, suffix=None):
@@ -258,7 +256,7 @@ def get_configs(args, root_dir, config_type):
 
 def tests_only(test_configs):
     for config in test_configs:
-        for section in config.sections():
+        for section in config:
             if section.lower().startswith('test'):
                 yield config[section]
 
@@ -278,7 +276,7 @@ def get_source_path(source_clip):
 
 
 def get_source_metadata_dict(source_clip):
-    return source_clip.metadata['aswf_enctests']['SOURCE_INFO']
+    return source_clip.metadata['aswf_enctests']['source_info']
 
 
 def get_test_metadata_dict(otio_item, testname):
@@ -297,41 +295,34 @@ def get_ffmpeg_version():
     return version
 
 
-def ffmpeg_convert(args, source_clip, test_config):
-    ffmpeg_cmd = '\
-{ffmpeg_bin} \
-{input_args} \
--start_number {start_frame} \
--i "{source}" \
--vframes {duration}\
-{compression_args} \
--y "{outfile}"\
-'
+def ffmpeg_convert(args, source_clip, test_config, wedge, testname):
+    ffmpeg_cmd = test_config.get('encoding_template')
+
     source_path, symbol = get_source_path(source_clip)
 
     # Append test name to source filename
     stem = source_path.stem.replace(symbol, '')
     out_file = Path(args.encoded_folder).absolute().joinpath(
-        f"{stem}-{test_config.name}{test_config.get('suffix')}"
+        f"{stem}-{testname}{test_config.get('suffix')}"
     )
     source_meta = get_source_metadata_dict(source_clip)
-    input_args = ''
-    if source_meta.get('input_args'):
-        input_args = ' '.join(source_meta.get('input_args').split('\n'))
+    input_args = ' '.join(
+        [f'{key} {value}' for key, value in
+         source_meta.get('input_args', {}).items()]
+    )
 
     encoding_args = ' '.join(
-        test_config.get('encoding_args').split('\n')
+        [f'{key} {value}' for key, value in
+         test_config['wedges'][wedge].items()]
     )
 
     duration = source_clip.source_range.duration.to_frames()
-    start_frame = source_clip.start_frame
+
     cmd = ffmpeg_cmd.format(
-        ffmpeg_bin=FFMPEG_BIN,
         input_args=input_args,
-        start_frame=start_frame,
         source=source_path,
         duration=duration,
-        compression_args=encoding_args,
+        encoding_args=encoding_args,
         outfile=out_file
     )
 
@@ -342,9 +333,11 @@ def ffmpeg_convert(args, source_clip, test_config):
     # Do encoding
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
-	    env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+        env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
+
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+
     subprocess.call(shlex.split(cmd), env=env)
 
     # Store encoding time
@@ -354,7 +347,7 @@ def ffmpeg_convert(args, source_clip, test_config):
     mr = create_media_reference(out_file, source_clip)
 
     # Update metadata
-    enc_meta = get_test_metadata_dict(mr, test_config.name)
+    enc_meta = get_test_metadata_dict(mr, testname)
     enc_meta['encode_time'] = round(enctime, 4)
     enc_meta['encode_arguments'] = encoding_args
     enc_meta['filesize'] = sizeof_fmt(out_file)
@@ -365,7 +358,6 @@ def ffmpeg_convert(args, source_clip, test_config):
 def vmaf_compare(source_clip, test_ref, testname):
     vmaf_cmd = '\
 {ffmpeg_bin} \
--start_number {start_frame} \
 {reference} \
 -i "{distorted}" \
 -vframes {duration} \
@@ -381,9 +373,10 @@ model_path={vmaf_model}\" \
 '
     # Get settings from metadata used as basis for encoded media
     source_meta = get_source_metadata_dict(source_clip)
-    input_args = ''
-    if source_meta.get('input_args'):
-        input_args = ' '.join(source_meta.get('input_args').split('\n'))
+    input_args = ' '.join(
+        [f'{key} {value}' for key, value in
+         source_meta.get('input_args', {}).items()]
+    )
 
     source_path, _ = get_source_path(source_clip)
     reference = f'{input_args} -i "{source_path}" '
@@ -394,7 +387,6 @@ model_path={vmaf_model}\" \
 
     cmd = vmaf_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
-        start_frame=start_frame,
         reference=reference,
         distorted=distorted,
         duration=source_meta.get('duration'),
@@ -404,7 +396,7 @@ model_path={vmaf_model}\" \
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
-	    env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+        env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
@@ -423,7 +415,7 @@ model_path={vmaf_model}\" \
 def prep_sources(args, collection):
     source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
     for config in source_configs:
-        source_clip = create_clip(config['SOURCE_INFO'])
+        source_clip = create_clip(config['source_info'])
         collection.append(source_clip)
 
 
@@ -437,11 +429,14 @@ def run_tests(args, test_configs, collection):
 
         for test_config in tests_only(test_configs):
             # perform enctest
-            testname = test_config.name
-            print(f'Running "{testname}"')
-            test_ref = ffmpeg_convert(args, source_clip, test_config)
-            references.update({testname: test_ref})
-            vmaf_compare(source_clip, test_ref, testname)
+            for wedge in test_config['wedges']:
+                testname = f"{test_config.get('name')}-{wedge}"
+                print(f'Running "{testname}"')
+                test_ref = ffmpeg_convert(
+                    args, source_clip, test_config, wedge, testname
+                )
+                references.update({testname: test_ref})
+                vmaf_compare(source_clip, test_ref, testname)
 
         # Add media references to clip
         source_clip.set_media_references(

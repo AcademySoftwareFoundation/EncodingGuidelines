@@ -63,9 +63,11 @@ def get_media_info(path, startframe=None):
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
-	    env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+        env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+
     try:
         proc = run(shlex.split(cmd), capture_output=True, env=env, check=True)
         raw_json = json.loads(proc.stdout)
@@ -87,9 +89,9 @@ def get_media_info(path, startframe=None):
     info = {
         'path': path.as_posix(),
         'width': stream.get('width'),
-        'heigth': stream.get('height'),
-        'in': startframe,
-        'duration': stream.get('nb_frames', stream.get('duration_ts', 1)),
+        'height': stream.get('height'),
+        'in': startframe or 0,
+        'duration': int(stream.get('nb_frames', stream.get('duration_ts', 1))),
         'rate': calculate_rate(stream.get('r_frame_rate'))
     }
 
