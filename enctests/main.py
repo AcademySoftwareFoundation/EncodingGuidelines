@@ -415,7 +415,7 @@ model_path={vmaf_model}\" \
 def prep_sources(args, collection):
     source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
     for config in source_configs:
-        source_clip = create_clip(config['source_info'])
+        source_clip = create_clip(config)
         collection.append(source_clip)
 
 
