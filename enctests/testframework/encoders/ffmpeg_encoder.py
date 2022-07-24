@@ -85,10 +85,10 @@ class FFmpegEncoder(ABCTestEncoder):
 
         source_path, _ = self.get_source_path()
         source_meta = self.source_clip.metadata['aswf_enctests']['source_info']
-        input_args = ' '.join(
-            [f'{key} {value}' for key, value in
-             source_meta.get('input_args', {}).items()]
-        )
+
+        input_args = ''
+        if source_meta.get('images'):
+            input_args = f"-start_number {source_meta.get('in')}"
 
         encoding_args = ' '.join(
             [f'{key} {value}' for key, value in wedge.items()]

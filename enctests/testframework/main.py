@@ -107,7 +107,7 @@ def parse_config_file(path):
 
 
 def create_config_from_source(path, startframe=None):
-    config_data = {'source_info': {'input_args': {}}}
+    config_data = {'images': False}
 
     media_info = get_media_info(path, startframe)
     if not media_info:
@@ -116,9 +116,7 @@ def create_config_from_source(path, startframe=None):
     config_data.update(media_info)
 
     if startframe:
-        config_data['input_args'].update(
-            {'-start_number': startframe}
-        )
+        config_data['images'] = True
 
     config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
     with open(config_path, 'wt') as f:

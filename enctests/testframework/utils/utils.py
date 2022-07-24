@@ -55,15 +55,17 @@ def get_nearest_model(width):
 
 
 def get_media_info(path, startframe=None):
+    input_args = ''
+    if startframe:
+        input_args = f'-start_number {startframe} '
+
     cmd = f'ffprobe ' \
           f'-v quiet ' \
           f'-hide_banner ' \
           f'-print_format json ' \
           f'-show_streams ' \
+          f'{input_args}' \
           f'-i "{path.as_posix()}"'
-
-    if startframe:
-         cmd = cmd + f' -start_number %d ' % startframe
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
