@@ -1,7 +1,6 @@
 import os
 import sys
 import yaml
-import time
 import json
 import pyseq
 import shlex
@@ -10,6 +9,8 @@ import subprocess
 
 from pathlib import Path
 from copy import deepcopy
+
+from .encoders import encoder_factory
 
 try:
     from yaml import CSafeLoader as SafeLoader
@@ -22,7 +23,13 @@ import opentimelineio as otio
 
 
 # Test config files
-from utils import sizeof_fmt, get_media_info, get_nearest_model
+from .utils import (
+    get_media_info,
+    get_nearest_model,
+    create_media_reference,
+    get_test_metadata_dict,
+    get_source_metadata_dict
+)
 
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
@@ -36,7 +43,7 @@ FFMPEG_BIN = os.getenv(
 
 VMAF_LIB_DIR = os.getenv(
     'VMAF_LIB_DIR',
-    f'{os.path.dirname(__file__)}/.venv/usr/local/lib/x86_64-linux-gnu'
+    f'{os.path.dirname(__file__)}/../.venv/usr/local/lib/x86_64-linux-gnu'
 )
 
 
@@ -100,52 +107,6 @@ def parse_config_file(path):
     return config
 
 
-def create_media_reference(path, source_clip):
-    config = get_source_metadata_dict(source_clip)
-    rate = float(config.get('rate'))
-    duration = float(config.get('duration'))
-
-    if path.is_dir():
-        # Create ImageSequenceReference
-        seq = pyseq.get_sequences(path.as_posix())[0]
-        available_range = otio.opentime.TimeRange(
-            start_time=otio.opentime.RationalTime(
-                seq.start(), rate
-            ),
-            duration=otio.opentime.RationalTime(
-                seq.length(), rate
-            )
-        )
-        mr = otio.schema.ImageSequenceReference(
-            target_url_base=Path(seq.directory()).as_posix(),
-            name_prefix=seq.head(),
-            name_suffix=seq.tail(),
-            start_frame=seq.start(),
-            frame_step=1,
-            frame_zero_padding=len(max(seq.digits, key=len)),
-            rate=rate,
-            available_range=available_range
-        )
-
-    else:
-        # Create ExternalReference
-        available_range = otio.opentime.TimeRange(
-            start_time=otio.opentime.RationalTime(
-                0, rate
-            ),
-            duration=otio.opentime.RationalTime(
-                duration, rate
-            )
-        )
-        mr = otio.schema.ExternalReference(
-            target_url=path.resolve().as_posix(),
-            available_range=available_range,
-        )
-        mr.name = path.name
-
-    return mr
-
-
 def create_clip(config):
     path = Path(config.get('path'))
 
@@ -189,7 +150,7 @@ def create_config_from_source(path, startframe=None):
     config_data.update(media_info)
 
     if startframe:
-        config_data['source_info']['input_args'].update(
+        config_data['input_args'].update(
             {'-start_number': startframe}
         )
 
@@ -275,86 +236,6 @@ def get_source_path(source_clip):
     return path, symbol
 
 
-def get_source_metadata_dict(source_clip):
-    return source_clip.metadata['aswf_enctests']['source_info']
-
-
-def get_test_metadata_dict(otio_item, testname):
-    ffmpeg_version = get_ffmpeg_version()
-    aswf_meta = otio_item.metadata.setdefault('aswf_enctests', {})
-    enc_meta = aswf_meta.setdefault(testname, {})
-
-    return enc_meta.setdefault(ffmpeg_version, {})
-
-
-def get_ffmpeg_version():
-    cmd = f'{FFMPEG_BIN} -version -v quiet -hide_banner'
-    _raw = subprocess.check_output(shlex.split(cmd))
-    version = b'_'.join(_raw.split(b' ')[:3])
-
-    return version
-
-
-def ffmpeg_convert(args, source_clip, test_config, wedge, testname):
-    ffmpeg_cmd = test_config.get('encoding_template')
-
-    source_path, symbol = get_source_path(source_clip)
-
-    # Append test name to source filename
-    stem = source_path.stem.replace(symbol, '')
-    out_file = Path(args.encoded_folder).absolute().joinpath(
-        f"{stem}-{testname}{test_config.get('suffix')}"
-    )
-    source_meta = get_source_metadata_dict(source_clip)
-    input_args = ' '.join(
-        [f'{key} {value}' for key, value in
-         source_meta.get('input_args', {}).items()]
-    )
-
-    encoding_args = ' '.join(
-        [f'{key} {value}' for key, value in
-         test_config['wedges'][wedge].items()]
-    )
-
-    duration = source_clip.source_range.duration.to_frames()
-
-    cmd = ffmpeg_cmd.format(
-        input_args=input_args,
-        source=source_path,
-        duration=duration,
-        encoding_args=encoding_args,
-        outfile=out_file
-    )
-
-    print('ffmpeg command:', cmd)
-    # Time encoding process
-    t1 = time.perf_counter()
-
-    # Do encoding
-    env = os.environ
-    if 'LD_LIBRARY_PATH' in env:
-        env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
-
-    else:
-        env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
-
-    subprocess.call(shlex.split(cmd), env=env)
-
-    # Store encoding time
-    enctime = time.perf_counter() - t1
-
-    # Create a media reference of output file
-    mr = create_media_reference(out_file, source_clip)
-
-    # Update metadata
-    enc_meta = get_test_metadata_dict(mr, testname)
-    enc_meta['encode_time'] = round(enctime, 4)
-    enc_meta['encode_arguments'] = encoding_args
-    enc_meta['filesize'] = sizeof_fmt(out_file)
-
-    return mr
-
-
 def vmaf_compare(source_clip, test_ref, testname):
     vmaf_cmd = '\
 {ffmpeg_bin} \
@@ -401,7 +282,7 @@ model_path={vmaf_model}\" \
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
     subprocess.call(shlex.split(cmd), env=env)
-    with open('compare_log.json', 'rb') as f:
+    with open(f'compare_log.json', 'rb') as f:
         raw_results = json.load(f)
 
     results = {
@@ -423,20 +304,18 @@ def run_tests(args, test_configs, collection):
     for source_clip in collection:
         references = source_clip.media_references()
 
-        # # Create lossless reference for comparisons
-        # lossless_ref = ffmpeg_convert(args, config, 'BASELINE_SETTINGS')
-        # references.update({'baseline': lossless_ref})
-
         for test_config in tests_only(test_configs):
             # perform enctest
-            for wedge in test_config['wedges']:
-                testname = f"{test_config.get('name')}-{wedge}"
-                print(f'Running "{testname}"')
-                test_ref = ffmpeg_convert(
-                    args, source_clip, test_config, wedge, testname
-                )
-                references.update({testname: test_ref})
-                vmaf_compare(source_clip, test_ref, testname)
+            encoder = encoder_factory(
+                source_clip,
+                test_config,
+                Path(args.encoded_folder)
+            )
+            results = encoder.run_wedges()
+            for test_name, test_ref in results.items():
+                vmaf_compare(source_clip, test_ref, test_name)
+
+            references.update(results)
 
         # Add media references to clip
         source_clip.set_media_references(

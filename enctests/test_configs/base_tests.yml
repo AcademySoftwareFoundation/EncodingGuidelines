@@ -1,6 +1,7 @@
 test_scale_yuv444p10le:
     name: test_scale_yuv444p10le
     description: scale (yuv444p10le)
+    app: ffmpeg
     suffix: .mov
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     wedges:

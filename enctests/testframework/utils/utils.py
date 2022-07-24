@@ -2,7 +2,11 @@ import os
 import pathlib
 import json
 import shlex
-from subprocess import run, PIPE, CalledProcessError
+from pathlib import Path
+from subprocess import run, CalledProcessError
+
+import opentimelineio as otio
+import pyseq
 
 VMAF_LIB_DIR = os.getenv(
     'VMAF_LIB_DIR',
@@ -13,13 +17,13 @@ VMAF_LIB_DIR = os.getenv(
 # Which vmaf model to use
 VMAF_HD_MODEL = os.getenv(
     'VMAF_MODEL',
-    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model/'
+    f'{os.path.dirname(__file__)}/../../tools/vmaf-2.3.1/model/'
 ) + "/vmaf_v0.6.1.json"
 
 
 VMAF_4K_MODEL = os.getenv(
     'VMAF_MODEL',
-    f'{os.path.dirname(__file__)}/tools/vmaf-2.3.1/model'
+    f'{os.path.dirname(__file__)}/../../tools/vmaf-2.3.1/model'
 ) + "/vmaf_4k_v0.6.1.json"
 
 
@@ -98,10 +102,58 @@ def get_media_info(path, startframe=None):
     return info
 
 
-if __name__ == '__main__':
-    path = pathlib.Path(
-        '/home/daniel/Desktop/encoding_test_files/'
-        'face_HEVC 100mbps VBR High - Good.mp4'
-    )
-    info = get_media_info(path=path)
-    print(info)
+def create_media_reference(path, source_clip):
+    config = get_source_metadata_dict(source_clip)
+    rate = float(config.get('rate'))
+    duration = float(config.get('duration'))
+
+    if path.is_dir():
+        # Create ImageSequenceReference
+        seq = pyseq.get_sequences(path.as_posix())[0]
+        available_range = otio.opentime.TimeRange(
+            start_time=otio.opentime.RationalTime(
+                seq.start(), rate
+            ),
+            duration=otio.opentime.RationalTime(
+                seq.length(), rate
+            )
+        )
+        mr = otio.schema.ImageSequenceReference(
+            target_url_base=Path(seq.directory()).as_posix(),
+            name_prefix=seq.head(),
+            name_suffix=seq.tail(),
+            start_frame=seq.start(),
+            frame_step=1,
+            frame_zero_padding=len(max(seq.digits, key=len)),
+            rate=rate,
+            available_range=available_range
+        )
+
+    else:
+        # Create ExternalReference
+        available_range = otio.opentime.TimeRange(
+            start_time=otio.opentime.RationalTime(
+                0, rate
+            ),
+            duration=otio.opentime.RationalTime(
+                duration, rate
+            )
+        )
+        mr = otio.schema.ExternalReference(
+            target_url=path.resolve().as_posix(),
+            available_range=available_range,
+        )
+        mr.name = path.name
+
+    return mr
+
+
+def get_test_metadata_dict(otio_clip, testname):
+    aswf_meta = otio_clip.metadata.setdefault('aswf_enctests', {})
+    enc_meta = aswf_meta.setdefault(testname, {})
+
+    return enc_meta
+
+
+def get_source_metadata_dict(source_clip):
+    return source_clip.metadata['aswf_enctests']['source_info']
