@@ -120,7 +120,8 @@ def create_config_from_source(path, startframe=None):
 
     config_path = path.with_suffix(path.suffix + SOURCE_SUFFIX)
     with open(config_path, 'wt') as f:
-        yaml.dump(config_data, f, SafeDumper, indent=4)
+        yaml.dump(config_data, f, SafeDumper, indent=4, sort_keys=False)
+        print(f'Successfully wrote source file: "{config_path}"')
 
 
 def scantree(args, path, suffix=None):
@@ -130,7 +131,7 @@ def scantree(args, path, suffix=None):
             sequences = pyseq.get_sequences(entry.path)
             if args.prep_sources and sequences:
                 for sequence in sequences:
-                    if sequence.name.endswith(".source"):
+                    if sequence.name.endswith(SOURCE_SUFFIX):
                         # Can ignore any .source files.
                         continue
                     if sequence.length() < 2:
@@ -166,6 +167,11 @@ def create_source_config_files(args):
             continue
 
         create_config_from_source(path, startframe=startframe)
+
+    print(
+        f'Done creating source files. '
+        f'Make sure to do adjustments of in point, duration and so on.'
+    )
 
 
 def get_configs(args, root_dir, config_type):
@@ -204,17 +210,15 @@ model_path={vmaf_model}\" \
 '
     # Get settings from metadata used as basis for encoded media
     source_meta = get_source_metadata_dict(source_clip)
-    input_args = ' '.join(
-        [f'{key} {value}' for key, value in
-         source_meta.get('input_args', {}).items()]
-    )
+    input_args = ''
+    if source_meta.get('images'):
+        input_args = f"-start_number {source_meta.get('in')}"
 
     source_path, _ = get_source_path(source_clip)
     reference = f'{input_args} -i "{source_path}" '
 
     # Assuming all encoded files are video files for now
     distorted = test_ref.target_url
-    start_frame = source_clip.start_frame
 
     cmd = vmaf_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
@@ -240,6 +244,7 @@ model_path={vmaf_model}\" \
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
         'psnr': raw_results['pooled_metrics'].get('psnr')
     }
+
     enc_meta = get_test_metadata_dict(test_ref, testname)
     enc_meta['results'] = results
 
@@ -256,7 +261,7 @@ def run_tests(args, test_configs, collection):
         references = source_clip.media_references()
 
         for test_config in tests_only(test_configs):
-            # perform enctest
+            # perform encoding test
             encoder = encoder_factory(
                 source_clip,
                 test_config,
@@ -279,7 +284,6 @@ def main():
 
     if args.prep_sources:
         create_source_config_files(args)
-
         return
 
     # Make sure we have a folder for test configs
