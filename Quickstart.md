@@ -15,15 +15,17 @@ This document is based on results from ffmpeg 4.4, we have not tested with 5.0 y
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 
 ```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
+        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
-        -color_range tv -colorspace rec709 -color_primaries rec709 -color_trc iec61966-2-1 outputfile.mp4
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
+        outputfile.mp4
 ```
 
 | --- | --- |
-| **-r 24**     | means 24 fps |
+| **-r 24**     | means 24 frames per second for the png files. |
 | **-start_number** 1 | The frame sequence starts from frame 1 (defaults to 0) |
-**-i inputfile.%04d.png** | the file sequence will be padded to 4 digits, i.e. 0000, 0001, 0002, etc.
+**-i inputfile.%04d.png** | the %04d means the file sequence will be padded to 4 digits, i.e. 0000, 0001, 0002, etc. It is the same syntax supported by the C printf function.
 **[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range.
 **-c:v libx264** | use the h264 encoding library (libx264)
 **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow.
