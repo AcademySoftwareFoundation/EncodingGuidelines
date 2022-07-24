@@ -29,15 +29,15 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt
 **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow.
 **-pix_fmt yuv420p** | use yuv420 video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le
 **-color_range tv** | mp4 metadata - specifying color range as 16-235 (which is default for web playback).
-**-colorspace rec709** | mp4 metadata - specifying rec709 yuv color pixel format
-**-color_primaries rec709** | mp4 metadata - rec709 color gamut primaries
+**-colorspace bt709** | mp4 metadata - specifying bt709 yuv color pixel format
+**-color_primaries bt709** | mp4 metadata - bt709 color gamut primaries
 **-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests below.
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
 | --- | --- |
-| **in_color_matrix=rec709** | color space bt709 video coming in (normal for TV/Desktop video).|
-| **out_color_matrix=rec709** | means color space bt709 video going out.  |
+| **in_color_matrix=bt709** | color space bt709 video coming in (normal for TV/Desktop video).|
+| **out_color_matrix=bt709** | means color space bt709 video going out.  |
 
 The combination of this and in_color_matrix will mean the color encoding will match the source media. If you are only adding one set of flags, this is the one, otherwise it will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays.
 
