@@ -8,7 +8,6 @@ import argparse
 import subprocess
 
 from pathlib import Path
-from copy import deepcopy
 
 from .encoders import encoder_factory
 
@@ -21,12 +20,12 @@ except ImportError:
 
 import opentimelineio as otio
 
-
 # Test config files
 from .utils import (
+    create_clip,
     get_media_info,
+    get_source_path,
     get_nearest_model,
-    create_media_reference,
     get_test_metadata_dict,
     get_source_metadata_dict
 )
@@ -105,39 +104,6 @@ def parse_config_file(path):
         config = yaml.load(f, SafeLoader)
 
     return config
-
-
-def create_clip(config):
-    path = Path(config.get('path'))
-
-    clip = otio.schema.Clip(name=path.stem)
-    clip.metadata.update({'aswf_enctests': {'source_info': deepcopy(config)}})
-
-    # Source range
-    clip.source_range = get_source_range(config)
-    clip.start_frame = config.get('in')
-
-    # The initial MediaReference is stored as default
-    mr = create_media_reference(path, clip)
-    clip.media_reference = mr
-
-    return clip
-
-
-def get_source_range(config):
-    source_range = otio.opentime.TimeRange(
-        start_time=otio.opentime.RationalTime(
-            config.get('in'),
-            config.get('rate')
-        ),
-        duration=otio.opentime.RationalTime.from_seconds(
-            config.get('duration') /
-            config.get('rate'),
-            config.get('rate')
-        )
-    )
-
-    return source_range
 
 
 def create_config_from_source(path, startframe=None):
@@ -222,20 +188,6 @@ def tests_only(test_configs):
                 yield config[section]
 
 
-def get_source_path(source_clip):
-    source_mr = source_clip.media_reference
-    symbol = ''
-    path = Path()
-    if isinstance(source_mr, otio.schema.ExternalReference):
-        path = Path(source_mr.target_url)
-
-    elif isinstance(source_mr, otio.schema.ImageSequenceReference):
-        symbol = f'%0{source_mr.frame_zero_padding}d'
-        path = Path(source_mr.abstract_target_url(symbol=symbol))
-
-    return path, symbol
-
-
 def vmaf_compare(source_clip, test_ref, testname):
     vmaf_cmd = '\
 {ffmpeg_bin} \
@@ -277,7 +229,8 @@ model_path={vmaf_model}\" \
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
-        env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+        env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
+
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 

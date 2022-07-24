@@ -1,12 +1,12 @@
 import os
-import pathlib
 import json
 import shlex
+import pyseq
+from copy import deepcopy
 from pathlib import Path
 from subprocess import run, CalledProcessError
 
 import opentimelineio as otio
-import pyseq
 
 VMAF_LIB_DIR = os.getenv(
     'VMAF_LIB_DIR',
@@ -67,7 +67,7 @@ def get_media_info(path, startframe=None):
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
-        env.update({'LD_LIBRARY_PATH': env['LD_LIBRARY_PATH'] + ":" + VMAF_LIB_DIR})
+        env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
 
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
@@ -157,3 +157,50 @@ def get_test_metadata_dict(otio_clip, testname):
 
 def get_source_metadata_dict(source_clip):
     return source_clip.metadata['aswf_enctests']['source_info']
+
+
+def create_clip(config):
+    path = Path(config.get('path'))
+
+    clip = otio.schema.Clip(name=path.stem)
+    clip.metadata.update({'aswf_enctests': {'source_info': deepcopy(config)}})
+
+    # Source range
+    clip.source_range = get_source_range(config)
+    clip.start_frame = config.get('in')
+
+    # The initial MediaReference is stored as default
+    mr = create_media_reference(path, clip)
+    clip.media_reference = mr
+
+    return clip
+
+
+def get_source_range(config):
+    source_range = otio.opentime.TimeRange(
+        start_time=otio.opentime.RationalTime(
+            config.get('in'),
+            config.get('rate')
+        ),
+        duration=otio.opentime.RationalTime.from_seconds(
+            config.get('duration') /
+            config.get('rate'),
+            config.get('rate')
+        )
+    )
+
+    return source_range
+
+
+def get_source_path(source_clip):
+    source_mr = source_clip.media_reference
+    symbol = ''
+    path = Path()
+    if isinstance(source_mr, otio.schema.ExternalReference):
+        path = Path(source_mr.target_url)
+
+    elif isinstance(source_mr, otio.schema.ImageSequenceReference):
+        symbol = f'%0{source_mr.frame_zero_padding}d'
+        path = Path(source_mr.abstract_target_url(symbol=symbol))
+
+    return path, symbol
