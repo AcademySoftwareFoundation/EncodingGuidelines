@@ -101,7 +101,7 @@ def parse_args():
 def parse_config_file(path):
     config_file = path.as_posix()
     with open(config_file, 'rt') as f:
-        config = yaml.load(f, SafeLoader)
+        config = list(yaml.load_all(f, SafeLoader))
 
     return config
 
@@ -179,8 +179,8 @@ def get_configs(args, root_dir, config_type):
     for item in scantree(args, root_dir, suffix=config_type):
         path = Path(item.path)
         if path.suffix == config_type:
-            config = parse_config_file(path)
-            configs.append(config)
+            for config in parse_config_file(path):
+                configs.append(config)
 
     return configs
 
