@@ -25,7 +25,7 @@ The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h
 
 There are four possible tags that you can apply to movies:
   * <a href='#transfer-function-tests-color_trc-flag'>color_trc</a> - The transfer function (e.g. gamma)
-  * <a href='#colorprimaries'>color_primaries</a> - e.g. rec709, rec2020, display-p3
+  * <a href='#colorprimaries'>color_primaries</a> - e.g. bt709, rec2020, display-p3
   * <a href="#color_range">color_range</a> - Is it tv vs. full range
   * <a href="#color_space">color_space</a> - Is it YUV vs. RGB
 
@@ -34,25 +34,25 @@ For a detailed breakdown of what browsers support what flags see: [here](https:/
 
 
 # Transfer function tests (color_trc flag)
-This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. rec709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, rec709 is frankly rather useless, consequently we recommend using sRGB as a default.
+This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. bt709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, bt709 is frankly rather useless, consequently we recommend using sRGB as a default.
 
 For more details see: [here](tests/greramp-osx/ycrcbcompare.md)
 
 ## sRGB
-Using the `-color_trc 13` flag. This appears to be the most reliable one, working across all machines and browsers that support it.
+Using the `-color_trc iec61966-2-1` flag (the sRGB spec is defined as [iec61966-2-1](https://en.wikipedia.org/wiki/SRGB) ). This appears to be the most reliable one, working across all machines and browsers that support it. It's a shame that the flag has to be so cryptic. 
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-srgb.png"/></TD><TD>Source SRGB PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
 
-## rec709
-Using the `-color_trc 1` flag. This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera rec709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
+## bt709
+Using the `-color_trc bt709` flag (AKA rec709). This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera bt709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
 
 <table  class='compare'>
-<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the rec709 mp4.</TD></TR>
-<TR x-show="/^((?!chrome|android).)*safari/i.test(navigator.userAgent)"><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma195.mov"></video></TD><TD>This is a quicktime with a gamma of 1.95. This should be nearly identical to the above rec709 mp4, which implies OSX is correctly interpreting camera rec709.</TD></TR>
-<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>This is the srgb.mp4 which may match the rec709 result. For chrome on windows, this should match rec709, which implies its treating it as sRGB.</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the bt709 mp4.</TD></TR>
+<TR x-show="/^((?!chrome|android).)*safari/i.test(navigator.userAgent)"><TD><video width=400><source src="tests/greyramp-osx/greyscale-gamma195.mov"></video></TD><TD>This is a quicktime with a gamma of 1.95. This should be nearly identical to the above bt709 mp4, which implies OSX is correctly interpreting camera bt709.</TD></TR>
+<TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-srgb.mp4"></video></TD><TD>This is the srgb.mp4 which may match the bt709 result. For chrome on windows, this should match bt709, which implies its treating it as sRGB.</TD></TR>
 </table>
 
 Screenshots
@@ -62,7 +62,7 @@ Screenshots
 </table>
 
 ## Gamma 2.2
-Using the `-color_trc 2` flag. This does not work correctly on safari.
+Using the `-color_trc gamma22` flag. This does not work correctly on safari.
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-g22.png"/></TD><TD>Source gamma 2.2 PNG</TD></TR>
@@ -70,7 +70,7 @@ Using the `-color_trc 2` flag. This does not work correctly on safari.
 </table>
 
 ## Gamma linear
-Using the `-color_trc 8` flag. This is unlikely to ever be used for video, however it does make for a good test that something is working.
+Using the `-color_trc linear` flag. This is unlikely to ever be used for video, however it does make for a good test that something is working.
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-lin.png"/></TD><TD>Source linear PNG</TD></TR>
@@ -78,12 +78,12 @@ Using the `-color_trc 8` flag. This is unlikely to ever be used for video, howev
 </table>
 
 ## Summary
-We recommend the use of `-color_trc 13` to use sRGB. There is no support for a gamma 2.4, if you still need it, we recommend that you use -color_trc 2 (meaning undefined) and ensure that your monitor is set correctly
+We recommend the use of `-color_trc iec61966-2-1` to use sRGB. There is no support for a gamma 2.4, if you still need it, we recommend that you use -color_trc unknown and ensure that your monitor is set correctly
 
 
 # Gamut colorprimaries
 
-Normally web browsers use the rec709 color gamut (which is different to the rec709 gamma), but in theory you could define your media as having a wider gamut, e.g. DCI-P3 or rec2020. The files below show a PNG and MP4 file defined using the rec2020 gamut, so depending on which monitor you are using it will show different text. This is similar to the excellent [WIDE>Gamut](https://www.wide-gamut.com/) test page.
+Normally web browsers use the bt709 color gamut (which is different to the bt709 gamma), but in theory you could define your media as having a wider gamut, e.g. DCI-P3 or rec2020. The files below show a PNG and MP4 file defined using the rec2020 gamut, so depending on which monitor you are using it will show different text. This is similar to the excellent [WIDE>Gamut](https://www.wide-gamut.com/) test page.
 
 <table class='compare' width='100%'>
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
