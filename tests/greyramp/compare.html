@@ -6,6 +6,12 @@
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <style>
   .grid tbody tr td { cursor: grab }
+  a:link {
+        color:rgb(150, 150, 255);
+   }
+     a:visited {
+        color:rgb(120, 120, 255);
+   }
   </style>
   <script>
   $( function() {
@@ -23,54 +29,53 @@
   } );
   </script>
 </head>
-
-<body style="background-color:rgb(65 65 65); color:rgb(200,200,200)">
+<body style="background-color:#27262b; color:rgb(200,200,200); ">
 <H1>Color_trc comparison</H1><p> This is comparing a png file written with different ICC profiles (i.e. the underlying data is identical in all png files), and comparing it to mp4's where the only change is the -color_trc flag setting. The code to generate these files is <a href='../icctest.py'>here</a>. You can reorder the wedges to help with comparison by drag and drop.</p>
 <table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">
 <tbody>
 
 <TR class="index group"  id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD >raw png</TD><td><img src="greyscale-raw.png"/></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >raw png <B>png</B></TD><td><img src="greyscale-raw.png"/></td><td><p></p><p></p></td>
 </TR>
 
 <TR class="index group"  id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD >srgb png</TD><td><img src="greyscale-srgb.png"/></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >srgb png <B>png</B></TD><td><img src="greyscale-srgb.png"/></td><td><p></p><p></p></td>
 </TR>
 
 <TR class="index group"  id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD >rec1886 png</TD><td><img src="greyscale-rec1886.png"/></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >rec1886 png <B>png</B></TD><td><img src="greyscale-rec1886.png"/></td><td><p></p><p></p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>raw mp4</TD><td><video    ><source src='greyscale-raw.mp4' type='video/mp4'></video></td><td></td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>raw <B>mp4</B></TD><td><video    ><source src='greyscale-raw.mp4' type='video/mp4'></video></td><td><p><p\><p></p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = rec709 mp4</TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 1 ./greyramp/greyscale-rec709.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 1 = bt709 <B>mp4</B></TD><td><video    ><source src='greyscale-rec709.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 ./greyramp/greyscale-rec709.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 2 = unknown mp4</TD><td><video    ><source src='greyscale-unknown.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 ./greyramp/greyscale-unknown.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 2 = unknown <B>mp4</B></TD><td><video    ><source src='greyscale-unknown.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc unknown ./greyramp/greyscale-unknown.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB mp4</TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 13 ./greyramp/greyscale-srgb.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 13 = sRGB <B>mp4</B></TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp/greyscale-srgb.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 mp4</TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 4 ./greyramp/greyscale-gamma22.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma22.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc gamma22 ./greyramp/greyscale-gamma22.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 mp4</TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 5 ./greyramp/greyscale-gamma28.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 5 = gamma 2.8 <B>mp4</B></TD><td><video    ><source src='greyscale-gamma28.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc gamma28 ./greyramp/greyscale-gamma28.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear mp4</TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 8 ./greyramp/greyscale-lin.mp4</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 8 = linear <B>mp4</B></TD><td><video    ><source src='greyscale-lin.mp4' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc linear ./greyramp/greyscale-lin.mp4</p></td>
 </TR>
 
 <TR class="index group" id="button">
-	<TD><img width=25 src="../../static/reorder.png"></td><TD>gamma 2.4 mov (OSX only) mov</TD><td><video    ><source src='h264-ffmpeg-gamma24alt.mov' type='video/mp4'></video></td><td>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -movflags write_colr+write_gama -mov_gamma 2.4 ./greyramp/h264-ffmpeg-gamma24alt.mov</td>
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>gamma 2.4 mov (OSX only) <B>mov</B></TD><td><video    ><source src='h264-ffmpeg-gamma24alt.mov' type='video/mp4'></video></td><td><p><p\><p>ffmpeg -r 1 -y -i  ./greyramp/greyscale-raw.png -c:v libx264  -pix_fmt yuv420p -qscale:v 1  -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 ./greyramp/h264-ffmpeg-gamma24alt.mov</p></td>
 </TR>
 
 </tbody>
