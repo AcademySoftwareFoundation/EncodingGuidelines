@@ -544,7 +544,7 @@ RUN \
         cp -r ${DIR}/model/* ${PREFIX}/share/model/ && \
         mkdir -p ${VMAF_LIB_DIR} && \
 	echo "Creating VMAF DIRECTGORY:" ${VMAF_LIB_DIR} && \
-        cp -vr ${DIR}/model/* ${VMAF_LIB_DIR} 
+        cp -vr ${DIR}/model/* ${VMAF_LIB_DIR}
 
 #       rm -rf ${DIR}; \
 
@@ -638,7 +638,7 @@ RUN \
 
 
  #       && \
- #       rm -rf ${DIR}; 
+ #       rm -rf ${DIR};
 
 
 #FROM        base
