@@ -65,6 +65,13 @@ Options that can be used include:
 -qscale:v between values of 9 - 13 give a good result, 0 being best.
 -vendor apl0 - tricks the codec into believing its from an Apple codec.
 
+Example encode would look like:
+```
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vframes 100 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le \
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \ outputfile.mov
+```
+
 Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognised, e.g.:
 
 ```
@@ -80,6 +87,15 @@ ffmpeg.exe -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
    -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 \
    chip-chart-yuvconvert/basicnclcmetadata.mov
 ```
+
+If you are on a OSX M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to prores using:
+```
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vframes 100 -c:v prores_videotoolbox -profile:v 3 -pix_fmt yuv422p \
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 outputfile.mp4
+
+```
+NOTE, it does not appear to allow -color_trc iec61966-2-1 (sRGB) -- so this needs more testing.
 
 TODO:
 * Figure out the missing metadata so that ffmpeg can correctly decode a quicktime to still.

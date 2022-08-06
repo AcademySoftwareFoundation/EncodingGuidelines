@@ -25,7 +25,7 @@ The docs are pretty sparse for this, some of the better info is [FFmpeg/pixfmt.h
 
 There are four possible tags that you can apply to movies:
   * <a href='#transfer-function-tests-color_trc-flag'>color_trc</a> - The transfer function (e.g. gamma)
-  * <a href='#colorprimaries'>color_primaries</a> - e.g. rec709, rec2020, display-p3
+  * <a href='#colorprimaries'>color_primaries</a> - e.g. bt709, rec2020, display-p3
   * <a href="#color_range">color_range</a> - Is it tv vs. full range
   * <a href="#color_space">color_space</a> - Is it YUV vs. RGB
 
@@ -34,7 +34,7 @@ For a detailed breakdown of what browsers support what flags see: [here](https:/
 
 
 # Transfer function tests (color_trc flag)
-This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. rec709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, rec709 is frankly rather useless, consequently we recommend using sRGB as a default.
+This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. bt709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, bt709 is frankly rather useless, consequently we recommend using sRGB as a default.
 
 For more details see: [here](tests/greramp-osx/ycrcbcompare.md)
 
