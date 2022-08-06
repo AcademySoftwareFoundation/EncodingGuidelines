@@ -544,7 +544,7 @@ RUN \
         cp -r ${DIR}/model/* ${PREFIX}/share/model/ && \
         mkdir -p ${VMAF_LIB_DIR} && \
 	echo "Creating VMAF DIRECTGORY:" ${VMAF_LIB_DIR} && \
-        cp -vr ${DIR}/model/* ${VMAF_LIB_DIR} 
+        cp -vr ${DIR}/model/* ${VMAF_LIB_DIR}
 
 #       rm -rf ${DIR}; \
 
@@ -552,11 +552,8 @@ RUN \
 ## Download ffmpeg https://ffmpeg.org/
 RUN  \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
-        curl -sLO https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
-        tar -jx --strip-components=1 -f ffmpeg-${FFMPEG_VERSION}.tar.bz2 && \
-        ./configure     --disable-debug  --disable-doc    --disable-ffplay   --enable-shared --enable-gpl  --extra-libs=-ldl && \
-        make ;  make install
-
+        curl -sLO https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n${FFMPEG_VERSION}.tar.gz && \
+        tar -zx --strip-components=1 -f n${FFMPEG_VERSION}.tar.gz
 
 ## Build ffmpeg https://ffmpeg.org/
 RUN  \
@@ -640,7 +637,7 @@ RUN \
 
 
  #       && \
- #       rm -rf ${DIR}; 
+ #       rm -rf ${DIR};
 
 
 #FROM        base
