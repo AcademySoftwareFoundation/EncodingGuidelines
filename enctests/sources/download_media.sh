@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/usr/bin/bash -xv
 
 if [ ! -d Sintel-trailer-1080p-png ]
 then
