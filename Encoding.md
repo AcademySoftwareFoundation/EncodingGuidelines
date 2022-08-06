@@ -68,8 +68,8 @@ Options that can be used include:
 Example encode would look like:
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -vframes 100 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p \
-        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 outputfile.mp4
+        -vframes 100 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le \
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \ outputfile.mov
 ```
 
 Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognised, e.g.:
