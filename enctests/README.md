@@ -2,40 +2,121 @@
 -*WORK IN PROGRESS*-
 
 ## Goals
-Create a framework for easy testing and comparing of FFmpeg versions, video 
-codecs and encoding parameters commonly used in the animation and VFX industry. </br>
-Through the tests, find the settings best suited for preserving color and quality 
-in media for review and deliverables.
+Create a framework for testing and comparing encoded media through various encoders 
+making sure color and quality is preserved.
 
-## How
-Run a set of tests on a selection of test media based on configuration file(s). </br> 
-Each test produces new media files compared against source using VMAF and/or idiff.
-The resulting media and statistics are stored as media references with metadata 
-under clips gathered in an OTIO SerializableCollection.
+## Requirements
+* FFmpeg with VMAF enabled
+* OpenTimelineIO (0.15+ currently only in main) 
 
-From the resulting .otio file we can produce HTML reports or playback of media in 
-media players either supporting OTIO or a playlist.
+## Usage
 
-## What's been done so far
-- [x] Create an initial application framework
-- [x] Create SerializableCollection
-- [x] Support image sequenced source media
-- [x] Support video based source media
-- [x] Create a clip per soource
-- [x] Create baseline reference media
-- [x] Create encoded media based on config file
-- [x] Store encoded media as media references under clip
-- [x] Compare encoded media with source
-- [x] Serialize results in an .otio file
-- [x] Create source config file based on video file
-- [x] Create source config file based on image sequence
-- [x] Choose VMAF model (HD vs 4K) based on res. (width nearest to 1920 or 4096)
-- [ ] Create OTIO -> HTML adapter 
-- [ ] Option to append new test into existing OTIO file
-- [ ] Option to skip previously tested files
-- [ ] ..
+```commandline
+usage: main.py [-h] [--source-folder SOURCE_FOLDER] [--test-config-dir TEST_CONFIG_DIR] [--prep-sources] [--encoded-folder ENCODED_FOLDER] [--output OUTPUT]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --source-folder SOURCE_FOLDER
+                        Where to look for source media files
+  --test-config-dir TEST_CONFIG_DIR
+                        Where to look for *.yml files containing test descriptions
+  --prep-sources        Create *.yml files from media in --source-folder used as sources in encoding tests
+  --encoded-folder ENCODED_FOLDER
+                        Where to store the encoded files
+  --output OUTPUT       Path to results file including ".otio" extenstion (default: ./encoding-test-results.otio)
+```
+
+### Prepare your sources
+Start by prepping your source files. This is done with the `--prep-sources` flag. 
+</br>A set of "sourcefile.ext.yml" files get created alongside the source media.
+This is done, so you can adjust the desired in point and duration of the media
+before running your tests. 
+VMAF works best on clips of short durations like 1-2 seconds. 
+Duration is set in frames
+
+``` commandline
+# Prep sources 
+python -m testframework.main --prep-sources --source-folder /path/to/source_media/
+```
+
+#### Example source file
+sintel_trailer_2k_%04d.png.yml
+```yaml
+images: true
+path: /path/to/sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%04d.png
+width: 1920
+height: 1080
+in: 600
+duration: 25
+rate: 25.0
+```
+
+### Prepare your test files
+A set of default tests are provided for you in the "test_configs" folder.
+The test files are yaml based and require a couple of keys and values to work. 
+By default, the tests are geared towards encoding with FFmpeg, but you may write 
+your own encoder classes and test files geared towards that encoder.
+You may provide several tests in the same file separated by "---" so yaml reads 
+them as separate documents.
+
+#### Example test configuration
+```yaml
+---
+test_colorspace_yuv420p:
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    wedges:
+        slow_crf_23: &base_args
+            -c:v: libx264
+            -preset: slow
+            -crf: 23
+            -x264-params: '"keyint=15:no-deblock=1"'
+            -pix_fmt: yuv420p
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        slower_crf_18:
+            << : *base_args
+            -preset: slower
+            -crf: 18
+
+        slower_crf_18_film:
+            << : *base_args
+            -preset: slower
+            -crf: 18
+            -tune: film
+
+        slow_full_range:
+            << : *base_args
+            -crf: 18
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+            -color_range: 2
+            -color_trc: 1
+---
+```
+
+### Run the tests
+To run the default tests, simply run the app like below
+
+```commandline
+python -m testframework.main --source-folder /path/to/sources/ --encoded-folder /path/to/save/the/encoded/files/
+```
+
+### Results
+The results are stored in an "*.otio" file. Each source clip contains a media reference 
+for its source plus all additional encoded test files. 
+Each test is compared against the source with VMAF and the score is stored in 
+the media reference's metadata.
 
 ## Setup Test Environment
+**Please note! We're working on dockerizing this**
 
 In addition to OpenTimelineIO the tests rely on FFmpeg with VMAF support and most
 likely OpenImageIO.
@@ -60,72 +141,3 @@ python -m pip install .
 # Run tests (for now)
 .venv/bin/python main.py
 ```
-
-## Example Source config
-
-INI style config describing where to find media and a few crucial bits of info
-needed to encode it.
-The filename must follow the convention `<source_filename>.source` and reside 
-at the same level as the source file. In this case we're looking at an 
-image sequence which must be contained in a folder.</br>
-
-Example configuration file `Sintel-trailer-1080p-png.source`:
-
-```
-[[SOURCE_INFO]
-input_args =
-    -r 25
-    -start_number 600
-path = /home/daniel/Documents/dev/ffmpeg-tests/enctests/sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%%04d.png
-width = 1920
-heigth = 1080
-in = 600
-duration = 25
-rate = 25.0
-```
-
-## Example test config
-Same INI style config.
-
-```
-[test_colorspace_rgb]
-
-description = colorspace_rgb
-suffix = .mov
-encoding_args =
-    -c:v libx264
-    -preset slow
-    -crf 18
-    -x264-params "keyint=15:no-deblock=1"
-
-```
-
-## Metadata - results 
-
-``` JSON
-"metadata": {
-    "aswf_enctests": {
-        "test_colorspace_rgb": {
-            "ffmpeg_version_5.0.1": {
-                "encode_arguments": " -c:v libx264 -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\"",
-                "encode_time": 65.0579,
-                "filesize": "28.6MiB",
-                "results": {
-                    "psnr": {
-                        "harmonic_mean": 49.732509,
-                        "max": 53.299791,
-                        "mean": 49.769349,
-                        "min": 47.985198
-                    },
-                    "vmaf": {
-                        "harmonic_mean": 98.237394,
-                        "max": 100.0,
-                        "mean": 98.245602,
-                        "min": 96.345517
-                    }
-                }
-            }
-        }
-    }
-}
-``` 
