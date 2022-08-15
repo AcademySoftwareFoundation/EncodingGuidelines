@@ -33,8 +33,11 @@ class FFmpegEncoder(ABCTestEncoder):
         self.destination = destination
 
     def run_wedges(self) -> dict:
+        # The results dictionary is passed to source clip's list of available
+        # media references. Key is test name and value is media reference
         results = {}
         for wedge_name, wedge in self.test_config.get('wedges', {}).items():
+            # Test name is based on main test name and wedge name
             test_name = f"{self.test_config.get('name')}-{wedge_name}"
             out_file = self.get_output_filename(test_name)
 
@@ -57,16 +60,20 @@ class FFmpegEncoder(ABCTestEncoder):
             # Store timing
             enctime = time.perf_counter() - t1
 
-            # Create a media reference of output file
+            # !! Use this function from utils to create a media reference
+            # of output the file.
             mr = create_media_reference(out_file, self.source_clip)
 
-            # Update metadata
+            # Update metadata for use later
             ffmpeg_version = self.get_application_version()
             encoding_args = ' '.join(
                 [f'{key} {value}' for key, value in wedge.items()]
             )
 
+            # !! Use this function from utils to make sure we find the metadata
+            # later on
             enc_meta = get_test_metadata_dict(mr, test_name)
+
             test_meta = enc_meta.setdefault(ffmpeg_version, {})
             test_meta['encode_time'] = round(enctime, 4)
             test_meta['encode_arguments'] = encoding_args

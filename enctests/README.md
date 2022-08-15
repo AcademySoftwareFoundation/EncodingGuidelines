@@ -30,9 +30,7 @@ optional arguments:
 Start by prepping your source files. This is done with the `--prep-sources` flag. 
 </br>A set of "sourcefile.ext.yml" files get created alongside the source media.
 This is done, so you can adjust the desired in point and duration of the media
-before running your tests. 
-VMAF works best on clips of short durations like 1-2 seconds. 
-Duration is set in frames
+before running your tests. In-point and duration are set in frames.
 
 ``` commandline
 # Prep sources 
@@ -141,3 +139,24 @@ python -m pip install .
 # Run tests (for now)
 .venv/bin/python main.py
 ```
+
+## How to add an encoder
+This is still **work in progress** so for now you'll have to add an encoder class
+to a file in the "encoders" folder.
+Since every encoder has its own set of arguments, a new encoder also requires 
+its own test configs.
+
+* Create a subclass of the `ABCTestEncoder` found in "encoders/base.py".
+  * Implement the required methods to make your encoder work.
+  * Make sure you add new media references to a dictionary for each wedge
+    * Use `create_media_reference(out_file, self.source_clip)` from utils
+  * Make sure you store the test parameters in metadata under a test name based on "\<testname\>-\<wedgename\>"
+    * Use `get_test_metadata_dict(otio_clip, testname)` from utils 
+* Register your new class in the `encoder_factory` function found in "encoders/\_\_init\_\_.py" (for now)
+  * The key in the `encoder_map` dictionary needs to match the "app" value in the test configuration file
+* Create a test configuration file
+  * Required keys: 
+    * "name" - name of test
+    * "app" - name of application used in mapping mentioned above
+    * "wedges" - containing list of wedges (which are named freely)
+  * Just make sure you add the key/values you need in your class
