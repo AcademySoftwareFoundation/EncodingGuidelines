@@ -59,14 +59,15 @@ def parse_args():
         '--test-config-dir',
         action='store',
         default='./test_configs',
-        help='Where to look for *.enctest files'
+        help='Where to look for *.yml files containing test descriptions'
     )
 
     parser.add_argument(
         '--prep-sources',
         action='store_true',
         default=False,
-        help='Create *.source files for media in --source-folder'
+        help='Create *.yml files from media in --source-folder used as sources '
+             'in encoding tests'
     )
 
     parser.add_argument(
@@ -80,14 +81,16 @@ def parse_args():
         '--encode-all',
         action='store_true',
         default=False,
-        help='Encode all tests. Default to only encoding new tests'
+        help=argparse.SUPPRESS
+        # help='Encode all tests. Default to only encoding new tests'
     )
 
     parser.add_argument(
         '--output',
         action='store',
         default='encoding-test-results.otio',
-        help='Full path to results file (.otio)'
+        help='Path to results file including ".otio" extenstion '
+             '(default: ./encoding-test-results.otio)'
     )
 
     args = parser.parse_args()
