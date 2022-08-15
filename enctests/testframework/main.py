@@ -249,15 +249,15 @@ model_path={vmaf_model}\" \
     enc_meta['results'] = results
 
 
-def prep_sources(args, collection):
+def prep_sources(args, track):
     source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
     for config in source_configs:
         source_clip = create_clip(config)
-        collection.append(source_clip)
+        track.append(source_clip)
 
 
-def run_tests(args, test_configs, collection):
-    for source_clip in collection:
+def run_tests(args, test_configs, track):
+    for source_clip in track:
         references = source_clip.media_references()
 
         for test_config in tests_only(test_configs):
@@ -295,17 +295,21 @@ def main():
     # Load test config files
     test_configs = get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
 
-    # Create a collection object to hold clips
-    collection = otio.schema.SerializableCollection(name='aswf_enctests')
+    # Create a track to hold clips
+    track = otio.schema.Track(name='aswf_enctests')
 
     # Prep source files
-    prep_sources(args, collection)
+    prep_sources(args, track)
 
     # Run tests
-    run_tests(args, test_configs, collection)
+    run_tests(args, test_configs, track)
 
-    # Store results in an *.otio file
-    otio.adapters.write_to_file(collection, args.output)
+    # Store results in a timeline, so we can view the results in otioview
+    timeline = otio.schema.Timeline()
+    timeline.tracks.append(track)
+
+    # Serialize to *.otio
+    otio.adapters.write_to_file(timeline, args.output)
 
 
 if __name__== '__main__':

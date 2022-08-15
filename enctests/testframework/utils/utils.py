@@ -104,14 +104,18 @@ def get_media_info(path, startframe=None):
     return info
 
 
-def create_media_reference(path, source_clip):
+def create_media_reference(path, source_clip, is_sequence=False):
     config = get_source_metadata_dict(source_clip)
     rate = float(config.get('rate'))
     duration = float(config.get('duration'))
 
-    if path.is_dir():
+    if is_sequence:
         # Create ImageSequenceReference
-        seq = pyseq.get_sequences(path.as_posix())[0]
+        # TODO find a less error prone way to find correct sequence
+        seq = max(
+            pyseq.get_sequences(path.parent.as_posix()),
+            key=lambda s: s.frames()
+        )
         available_range = otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(
                 seq.start(), rate
@@ -171,8 +175,11 @@ def create_clip(config):
     clip.source_range = get_source_range(config)
     clip.start_frame = config.get('in')
 
+    # Check if we have an image sequence source
+    is_sequence = config.get('images', False)
+
     # The initial MediaReference is stored as default
-    mr = create_media_reference(path, clip)
+    mr = create_media_reference(path, clip, is_sequence)
     clip.media_reference = mr
 
     return clip
