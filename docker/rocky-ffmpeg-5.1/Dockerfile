@@ -48,6 +48,7 @@ ENV         FFMPEG_VERSION=5.1 \
     LIBARIBB24_VERSION=1.0.3 \
     LIBPNG_VERSION=1.6.9 \
     LIBVMAF_VERSION=2.1.1 \
+    VMAF_LIB_DIR=/usr/share/vmaf \
     SRC=/usr/local
 
 # OCIO and OIIO
@@ -159,6 +160,9 @@ RUN \
         ninja -vC build install && \
         mkdir -p ${PREFIX}/share/model/ && \
         cp -r /tmp/vmaf/model/* ${PREFIX}/share/model/ && \
+        mkdir -p ${VMAF_LIB_DIR} && \
+	echo "Creating VMAF DIRECTGORY:" ${VMAF_LIB_DIR} && \
+        cp -vr ${DIR}/model/* ${VMAF_LIB_DIR} && \
         rm -rf ${DIR}; \
         else \
         echo "VMAF skipped."; \
