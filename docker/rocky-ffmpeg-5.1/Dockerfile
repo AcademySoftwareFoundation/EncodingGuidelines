@@ -619,6 +619,7 @@ RUN  \
         --enable-libopenjpeg \
         # --enable-libopus \
         --enable-libsrt \
+        --enable-libvmaf \
         --enable-libtheora \
         --enable-libvidstab \
         --enable-libvorbis \

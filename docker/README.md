@@ -44,7 +44,7 @@ Built on top of Rocky linux i9 (identical to RHEL 9).
 
 ```
 cd rocky-ffmpeg-5.1
-docker build -t ffmpeg5.1 .
+docker build -t ffmpeg-5.1 .
 ./runme.sh
 ```
 
