@@ -744,6 +744,9 @@ RUN  \
                 ENABLE_OpenCV=0 ENABLE_QT5=0 ENABLE_OpenVDB=0 ENABLE_LibRaw=0 \
                 ENABLE_Libheif=0 ENABLE_FFmpeg=0 install
 
+WORKDIR     /test
+
+
 # ENV         LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib
 
 # #ENTRYPOINT  ["ffmpeg"]
