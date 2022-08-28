@@ -20,6 +20,7 @@ Its using the ffmpeg build environment based on https://github.com/jrottenberg/f
 The runme.sh script will mount the git repo as "/test" and create a shell to run the tests in.
 
 ### Building for ffmpeg-4.4
+Built on the ASWF vfxall image.
 
 ```
 cd ffmpeg-4.4
@@ -29,6 +30,7 @@ docker build -t ffmpeg4.4 .
 
 
 ### Building for ffmpeg-5.0
+Built on the ASWF vfxall image.
 
 ```
 cd ffmpeg-5.0
@@ -36,4 +38,13 @@ docker build -t ffmpeg5.0 .
 ./runme.sh
 ```
 
+
+### Building for rocky-ffmpeg-5.1
+Built on top of Rocky linux i9 (identical to RHEL 9).
+
+```
+cd rocky-ffmpeg-5.1
+docker build -t ffmpeg5.1 .
+./runme.sh
+```
 
