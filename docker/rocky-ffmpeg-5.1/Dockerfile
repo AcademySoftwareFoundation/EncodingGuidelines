@@ -4,7 +4,7 @@ FROM    rockylinux:9 AS base
 #RUN     dnf -y install s3cmd libgomp httpd24-libcurl icc-profiles-openicc imagemagick python-pip && \
 RUN     dnf install epel-release -y && \
         dnf --enablerepo=crb -y install xorg-x11-util-macros libgomp python3-pip ninja-build ImageMagick s3cmd yaml-cpp \
-                python3-devel clang git-clang-format libtiff libtiff-devel bzip2 bzip2-devel bzip2-libs tbb tbb-devel libwebp giflib patch && \
+                python3-devel clang git-clang-format libtiff libtiff-devel bzip2 bzip2-devel bzip2-libs tbb tbb-devel libwebp giflib patch vim && \
         dnf clean all;
 
 RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq awscli pillow PyYAML meson
