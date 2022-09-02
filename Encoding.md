@@ -75,7 +75,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt
 Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognised, e.g.:
 
 ```
-ffmpeg.exe -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
+ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
    -sws_flags spline+accurate_rnd+full_chroma_int -vframes 1 \
    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 OUTPUTFILE.png
 ```
@@ -83,7 +83,7 @@ ffmpeg.exe -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be 
 However, other encoders seem to be recognised correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
 
 ```
-ffmpeg.exe -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
+ffmpeg -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
    -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 \
    chip-chart-yuvconvert/basicnclcmetadata.mov
 ```
