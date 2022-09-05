@@ -285,15 +285,15 @@ def run_tests(args, test_configs, track):
 def main():
     args = parse_args()
 
+    # Make sure we have a folder for test configs
+    Path(args.test_config_dir).mkdir(parents=True, exist_ok=True)
+
     if args.prep_sources:
         create_source_config_files(args)
         return
 
-    # Make sure we have a folder for test configs
-    Path(args.test_config_dir).mkdir(exist_ok=True)
-
     # Make sure we have a destination folder
-    Path(args.encoded_folder).mkdir(exist_ok=True)
+    Path(args.encoded_folder).mkdir(parents=True, exist_ok=True)
 
     # Load test config files
     test_configs = get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
