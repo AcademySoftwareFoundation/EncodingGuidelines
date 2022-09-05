@@ -207,8 +207,8 @@ def vmaf_compare(source_clip, test_ref, testname):
 [distorted][reference]\
 libvmaf=log_fmt=json:\
 log_path=compare_log.json:\
-psnr=1:\
-model_path={vmaf_model}\" \
+feature="name=psnr":\
+model=path={vmaf_model}\" \
 -f null -\
 '
     # Get settings from metadata used as basis for encoded media
