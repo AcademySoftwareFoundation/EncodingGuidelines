@@ -63,6 +63,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        '--test-config',
+        action='store',
+        dest='test_config_file',
+        default=None,
+        help='Specify a single test config file to run'
+    )
+
+    parser.add_argument(
         '--prep-sources',
         action='store_true',
         default=False,
@@ -106,7 +114,11 @@ def parse_config_file(path):
     with open(config_file, 'rt') as f:
         config = list(yaml.load_all(f, SafeLoader))
 
-    return config
+    test_configs = []
+    for test_config in config:
+        test_configs.append(test_config)
+
+    return test_configs
 
 
 def create_config_from_source(path, startframe=None):
@@ -177,13 +189,12 @@ def create_source_config_files(args):
     )
 
 
-def get_configs(args, root_dir, config_type):
+def get_configs(args, root_path, config_type):
     configs = []
-    for item in scantree(args, root_dir, suffix=config_type):
+    for item in scantree(args, root_path, suffix=config_type):
         path = Path(item.path)
         if path.suffix == config_type:
-            for config in parse_config_file(path):
-                configs.append(config)
+            configs.extend(parse_config_file(path))
 
     return configs
 
@@ -207,8 +218,8 @@ def vmaf_compare(source_clip, test_ref, testname):
 [distorted][reference]\
 libvmaf=log_fmt=json:\
 log_path=compare_log.json:\
-psnr=1:\
-model_path={vmaf_model}\" \
+feature="name=psnr":\
+model=path={vmaf_model}\" \
 -f null -\
 '
     # Get settings from metadata used as basis for encoded media
@@ -285,18 +296,25 @@ def run_tests(args, test_configs, track):
 def main():
     args = parse_args()
 
+    # Make sure we have a folder for test configs
+    Path(args.test_config_dir).mkdir(parents=True, exist_ok=True)
+
     if args.prep_sources:
         create_source_config_files(args)
         return
 
-    # Make sure we have a folder for test configs
-    Path(args.test_config_dir).mkdir(exist_ok=True)
-
     # Make sure we have a destination folder
-    Path(args.encoded_folder).mkdir(exist_ok=True)
+    Path(args.encoded_folder).mkdir(parents=True, exist_ok=True)
 
-    # Load test config files
-    test_configs = get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
+    # Load test config file(s)
+    test_configs = []
+    if args.test_config_file:
+        test_configs.extend(parse_config_file(Path(args.test_config_file)))
+
+    else:
+        test_configs.extend(
+            get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
+        )
 
     # Create a track to hold clips
     track = otio.schema.Track(name='aswf_enctests')
