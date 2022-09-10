@@ -1,7 +1,8 @@
 ---
 layout: default
-nav_order: 2
+nav_order: 6
 title: HDR Encoding
+parent: Encoding Overview
 ---
 
 # HDR Encoding.
@@ -13,7 +14,7 @@ title: HDR Encoding
 
 There are a two main encoding formats (https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma)[HLG] and (https://en.wikipedia.org/wiki/Perceptual_quantizer)[PQ] encoding. We are choosing HLG since its a slightly simpler format, and requires less additional metadata.
 
-We take advantage of ACES to do the initial coversion to an intermediate format, which we are using png as the container.
+We take advantage of ACES to do the initial conversion to an intermediate format, which we are using png as the container.
 
 ```
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
@@ -33,6 +34,7 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
     -color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
     -pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
     -c:v libx265   \
+	-tag:v hvc1  \
     -color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc  \
     -pix_fmt yuv444p10le   -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int  \
     -x265-params 'colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400'   \
@@ -49,6 +51,13 @@ NOTE, this is a little different to other conversions (is this better?). We are 
 | -color_primaries bt2020 | Use the bt2020 color primaries |
 | -colorspace bt2020nc | NOT SURE ??? |
 | -pix_fmt rgb48be | We are assuming 16-bit RGB imagery as input |
+
+
+### Overall encode params
+
+| --- | --- |
+| -c:v libx265 | Use the h265 encoder |
+| -tag:v hvc1 | Tag the file for playback on mac | 
 
 ### Encode media definition
 
@@ -81,6 +90,7 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 	-color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
 	-pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 	-c:v libx265   \
+	-tag:v hvc1  \
 	-color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
 	-pix_fmt yuv420p10le   \
 	-sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
@@ -88,6 +98,7 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 	   sparks2_hlg_420.mov
 
 ```
+
 
 ## HLG 422 FFMPEG Encoding
 
