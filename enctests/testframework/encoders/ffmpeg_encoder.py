@@ -77,7 +77,7 @@ class FFmpegEncoder(ABCTestEncoder):
             test_meta = enc_meta.setdefault(ffmpeg_version, {})
             test_meta['encode_time'] = round(enctime, 4)
             test_meta['encode_arguments'] = encoding_args
-            test_meta['filesize'] = sizeof_fmt(out_file)
+            test_meta['filesize'] = out_file.stat().st_size
 
             # Add media reference to result list
             results.update({test_name: mr})
