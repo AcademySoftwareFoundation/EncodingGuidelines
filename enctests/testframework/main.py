@@ -1,5 +1,7 @@
 import os
 import sys
+from copy import deepcopy
+
 import yaml
 import json
 import pyseq
@@ -48,6 +50,16 @@ VMAF_LIB_DIR = os.getenv(
 
 def parse_args():
     parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--sources',
+        action='store',
+        nargs='+',
+        default=[],
+        help='Provide a list of paths to sources in stead of running all '
+             'from source folder'
+    )
+
     parser.add_argument(
         '--source-folder',
         action='store',
@@ -200,10 +212,13 @@ def get_configs(args, root_path, config_type):
 
 
 def tests_only(test_configs):
+    configs = []
     for config in test_configs:
         for section in config:
             if section.lower().startswith('test'):
-                yield config[section]
+                configs.append(config[section])
+
+    return configs
 
 
 def vmaf_compare(source_clip, test_ref, testname):
@@ -263,34 +278,86 @@ model=path={vmaf_model}\" \
     enc_meta['results'] = results
 
 
-def prep_sources(args, track):
-    source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
+def prep_sources(args):
+    bin = otio.schema.SerializableCollection()
+
+    source_configs = []
+    for path in args.sources:
+        source_configs.extend(parse_config_file(Path(path)))
+
+    if not source_configs:
+        source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
+
     for config in source_configs:
         source_clip = create_clip(config)
-        track.append(source_clip)
+        bin.append(source_clip)
+
+    return bin
 
 
-def run_tests(args, test_configs, track):
-    for source_clip in track:
+def check_for_sources(test_configs):
+    sources = []
+    for test_config in test_configs:
+        # Check if config contains sources to test against
+        sources.extend(test_config.get('sources', []))
+
+    return sources
+
+
+def run_tests(args, test_configs, timeline):
+    track_map = {}
+
+    # Gather test configs
+    test_configs = tests_only(test_configs)
+
+    # Check for sources in test configs
+    test_sources = check_for_sources(test_configs)
+    args.sources = args.sources or test_sources
+    print(args.sources)
+
+    # Prepare sources for tests
+    source_bin = prep_sources(args)
+
+    for source_clip in source_bin:
         references = source_clip.media_references()
 
-        for test_config in tests_only(test_configs):
-            # perform encoding test
+        for test_config in test_configs:
+            # Create an encoder instance
             encoder = encoder_factory(
                 source_clip,
                 test_config,
                 Path(args.encoded_folder)
             )
+
+            # Run tests and get a dict of resulting media references
             results = encoder.run_wedges()
+
+            # Compare results against source
             for test_name, test_ref in results.items():
                 vmaf_compare(source_clip, test_ref, test_name)
 
+            # Update dict of references
             references.update(results)
 
         # Add media references to clip
         source_clip.set_media_references(
             references, source_clip.DEFAULT_MEDIA_KEY
         )
+
+        # Get or create a track to hold test results
+        encoder_version = encoder.get_application_version()
+        track = track_map.setdefault(
+            encoder_version,
+            otio.schema.Track(name=encoder_version)
+        )
+
+        # We need to copy the clip since there can only be one instance
+        # pr/timeline
+        # Add clip to track
+        if source_clip not in track:
+            track.append(deepcopy(source_clip))
+
+    timeline.tracks.extend(track_map.values())
 
 
 def main():
@@ -316,18 +383,11 @@ def main():
             get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
         )
 
-    # Create a track to hold clips
-    track = otio.schema.Track(name='aswf_enctests')
-
-    # Prep source files
-    prep_sources(args, track)
+    # Store results in a timeline, so we can view the results in otioview
+    timeline = otio.schema.Timeline(name='aswf-encoding-tests')
 
     # Run tests
-    run_tests(args, test_configs, track)
-
-    # Store results in a timeline, so we can view the results in otioview
-    timeline = otio.schema.Timeline()
-    timeline.tracks.append(track)
+    run_tests(args, test_configs, timeline)
 
     # Serialize to *.otio
     otio.adapters.write_to_file(timeline, args.output)

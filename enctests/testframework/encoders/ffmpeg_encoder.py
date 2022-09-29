@@ -28,9 +28,11 @@ class FFmpegEncoder(ABCTestEncoder):
             test_config: dict,
             destination: pathlib.Path
     ):
-        self.source_clip = source_clip
-        self.test_config = test_config
-        self.destination = destination
+        super(FFmpegEncoder, self).__init__(
+            source_clip,
+            test_config,
+            destination
+        )
 
     def run_wedges(self) -> dict:
         # The results dictionary is passed to source clip's list of available
@@ -86,11 +88,14 @@ class FFmpegEncoder(ABCTestEncoder):
         return results
 
     def get_application_version(self) -> str:
-        cmd = f'ffmpeg -version -v quiet -hide_banner'
-        _raw = subprocess.check_output(shlex.split(cmd))
-        version = b'_'.join(_raw.split(b' ')[:3])
+        if not self._application_version:
+            cmd = f'ffmpeg -version -v quiet -hide_banner'
+            _raw = subprocess.check_output(shlex.split(cmd))
+            version = b'_'.join(_raw.split(b' ')[:3])
 
-        return str(version, 'utf-8')
+            self._application_version = str(version, 'utf-8')
+
+        return self._application_version
 
     def prep_encoding_command(self, wedge: dict, out_file: pathlib.Path) -> str:
         template = self.test_config.get('encoding_template')
