@@ -271,11 +271,16 @@ model=path={vmaf_model}\" \
 
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
-        'psnr': raw_results['pooled_metrics'].get('psnr')
+        'psnr': raw_results['pooled_metrics'].get('psnr')   # FFmpeg < 5.1
     }
 
-    enc_meta = get_test_metadata_dict(test_ref, testname)
-    enc_meta['results'] = results
+    # FFmpeg >= 5.1 have split psnr results
+    if not results['psnr']:
+        for key in ['psnr_y', 'psnr_cb', 'psnr_cr']:
+            results[key] = raw_results['pooled_metrics'].get(key)
+
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(results)
 
 
 def prep_sources(args):

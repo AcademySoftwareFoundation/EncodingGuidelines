@@ -67,20 +67,14 @@ class FFmpegEncoder(ABCTestEncoder):
             mr = create_media_reference(out_file, self.source_clip)
 
             # Update metadata for use later
-            ffmpeg_version = self.get_application_version()
-            # encoding_args = ' '.join(
-            #     [f'{key} {value}' for key, value in wedge.items()]
-            # )
-
             # !! Use this function from utils to make sure we find the metadata
             # later on
-            enc_meta = get_test_metadata_dict(mr, test_name)
-
-            test_meta = enc_meta.setdefault(ffmpeg_version, {})
-            test_meta['encode_time'] = round(enctime, 4)
-            # test_meta['encode_arguments'] = encoding_args
+            test_meta = get_test_metadata_dict(mr)
             test_meta['encode_arguments'] = wedge
-            test_meta['filesize'] = out_file.stat().st_size
+
+            result_meta = test_meta.setdefault('results', {})
+            result_meta['encode_time'] = round(enctime, 4)
+            result_meta['filesize'] = out_file.stat().st_size
 
             # Add media reference to result list
             results.update({test_name: mr})
