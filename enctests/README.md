@@ -16,10 +16,14 @@ usage: main.py [-h] [--source-folder SOURCE_FOLDER] [--test-config-dir TEST_CONF
 
 optional arguments:
   -h, --help            show this help message and exit
+  --sources SOURCES [SOURCES ...]
+                        Provide a list of paths to sources in stead of running all from source folder. Please note this overrides the --source-folder argument.
   --source-folder SOURCE_FOLDER
                         Where to look for source media files
   --test-config-dir TEST_CONFIG_DIR
                         Where to look for *.yml files containing test descriptions
+  --test-config TEST_CONFIG_FILE
+                        Specify a single test config file to run
   --prep-sources        Create *.yml files from media in --source-folder used as sources in encoding tests
   --encoded-folder ENCODED_FOLDER
                         Where to store the encoded files
@@ -98,6 +102,29 @@ test_colorspace_yuv420p:
             -color_range: 2
             -color_trc: 1
 ---
+```
+
+#### Additional options in the test config
+You may provide a list of sources in a test config. Please note that this will 
+override the behavior of the `--source-folder` argument. Only the sources 
+provided in the test config will be used in the tests.
+
+Example:
+```yaml
+---
+test_colorspace_yuv420p:
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+      - sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%04d.png.yml
+    wedges:
+        slow_crf_23: &base_args
+            -c:v: libx264
+            -preset: slow
+            -crf: 23
 ```
 
 ### Run the tests

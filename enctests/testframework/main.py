@@ -57,7 +57,8 @@ def parse_args():
         nargs='+',
         default=[],
         help='Provide a list of paths to sources in stead of running all '
-             'from source folder'
+             'from source folder. '
+             'Please note this overrides the --source-folder argument.'
     )
 
     parser.add_argument(
@@ -318,7 +319,6 @@ def run_tests(args, test_configs, timeline):
     # Check for sources in test configs
     test_sources = check_for_sources(test_configs)
     args.sources = args.sources or test_sources
-    print(args.sources)
 
     # Prepare sources for tests
     source_bin = prep_sources(args)
