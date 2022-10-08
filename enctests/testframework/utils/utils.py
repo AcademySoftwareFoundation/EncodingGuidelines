@@ -154,11 +154,10 @@ def create_media_reference(path, source_clip, is_sequence=False):
     return mr
 
 
-def get_test_metadata_dict(otio_clip, testname):
+def get_test_metadata_dict(otio_clip):
     aswf_meta = otio_clip.metadata.setdefault('aswf_enctests', {})
-    enc_meta = aswf_meta.setdefault(testname, {})
 
-    return enc_meta
+    return aswf_meta
 
 
 def get_source_metadata_dict(source_clip):
