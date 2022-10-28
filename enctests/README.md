@@ -157,11 +157,7 @@ source .venv/bin/activate
 
 # Upgrade pip and install dependencies
 pip install --upgrade pip
-pip install cmake pyseq
-
-# Build OTIO
-git clone https://github.com/AcademySoftwareFoundation/OpenTimelineIO.git
-python -m pip install .
+pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2
 
 # Run tests (for now)
 .venv/bin/python main.py
