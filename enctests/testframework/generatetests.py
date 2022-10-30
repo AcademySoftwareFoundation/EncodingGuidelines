@@ -24,7 +24,7 @@ def parse_args():
         '--output-config',
         action='store',
         dest='output_config_file',
-        default="test_configs/documentation_tests.html",
+        default="test_configs/documentation_tests.yml",
         help='Specify output file to write test wrappers to.'
     )
 
