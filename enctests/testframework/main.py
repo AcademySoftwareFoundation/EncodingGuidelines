@@ -32,6 +32,8 @@ from .utils import (
     get_source_metadata_dict
 )
 
+from .utils.outputTemplate import processTemplate
+
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
 
@@ -396,6 +398,10 @@ def main():
 
     # Serialize to *.otio
     otio.adapters.write_to_file(timeline, args.output)
+
+    # Generate any reports (if specified in file)
+    processTemplate(test_configs, timeline)
+
 
 
 if __name__== '__main__':
