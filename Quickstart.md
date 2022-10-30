@@ -14,6 +14,11 @@ This document is based on results from ffmpeg 4.4, we have not tested with 5.0 y
 
 If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 
+<!---
+name: test_quickstart
+sources: 
+- sourceimages/chip-chart-1080-noicc.png.yml
+-->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
@@ -55,6 +60,11 @@ For more details see:
 
 Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
 
+<!---
+name: test_proresquickstart
+sources: 
+- sourceimages/chip-chart-1080-noicc.png.yml
+-->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
     -c:v prores_ks -profile:v 3 -qscale:v 9 \
@@ -74,7 +84,11 @@ For more details see:
 # ProRes 4444 encoding with ffmpeg.
 
 As above, but using 4444 (i.e. a color value for each pixel + an alpha)
-
+<!---
+name: test_prores444
+sources: 
+- sourceimages/chip-chart-1080-noicc.png.yml
+-->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
    -c:v prores_ks -profile:v 4444 -qscale:v 9 \
@@ -104,6 +118,11 @@ Specifying *out_range=full* forces the output range, but you also need to set th
 -color_range 2
 ```
 A full example encode would look like:
+<!---
+name: test_fullrange
+sources: 
+- sourceimages/radialgrad.png.yml
+-->
 ```
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
