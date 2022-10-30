@@ -59,7 +59,12 @@ def processTemplate(test_configs, otio_info):
           merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
           merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
           merge_test_info['filesize'] = merge_test_info['filesize']
-          merge_test_info['quality'] = int(ref_name.split("_")[-1])
+          if "_" in ref_name:
+            #This is a hack that we need to get rid of.
+            try:
+              merge_test_info['quality'] = int(ref_name.split("_")[-1])
+            except Exception as e:
+              print("Exception:", e, " for getting quality from ", ref_name)
           # We merge the arguments into the dictionary too, as well as merge it into a single string, to make the graphing simpler.
           args=[]
           for k,v in test_info.metadata['aswf_enctests']['encode_arguments'].items():
