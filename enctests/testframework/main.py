@@ -225,6 +225,8 @@ def tests_only(test_configs):
 def vmaf_compare(source_clip, test_ref, testname):
     vmaf_cmd = '\
 {ffmpeg_bin} \
+-color_primaries bt709 \
+ -colorspace bt709 \
 {reference} \
 -i "{distorted}" \
 -vframes {duration} \
