@@ -215,6 +215,10 @@ def get_configs(args, root_path, config_type):
 
 
 def tests_only(test_configs):
+    """
+    Scan the test-configs for just the test configurations (since it can be co-mingled with output and source info).
+    Each test mu
+    """
     configs = []
     for config in test_configs:
         for section in config:
@@ -304,6 +308,7 @@ def prep_sources(args):
 
 
 def check_for_sources(test_configs):
+    """Grab the image source paths from the test_configs file (which are optional)"""
     sources = []
     for test_config in test_configs:
         # Check if config contains sources to test against
