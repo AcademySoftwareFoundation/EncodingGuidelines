@@ -1,0 +1,2099 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {},
+    "name": "",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "aswf_enctests",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "/test/enctests/sources/encsources/chimera_cars_srgb/chimera_cars_srgb.%05d.png",
+                                    "rate": 25.0,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-medium_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 130.9061,
+                                                "filesize": "7.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.189005,
+                                                    "max": 100.0,
+                                                    "mean": 99.198332,
+                                                    "min": 94.588805
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 10 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 294.7671,
+                                                "filesize": "33.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.882239,
+                                                    "max": 100.0,
+                                                    "mean": 99.883591,
+                                                    "min": 96.063587
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_10.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 14 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 191.7618,
+                                                "filesize": "13.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.643092,
+                                                    "max": 100.0,
+                                                    "mean": 99.647006,
+                                                    "min": 95.614157
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_14.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 195.8765,
+                                                "filesize": "7.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.203348,
+                                                    "max": 100.0,
+                                                    "mean": 99.212599,
+                                                    "min": 94.987818
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_22": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 22 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 108.7941,
+                                                "filesize": "3.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.31138,
+                                                    "max": 100.0,
+                                                    "mean": 97.329567,
+                                                    "min": 92.786031
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_22.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_26": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_26": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 26 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 269.3098,
+                                                "filesize": "2.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 94.091544,
+                                                    "max": 99.534021,
+                                                    "mean": 94.114869,
+                                                    "min": 89.421926
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_26.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slow_crf_26.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 263.0021,
+                                                "filesize": "6.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.046407,
+                                                    "max": 100.0,
+                                                    "mean": 99.056889,
+                                                    "min": 94.617279
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_film_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_film_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 262.2358,
+                                                "filesize": "7.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.212539,
+                                                    "max": 100.0,
+                                                    "mean": 99.221369,
+                                                    "min": 95.076096
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-veryslow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 292.4396,
+                                                "filesize": "7.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.168503,
+                                                    "max": 100.0,
+                                                    "mean": 99.177849,
+                                                    "min": 95.177635
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_cars_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 2160,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "/test/enctests/sources/encsources/chimera_coaster/Chimera_DCI4k5994p_HDR_P3PQ_%06d.tif",
+                                    "rate": 25.0,
+                                    "width": 4096
+                                }
+                            }
+                        },
+                        "name": "Chimera_DCI4k5994p_HDR_P3PQ_%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_coaster",
+                                "name_prefix": "Chimera_DCI4k5994p_HDR_P3PQ_",
+                                "name_suffix": ".tif",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-medium_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 881.5272,
+                                                "filesize": "48.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.062641,
+                                                    "max": 100.0,
+                                                    "mean": 99.072525,
+                                                    "min": 96.712119
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 10 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 1967.091,
+                                                "filesize": "243.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.985475,
+                                                    "max": 100.0,
+                                                    "mean": 99.985557,
+                                                    "min": 98.999887
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_10.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 14 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 1512.3518,
+                                                "filesize": "104.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.785241,
+                                                    "max": 100.0,
+                                                    "mean": 99.786758,
+                                                    "min": 98.274452
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_14.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 1307.3617,
+                                                "filesize": "51.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.138486,
+                                                    "max": 100.0,
+                                                    "mean": 99.1479,
+                                                    "min": 96.697581
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_22": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 22 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 807.9092,
+                                                "filesize": "22.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.964633,
+                                                    "max": 100.0,
+                                                    "mean": 96.998214,
+                                                    "min": 93.063392
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_22.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_26": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_26": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 26 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 657.9818,
+                                                "filesize": "12.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 93.248409,
+                                                    "max": 100.0,
+                                                    "mean": 93.316944,
+                                                    "min": 87.401969
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_26.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slow_crf_26.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 1719.2019,
+                                                "filesize": "45.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.078,
+                                                    "max": 100.0,
+                                                    "mean": 99.088077,
+                                                    "min": 96.709068
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_film_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_film_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 1932.1601,
+                                                "filesize": "51.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.194957,
+                                                    "max": 100.0,
+                                                    "mean": 99.203773,
+                                                    "min": 96.918607
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slower_film_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-slower_film_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-veryslow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 2107.9443,
+                                                "filesize": "49.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.071241,
+                                                    "max": 100.0,
+                                                    "mean": 99.081511,
+                                                    "min": 96.654716
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "/test/enctests/sources/encsources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png",
+                                    "rate": 59.94,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 59.94,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-medium_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 196.7351,
+                                                "filesize": "13.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.270645,
+                                                    "max": 100.0,
+                                                    "mean": 99.281989,
+                                                    "min": 94.58542
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 10 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 487.8949,
+                                                "filesize": "52.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.971702,
+                                                    "max": 100.0,
+                                                    "mean": 99.972391,
+                                                    "min": 96.51
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_10.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 14 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 400.65,
+                                                "filesize": "23.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.855553,
+                                                    "max": 100.0,
+                                                    "mean": 99.857484,
+                                                    "min": 95.835262
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_14.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 254.8775,
+                                                "filesize": "13.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.313712,
+                                                    "max": 100.0,
+                                                    "mean": 99.324247,
+                                                    "min": 95.075828
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_22": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 22 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 201.8758,
+                                                "filesize": "7.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.115739,
+                                                    "max": 100.0,
+                                                    "mean": 97.168606,
+                                                    "min": 91.912637
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_22.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_26": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_26": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 26 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 186.9604,
+                                                "filesize": "4.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 92.315123,
+                                                    "max": 100.0,
+                                                    "mean": 92.422076,
+                                                    "min": 85.671255
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_26.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slow_crf_26.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 361.5085,
+                                                "filesize": "12.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.305266,
+                                                    "max": 100.0,
+                                                    "mean": 99.315885,
+                                                    "min": 94.704092
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_film_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_film_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 407.2109,
+                                                "filesize": "13.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.406264,
+                                                    "max": 100.0,
+                                                    "mean": 99.414935,
+                                                    "min": 95.220793
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-veryslow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 513.2025,
+                                                "filesize": "12.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.320835,
+                                                    "max": 100.0,
+                                                    "mean": 99.330865,
+                                                    "min": 95.209063
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "/test/enctests/sources/encsources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png",
+                                    "rate": 59.94,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 59.94,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-medium_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 258.0159,
+                                                "filesize": "38.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.95827,
+                                                    "max": 100.0,
+                                                    "mean": 99.961441,
+                                                    "min": 92.288108
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 10 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 816.9247,
+                                                "filesize": "97.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.975816,
+                                                    "max": 100.0,
+                                                    "mean": 99.976916,
+                                                    "min": 95.383257
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_10.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 14 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 679.2409,
+                                                "filesize": "61.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.971078,
+                                                    "max": 100.0,
+                                                    "mean": 99.972637,
+                                                    "min": 94.527478
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_14.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 509.7698,
+                                                "filesize": "39.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.963523,
+                                                    "max": 100.0,
+                                                    "mean": 99.965969,
+                                                    "min": 93.19382
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_22": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 22 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 519.8069,
+                                                "filesize": "24.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.922391,
+                                                    "max": 100.0,
+                                                    "mean": 99.928551,
+                                                    "min": 89.5133
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_22.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_26": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_26": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 26 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 381.8175,
+                                                "filesize": "14.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 94.141882,
+                                                    "max": 100.0,
+                                                    "mean": 94.197475,
+                                                    "min": 83.372435
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_26.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slow_crf_26.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 724.7091,
+                                                "filesize": "37.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.961681,
+                                                    "max": 100.0,
+                                                    "mean": 99.964371,
+                                                    "min": 92.874127
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_film_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_film_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 718.7766,
+                                                "filesize": "38.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.96417,
+                                                    "max": 100.0,
+                                                    "mean": 99.966533,
+                                                    "min": 93.306576
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-veryslow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 862.8536,
+                                                "filesize": "37.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.964328,
+                                                    "max": 100.0,
+                                                    "mean": 99.966671,
+                                                    "min": 93.334165
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 1100,
+                                    "path": "/test/enctests/sources/encsources/chimera_wind_srgb/chimera_wind_srgb.%05d.png",
+                                    "rate": 25.0,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_wind_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 1100.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 1100.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_wind_srgb",
+                                "name_prefix": "chimera_wind_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 1100,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-medium_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 153.6519,
+                                                "filesize": "12.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.329613,
+                                                    "max": 99.001965,
+                                                    "mean": 96.336227,
+                                                    "min": 94.427259
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 10 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 439.2761,
+                                                "filesize": "54.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.166246,
+                                                    "max": 100.0,
+                                                    "mean": 98.168738,
+                                                    "min": 95.439178
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_10.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 14 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 311.3279,
+                                                "filesize": "25.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.409472,
+                                                    "max": 99.802015,
+                                                    "mean": 97.413454,
+                                                    "min": 95.129724
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_14.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 241.0805,
+                                                "filesize": "12.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.331838,
+                                                    "max": 99.044699,
+                                                    "mean": 96.339299,
+                                                    "min": 94.643638
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_22": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 22 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 172.8663,
+                                                "filesize": "6.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 93.945988,
+                                                    "max": 97.498592,
+                                                    "mean": 93.959196,
+                                                    "min": 92.430231
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_22.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_26": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slow_crf_26": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slow -crf 26 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 144.4882,
+                                                "filesize": "3.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 90.475885,
+                                                    "max": 95.700306,
+                                                    "mean": 90.502142,
+                                                    "min": 88.122033
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_26.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slow_crf_26.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2",
+                                                "encode_time": 359.3807,
+                                                "filesize": "11.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.152616,
+                                                    "max": 98.743022,
+                                                    "mean": 96.159322,
+                                                    "min": 94.351717
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_film_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-slower_film_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 341.2708,
+                                                "filesize": "12.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.375302,
+                                                    "max": 99.020338,
+                                                    "mean": 96.382278,
+                                                    "min": 94.581268
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-slower_film_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_colorspace_yuv420p-veryslow_crf_18": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v libx264 -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -tune film",
+                                                "encode_time": 426.1762,
+                                                "filesize": "11.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.347793,
+                                                    "max": 98.804429,
+                                                    "mean": 96.356017,
+                                                    "min": 94.849347
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/h264-encode/chimera_wind_srgb.-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}

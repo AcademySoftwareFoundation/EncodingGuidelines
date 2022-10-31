@@ -1,0 +1,2099 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {},
+    "name": "",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "aswf_enctests",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "/test/enctests/sources/encsources/chimera_cars_srgb/chimera_cars_srgb.%05d.png",
+                                    "rate": 25.0,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_00": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 0 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 140.294,
+                                                "filesize": "197.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.170949,
+                                                    "max": 100.0,
+                                                    "mean": 99.176462,
+                                                    "min": 96.163411
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_02": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 2 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 53.7159,
+                                                "filesize": "249.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.755868,
+                                                    "max": 100.0,
+                                                    "mean": 99.757392,
+                                                    "min": 97.055911
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_04": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 4 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 55.2291,
+                                                "filesize": "142.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.522153,
+                                                    "max": 100.0,
+                                                    "mean": 99.525176,
+                                                    "min": 96.625815
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_06": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 6 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 54.4762,
+                                                "filesize": "101.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.22501,
+                                                    "max": 100.0,
+                                                    "mean": 99.229956,
+                                                    "min": 96.204025
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_08": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 08 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 47.6,
+                                                "filesize": "79.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.878874,
+                                                    "max": 100.0,
+                                                    "mean": 98.885986,
+                                                    "min": 95.766759
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 44.8859,
+                                                "filesize": "66.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.514636,
+                                                    "max": 100.0,
+                                                    "mean": 98.523864,
+                                                    "min": 95.343785
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_12": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 12 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 38.8468,
+                                                "filesize": "56.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.114327,
+                                                    "max": 100.0,
+                                                    "mean": 98.12483,
+                                                    "min": 94.924659
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 14 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 45.6121,
+                                                "filesize": "49.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.68213,
+                                                    "max": 100.0,
+                                                    "mean": 97.693534,
+                                                    "min": 94.467062
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_16": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 16 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 60.4667,
+                                                "filesize": "44.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.234841,
+                                                    "max": 99.993909,
+                                                    "mean": 97.246654,
+                                                    "min": 94.087523
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_cars_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 2160,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "/test/enctests/sources/encsources/chimera_coaster/Chimera_DCI4k5994p_HDR_P3PQ_%06d.tif",
+                                    "rate": 25.0,
+                                    "width": 4096
+                                }
+                            }
+                        },
+                        "name": "Chimera_DCI4k5994p_HDR_P3PQ_%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_coaster",
+                                "name_prefix": "Chimera_DCI4k5994p_HDR_P3PQ_",
+                                "name_suffix": ".tif",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_00": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 0 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 455.4622,
+                                                "filesize": "786.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 100.0,
+                                                    "max": 100.0,
+                                                    "mean": 100.0,
+                                                    "min": 100.0
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_02": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 2 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 209.8433,
+                                                "filesize": "948.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 100.0,
+                                                    "max": 100.0,
+                                                    "mean": 100.0,
+                                                    "min": 100.0
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_04": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 4 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 195.3327,
+                                                "filesize": "545.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 100.0,
+                                                    "max": 100.0,
+                                                    "mean": 100.0,
+                                                    "min": 100.0
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_06": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 6 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 187.4111,
+                                                "filesize": "369.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.997993,
+                                                    "max": 100.0,
+                                                    "mean": 99.998001,
+                                                    "min": 99.600137
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_08": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 08 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 123.3501,
+                                                "filesize": "275.0MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.992305,
+                                                    "max": 100.0,
+                                                    "mean": 99.992342,
+                                                    "min": 99.178491
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 142.9847,
+                                                "filesize": "218.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.908098,
+                                                    "max": 100.0,
+                                                    "mean": 99.908346,
+                                                    "min": 98.785346
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_12": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 12 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 179.7215,
+                                                "filesize": "181.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.698812,
+                                                    "max": 100.0,
+                                                    "mean": 99.699647,
+                                                    "min": 98.406892
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 14 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 173.3044,
+                                                "filesize": "155.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.399447,
+                                                    "max": 100.0,
+                                                    "mean": 99.400984,
+                                                    "min": 98.03872
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_16": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 16 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 187.5511,
+                                                "filesize": "136.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.058748,
+                                                    "max": 100.0,
+                                                    "mean": 99.060746,
+                                                    "min": 97.673174
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/Chimera_DCI4k5994p_HDR_P3PQ_-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "/test/enctests/sources/encsources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png",
+                                    "rate": 59.94,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 59.94,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_00": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 0 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 124.5136,
+                                                "filesize": "197.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.405305,
+                                                    "max": 100.0,
+                                                    "mean": 99.410888,
+                                                    "min": 96.364084
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_02": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 2 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 66.752,
+                                                "filesize": "276.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.701935,
+                                                    "max": 100.0,
+                                                    "mean": 99.704563,
+                                                    "min": 97.022131
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_04": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 4 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 50.557,
+                                                "filesize": "166.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.527317,
+                                                    "max": 100.0,
+                                                    "mean": 99.531847,
+                                                    "min": 96.556175
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_06": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 6 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 45.0265,
+                                                "filesize": "119.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.303229,
+                                                    "max": 100.0,
+                                                    "mean": 99.310194,
+                                                    "min": 96.094619
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_08": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 08 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 45.8362,
+                                                "filesize": "94.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.02331,
+                                                    "max": 100.0,
+                                                    "mean": 99.033161,
+                                                    "min": 95.621771
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 41.7888,
+                                                "filesize": "78.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.6881,
+                                                    "max": 100.0,
+                                                    "mean": 98.700725,
+                                                    "min": 95.171511
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_12": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 12 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 39.6724,
+                                                "filesize": "67.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.311713,
+                                                    "max": 100.0,
+                                                    "mean": 98.326752,
+                                                    "min": 94.701962
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 14 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 38.2252,
+                                                "filesize": "59.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.87193,
+                                                    "max": 100.0,
+                                                    "mean": 97.888597,
+                                                    "min": 94.27538
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_16": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 16 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 46.7323,
+                                                "filesize": "53.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.403974,
+                                                    "max": 100.0,
+                                                    "mean": 97.421423,
+                                                    "min": 93.781687
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_coaster_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "/test/enctests/sources/encsources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png",
+                                    "rate": 59.94,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 59.94,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 59.94,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_00": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 0 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 127.6798,
+                                                "filesize": "197.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.97639,
+                                                    "max": 100.0,
+                                                    "mean": 99.977439,
+                                                    "min": 95.487897
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_02": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 2 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 60.7786,
+                                                "filesize": "366.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.984121,
+                                                    "max": 100.0,
+                                                    "mean": 99.984603,
+                                                    "min": 96.920529
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_04": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 4 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 52.9247,
+                                                "filesize": "238.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.980891,
+                                                    "max": 100.0,
+                                                    "mean": 99.981585,
+                                                    "min": 96.316962
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_06": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 6 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 45.8015,
+                                                "filesize": "177.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.977661,
+                                                    "max": 100.0,
+                                                    "mean": 99.978603,
+                                                    "min": 95.720536
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_08": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 08 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 41.7971,
+                                                "filesize": "141.3MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.974419,
+                                                    "max": 100.0,
+                                                    "mean": 99.975647,
+                                                    "min": 95.129373
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 47.4553,
+                                                "filesize": "117.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.962615,
+                                                    "max": 100.0,
+                                                    "mean": 99.96419,
+                                                    "min": 94.521952
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_12": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 12 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 45.6084,
+                                                "filesize": "100.2MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.870168,
+                                                    "max": 100.0,
+                                                    "mean": 99.872521,
+                                                    "min": 93.934382
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 14 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 43.0105,
+                                                "filesize": "87.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.732289,
+                                                    "max": 100.0,
+                                                    "mean": 99.736489,
+                                                    "min": 93.344179
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_16": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 16 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 43.5205,
+                                                "filesize": "77.9MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 99.513029,
+                                                    "max": 100.0,
+                                                    "mean": 99.520041,
+                                                    "min": 92.72163
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 59.94,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_fountains_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 1100,
+                                    "path": "/test/enctests/sources/encsources/chimera_wind_srgb/chimera_wind_srgb.%05d.png",
+                                    "rate": 25.0,
+                                    "width": 2048
+                                }
+                            }
+                        },
+                        "name": "chimera_wind_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 1100.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 1100.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/test/enctests/sources/encsources/chimera_wind_srgb",
+                                "name_prefix": "chimera_wind_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 1100,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_00": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 0 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 132.4881,
+                                                "filesize": "197.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.760603,
+                                                    "max": 99.274304,
+                                                    "mean": 97.761822,
+                                                    "min": 96.128027
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_02": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 2 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 59.9861,
+                                                "filesize": "350.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.797126,
+                                                    "max": 100.0,
+                                                    "mean": 98.798204,
+                                                    "min": 97.086881
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_04": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 4 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 49.887,
+                                                "filesize": "225.4MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 98.387493,
+                                                    "max": 99.807853,
+                                                    "mean": 98.388609,
+                                                    "min": 96.677177
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_06": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 6 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 41.8732,
+                                                "filesize": "166.7MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.963912,
+                                                    "max": 99.354095,
+                                                    "mean": 97.965002,
+                                                    "min": 96.251856
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_08": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 08 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 45.2987,
+                                                "filesize": "131.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.535729,
+                                                    "max": 98.902134,
+                                                    "mean": 97.536791,
+                                                    "min": 95.827758
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_10": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 40.3457,
+                                                "filesize": "108.6MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 97.107638,
+                                                    "max": 98.423912,
+                                                    "mean": 97.108672,
+                                                    "min": 95.408216
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_12": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 12 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 38.9432,
+                                                "filesize": "92.8MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.674183,
+                                                    "max": 97.994518,
+                                                    "mean": 96.675197,
+                                                    "min": 94.971897
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_14": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 14 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 39.656,
+                                                "filesize": "81.5MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 96.239415,
+                                                    "max": 97.529063,
+                                                    "mean": 96.240401,
+                                                    "min": 94.561174
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "test_prores_quality-qscale_16": {
+                                            "ffmpeg_version_5.1": {
+                                                "encode_arguments": "-c:v prores_ks -profile:v 3 -qscale:v 16 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1",
+                                                "encode_time": 47.8977,
+                                                "filesize": "73.1MiB"
+                                            },
+                                            "results": {
+                                                "psnr": null,
+                                                "vmaf": {
+                                                    "harmonic_mean": 95.804942,
+                                                    "max": 97.063749,
+                                                    "mean": 95.805917,
+                                                    "min": 94.100561
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "name": "chimera_wind_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/test/enctests/prores-encode/chimera_wind_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}
