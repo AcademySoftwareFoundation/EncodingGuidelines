@@ -9,4 +9,4 @@ python3 -m testframework.otio2html --test-config test_configs/h264_tests.yml --r
 #WIP
 python3 -m testframework.generatetests
 
- python3 -m testframework.main --test-config test_configs/documentation_tests.yml --output doc-results.otio --encoded-folder docs-encode
+python3 -m testframework.main --test-config test_configs/documentation_tests.yml --output doc-results.otio --encoded-folder docs-encode
