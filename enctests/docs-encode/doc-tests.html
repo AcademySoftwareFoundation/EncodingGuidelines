@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Results</title>
+  <link rel="stylesheet" href="https://richardssam.github.io/ffmpeg-tests/assets/css/just-the-docs-default.css"> 
+  <script type="text/javascript" src="https://richardssam.github.io/ffmpeg-tests/assets/js/vendor/lunr.min.js"></script> 
+  <script type="text/javascript" src="https://richardssam.github.io/ffmpeg-tests/assets/js/just-the-docs.js"></script>
+</head>
+
+<body>
+  <img src='doc-tests-filesize.png' />
+  <img src='doc-tests-encode_time.png' />
+
+  <img src='doc-tests-vmaf_harmonic_mean.png' /></BR>
+  
+  Testing with ffmpeg version: 5.1
+
+  
+
+  <h1>chip-chart-1080-noicc Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>/test/sourceimages/chip-chart-1080-noicc.png</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>1920 x 1080</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>25.0</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>0 - 1</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>PSNR-Y</TH>
+   <TH>PSNR-CR</TH>
+   <TH>PSNR-CB</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  
+    <TR>
+    <TH>test_colormatch_colorspace-wedge0</TH>
+        <td align=right>0.1382 </TD>
+        <td align=right>98427 </TD>
+        <TD align=right>54.58452</TD>
+        <TD align=right>56.122347</TD>
+        <TD align=right>57.435365</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 -pix_fmt yuv444p10le -preset placebo -sws_flags spline+accurate_rnd+full_chroma_int -vf &#34;colorspace=bt709:iall=bt601-6-625:fast=1&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_colormatch_libswscale-wedge0</TH>
+        <td align=right>0.1112 </TD>
+        <td align=right>97312 </TD>
+        <TD align=right>60.0</TD>
+        <TD align=right>60.0</TD>
+        <TD align=right>60.0</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 -pix_fmt yuv444p10le -preset placebo -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf &#34;scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_colormatch_raw-rawcolor</TH>
+        <td align=right>0.131 </TD>
+        <td align=right>100653 </TD>
+        <TD align=right>27.420434</TD>
+        <TD align=right>37.43053</TD>
+        <TD align=right>33.568545</TD>
+        <TD>-c:v libx264 -pix_fmt yuv444p10le -preset placebo</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_colormatch_raw-wedge0</TH>
+        <td align=right>0.1313 </TD>
+        <td align=right>98361 </TD>
+        <TD align=right>53.737263</TD>
+        <TD align=right>56.371651</TD>
+        <TD align=right>57.435365</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 -pix_fmt yuv444p10le -preset placebo -sws_flags spline+accurate_rnd+full_chroma_int -vf &#34;colormatrix=bt470bg:bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_fullrange-wedge0</TH>
+        <td align=right>0.8732 </TD>
+        <td align=right>73722 </TD>
+        <TD align=right>51.386625</TD>
+        <TD align=right>51.708163</TD>
+        <TD align=right>50.296115</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range pc -color_trc iec61966-2-1 -colorspace bt709 -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf &#34;scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_prores444-wedge0</TH>
+        <td align=right>0.0971 </TD>
+        <td align=right>262424 </TD>
+        <TD align=right>59.677722</TD>
+        <TD align=right>63.099491</TD>
+        <TD align=right>61.003468</TD>
+        <TD>-c:v prores_ks -pix_fmt yuv444p10le -profile:v 4444 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_proresks-wedge0</TH>
+        <td align=right>0.2138 </TD>
+        <td align=right>297536 </TD>
+        <TD align=right>51.136109</TD>
+        <TD align=right>63.735844</TD>
+        <TD align=right>53.150904</TD>
+        <TD>-c:v prores_ks -color_primaries bt709 -color_range tv -color_trc iec61966-2-1 -colorspace bt709 -pix_fmt yuv422p10le -profile:v 3 -vf &#34;scale=in_color_matrix=bt709:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_proresks2-wedge0</TH>
+        <td align=right>0.3134 </TD>
+        <td align=right>171857 </TD>
+        <TD align=right>36.551005</TD>
+        <TD align=right>46.600671</TD>
+        <TD align=right>42.724668</TD>
+        <TD>-compression_level 10 -pix_fmt rgba64be -pred mixed -sws_flags spline+accurate_rnd+full_chroma_int -vf scale=in_color_matrix=bt709:out_color_matrix=bt709</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_proresquickstart-wedge0</TH>
+        <td align=right>0.089 </TD>
+        <td align=right>212193 </TD>
+        <TD align=right>59.573225</TD>
+        <TD align=right>62.069726</TD>
+        <TD align=right>60.013651</TD>
+        <TD>-c:v prores_ks -pix_fmt yuv422p10le -profile:v 3 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_quickstart-wedge0</TH>
+        <td align=right>0.1508 </TD>
+        <td align=right>31098 </TD>
+        <TD align=right>43.641623</TD>
+        <TD align=right>49.906066</TD>
+        <TD align=right>44.277552</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc iec61966-2-1 -colorspace bt709 -pix_fmt yuv420p -preset slower -vf &#34;scale=in_color_matrix=bt709:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+</TABLE>
+  
+
+  <h1>radialgrad Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>/test/sourceimages/radialgrad.png</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>920 x 250</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>25.0</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>0 - 1</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>PSNR-Y</TH>
+   <TH>PSNR-CR</TH>
+   <TH>PSNR-CB</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  
+    <TR>
+    <TH>test_colormatch_colorspace-wedge0</TH>
+        <td align=right>0.0455 </TD>
+        <td align=right>30588 </TD>
+        <TD align=right>57.353808</TD>
+        <TD align=right>53.481763</TD>
+        <TD align=right>54.246316</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 -pix_fmt yuv444p10le -preset placebo -sws_flags spline+accurate_rnd+full_chroma_int -vf &#34;colorspace=bt709:iall=bt601-6-625:fast=1&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_colormatch_libswscale-wedge0</TH>
+        <td align=right>0.0328 </TD>
+        <td align=right>27252 </TD>
+        <TD align=right>60.0</TD>
+        <TD align=right>60.0</TD>
+        <TD align=right>60.0</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 -pix_fmt yuv444p10le -preset placebo -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf &#34;scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_colormatch_raw-rawcolor</TH>
+        <td align=right>0.0456 </TD>
+        <td align=right>28323 </TD>
+        <TD align=right>57.353808</TD>
+        <TD align=right>45.129662</TD>
+        <TD align=right>46.930547</TD>
+        <TD>-c:v libx264 -pix_fmt yuv444p10le -preset placebo</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_colormatch_raw-wedge0</TH>
+        <td align=right>0.047 </TD>
+        <td align=right>30588 </TD>
+        <TD align=right>57.353808</TD>
+        <TD align=right>53.481763</TD>
+        <TD align=right>54.246316</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 -pix_fmt yuv444p10le -preset placebo -sws_flags spline+accurate_rnd+full_chroma_int -vf &#34;colormatrix=bt470bg:bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_fullrange-wedge0</TH>
+        <td align=right>0.2361 </TD>
+        <td align=right>13987 </TD>
+        <TD align=right>53.79032</TD>
+        <TD align=right>53.635693</TD>
+        <TD align=right>53.356615</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range pc -color_trc iec61966-2-1 -colorspace bt709 -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf &#34;scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_prores444-wedge0</TH>
+        <td align=right>0.0378 </TD>
+        <td align=right>8107 </TD>
+        <TD align=right>60.738847</TD>
+        <TD align=right>63.093874</TD>
+        <TD align=right>61.283181</TD>
+        <TD>-c:v prores_ks -pix_fmt yuv444p10le -profile:v 4444 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_proresks-wedge0</TH>
+        <td align=right>0.0606 </TD>
+        <td align=right>52383 </TD>
+        <TD align=right>71.459507</TD>
+        <TD align=right>72.0</TD>
+        <TD align=right>71.551886</TD>
+        <TD>-c:v prores_ks -color_primaries bt709 -color_range tv -color_trc iec61966-2-1 -colorspace bt709 -pix_fmt yuv422p10le -profile:v 3 -vf &#34;scale=in_color_matrix=bt709:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_proresks2-wedge0</TH>
+        <td align=right>0.1535 </TD>
+        <td align=right>63410 </TD>
+        <TD align=right>66.865056</TD>
+        <TD align=right>48.459202</TD>
+        <TD align=right>50.520708</TD>
+        <TD>-compression_level 10 -pix_fmt rgba64be -pred mixed -sws_flags spline+accurate_rnd+full_chroma_int -vf scale=in_color_matrix=bt709:out_color_matrix=bt709</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_proresquickstart-wedge0</TH>
+        <td align=right>0.0356 </TD>
+        <td align=right>7420 </TD>
+        <TD align=right>60.745397</TD>
+        <TD align=right>61.955292</TD>
+        <TD align=right>62.267022</TD>
+        <TD>-c:v prores_ks -pix_fmt yuv422p10le -profile:v 3 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709</TD>
+    </TR>
+  
+    <TR>
+    <TH>test_quickstart-wedge0</TH>
+        <td align=right>0.0467 </TD>
+        <td align=right>3212 </TD>
+        <TD align=right>55.979603</TD>
+        <TD align=right>55.394451</TD>
+        <TD align=right>53.782339</TD>
+        <TD>-c:v libx264 -color_primaries bt709 -color_range tv -color_trc iec61966-2-1 -colorspace bt709 -pix_fmt yuv420p -preset slower -vf &#34;scale=in_color_matrix=bt709:out_color_matrix=bt709&#34;</TD>
+    </TR>
+  
+</TABLE>
+  
+</body>
+</html>
