@@ -59,21 +59,21 @@ reports:
     - args:
         color: media
         height: 400
-        x: quality
+        x: -qscale:v
         y: vmaf_harmonic_mean
       name: vmaf_harmonic_mean.png
       sortby: name
     - args:
         color: media
         height: 400
-        x: quality
+        x: -qscale:v
         y: encode_time
       name: encode_time.png
       sortby: name
     - args:
         color: media
         height: 400
-        x: quality
+        x: -qscale:v
         y: filesize
       name: filesize.png
       sortby: name
