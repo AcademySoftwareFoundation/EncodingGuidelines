@@ -17,7 +17,6 @@ def processTemplate(test_configs, otio_info):
   alltests = []
   reportconfig = None
   for config in test_configs:
-    print("KEYS:", config.keys())
     if "reports" in config:
       reportconfig = config['reports']
     
@@ -49,7 +48,6 @@ def processTemplate(test_configs, otio_info):
           #         merge_test_info['encoder_version'] = key
           #         for arg, value in enc_data.items():
           #             merge_test_info[arg] = value
-          print("ref_name:", ref_name)
           #print("testInfo:", test_info.metadata)
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
@@ -73,7 +71,11 @@ def processTemplate(test_configs, otio_info):
       df = pd.DataFrame(alltests)
       df = df.sort_values(by=graph.get("sortby", "name"))
       #print(df)
-      fig = px.line(df, **graph.get("args")) #"x='quality', y='min', color='media', markers=True, text="min")
+      if graph.get("type", "line") == "bar":
+        fig = px.bar(df, **graph.get("args")) #"x='quality', y='min', color='media', markers=True, text="min")
+      else:
+        fig = px.line(df, **graph.get("args")) #"x='quality', y='min', color='media', markers=True, text="min")
+
       filename = reportconfig['name']+"-"+graph.get("name")
       if "directory" in reportconfig:
         filename = os.path.join(reportconfig['directory'], filename)
