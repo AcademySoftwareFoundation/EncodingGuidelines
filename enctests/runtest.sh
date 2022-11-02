@@ -6,6 +6,11 @@ python3 -m testframework.main --source-folder sources/encsources --test-config t
 
 python3 -m testframework.otio2html --test-config test_configs/h264_tests.yml --results h264-results.otio
 
+python3 -m testframework.main --source-folder sources/encsources --test-config test_configs/h264_crf_tests.yml --output h264-crf-results.otio --encoded-folder h264-crf-encode
+
+python3 -m testframework.otio2html --test-config test_configs/h264_crf_tests.yml --results h264-crf-results.otio
+
+
 #WIP
 python3 -m testframework.generatetests
 
