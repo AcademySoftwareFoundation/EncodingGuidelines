@@ -61,6 +61,7 @@ reports:
         height: 400
         x: -qscale:v
         y: vmaf_harmonic_mean
+        markers: True
       name: vmaf_harmonic_mean.png
       sortby: name
     - args:
@@ -68,6 +69,7 @@ reports:
         height: 400
         x: -qscale:v
         y: encode_time
+        markers: True
       name: encode_time.png
       sortby: name
     - args:
@@ -75,8 +77,11 @@ reports:
         height: 400
         x: -qscale:v
         y: filesize
+        markers: True
       name: filesize.png
       sortby: name
     name: prores-test
+    title: Prores quality comparison.
+    description: This is a comparison of different quality settings for the prores_ks encoder.
     directory: prores-encode
     templatefile: basic.html.jinja

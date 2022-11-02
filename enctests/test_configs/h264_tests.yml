@@ -1,38 +1,3 @@
-test_crf_yuv420p:
-    name: test_colorspace_yuv420p
-    description: variations of colorspace yuv420p
-    app: ffmpeg
-    suffix: .mov
-    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
-    wedges:
-        slow_crf_10: &base_args
-            -c:v: libx264
-            -preset: slow
-            -crf: 10
-            -x264-params: '"keyint=15:no-deblock=1"'
-            -pix_fmt: yuv420p
-            -sws_flags: spline+accurate_rnd+full_chroma_int
-            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-            -color_range: 1
-            -colorspace: 1
-            -color_primaries: 1
-            -color_trc: 2
-
-        slow_crf_14:
-            << : *base_args
-            -crf: 14
-
-        slow_crf_18:
-            << : *base_args
-            -crf: 18
-
-        slow_crf_22:
-            << : *base_args
-            -crf: 22
-
-        slow_crf_26:
-            << : *base_args
-            -crf: 26
 
 test_preset_yuv420p:
     name: test_colorspace_yuv420p
@@ -41,9 +6,9 @@ test_preset_yuv420p:
     suffix: .mov
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     wedges:
-        slower_crf_18: &base_args2
+        medium_crf_18: &base_args2
             -c:v: libx264
-            -preset: slower
+            -preset: medium
             -crf: 18
             -x264-params: '"keyint=15:no-deblock=1"'
             -pix_fmt: yuv420p
@@ -54,49 +19,55 @@ test_preset_yuv420p:
             -color_primaries: 1
             -color_trc: 2
 
-        veryslow_crf_18:
-            << : *base_args2
-            -preset: veryslow
-
         slow_crf_18:
             << : *base_args2
             -preset: slow
 
-        medium_crf_18:
-            << : *base_args2
-            -preset: medium
-
-        slower_film_crf_18: &film_args
+        slower_crf_18:
             << : *base_args2
             -preset: slower
-            -tune: film
 
+        veryslow_crf_18:
+            << : *base_args2
+            -preset: veryslow
+
+        placebo_crf_18:
+            << : *base_args2
+            -preset: placebo
 ---
 
 reports:
     graphs:
     - args:
-        color: media
+        color: -preset
         height: 400
-        x: quality
+        barmode: group
+        x: media
         y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
       name: vmaf_harmonic_mean.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: -preset
         height: 400
-        x: quality
+        x: media
+        barmode: group
         y: encode_time
       name: encode_time.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: -preset
         height: 400
-        x: quality
+        x: media
+        barmode: group
         y: filesize
       name: filesize.png
-      sortby: name
+      type: bar
     name: h264-test2
+    title: H264 Preset Comparison
+    description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
     directory: h264-encode
     templatefile: basic.html.jinja
 

@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Results</title>
+  <title>{{config.title}}</title>
   <link rel="stylesheet" href="https://richardssam.github.io/ffmpeg-tests/assets/css/just-the-docs-default.css"> 
   <script type="text/javascript" src="https://richardssam.github.io/ffmpeg-tests/assets/js/vendor/lunr.min.js"></script> 
   <script type="text/javascript" src="https://richardssam.github.io/ffmpeg-tests/assets/js/just-the-docs.js"></script>
 </head>
 
 <body>
+  <H1>{{config.title}}</H1>
+  <P>{{config.description}}</P>
   <img src='{{ config.name }}-filesize.png' />
   <img src='{{ config.name }}-encode_time.png' />
 
