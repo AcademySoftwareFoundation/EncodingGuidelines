@@ -54,11 +54,10 @@ def processTemplate(test_configs, otio_info):
   for graph in reportconfig.get("graphs", []):
       df = pd.DataFrame(alltests)
       df = df.sort_values(by=graph.get("sortby", "name"))
-      #print(df)
       if graph.get("type", "line") == "bar":
-        fig = px.bar(df, **graph.get("args")) #"x='quality', y='min', color='media', markers=True, text="min")
+        fig = px.bar(df, **graph.get("args")) 
       else:
-        fig = px.line(df, **graph.get("args")) #"x='quality', y='min', color='media', markers=True, text="min")
+        fig = px.line(df, **graph.get("args")) 
 
       filename = reportconfig['name']+"-"+graph.get("name")
       if "directory" in reportconfig:
