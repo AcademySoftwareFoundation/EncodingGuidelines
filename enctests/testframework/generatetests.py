@@ -90,12 +90,9 @@ def main():
         testname = test['config'].get("name", "test-%d" % (testcount + 1))
         outputfile = test['command'].split(" ")[-1]
         outputfileext = outputfile.split(".")[-1]
-        #print("START:", test['command'])
         template = re.sub("\s\S+$", ' {encoding_args} -y "{outfile}"', test['command'])
         template = re.sub("\s-i\s\S+\s", ' {input_args} -i "{source}" ', template)
-        #print("Pre vframes:", template)
         template = re.sub("\s-vframes\s\S+\s", ' -vframes {duration} ', template)
-        #print("Post vframes:", template)
 
         # input arg flags.
         for arg in ['-r', '-start_number']:
