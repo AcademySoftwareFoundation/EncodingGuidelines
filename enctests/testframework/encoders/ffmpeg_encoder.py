@@ -4,6 +4,7 @@ import shlex
 import pathlib
 import subprocess
 from typing import Tuple
+from datetime import datetime, timezone
 
 import opentimelineio as otio
 
@@ -74,6 +75,8 @@ class FFmpegEncoder(ABCTestEncoder):
             test_meta['description'] = self.test_config.get('description')
 
             result_meta = test_meta.setdefault('results', {})
+            result_meta['completed_utc'] = \
+                datetime.now(timezone.utc).isoformat()
             result_meta['encode_time'] = round(enctime, 4)
             result_meta['filesize'] = out_file.stat().st_size
 
