@@ -71,6 +71,7 @@ class FFmpegEncoder(ABCTestEncoder):
             # later on
             test_meta = get_test_metadata_dict(mr)
             test_meta['encode_arguments'] = wedge
+            test_meta['description'] = self.test_config.get('description')
 
             result_meta = test_meta.setdefault('results', {})
             result_meta['encode_time'] = round(enctime, 4)
