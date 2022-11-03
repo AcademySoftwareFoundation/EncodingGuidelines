@@ -3,6 +3,7 @@ import os
 import argparse
 import yaml
 import re
+from pathlib import Path
 
 try:
     from yaml import CSafeLoader as SafeLoader
@@ -35,7 +36,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    rootdir = os.path.abspath(args.root)
+    rootdir = Path(args.root).absolute()
 
     markdownfiles = []
     for root, dirs, files in os.walk(rootdir):
