@@ -109,6 +109,13 @@ def parse_args():
     )
 
     parser.add_argument(
+        '--skip-reports',
+        action='store_true',
+        default=False,
+        help='Skip any report generation (default: False).'
+    )
+
+    parser.add_argument(
         '--output',
         action='store',
         default='encoding-test-results.otio',
@@ -405,7 +412,8 @@ def main():
     otio.adapters.write_to_file(timeline, args.output)
 
     # Generate any reports (if specified in file)
-    processTemplate(test_configs, timeline)
+    if not args.skip_reports:
+        processTemplate(test_configs, timeline)
 
 
 
