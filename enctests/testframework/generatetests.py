@@ -130,6 +130,8 @@ def main():
         tests.append(testconfigs)
 
     reports = {'reports': {'name': 'doc-tests',
+                            'title': 'Ffmpeg encoding guide tests',
+                            'description': 'This is testing commands that are in the documentation as a way to confirm that all the commands in the documentation produce the desired results.',
                             'directory': 'docs-encode',
                             'templatefile': 'doctests.html.jinja'}}
     tests.append(reports)
