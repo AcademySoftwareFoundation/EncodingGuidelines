@@ -101,7 +101,7 @@ def main():
         wedge = {}
 
         # Main args.
-        for arg in ["-vf", '-color_range', '-colorspace', '-color_primaries', '-profile:v', '-compression_level', '-pred', '-color_trc', '-pix_fmt', '-preset', '-c:v', '-sws_flags']:
+        for arg in ["-qp", "-x264-params", "-qscale:v", "-vf", '-color_range', '-colorspace', '-color_primaries', '-profile:v', '-compression_level', '-pred', '-color_trc', '-pix_fmt', '-preset', '-c:v', '-sws_flags']:
             match = re.search("\s%s\s(\S+)\s" % arg, template)
             if match:
                 wedge[arg] = match.group(1)
