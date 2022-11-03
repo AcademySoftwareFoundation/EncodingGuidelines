@@ -47,44 +47,39 @@ def main():
     allinfo = []
 
     for markdownfile in markdownfiles:
-        print("------\n", markdownfile)
-        f = open(markdownfile, "r")
-        incomment = False
-        incommand = False
-        command = ""
-        info = ""
-        lastcommandstart = -1
-        linenumber = 0
-        for line in f:
-            linenumber = linenumber + 1
-            if "<!---" in line:
-                incomment = True
-                continue
-            if "-->" in line:
-                incomment = False
-                print("Got comment:", info)
-                continue
-            if "```" in line:
+        with open(markdownfile, "r") as f:
+            incomment = False
+            incommand = False
+            command = ""
+            info = ""
+            lastcommandstart = -1
+            for linenumber, line in enumerate(f):
+                if "<!---" in line:
+                    incomment = True
+                    continue
+                if "-->" in line:
+                    incomment = False
+                    continue
+                if "```" in line:
+                    if incommand:
+                        incommand = False
+                        if "ffmpeg" in command and info != "":
+                            try:
+                                infostruct = yaml.load(info, SafeLoader)
+                                command = command.replace("\\\n", "").replace("\n", "")
+                                allinfo.append({'config': infostruct, 'command': command, 'file': markdownfile, 'line': lastcommandstart})
+                            except:
+                                pass
+                        command = ""
+                        info = ""
+                    else:
+                        incommand = True
+                        lastcommandstart = linenumber
+                    continue
+                if incomment:
+                    info = info + line
                 if incommand:
-                    incommand = False
-                    if "ffmpeg" in command and info != "":
-                        try:
-                            infostruct = yaml.load(info, SafeLoader)
-                            command = command.replace("\\\n", "").replace("\n", "")
-                            print("Command:", infostruct, command)
-                            allinfo.append({'config': infostruct, 'command': command, 'file': markdownfile, 'line': lastcommandstart})
-                        except:
-                            pass
-                    command = ""
-                    info = ""
-                else:
-                    incommand = True
-                    lastcommandstart = linenumber
-                continue
-            if incomment:
-                info = info + line
-            if incommand:
-                command = command + line
+                    command = command + line
 
     # Now we process the scanned data to create the config file.
     tests = []
@@ -142,8 +137,8 @@ def main():
                             'templatefile': 'doctests.html.jinja'}}
     tests.append(reports)
 
-    f = open(args.output_config_file, "w")
-    yaml.dump_all(tests, f)
+    with open(args.output_config_file, "w") as f:
+        yaml.dump_all(tests, f)
 
 
 if __name__== '__main__':
