@@ -67,6 +67,7 @@ def get_media_info(path, startframe=None):
           f'{input_args}' \
           f'-i "{path.as_posix()}"'
 
+    print(f'Probe command: {cmd}')
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
         env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
@@ -83,7 +84,7 @@ def get_media_info(path, startframe=None):
         return None
 
     stream = None
-    for raw_stream in raw_json.get('streams'):
+    for raw_stream in raw_json.get('streams', []):
         if raw_stream.get('codec_type') == 'video':
             stream = raw_stream
             break
@@ -96,6 +97,7 @@ def get_media_info(path, startframe=None):
         'path': path.as_posix(),
         'width': stream.get('width'),
         'height': stream.get('height'),
+        'pix_fmt': stream.get('pix_fmt'),
         'in': startframe or 0,
         'duration': int(stream.get('nb_frames', stream.get('duration_ts', 1))),
         'rate': calculate_rate(stream.get('r_frame_rate'))
