@@ -32,6 +32,8 @@ from .utils import (
     get_source_metadata_dict
 )
 
+from .utils.outputTemplate import processTemplate
+
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
 
@@ -104,6 +106,13 @@ def parse_args():
         default=False,
         help=argparse.SUPPRESS
         # help='Encode all tests. Default to only encoding new tests'
+    )
+
+    parser.add_argument(
+        '--skip-reports',
+        action='store_true',
+        default=False,
+        help='Skip any report generation (default: False).'
     )
 
     parser.add_argument(
@@ -213,6 +222,10 @@ def get_configs(args, root_path, config_type):
 
 
 def tests_only(test_configs):
+    """
+    Scan the test-configs for just the test configurations (since it can be co-mingled with output and source info).
+    Each test mu
+    """
     configs = []
     for config in test_configs:
         for section in config:
@@ -302,6 +315,7 @@ def prep_sources(args):
 
 
 def check_for_sources(test_configs):
+    """Grab the image source paths from the test_configs file (which are optional)"""
     sources = []
     for test_config in test_configs:
         # Check if config contains sources to test against
@@ -396,6 +410,11 @@ def main():
 
     # Serialize to *.otio
     otio.adapters.write_to_file(timeline, args.output)
+
+    # Generate any reports (if specified in file)
+    if not args.skip_reports:
+        processTemplate(test_configs, timeline)
+
 
 
 if __name__== '__main__':

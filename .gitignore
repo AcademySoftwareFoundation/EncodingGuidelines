@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+enctests/encoded/
+
+enctests/h264-encode/
+_site/
+enctests/prores-encode/
+enctests/results/
+enctests/sources/encsources/chimera_coaster/
+.jekyll-cache/
+enctests/docs-encode/

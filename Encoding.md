@@ -66,14 +66,25 @@ Options that can be used include:
 -vendor apl0 - tricks the codec into believing its from an Apple codec.
 
 Example encode would look like:
+<!---
+name: test_proresks
+sources: 
+- sourceimages/chip-chart-1080-noicc.png.yml
+-->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le \
-        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \ outputfile.mov
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 outputfile.mov
 ```
 
 Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognised, e.g.:
 
+
+<!---
+name: test_proresks2
+sources: 
+- sourceimages/chip-chart-1080-noicc.png.yml
+-->
 ```
 ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
    -sws_flags spline+accurate_rnd+full_chroma_int -vframes 1 \
