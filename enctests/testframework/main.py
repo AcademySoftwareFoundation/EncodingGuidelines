@@ -224,7 +224,7 @@ def get_configs(args, root_path, config_type):
 def tests_only(test_configs):
     """
     Scan the test-configs for just the test configurations (since it can be co-mingled with output and source info).
-    Each test mu
+    Each test must start with the label test" to not confuse it with other configs.
     """
     configs = []
     for config in test_configs:
