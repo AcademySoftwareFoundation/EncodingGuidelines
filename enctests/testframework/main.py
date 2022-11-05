@@ -297,18 +297,38 @@ model=path={vmaf_model}\" \
     enc_meta['results'].update(results)
 
 
-def prep_sources(args):
+def prep_sources(args, test_sources=None):
     bin = otio.schema.SerializableCollection()
 
-    source_configs = []
-    for path in args.sources:
-        source_configs.extend(parse_config_file(Path(path)))
+    # Priority of sources
+    # args.source | test_configs | source_folder
 
-    if not source_configs:
+    source_configs = []
+    if args.sources:
+        for path in args.sources:
+            source_configs.extend(parse_config_file(Path(path)))
+
+    elif test_sources:
+        source_configs.extend(test_sources)
+
+    else:
         source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
 
     for config in source_configs:
+        test_name = None
+        # A tuple indicates the source is from a test_config
+        if isinstance(config, tuple):
+            # We need to split source and test name
+            config, test_name = config
+
+        # Create an OTIO clip
         source_clip = create_clip(config)
+
+        # Add breadcrumb indicating this source came from a test config.
+        if test_name:
+            source_clip.metadata['source_test_name'] = test_name
+
+        # Add to bin
         bin.append(source_clip)
 
     return bin
@@ -319,7 +339,11 @@ def check_for_sources(test_configs):
     sources = []
     for test_config in test_configs:
         # Check if config contains sources to test against
-        sources.extend(test_config.get('sources', []))
+        for source in test_config.get('sources', []):
+            for source_config in parse_config_file(Path(source)):
+                sources.append(
+                    (source_config, test_config.get('name'))
+                )
 
     return sources
 
@@ -332,15 +356,20 @@ def run_tests(args, test_configs, timeline):
 
     # Check for sources in test configs
     test_sources = check_for_sources(test_configs)
-    args.sources = args.sources or test_sources
 
     # Prepare sources for tests
-    source_bin = prep_sources(args)
+    source_bin = prep_sources(args, test_sources)
 
     for source_clip in source_bin:
         references = source_clip.media_references()
 
         for test_config in test_configs:
+            # Check if source is defined in test config
+            source_test_name = source_clip.metadata.get('source_test_name')
+            if source_test_name and source_test_name != test_config.get('name'):
+                # We don't want to process sources not mentioned in the test
+                continue
+
             # Create an encoder instance
             encoder = encoder_factory(
                 source_clip,
