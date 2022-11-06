@@ -60,7 +60,6 @@ def processTemplate(test_configs, otio_info):
       for ref_name, test_info in track.media_references().items():
           if ref_name == "DEFAULT_MEDIA":
               continue
-
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
           results.append(merge_test_info)
@@ -77,7 +76,10 @@ def processTemplate(test_configs, otio_info):
             merge_test_info[k] = v 
           merge_test_info['encode_arguments'] = " ".join(args)
           alltests.append(merge_test_info)
-      tests[track.name] = {'results': results, 'source_info': track.metadata['aswf_enctests']['source_info']}
+      if track.name in tests:
+        tests[track.name]['results'].extend(results)
+      else:
+        tests[track.name] = {'results': results, 'source_info': track.metadata['aswf_enctests']['source_info']}
 
   for graph in reportconfig.get("graphs", []):
     _exportGraph(reportconfig, graph, alltests)
