@@ -39,6 +39,7 @@
    <TH>PSNR-CR</TH>
    <TH>PSNR-CB</TH>
    <TH>Encode Arguments</TH>
+   <TH>Test Description</TH>
    </TR>
   {% for enc_info in test.results %}
     <TR>
@@ -49,7 +50,7 @@
         <TD align=right>{{enc_info.psnr_cr.harmonic_mean |e }}</TD>
         <TD align=right>{{enc_info.psnr_cb.harmonic_mean |e }}</TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
-        <TD>{{enc_info.description | e}}</TD>
+        <TD>{{enc_info.test_description | e}}</TD>
     </TR>
   {% endfor %}
 </TABLE>

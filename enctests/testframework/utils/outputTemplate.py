@@ -62,6 +62,8 @@ def processTemplate(test_configs, otio_info):
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
+          if 'description' in test_info.metadata['aswf_enctests']:
+            merge_test_info['test_description'] = test_info.metadata['aswf_enctests']['description']
           results.append(merge_test_info)
           merge_test_info['media'] = track.name
           merge_test_info['vmaf_min'] = float(merge_test_info['vmaf']['min'])
