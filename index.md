@@ -15,6 +15,17 @@ This is being done as part of the [ASWF Media Review working-group](https://wiki
 
 The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
+# Why is this needed.
+
+There are a lot of excellent guides out there. But few addressing the needs of the VFX community. 
+
+An example of why this is important is to compare:
+| Original PNG image | ![Original Image](sourceimages/original-png.png) |
+| Default ffmpeg conversion | ![Default ffmpeg conversion](sourceimages/default-ffmpeg.png) |
+| Using the libavscale library | ![libavscale](sourceimages/libswscale-example.png) |
+
+You can see the default ffmpeg conversion introduces a dramatic colorshift that if you use the right flags, you can eliminate. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
+
 1. [Acknowledgements](#Acknowledgements)
 2. [Encoding Cheat Sheet](Quickstart.html)
 3. [Encoding Overview](Encoding.html#Encoding-Overview)
@@ -43,3 +54,7 @@ This document and project is still a work in progress. We are working on buildin
 ### Authors
 
 This document is primarily the work of Sam Richards, with support from Daniel Flehner Heen.
+
+### Feedback and error reporting.
+
+We welcome feedback on this document, please report any errors or suggestions to the [github issues](https://github.com/richardssam/ffmpeg-tests/issues) page. 

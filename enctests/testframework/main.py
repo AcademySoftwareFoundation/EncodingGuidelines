@@ -1,5 +1,7 @@
 import os
 import sys
+from copy import deepcopy
+
 import yaml
 import json
 import pyseq
@@ -30,6 +32,8 @@ from .utils import (
     get_source_metadata_dict
 )
 
+from .utils.outputTemplate import processTemplate
+
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
 
@@ -48,6 +52,17 @@ VMAF_LIB_DIR = os.getenv(
 
 def parse_args():
     parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--sources',
+        action='store',
+        nargs='+',
+        default=[],
+        help='Provide a list of paths to sources in stead of running all '
+             'from source folder. '
+             'Please note this overrides the --source-folder argument.'
+    )
+
     parser.add_argument(
         '--source-folder',
         action='store',
@@ -91,6 +106,13 @@ def parse_args():
         default=False,
         help=argparse.SUPPRESS
         # help='Encode all tests. Default to only encoding new tests'
+    )
+
+    parser.add_argument(
+        '--skip-reports',
+        action='store_true',
+        default=False,
+        help='Skip any report generation (default: False).'
     )
 
     parser.add_argument(
@@ -200,10 +222,17 @@ def get_configs(args, root_path, config_type):
 
 
 def tests_only(test_configs):
+    """
+    Scan the test-configs for just the test configurations (since it can be co-mingled with output and source info).
+    Each test must start with the label test" to not confuse it with other configs.
+    """
+    configs = []
     for config in test_configs:
         for section in config:
             if section.lower().startswith('test'):
-                yield config[section]
+                configs.append(config[section])
+
+    return configs
 
 
 def vmaf_compare(source_clip, test_ref, testname):
@@ -256,41 +285,127 @@ model=path={vmaf_model}\" \
 
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
-        'psnr': raw_results['pooled_metrics'].get('psnr')
+        'psnr': raw_results['pooled_metrics'].get('psnr')   # FFmpeg < 5.1
     }
 
-    enc_meta = get_test_metadata_dict(test_ref, testname)
-    enc_meta['results'] = results
+    # FFmpeg >= 5.1 have split psnr results
+    if not results['psnr']:
+        for key in ['psnr_y', 'psnr_cb', 'psnr_cr']:
+            results[key] = raw_results['pooled_metrics'].get(key)
+
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(results)
 
 
-def prep_sources(args, track):
-    source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
+def prep_sources(args, test_sources=None):
+    bin = otio.schema.SerializableCollection()
+
+    # Priority of sources
+    # args.source | test_configs | source_folder
+
+    source_configs = []
+    if args.sources:
+        for path in args.sources:
+            source_configs.extend(parse_config_file(Path(path)))
+
+    elif test_sources:
+        source_configs.extend(test_sources)
+
+    else:
+        source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
+
     for config in source_configs:
+        test_name = None
+        # A tuple indicates the source is from a test_config
+        if isinstance(config, tuple):
+            # We need to split source and test name
+            config, test_name = config
+
+        # Create an OTIO clip
         source_clip = create_clip(config)
-        track.append(source_clip)
+
+        # Add breadcrumb indicating this source came from a test config.
+        if test_name:
+            source_clip.metadata['source_test_name'] = test_name
+
+        # Add to bin
+        bin.append(source_clip)
+
+    return bin
 
 
-def run_tests(args, test_configs, track):
-    for source_clip in track:
+def check_for_sources(test_configs):
+    """Grab the image source paths from the test_configs file (which are optional)"""
+    sources = []
+    for test_config in test_configs:
+        # Check if config contains sources to test against
+        for source in test_config.get('sources', []):
+            for source_config in parse_config_file(Path(source)):
+                sources.append(
+                    (source_config, test_config.get('name'))
+                )
+
+    return sources
+
+
+def run_tests(args, test_configs, timeline):
+    track_map = {}
+
+    # Gather test configs
+    test_configs = tests_only(test_configs)
+
+    # Check for sources in test configs
+    test_sources = check_for_sources(test_configs)
+
+    # Prepare sources for tests
+    source_bin = prep_sources(args, test_sources)
+
+    for source_clip in source_bin:
         references = source_clip.media_references()
 
-        for test_config in tests_only(test_configs):
-            # perform encoding test
+        for test_config in test_configs:
+            # Check if source is defined in test config
+            source_test_name = source_clip.metadata.get('source_test_name')
+            if source_test_name and source_test_name != test_config.get('name'):
+                # We don't want to process sources not mentioned in the test
+                continue
+
+            # Create an encoder instance
             encoder = encoder_factory(
                 source_clip,
                 test_config,
                 Path(args.encoded_folder)
             )
+
+            # Run tests and get a dict of resulting media references
             results = encoder.run_wedges()
+
+            # Compare results against source
             for test_name, test_ref in results.items():
                 vmaf_compare(source_clip, test_ref, test_name)
 
+            # Update dict of references
             references.update(results)
 
         # Add media references to clip
         source_clip.set_media_references(
             references, source_clip.DEFAULT_MEDIA_KEY
         )
+
+        # Get or create a track to hold test results
+        encoder_version = encoder.get_application_version()
+        track = track_map.setdefault(
+            encoder_version,
+            otio.schema.Track(name=encoder_version)
+        )
+
+        # We need to copy the clip since there can only be one instance
+        # pr/timeline
+        # Add clip to track
+        if source_clip not in track:
+            track.append(deepcopy(source_clip))
+
+    timeline.tracks.extend(track_map.values())
 
 
 def main():
@@ -316,21 +431,19 @@ def main():
             get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
         )
 
-    # Create a track to hold clips
-    track = otio.schema.Track(name='aswf_enctests')
-
-    # Prep source files
-    prep_sources(args, track)
+    # Store results in a timeline, so we can view the results in otioview
+    timeline = otio.schema.Timeline(name='aswf-encoding-tests')
 
     # Run tests
-    run_tests(args, test_configs, track)
-
-    # Store results in a timeline, so we can view the results in otioview
-    timeline = otio.schema.Timeline()
-    timeline.tracks.append(track)
+    run_tests(args, test_configs, timeline)
 
     # Serialize to *.otio
     otio.adapters.write_to_file(timeline, args.output)
+
+    # Generate any reports (if specified in file)
+    if not args.skip_reports:
+        processTemplate(test_configs, timeline)
+
 
 
 if __name__== '__main__':

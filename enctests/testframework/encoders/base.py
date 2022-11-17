@@ -12,6 +12,7 @@ class ABCTestEncoder(ABC):
             test_config: dict,
             destination: pathlib.Path
     ):
+        self._application_version = None
         self.source_clip = source_clip
         self.test_config = test_config
         self.destination = destination
@@ -25,4 +26,7 @@ class ABCTestEncoder(ABC):
 
     @abstractmethod
     def get_application_version(self) -> str:
-        """Return version of encoder application"""
+        """Return version of encoder application
+        You should cache the application version in the
+        self._application_version variable
+        """

@@ -1,0 +1,7 @@
+images: false
+path: /test/sourceimages/radialgrad.png
+width: 920
+height: 250
+in: 0
+duration: 1
+rate: 25.0

@@ -7,7 +7,8 @@ RUN     dnf install epel-release -y && \
                 python3-devel clang git-clang-format libtiff libtiff-devel bzip2 bzip2-devel bzip2-libs tbb tbb-devel libwebp giflib patch vim && \
         dnf clean all;
 
-RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq awscli pillow PyYAML meson
+RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
+
 
 FROM        base AS build
 
@@ -55,8 +56,8 @@ ENV         FFMPEG_VERSION=5.1 \
 ENV         LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/opt/rh/httpd24/root/usr/lib64/ \
             OCIO=/usr/share/ocio/aces_1.2/config.ocio \
             VMAF_MODEL=${VMAF_LIB_DIR} \
-            ASWF_OIIO_VERSION=2.3.18.0 \
-            ASWF_OCIO_VERSION=2.1.1 \
+            ASWF_OIIO_VERSION=2.4.4.1 \
+            ASWF_OCIO_VERSION=2.1.2 \
             ASWF_BOOST_VERSION=1.76.0 \
             ASWF_PYTHON_MAJOR_MINOR_VERSION=3.9 \
             ASWF_OPENEXR_VERSION=3.1.5
@@ -712,15 +713,6 @@ RUN  \
     .. && \
         make  && \
         make install && \
-        rm -rf ${DIR}
-
-#As of the time writing this the multi media-reference feature of OTIO is still in
-# the main branch of the project.
-RUN \
-        DIR=/opt/otio && mkdir -p ${DIR} && cd ${DIR} && \
-        git clone https://github.com/AcademySoftwareFoundation/OpenTimelineIO.git &&  \
-        cd OpenTimelineIO && \
-        python3 -m pip install . && \
         rm -rf ${DIR}
 
 # RUN \

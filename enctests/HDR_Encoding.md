@@ -49,7 +49,7 @@ NOTE, this is a little different to other conversions (is this better?). We are 
 | -color_range pc | Set the source range to be full-range |
 | -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
 | -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | NOT SURE ??? |
+| -colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
 | -pix_fmt rgb48be | We are assuming 16-bit RGB imagery as input |
 
 
@@ -65,7 +65,7 @@ NOTE, this is a little different to other conversions (is this better?). We are 
 | -color_range tv | Set the source range to be tv range. |
 | -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
 | -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | NOT SURE ??? |
+| -colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
 | -pix_fmt yuv444p10le | YUV 444 10-bit output
 
 ### X265 parameters
@@ -75,7 +75,7 @@ We explicitly define the X265 parameters (see https://x265.readthedocs.io/en/2.5
 | --- | --- |
 | colorprim=bt2020 | Set the colorprimaries to bt2020 |
 | transfer=arib-std-b67 | Set the ETOF to HLG (aka. arib-std-bt67 ) |
-| colormatrix=bt2020nc | Use the bt2020 color primaries |
+| colormatrix=bt2020nc | UTagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
 | range=limited | Set the source range to be tv range. |
 | master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\) | SMPTE ST 2086 mastering display color volume SEI info, specified as a string which is parsed when the stream header Essentially setting the X,Y display primaries for rec2020 along with the Whitepoint, and the Max,min luminance values in units of 0.00001 NITs. See the above docs for more info. |
 | max-cll=1000,400 | Set the Maximum content light level |
@@ -115,3 +115,6 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 ```
 
 
+Further Reading:
+   * https://www.itu.int/rec/T-REC-H.273-202107-I/en - H.273 Specification.
+   * 

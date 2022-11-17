@@ -526,7 +526,7 @@ RUN \
         rm -rf ${DIR}
 
 
-RUN pip install pyseq awscli pillow PyYAML meson
+RUN pip install pyseq awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
 
 ## libvmaf https://github.com/Netflix/vmaf
 RUN \
@@ -663,14 +663,6 @@ RUN  \
         make INSTALL_PREFIX=/usr/local OIIO_BUILD_TESTS=0 ENABLE_OpenJPEG=0 USE_QT=0 install  && \
         rm -rf ${DIR}
 
-#As of the time writing this the multi media-reference feature of OTIO is still in
-# the main branch of the project.
-RUN \
-        DIR=/opt/otio && mkdir -p ${DIR} && cd ${DIR} && \
-        git clone https://github.com/AcademySoftwareFoundation/OpenTimelineIO.git && \
-        cd OpenTimelineIO && \
-        python -m pip install . && \
-        rm -rf ${DIR}
 
 # ENTRYPOINT  ["ffmpeg"]
 

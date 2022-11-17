@@ -4,6 +4,7 @@ import shlex
 import pathlib
 import subprocess
 from typing import Tuple
+from datetime import datetime, timezone
 
 import opentimelineio as otio
 
@@ -28,9 +29,11 @@ class FFmpegEncoder(ABCTestEncoder):
             test_config: dict,
             destination: pathlib.Path
     ):
-        self.source_clip = source_clip
-        self.test_config = test_config
-        self.destination = destination
+        super(FFmpegEncoder, self).__init__(
+            source_clip,
+            test_config,
+            destination
+        )
 
     def run_wedges(self) -> dict:
         # The results dictionary is passed to source clip's list of available
@@ -65,19 +68,17 @@ class FFmpegEncoder(ABCTestEncoder):
             mr = create_media_reference(out_file, self.source_clip)
 
             # Update metadata for use later
-            ffmpeg_version = self.get_application_version()
-            encoding_args = ' '.join(
-                [f'{key} {value}' for key, value in wedge.items()]
-            )
-
             # !! Use this function from utils to make sure we find the metadata
             # later on
-            enc_meta = get_test_metadata_dict(mr, test_name)
+            test_meta = get_test_metadata_dict(mr)
+            test_meta['encode_arguments'] = wedge
+            test_meta['description'] = self.test_config.get('description')
 
-            test_meta = enc_meta.setdefault(ffmpeg_version, {})
-            test_meta['encode_time'] = round(enctime, 4)
-            test_meta['encode_arguments'] = encoding_args
-            test_meta['filesize'] = sizeof_fmt(out_file)
+            result_meta = test_meta.setdefault('results', {})
+            result_meta['completed_utc'] = \
+                datetime.now(timezone.utc).isoformat()
+            result_meta['encode_time'] = round(enctime, 4)
+            result_meta['filesize'] = out_file.stat().st_size
 
             # Add media reference to result list
             results.update({test_name: mr})
@@ -85,11 +86,14 @@ class FFmpegEncoder(ABCTestEncoder):
         return results
 
     def get_application_version(self) -> str:
-        cmd = f'ffmpeg -version -v quiet -hide_banner'
-        _raw = subprocess.check_output(shlex.split(cmd))
-        version = b'_'.join(_raw.split(b' ')[:3])
+        if not self._application_version:
+            cmd = f'ffmpeg -version -v quiet -hide_banner'
+            _raw = subprocess.check_output(shlex.split(cmd))
+            version = b'_'.join(_raw.split(b' ')[:3])
 
-        return str(version, 'utf-8')
+            self._application_version = str(version, 'utf-8')
+
+        return self._application_version
 
     def prep_encoding_command(self, wedge: dict, out_file: pathlib.Path) -> str:
         template = self.test_config.get('encoding_template')

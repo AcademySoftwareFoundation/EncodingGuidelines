@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{config.title}}</title>
+  <link rel="stylesheet" href="https://richardssam.github.io/ffmpeg-tests/assets/css/just-the-docs-default.css"> 
+  <script type="text/javascript" src="https://richardssam.github.io/ffmpeg-tests/assets/js/vendor/lunr.min.js"></script> 
+  <script type="text/javascript" src="https://richardssam.github.io/ffmpeg-tests/assets/js/just-the-docs.js"></script>
+</head>
+
+<body>
+  <H1>{{config.title}}</H1>
+  <P>{{config.description}}</P>
+  Testing with ffmpeg version: {{ testinfo.ffmpeg_version}}
+
+  {% for media_name, test in tests.items() %}
+
+  <h1>{{ media_name }} Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>{{test.source_info.path}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>{{test.source_info.in}} - {{test.source_info.in + test.source_info.duration}}</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>PSNR-Y</TH>
+   <TH>PSNR-CR</TH>
+   <TH>PSNR-CB</TH>
+   <TH>Encode Arguments</TH>
+   <TH>Test Description</TH>
+   </TR>
+  {% for enc_info in test.results %}
+    <TR>
+    <TH>{{ enc_info.name|e }}</TH>
+        <td align=right>{{ enc_info.encode_time}} </TD>
+        <td align=right>{{ enc_info.filesize}} </TD>
+        <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
+        <TD align=right>{{enc_info.psnr_cr.harmonic_mean |e }}</TD>
+        <TD align=right>{{enc_info.psnr_cb.harmonic_mean |e }}</TD>
+        <TD>{{enc_info.encode_arguments | e}}</TD>
+        <TD>{{enc_info.test_description | e}}</TD>
+    </TR>
+  {% endfor %}
+</TABLE>
+  {% endfor %}
+</body>
+</html>

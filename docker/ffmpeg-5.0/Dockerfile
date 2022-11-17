@@ -526,7 +526,7 @@ RUN \
         rm -rf ${DIR}
 
 
-RUN pip install pyseq awscli pillow PyYAML meson
+RUN pip install pyseq awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
 
 ## libvmaf https://github.com/Netflix/vmaf
 RUN \
@@ -649,18 +649,6 @@ RUN \
 ENV         LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/opt/rh/httpd24/root/usr/lib64/ \
             OCIO=/usr/share/ocio/aces_1.2/config.ocio \
             VMAF_MODEL=${VMAF_LIB_DIR}
-
-## Download and install OIIO again. Currently the VFXALL version of oiiotool does not have ocio compiled
-# into it, we hope a future version will have that fixed.
-
-RUN  \
-        DIR=/opt/oiio && mkdir -p ${DIR} && cd ${DIR} && \
-        curl -sLO https://github.com/OpenImageIO/oiio/archive/refs/tags/v${ASWF_OIIO_VERSION}.tar.gz && \
-        # echo ${LIBARIBB24_SHA256SUM} | sha256sum --check && \
-        tar -xz --strip-components=1 -f v${ASWF_OIIO_VERSION}.tar.gz && \
-        src/build-scripts/build_pybind11.bash && \
-        make INSTALL_PREFIX=/usr/local OIIO_BUILD_TESTS=0 ENABLE_OpenJPEG=0 USE_QT=0 install  && \
-        rm -rf ${DIR}
 
 #As of the time writing this the multi media-reference feature of OTIO is still in
 # the main branch of the project.

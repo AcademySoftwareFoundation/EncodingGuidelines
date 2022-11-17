@@ -41,6 +41,7 @@ docker build -t ffmpeg5.0 .
 
 ### Building for rocky-ffmpeg-5.1
 Built on top of Rocky linux i9 (identical to RHEL 9).
+This builds all the components directly not relying on any ASWF containers. We have seen some odd behaviour on Ubuntu where the above containers do not build correctly.
 
 ```
 cd rocky-ffmpeg-5.1
