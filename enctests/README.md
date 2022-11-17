@@ -2,7 +2,7 @@
 layout: default
 title: ASWF Encoding Test Framework
 nav_order: 7
-has_children: false
+has_children: true
 ---
 
 # ASWF Encoding Test Framework
@@ -282,3 +282,4 @@ reports:
 ```
 
 This example creates bar-graphs based on the `-preset` flag.
+
