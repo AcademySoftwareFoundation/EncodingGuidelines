@@ -12,11 +12,11 @@ parent: Encoding Overview
 
 ## Frame prep
 
-There are a two main encoding formats (https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma)[HLG] and (https://en.wikipedia.org/wiki/Perceptual_quantizer)[PQ] encoding. We are choosing HLG since its a slightly simpler format, and requires less additional metadata.
+There are a two main encoding formats [HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma) and [PQ](https://en.wikipedia.org/wiki/Perceptual_quantizer) encoding. We are choosing HLG since its a slightly simpler format, and requires less additional metadata.
 
 We take advantage of ACES to do the initial conversion to an intermediate format, which we are using png as the container.
 
-```
+```consoleconsole
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
       --colorconvert acescg out_rec2020hlg1000nits -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 ```
@@ -29,7 +29,7 @@ oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resi
 
 ## HLG 444 FFMPEG encoding
 
-```
+```console
 ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
     -color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
     -pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
@@ -70,7 +70,7 @@ NOTE, this is a little different to other conversions (is this better?). We are 
 
 ### X265 parameters
 
-We explicitly define the X265 parameters (see https://x265.readthedocs.io/en/2.5/cli.html )
+We explicitly define the X265 parameters (see [x265](https://x265.readthedocs.io/en/2.5/cli.html) )
 
 | --- | --- |
 | colorprim=bt2020 | Set the colorprimaries to bt2020 |
@@ -83,9 +83,7 @@ We explicitly define the X265 parameters (see https://x265.readthedocs.io/en/2.5
 
 ## HLG 420 FFMPEG encoding
 
-
-
-```
+```console
 ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 	-color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
 	-pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
@@ -102,7 +100,7 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 
 ## HLG 422 FFMPEG Encoding
 
-```
+```console
 ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 	-color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
 	-pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
@@ -116,5 +114,4 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 
 
 Further Reading:
-   * https://www.itu.int/rec/T-REC-H.273-202107-I/en - H.273 Specification.
-   * 
+   * [H.273 Specification.](https://www.itu.int/rec/T-REC-H.273-202107-I/en)

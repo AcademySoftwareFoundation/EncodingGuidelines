@@ -66,12 +66,13 @@ Options that can be used include:
 -vendor apl0 - tricks the codec into believing its from an Apple codec.
 
 Example encode would look like:
+
 <!---
 name: test_proresks
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 outputfile.mov
@@ -85,7 +86,7 @@ name: test_proresks2
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
    -sws_flags spline+accurate_rnd+full_chroma_int -vframes 1 \
    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 OUTPUTFILE.png
@@ -93,20 +94,22 @@ ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
 
 However, other encoders seem to be recognised correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
 
-```
+```console
 ffmpeg -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
    -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 \
    chip-chart-yuvconvert/basicnclcmetadata.mov
 ```
 
 If you are on a OSX M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to prores using:
-```
+
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v prores_videotoolbox -profile:v 3 -pix_fmt yuv422p \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 outputfile.mp4
 
 ```
-NOTE, it does not appear to allow -color_trc iec61966-2-1 (sRGB) -- so this needs more testing.
+
+NOTE, it does not appear to allow `-color_trc iec61966-2-1` (sRGB) -- so this needs more testing.
 
 TODO:
 * Figure out the missing metadata so that ffmpeg can correctly decode a quicktime to still.

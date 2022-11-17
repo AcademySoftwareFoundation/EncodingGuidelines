@@ -1,6 +1,11 @@
 remote_theme: just-the-docs/just-the-docs
 color_scheme: dark
-exclude: ["enctests/sources", "ICC"]
+exclude: ["ICC", "*.yml", "enctests/*/*.mov", 
+          "enctests/sources/encsources/*/*.png", "enctests/sources/encsources/*/*.exr", 
+          "enctests/sources/encsources/*/*.tif", "enctests/sources/hdr_sources/*/*.png", 
+          "enctests/sources/hdr_sources/*/*.exr", "enctests/sources/Sintel-trailer-1080p-png",
+          "enctests/sources/1080p"]
+
 url: "https://richardssam.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Footer last edited timestamp
