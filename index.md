@@ -15,16 +15,17 @@ This is being done as part of the [ASWF Media Review working-group](https://wiki
 
 The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
-# Why is this needed.
+## Why is this needed.
 
 There are a lot of excellent guides out there. But few addressing the needs of the VFX community. 
 
 An example of why this is important is to compare:
-| Original PNG image | ![Original Image](sourceimages/original-png.png) |
-| Default ffmpeg conversion | ![Default ffmpeg conversion](sourceimages/default-ffmpeg.png) |
-| Using the libavscale library | ![libavscale](sourceimages/libswscale-example.png) |
 
-You can see the default ffmpeg conversion introduces a dramatic colorshift that if you use the right flags, you can eliminate. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
+| Original PNG image | ![Original Image](sourceimages/original-png.png) | |
+| Default ffmpeg conversion | ![Default ffmpeg conversion](sourceimages/default-ffmpeg.png) | NOTE color shift compared to original |
+| Using the libavscale library | ![libavscale](sourceimages/libswscale-example.png) | should match original |
+
+You can see the default ffmpeg conversion introduces a dramatic colorshift that if you use the right flags, you can match the original. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
 
 1. [Acknowledgements](#Acknowledgements)
 2. [Encoding Cheat Sheet](Quickstart.html)
