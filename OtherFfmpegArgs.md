@@ -32,12 +32,12 @@ If you are downrezing, you will get the best results with the lancozs filter, ot
 TODO - this needs testing, to confirm filter quality.
 
 
-See: https://trac.ffmpeg.org/wiki/Scaling for more info.
+See: [https://trac.ffmpeg.org/wiki/Scaling](https://trac.ffmpeg.org/wiki/Scaling) for more info.
 
 
 ## Concatination of video files.
 
-See: https://trac.ffmpeg.org/wiki/Concatenate
+See: [https://trac.ffmpeg.org/wiki/Concatenate](https://trac.ffmpeg.org/wiki/Concatenate)
 
 This has been useful in splitting long prores encodes into chunks, and then merging them back together.
 The merge process is not quick, so there are limits to how much you can split the process, but provided that the merge process not I/O bound, it can typically end up with faster encodes.

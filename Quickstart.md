@@ -19,7 +19,7 @@ name: test_quickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
@@ -65,7 +65,7 @@ name: test_proresquickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
     -c:v prores_ks -profile:v 3 -qscale:v 9 \
     -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov
@@ -89,7 +89,7 @@ name: test_prores444
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
    -c:v prores_ks -profile:v 4444 -qscale:v 9 \
    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov
@@ -123,7 +123,7 @@ name: test_fullrange
 sources: 
 - sourceimages/radialgrad.png.yml
 -->
-```
+```console
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
     -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 \
