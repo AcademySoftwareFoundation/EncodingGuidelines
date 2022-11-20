@@ -22,7 +22,7 @@ sources:
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
+        -frames:v 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         outputfile.mp4
 ```
@@ -31,7 +31,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 | **-r 24**     | means 24 frames per second for the png files. |
 | **-start_number** 1 | The frame sequence starts from frame 1 (defaults to 0) |
 **-i inputfile.%04d.png** | the %04d means the file sequence will be padded to 4 digits, i.e. 0000, 0001, 0002, etc. It is the same syntax supported by the C printf function.
-**[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range.
+**[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range. There is an obsolete alias flag `-vframes` which will be retired.
 **-c:v libx264** | use the h264 encoding library (libx264)
 **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow.
 **-pix_fmt yuv420p** | use yuv420 video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le
