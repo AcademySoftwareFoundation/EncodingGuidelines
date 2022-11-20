@@ -84,6 +84,7 @@ For more details see:
 # ProRes 4444 encoding with ffmpeg.
 
 As above, but using 4444 (i.e. a color value for each pixel + an alpha)
+
 <!---
 name: test_prores444
 sources: 
@@ -118,6 +119,7 @@ Specifying *out_range=full* forces the output range, but you also need to set th
 -color_range 2
 ```
 A full example encode would look like:
+
 <!---
 name: test_fullrange
 sources: 
@@ -130,11 +132,12 @@ ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_r
     -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
+
 TODO: Do additional testing across all players.
 
 For more details see:
    * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
-   * [Encoding](Encoding.md#range)
+   * [Encoding Guide](Encoding.html#range)
 
 
 # Encoding as RGB. <a name="rgbencode"></a>
@@ -145,8 +148,9 @@ Using the encoder:
 -c:v libx264rgb
 ```
 Will skip the conversion completely. Sadly this has no support in web browsers, but is supported by some players (e.g. RV). It is also limited to 8-bit.
+
 TODO Check about 10-bit encoding.
 
 For more details see:
    * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
-   * [Encoding](Encoding.md#range)
+   * [Encoding Guide](Encoding.html#range)
