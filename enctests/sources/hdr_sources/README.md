@@ -1,7 +1,7 @@
 ---
 layout: default
-nav_order: 7.1
-title: Reference Source Test Media
+nav_order: 7.2
+title: HDR Reference Source Test Media
 parent: ASWF Encoding Test Framework
 ---
 
@@ -13,4 +13,5 @@ You can download the clips using the `download_media.sh` shell script. The scrip
 
 The clips that are created include:
 
-TODO FILL THIS OUT.
+| ![sparks_srgb](thumbnails/sparks_srgb.6015.jpg) | [Sparks part 1](https://opencontent.netflix.com/#h.d0oh6u8prqhe) |  Creating both srgb and hlg color space versions for testing HDR and regular sRGB encodes |
+| ![sparks2_srgb](thumbnails/sparks2_srgb.06726.jpg) | [Sparks part 2](https://opencontent.netflix.com/#h.d0oh6u8prqhe) |  Creating both srgb and hlg color space versions for testing HDR and regular sRGB encodes |
