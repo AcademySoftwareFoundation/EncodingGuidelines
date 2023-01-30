@@ -19,10 +19,10 @@ name: test_quickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -vframes 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
+        -frames:v 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         outputfile.mp4
 ```
@@ -31,7 +31,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 | **-r 24**     | means 24 frames per second for the png files. |
 | **-start_number** 1 | The frame sequence starts from frame 1 (defaults to 0) |
 **-i inputfile.%04d.png** | the %04d means the file sequence will be padded to 4 digits, i.e. 0000, 0001, 0002, etc. It is the same syntax supported by the C printf function.
-**[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range.
+**[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range. There is an obsolete alias flag `-vframes` which will be retired.
 **-c:v libx264** | use the h264 encoding library (libx264)
 **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow.
 **-pix_fmt yuv420p** | use yuv420 video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le
@@ -65,7 +65,7 @@ name: test_proresquickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
     -c:v prores_ks -profile:v 3 -qscale:v 9 \
     -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov
@@ -84,12 +84,13 @@ For more details see:
 # ProRes 4444 encoding with ffmpeg.
 
 As above, but using 4444 (i.e. a color value for each pixel + an alpha)
+
 <!---
 name: test_prores444
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 -->
-```
+```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
    -c:v prores_ks -profile:v 4444 -qscale:v 9 \
    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov
@@ -118,23 +119,25 @@ Specifying *out_range=full* forces the output range, but you also need to set th
 -color_range 2
 ```
 A full example encode would look like:
+
 <!---
 name: test_fullrange
 sources: 
 - sourceimages/radialgrad.png.yml
 -->
-```
+```console
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
     -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 \
     -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
+
 TODO: Do additional testing across all players.
 
 For more details see:
    * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
-   * [Encoding](Encoding.md#range)
+   * [Encoding Guide](Encoding.html#range)
 
 
 # Encoding as RGB. <a name="rgbencode"></a>
@@ -145,8 +148,9 @@ Using the encoder:
 -c:v libx264rgb
 ```
 Will skip the conversion completely. Sadly this has no support in web browsers, but is supported by some players (e.g. RV). It is also limited to 8-bit.
+
 TODO Check about 10-bit encoding.
 
 For more details see:
    * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
-   * [Encoding](Encoding.md#range)
+   * [Encoding Guide](Encoding.html#range)

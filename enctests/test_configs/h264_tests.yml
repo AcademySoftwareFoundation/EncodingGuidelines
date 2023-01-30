@@ -65,7 +65,7 @@ reports:
         y: filesize
       name: filesize.png
       type: bar
-    name: h264-test2
+    name: h264-test
     title: H264 Preset Comparison
     description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
     directory: h264-encode
