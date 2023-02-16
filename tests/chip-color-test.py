@@ -3,6 +3,7 @@ sys.path.append("python")
 from PIL import Image
 from PIL import ImageCms
 import subprocess
+import shutil
 import os
 from CompareOverHtml import createCompareHtml
 rootpath = "./chip-chart-yuvconvert"
@@ -10,20 +11,23 @@ if not os.path.exists(rootpath):
 	os.makedirs(rootpath)
 
 source_image = os.path.join("..", "sourceimages", "chip-chart-1080-noicc.png")
+source_image = 'I:/jobs/W/EC/FW/ENER/saus01w/shots/GAL_5000/vfx/cmp/_ren/GAL_5000_vfx_cmp_main_output_v013/3840x3840_sRGB_png/saus01w_GAL_5000_vfx_cmp_main_output_v013_sRGB.89900.png'
+shutil.copyfile(source_image, os.path.join(rootpath, os.path.basename(source_image)))
+
 
 listimages = []
 listimages.append({'id': 'none', 'label': ''})
 
-listimages.append({'id': 'chipchartpng', 'label': 'Reference PNG', 'image': os.path.join("..", "..", 'sourceimages', os.path.basename(source_image)), 'cmd': "Source PNG file"})
+listimages.append({'id': 'chipchartpng', 'label': 'Reference PNG', 'image': os.path.basename(source_image), 'cmd': "Source PNG file"})
 print(listimages)
 
 processes = [
-        {'labelonly': 'YUV420p encodes'},
-        {'id': 'basic', 'label': 'Default Encode (terrible)', 'conv': '', 'pix_fmt': 'yuv420p', 'description': 'Basic ffmpeg conversion, no colorspace specified, ffmpeg assumes bt601 colorspace. This is a terrible filter, significant color changes from PNG file.', 'qp': "1"},
-        {'id': 'colormatrix', 'label': 'Colormatrix filter (close)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" ', 'pix_fmt': 'yuv420p', 'description': 'Using colormatrix filter. colormatrix only supports 8-bit per component images. Visually its getting pretty close. ', 'qp': "1"},
-        {'id': 'colorspace', 'label': 'Colorspace filter', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ', 'pix_fmt': 'yuv420p', 'description': 'Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too. Visually pretty close to colormatrix, but slight improvement based on colormatrix values.', 'qp': "1"},
-        # {'id': 'nospline', 'label': 'libswscale filter', 'conv': ' -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  ', 'pix_fmt': 'yuv420p', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.', 'qp': "1"},
-        {'id': 'splinecolormatrix', 'label': 'libswscale filter + flags (best)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" ', 'pix_fmt': 'yuv420p', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Visually this is close to the above two, but slight improvement based on colormatrix results.', 'qp': "1"},
+        {'labelonly': 'yuv422p10le encodes'},
+        {'id': 'basic', 'label': 'Default Encode (terrible)', 'conv': '', 'pix_fmt': 'yuv422p10le', 'description': 'Basic ffmpeg conversion, no colorspace specified, ffmpeg assumes bt601 colorspace. This is a terrible filter, significant color changes from PNG file.', 'qp': "1"},
+        {'id': 'colormatrix', 'label': 'Colormatrix filter (close)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" ', 'pix_fmt': 'yuv422p10le', 'description': 'Using colormatrix filter. colormatrix only supports 8-bit per component images. Visually its getting pretty close. ', 'qp': "1"},
+        {'id': 'colorspace', 'label': 'Colorspace filter', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ', 'pix_fmt': 'yuv422p10le', 'description': 'Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too. Visually pretty close to colormatrix, but slight improvement based on colormatrix values.', 'qp': "1"},
+        # {'id': 'nospline', 'label': 'libswscale filter', 'conv': ' -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"  ', 'pix_fmt': 'yuv422p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.', 'qp': "1"},
+        {'id': 'splinecolormatrix', 'label': 'libswscale filter + flags (best)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" ', 'pix_fmt': 'yuv422p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Visually this is close to the above two, but slight improvement based on colormatrix results.', 'qp': "1"},
         {'labelonly': 'YUV444p encodes (Chrome Only)', 'description': 'Encodes are more accurate.'},
 
              {'id': 'basic444', 'label': 'Default Encode (terrible)', 'conv': '', 'pix_fmt': 'yuv444p10le', 'description': 'Basic ffmpeg conversion, ffmpeg assumes bt601 colorspace, now at 444. Results look terrible.', 'qp': "0"},
@@ -31,7 +35,7 @@ processes = [
              {'id': 'spline444colorspace', 'label': 'Colorspace filter', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using colorspace filter, better quality filter, SIMD so faster too, can support 10-bit too. Visually slight differences, but getting closer.', 'qp': "0"},
              #{'id': '444out_color_matrix', 'label': 'yuv444p10le no sws_flags out_color_matrix=bt709 (chrome only)', 'conv': ' -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. ', 'qp': "0"},
              #{'id': '444out_color_matrix2', 'label': 'yuv444p10le no sws_flags no range out_color_matrix=bt709 (chrome only)', 'conv': ' -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing. ', 'qp': "0"},
-             {'id': 'spline444out_color_matrix', 'label': 'libswscale filter + flags (Match)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.', 'qp': "0", 'color_range': "1"},
+             {'id': 'spline444out_color_matrix', 'label': 'libswscale filter + flags (Match)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.', 'qp': "0", 'color_range': "1"},
              {'id': 'spline444out_color_matrixfull', 'label': 'libswscale filter + flags full-range (Match)', 'conv': '-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" ', 'pix_fmt': 'yuv444p10le', 'description': 'Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in. This also has a number of libswscale parameters. Looking at the oiio difference, this is the first one that has an identical result to the input image.', 'qp': "0", 'color_range': "2"},
              ]
 
@@ -45,10 +49,24 @@ for proc in processes:
             continue
     proc['source_image'] = source_image
     proc['rootpath'] = rootpath
+    proc['color_range'] = proc.get('color_range', '1')
+    proc['out_range'] = "tv"
+    if proc['color_range'] == "2":
+        proc['out_range'] = "full"
     if 'ffmpeg_extract' not in proc:
+<<<<<<< Updated upstream
         proc['ffmpeg_extract'] = ' -compression_level 10 -pred mixed -pix_fmt rgb24 -sws_flags spline+accurate_rnd+full_chroma_int'
     proc['video'] = '{id}.mp4'.format(**proc)
     cmd = 'ffmpeg -y -i  {source_image} {conv} -c:v libx264  -preset placebo -qp {qp} -x264-params "keyint=15:no-deblock=1"  -pix_fmt {pix_fmt} -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 {rootpath}/{id}.mp4'.format(**proc)
+=======
+        proc['ffmpeg_extract'] = ' -compression_level 10 -pred mixed -pix_fmt rgba64be -sws_flags spline+accurate_rnd+full_chroma_int'
+    proc['video'] = '{id}.mov'.format(**proc)
+    cmd = 'ffmpeg -y -r 1 -i {source_image} {conv} -c:v libx264  -preset placebo -qp {qp} -x264-params "keyint=15:no-deblock=1"  -pix_fmt {pix_fmt} -qscale:v 1  -color_range {color_range} -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/{id}.mp4'.format(**proc)
+    cmd = 'ffmpeg -y -r 1 -i {source_image} -c:v prores_ks -profile:v 3 -qscale:v 1  {conv}  -pix_fmt {pix_fmt} {rootpath}/{id}.mov'.format(**proc)
+    #1w_GAL_5000_vfx_cmp_colorSpaceTestsam_colorTestAceshprores_p003.3_sRGB.mov']
+    # ('Running:', 'ffmpeg -threads auto -y -r 60 -start_number 89900 -framerate 60 -i {source_image} -vframes 1 -c:v prores_ks -profile:v 3 -qscale:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le -metadata title=saus01w_GAL_5000_vfx_cmp_colorSpaceTestsam_colorTestAceshprores_p003.3_sRGB.mov I:/jobs/W/EC/FW/ENER/saus01w/shots/GAL_5000/vfx/_pub/cmp/_enc/saus01w_GAL_5000_vfx_cmp_colorSpaceTestsam_colorTestAceshprores_p003.3_sRGB.mov'
+    
+>>>>>>> Stashed changes
     os.system(cmd)
     proc['cmd'] = cmd
     listimages.append(proc)
@@ -56,7 +74,7 @@ for proc in processes:
     extractfile = os.path.join(rootpath, os.path.basename(source_image[:-4])+"-"+proc['id']+".png")
     if os.path.exists(extractfile):
         os.remove(extractfile)
-    extractcmd = ffmpeg_cmd + " -i " + encodeimage + " " + proc['ffmpeg_extract'] + " -vframes 1 " + extractfile
+    extractcmd = ffmpeg_cmd + " -i " + encodeimage + " " + proc['ffmpeg_extract'] + " -sws_flags spline+accurate_rnd+full_chroma_int -vframes 1 -vf scale=in_range="+proc['out_range']+":in_color_matrix=bt709:out_color_matrix=bt709:out_range=full " + extractfile
     print("\nExtractcmd:", extractcmd)
     os.system(extractcmd)
     del proc['video']
@@ -69,8 +87,8 @@ for proc in processes:
         output = subprocess.check_output(oiiocmd, shell=True)
     except Exception as e:
         output = str(e.output) + "ERROR!"
-    output = str(oiiocmd)+"\n"+str(output).replace("\\n", "<BR/>")
-    proc['cmd'] = "<h3>ffmpeg flags to add: %s</H3><p>Full creation commandline:<BR/>%s</p><H3>OIIO idiff output</H3>%s" % (proc['conv'], proc['cmd'], output)
+    output = str(oiiocmd)+"\n"+str(output) #.replace("\\n", "<BR/>")
+    proc['cmd'] = "<h3>ffmpeg flags to add: %s</H3><p>Full creation commandline:<BR/>%s</p><H3>OIIO idiff output</H3><PRE>%s</PRE>" % (proc['conv'], proc['cmd'], output)
 
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
