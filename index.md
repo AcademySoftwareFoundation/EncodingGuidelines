@@ -4,14 +4,12 @@ nav_order: 1
 title: Introduction
 ---
 
-# ASWF Encoding recommendations.
+# ORI Encoding Guidelines.
 
-This contains a variety of test suites to help pick encoding profiles suitable for VFX/Animation media reviews.
-We are trying to develop best practices, so we will suggest a good starting point, but there isnt a right answer for all cases, so we do also try to explain what the parameters do, and in what situations you might want to choose different parameters.
+A project from within the [https://openreviewinitiative.org/](ASWF Open Review Initiative), attempts to establish best practices for encoding Video media for VFX/Animation media review. We aim to explain what various parameters do, and in what situations you might want to choose to modify them.
+
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
-
-This is being done as part of the [ASWF Media Review working-group](https://wiki.aswf.io/display/PRWG/Playback+And+Review+Working+Group).
 
 The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
@@ -54,7 +52,7 @@ This document and project is still a work in progress. We are working on buildin
 
 ### Authors
 
-This document is primarily the work of Sam Richards, with support from Daniel Flehner Heen.
+This document is primarily the work of Sam Richards. The test suite was developed by Daniel Flehner Heen.
 
 ### Feedback and error reporting.
 
