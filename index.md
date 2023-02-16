@@ -19,9 +19,11 @@ There are a lot of excellent guides out there. But few addressing the needs of t
 
 An example of why this is important is to compare:
 
-| Original PNG image | ![Original Image](sourceimages/original-png.png) | |
-| Default ffmpeg conversion | ![Default ffmpeg conversion](sourceimages/default-ffmpeg.png) | NOTE color shift compared to original |
-| Using the libavscale library | ![libavscale](sourceimages/libswscale-example.png) | should match original |
+<table>
+<TR><TD style='padding-top:0px; padding-bottom: 0px' >Original PNG Image</TD><TD style='padding-top:0px; padding-bottom: 0px'><IMG src="sourceimages/original-png.png" style='height:70px'/></TD><TD style='padding-top:0px; padding-bottom: 0px'></td></TR>
+<TR><TD style='padding-top:0px; padding-bottom: 0px'>Default ffmpeg conversion</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/default-ffmpeg.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> NOTE color shift compared to original</TD></TR>
+<TR><TD style='padding-top:0px; padding-bottom: 0px'>Using the libavscale library</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/libswscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
+</table>
 
 You can see the default ffmpeg conversion introduces a dramatic colorshift that if you use the right flags, you can match the original. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
 

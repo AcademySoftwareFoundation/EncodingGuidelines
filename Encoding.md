@@ -20,7 +20,7 @@ A good starting point for encoding options is here: [https://trac.ffmpeg.org/wik
 ### H264 <a name="h264"></a>
 Key flags (see [https://trac.ffmpeg.org/wiki/Encode/H.264](https://trac.ffmpeg.org/wiki/Encode/H.264) )
 
-* **-crf 23** - This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where -crf 0 is uncompressed. By default this is set to 23, which is a little on the low side, using values closer to 11 is recommended, but this does come at the expense of file-size..
+* **-crf 23** - This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where -crf 0 is uncompressed. By default this is set to 23, which is a little on the low side, using values closer to 15 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](CRF Comparison) below.
 * **-qp 23** - Quantization Parameter - it is recommended that you do not use this, in preference to -crf above (see: [https://slhck.info/video/2017/03/01/rate-control.html](https://slhck.info/video/2017/03/01/rate-control.html) )
 * **-preset slower** - [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ)
 * **-tune film** - Optionally use the tune option to change settings based on specific inputs - [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ) - see also: [https://superuser.com/questions/564402/explanation-of-x264-tune](https://superuser.com/questions/564402/explanation-of-x264-tune) I suspect that we would want to use one of:
@@ -33,6 +33,14 @@ An example would be:
 ```
 -preset slower -crf 11  -profile:v high -tune film
 ```
+#### CRF Comparison
+
+To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
+
+| ![](enctests/reference-results/h264-crf-test-encode_time.png)  This is showing CRF values against encoding time. |
+| ![](enctests/reference-results/h264-crf-test-filesize.png) This is showing CRF values against file size. |
+| ![](enctests/reference-results/h264-crf-test-vmaf_harmonic_mean.png) This is showing CRF values against VMAF harmonic mean |
+
 
 #### H264 Bitdepth
 
@@ -62,7 +70,8 @@ Options that can be used include:
 * 4444 (4)
 * 4444xq (5)
 
--qscale:v between values of 9 - 13 give a good result, 0 being best.
+-qscale:v between values of 9 - 13 give a good result, 0 being best, see below for some wedge tests.
+
 -vendor apl0 - tricks the codec into believing its from an Apple codec.
 
 Example encode would look like:
@@ -117,3 +126,11 @@ TODO:
 * Wedge qscale values
 * Do some colorspace tests with different qscale values to see where color breaks down.
 * VMAF
+
+#### Prores_ks -qscale:v comparison.
+
+To help pick appropriate values with the -qscale:v , we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
+
+| ![](enctests/reference-results/prores-test-encode_time.png)  This is showing qscale values against encoding time. |
+| ![](enctests/reference-results/prores-test-filesize.png) This is showing qscale values against file size. |
+| ![](enctests/reference-results/prores-test-vmaf_harmonic_mean.png) This is showing qscale values against VMAF harmonic mean |

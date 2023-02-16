@@ -16,6 +16,12 @@ making sure color and quality is preserved.
 * FFmpeg with VMAF enabled
 * OpenTimelineIO (0.15+ currently only in main) 
 
+## Description
+
+The test suite takes advantage of the excellent [VMAF](https://github.com/Netflix/vmaf) perceptual video quality assessment algorithm developed by Netflix. We use a ffmpeg plugin version of this library to compare the original media to the encoded media. This algorithm combines human vision modeling with machine learning to give you a encoding quality metric. At the same time it also generates [PSNR](https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio) and [SSIM](https://en.wikipedia.org/wiki/Structural_similarity) comparison results, so depending on the test you are doing you may end up wanting to look at the other factors.
+
+You can use your own test data, but we also provide scripts for downloading some [reference media](sources/enc_sources/README.html).
+
 ## Usage
 
 ```
