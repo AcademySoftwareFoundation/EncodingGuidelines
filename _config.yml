@@ -28,3 +28,12 @@ footer_content: "Copyright &copy; 2022 ORI Contributors. Distributed under a <a 
 # Footer last edited timestamp
 last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
 last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
+
+# Aux links for the upper right navigation
+aux_links:
+  "Part of the ASWF Open Review Initiative (ORI)":
+    - "https://openreviewinitiative.org/"
+  "Academy Software Foundation (ASWF)":
+    - "https://www.aswf.io/"
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: false
