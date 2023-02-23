@@ -1,11 +1,11 @@
 ---
 layout: default
-title: ASWF Encoding Test Framework
+title: ORI Encoding Test Framework
 nav_order: 7
 has_children: true
 ---
 
-# ASWF Encoding Test Framework
+# ORI Encoding Test Framework
 -*WORK IN PROGRESS*-
 
 ## Goals

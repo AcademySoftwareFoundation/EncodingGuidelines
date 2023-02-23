@@ -136,7 +136,7 @@ We have seen the full range encoding work across all browsers, and a number of p
 TODO: Do additional testing across all players.
 
 For more details see:
-   * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
+   * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
    * [Encoding Guide](Encoding.html#range)
 
 
@@ -152,5 +152,5 @@ Will skip the conversion completely. Sadly this has no support in web browsers, 
 TODO Check about 10-bit encoding.
 
 For more details see:
-   * [Comparing full-range vs. tv range](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-fulltv/compare.html)
+   * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
    * [Encoding Guide](Encoding.html#range)

@@ -2,7 +2,7 @@
 layout: default
 nav_order: 7.2
 title: HDR Reference Source Test Media
-parent: ASWF Encoding Test Framework
+parent: ORI Encoding Test Framework
 ---
 
 # Reference Source Test Media for HDR Media.
