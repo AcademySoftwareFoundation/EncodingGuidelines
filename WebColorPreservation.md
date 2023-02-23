@@ -102,6 +102,6 @@ Chrome on windows, and Safari and Chrome on IOS will always assume the display i
 
 # Web Review <a name="webreview"></a>
 See:
-* [NCLC Testing Overview](https://richardssam.github.io/ffmpeg-tests/compare.html) This is an overview of the NCLC Tag tests for web review.
-* [Comparing different outputs for -color_trc](https://richardssam.github.io/ffmpeg-tests/tests/greyramp-osx/compare.html) - Showing what the -color_trc flag is doing, compared to embedding in mov and png.
-* [Comparing different outputs for the -colorprimaries](https://richardssam.github.io/ffmpeg-tests/gamuttests/iccgamut/compare.html)
+* [NCLC Testing Overview](https://academysoftwarefoundation.github.io/EncodingGuidelines/compare.html) This is an overview of the NCLC Tag tests for web review.
+* [Comparing different outputs for -color_trc](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-osx/compare.html) - Showing what the -color_trc flag is doing, compared to embedding in mov and png.
+* [Comparing different outputs for the -colorprimaries](https://academysoftwarefoundation.github.io/EncodingGuidelines/gamuttests/iccgamut/compare.html)

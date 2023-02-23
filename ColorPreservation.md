@@ -19,7 +19,7 @@ For more information, see: [https://trac.ffmpeg.org/wiki/colorspace](https://tra
 
 TODO -- Review the SWS_Flags.
 
-For examples comparing these see: [here](https://richardssam.github.io/ffmpeg-tests/tests/chip-chart-yuvconvert/compare.html)
+For examples comparing these see: [here](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/chip-chart-yuvconvert/compare.html)
 
 ## colormatrix filter
 ```
