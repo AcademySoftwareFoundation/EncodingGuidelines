@@ -13,10 +13,7 @@ url: "https://academysoftwarefoundation.github.io" # the base hostname & protoco
 last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
 last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
 
-nav_external_links:
-  - title: ORI Video Encoding Guidelines
-    url: https://academysoftwarefoundation.github.io/EncodingGuidelines/
-    hide_icon: false # set to true to hide the external link icon - defaults to false
+title: ORI Video Encoding Guidelines
 
 # Footer "Edit this page on GitHub" link text
 #gh_edit_link: true # show or hide edit this page link
