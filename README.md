@@ -1,4 +1,4 @@
-# ASWF Encoding recommendations.
+# ORI Video Encoding recommendations.
 
 This contains a variety of test suites to help pick encoding profiles suitable for VFX/Animation media reviews.
 We are trying to develop best practices, so we will suggest a good starting point, but there isnt a right answer for all cases, so we do also try to explain what the parameters do, and in what situations you might want to choose different parameters.

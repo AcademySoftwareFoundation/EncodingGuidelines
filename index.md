@@ -4,7 +4,7 @@ nav_order: 1
 title: Introduction
 ---
 
-# ORI Encoding Guidelines.
+# ORI Video Encoding Guidelines.
 
 A project from within the [https://openreviewinitiative.org/](ASWF Open Review Initiative), attempts to establish best practices for encoding Video media for VFX/Animation media review. We aim to explain what various parameters do, and in what situations you might want to choose to modify them.
 
