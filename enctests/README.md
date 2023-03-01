@@ -14,7 +14,7 @@ making sure color and quality is preserved.
 
 ## Requirements
 * FFmpeg with VMAF enabled
-* OpenTimelineIO (0.15+ currently only in main) 
+* OpenTimelineIO (>=0.15) 
 
 ## Description
 
