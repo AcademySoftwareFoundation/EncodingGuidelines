@@ -132,12 +132,18 @@ def parse_args():
 
 
 def parse_config_file(path):
-    config_file = path.as_posix()
+    config_file = path.absolute().as_posix()
     with open(config_file, 'rt') as f:
         config = list(yaml.load_all(f, SafeLoader))
 
     test_configs = []
     for test_config in config:
+        # Store path to config file for future reference.
+        test_name = next(iter(test_config))
+        if test_name.startswith('test_'):
+            # Only store config path for tests
+            test_config[test_name]['test_config_path'] = config_file
+
         test_configs.append(test_config)
 
     return test_configs
@@ -443,7 +449,6 @@ def main():
     # Generate any reports (if specified in file)
     if not args.skip_reports:
         processTemplate(test_configs, timeline)
-
 
 
 if __name__== '__main__':

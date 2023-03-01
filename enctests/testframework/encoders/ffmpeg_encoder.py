@@ -71,6 +71,9 @@ class FFmpegEncoder(ABCTestEncoder):
             # !! Use this function from utils to make sure we find the metadata
             # later on
             test_meta = get_test_metadata_dict(mr)
+            test_meta['test_config_path'] = self.test_config.get(
+                'test_config_path'
+            )
             test_meta['encode_arguments'] = wedge
             test_meta['description'] = self.test_config.get('description')
 
