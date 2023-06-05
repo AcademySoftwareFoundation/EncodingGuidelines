@@ -5,7 +5,7 @@ We are trying to develop best practices, so we will suggest a good starting poin
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
 
-This is being done as part of the [ASWF Open Review Initiative](https://openreviewinitiative.org/). We are grateful for the ASWF for creating the collaborative cross company environment that allows such projects to exist.
+This is being done as part of the [https://openreviewinitiative.org/](ASWF Open Review Initiative). We are grateful for the ASWF for creating the collaborative cross-company environment that allows such projects to exist.
 
 The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
