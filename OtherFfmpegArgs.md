@@ -43,3 +43,13 @@ This has been useful in splitting long prores encodes into chunks, and then merg
 The merge process is not quick, so there are limits to how much you can split the process, but provided that the merge process not I/O bound, it can typically end up with faster encodes.
 
 TODO - Provide some examples of speed improvement, as well as a sample command line.
+
+## ffmpeg help
+
+| | |
+| ffmpeg -codecs | list all codecs (encoders and decoders) |
+| ffmpeg -encoders | list just encoders | 
+| ffmpeg -formats | list all file formats |
+| ffmpeg -muxers | list all muxers (e.g. mp4, mov) |
+| ffmpeg -encoder=<ENCODERNAME> | List args for specified encoder, e.g. ffmpeg -encoder=prores_ks |
+| ffmpeg -decoder=<ENCODERNAME> | List args for specified encoder, e.g. ffmpeg -encoder=prores_ks |

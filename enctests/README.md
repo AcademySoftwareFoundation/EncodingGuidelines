@@ -177,6 +177,31 @@ pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2
 .venv/bin/python main.py
 ```
 
+## OSX Configuration
+
+```console
+brew install ffmpeg openimageio
+# Create a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Upgrade pip and install dependencies
+pip3 install --upgrade pip
+pip3 install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq 
+pip3 install awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
+
+mkdir aces
+cd aces
+curl -sLO https://github.com/colour-science/OpenColorIO-Configs/archive/refs/tags/v1.2.tar.gz && \
+tar zxvf v1.2.tar.gz OpenColorIO-Configs-1.2/aces_1.2 && \
+rm v1.2.tar.gz
+export OCIO=$PWD/OpenColorIO-Configs-1.2/aces_1.2/config.ocio
+        
+
+# Run tests (for now)
+.venv/bin/python main.py
+```
+
 ## How to add an encoder
 This is still **work in progress** so for now you'll have to add an encoder class
 to a file in the "encoders" folder.
