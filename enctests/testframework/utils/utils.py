@@ -111,11 +111,16 @@ def create_media_reference(path, source_clip, is_sequence=False):
     rate = float(config.get('rate'))
     duration = float(config.get('duration'))
 
+    print("PATH:", path)
     if is_sequence:
         # Create ImageSequenceReference
         # TODO find a less error prone way to find correct sequence
+        parentdir = path.parent.as_posix()
+        if not os.path.exists(parentdir):
+            print("Warning: ", path, " doesnt exist")
+            return
         seq = max(
-            pyseq.get_sequences(path.parent.as_posix()),
+            pyseq.get_sequences(parentdir),
             key=lambda s: s.frames()
         )
         available_range = otio.opentime.TimeRange(
