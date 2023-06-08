@@ -53,3 +53,25 @@ TODO - Provide some examples of speed improvement, as well as a sample command l
 | ffmpeg -muxers | list all muxers (e.g. mp4, mov) |
 | ffmpeg -encoder=<ENCODERNAME> | List args for specified encoder, e.g. ffmpeg -encoder=prores_ks |
 | ffmpeg -decoder=<ENCODERNAME> | List args for specified encoder, e.g. ffmpeg -encoder=prores_ks |
+
+## HD Color Bars
+
+ffmpeg does have a built-in SMPTE color bars, however by default, it does not create it in the right colorspace, so you do need to specify the color primaries, colorspace and colortrc to make it behave correctly.
+Also note, these are 8-bit only.
+
+This is an h264 output - NOTE, this is a yuv444p output, for more common h264 you may want a yuv420p 
+TODO: Figure out why this ends up as a 422 compression.
+
+```
+ffmpeg -re -color_primaries bt709 -colorspace bt709 -color_range tv -color_trc bt709 -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -pix_fmt yuv444p -c:v h264 -crf 10  smptehdbars-h264.mov
+```
+
+This is a 8-bit 444 raw encode.
+
+cffmpeg -re -color_primaries bt709 -colorspace bt709 -color_range tv -color_trc bt709 -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -pix_fmt yuv444p -c:v v408 smptehdbars-v408.mov
+```
+
+This is a PNG output, warning this would only be to the legal range, so the [pluge](https://en.wikipedia.org/wiki/Picture_line-up_generation_equipment) would be zeroed out:
+```
+ffmpeg -color_primaries bt709 -colorspace bt709 -color_trc bt709 -re -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -vframes 1  smptehdbars.png
+```
