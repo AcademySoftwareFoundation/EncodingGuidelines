@@ -38,6 +38,9 @@ wedges:
       -c:v: libx264
       -pix_fmt: yuv444p10le
       -preset: placebo
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
@@ -58,6 +61,9 @@ e.g.
 name: test_colormatch_colorspace
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
@@ -81,6 +87,9 @@ e.g.
 name: test_colormatch_libswscale
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \

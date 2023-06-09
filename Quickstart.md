@@ -18,6 +18,9 @@ If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.00
 name: test_quickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
@@ -64,6 +67,9 @@ Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many ca
 name: test_proresquickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
@@ -89,6 +95,9 @@ As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 name: test_prores444
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
@@ -124,6 +133,9 @@ A full example encode would look like:
 name: test_fullrange
 sources: 
 - sourceimages/radialgrad.png.yml
+comparisontest:
+   testtype: idiff
+   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
 -->
 ```console
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \

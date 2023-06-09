@@ -217,7 +217,7 @@ def create_source_config_files(args):
     )
 
 
-def get_configs(args, root_path, config_type):
+def get_configs(args, root_path, config_type, comparisontestinfo):
     configs = []
     for item in scantree(args, root_path, suffix=config_type):
         path = Path(item.path)
@@ -291,7 +291,8 @@ model=path={vmaf_model}\" \
 
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
-        'psnr': raw_results['pooled_metrics'].get('psnr')   # FFmpeg < 5.1
+        'psnr': raw_results['pooled_metrics'].get('psnr'),   # FFmpeg < 5.1
+        'result': "Completed"
     }
 
     # FFmpeg >= 5.1 have split psnr results
@@ -302,6 +303,37 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
+def idiff_compare(source_clip, test_ref, testname, comparisontestinfo):
+    apptemplate = comparisontestinfo.get("testtemplate", "idiff -fail 0.00195 {originalfile} {newfile}")
+    extracttemplate = comparisontestinfo.get("extracttemplate", "ffmpeg -y -i {newfile} -frames:v 1 -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}")
+
+    source_path, _ = get_source_path(source_clip)
+    distorted = test_ref.target_url
+
+    distortedbase, distortedext = os.path.splitext(distorted)
+    distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
+
+    extractcmd = extracttemplate.format(newfile=distorted, newpngfile=distortedpng)
+    print("About to extract with cmd:", extractcmd)
+    result = subprocess.call(shlex.split(extractcmd))
+
+    cmd = apptemplate.format(originalfile=source_path, newfile=distortedpng)
+    print("Idiff command:", cmd)
+    
+    output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
+    lines = output.decode("utf-8").splitlines()
+    if len(lines) < 2:
+        return {'success': False}
+    results = {'success': lines[-1] == "PASS", 'result': lines[-1]}
+    for line in lines[:-1]:
+        if " = " not in line:
+            continue
+        key, value = line.split(" = ")
+        key = key.strip().replace(" ", "_").lower()
+        value = value.strip()
+        results[key] = value
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(results)
 
 def prep_sources(args, test_sources=None):
     bin = otio.schema.SerializableCollection()
@@ -386,9 +418,19 @@ def run_tests(args, test_configs, timeline):
             # Run tests and get a dict of resulting media references
             results = encoder.run_wedges()
 
+            testtype = "vmaf"
+            comparisontestinfo = {}
+            if "comparisontest" in test_config:
+                comparisontestinfo = test_config.get("comparisontest", {})
+                testtype = comparisontestinfo.get("testtype", "vmaf")
+
             # Compare results against source
             for test_name, test_ref in results.items():
-                vmaf_compare(source_clip, test_ref, test_name)
+                if testtype != "idiff":
+                    # Run vmaf by default.
+                    vmaf_compare(source_clip, test_ref, test_name)
+                else:
+                    idiff_compare(source_clip, test_ref, test_name, test_config.get("comparisontest", {}))
 
             # Update dict of references
             references.update(results)
