@@ -303,9 +303,12 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
-def idiff_compare(source_clip, test_ref, testname, comparisontestinfo):
-    apptemplate = comparisontestinfo.get("testtemplate", "idiff -fail 0.00195 {originalfile} {newfile}")
-    extracttemplate = comparisontestinfo.get("extracttemplate", "ffmpeg -y -i {newfile} -frames:v 1 -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}")
+def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
+    default_app_template = "idiff -fail 0.00195 {originalfile} {newfile}"
+    apptemplate = comparisontest_info.get("testtemplate", default_app_template)
+
+    default_extract_template = "ffmpeg -y -i {newfile} -frames:v 1 -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+    extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
 
     source_path, _ = get_source_path(source_clip)
     distorted = test_ref.target_url
@@ -313,27 +316,34 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo):
     distortedbase, distortedext = os.path.splitext(distorted)
     distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
 
-    extractcmd = extracttemplate.format(newfile=distorted, newpngfile=distortedpng)
+    extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
     print("About to extract with cmd:", extractcmd)
-    result = subprocess.call(shlex.split(extractcmd))
-
-    cmd = apptemplate.format(originalfile=source_path, newfile=distortedpng)
-    print("Idiff command:", cmd)
-    
-    output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
-    lines = output.decode("utf-8").splitlines()
-    if len(lines) < 2:
-        return {'success': False}
-    results = {'success': lines[-1] == "PASS", 'result': lines[-1]}
-    for line in lines[:-1]:
-        if " = " not in line:
-            continue
-        key, value = line.split(" = ")
-        key = key.strip().replace(" ", "_").lower()
-        value = value.strip()
-        results[key] = value
+    result = {'success': False,
+              'result': "undefined"
+    }
+    cmdresult = subprocess.call(shlex.split(extractcmd))
+    if cmdresult != 0:
+        result['result'] = "Unable to extract file for test"
+    else:
+        cmd = apptemplate.format(originalfile=source_path, newfile=distortedpng)
+        print("Idiff command:", cmd)
+        
+        output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
+        lines = output.decode("utf-8").splitlines()
+        if len(lines) < 2:
+            result['result'] = "Unable to run idiff"
+            result['success'] = False
+        else:
+            result = {'success': lines[-1] == "PASS", 'result': lines[-1]}
+            for line in lines[:-1]:
+                if " = " not in line:
+                    continue
+                key, value = line.split(" = ")
+                key = key.strip().replace(" ", "_").lower()
+                value = value.strip()
+                result[key] = value
     enc_meta = get_test_metadata_dict(test_ref)
-    enc_meta['results'].update(results)
+    enc_meta['results'].update(result)
 
 def prep_sources(args, test_sources=None):
     bin = otio.schema.SerializableCollection()
