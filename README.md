@@ -1,13 +1,13 @@
 # ORI Video Encoding recommendations.
 
-This contains a variety of test suites to help pick encoding profiles suitable for VFX/Animation media reviews.
-We are trying to develop best practices, so we will suggest a good starting point, but there isnt a right answer for all cases, so we do also try to explain what the parameters do, and in what situations you might want to choose different parameters.
+This repository contains a variety of test suites to help pick encoding profiles suitable for VFX/Animation media reviews.
+We are trying to develop best practices, so we will suggest a good starting point, but there isn't a right answer for all cases. We also try to explain what the encoding parameters do, and in what situations you might want to choose different parameters.
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
 
-This is being done as part of the [https://openreviewinitiative.org/](ASWF Open Review Initiative). We are grateful for the ASWF for creating the collaborative cross-company environment that allows such projects to exist.
+This work is being done as part of the [ASWF Open Review Initiative](https://openreviewinitiative.org/). We are grateful for the ASWF for creating the collaborative cross company environment that allows such projects to exist.
 
-The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
+The main wiki page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
 1. [Acknowledgements](#Acknowledgements)
 2. [Encoding Cheat Sheet](docs/Index.md)
