@@ -1,4 +1,13 @@
-#!/usr/bin/bash -xv
+#!/bin/bash -xv
+
+
+#if [ ! -d Sintel-trailer-1080p-png ]
+#then
+#	echo Downloading Sintel-trailer-1080p-png
+#	curl https://s3.amazonaws.com/senkorasic.com/test-media/video/sintel/source/Sintel-trailer-1080p-png.zip -o Sintel-trailer-1080p-png.zip
+#	unzip Sintel-trailer-1080p-png.zip -d Sintel-trailer-1080p-png
+#	rm -rf Sintel-trailer-1080p-png.zip
+#fi
 
 #downloading chimera
 

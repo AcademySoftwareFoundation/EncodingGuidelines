@@ -40,7 +40,7 @@ SOURCE_SUFFIX = '.yml'
 # We assume macos and linux both have the same binary name
 FFMPEG_BIN = os.getenv(
     'FFMPEG_BIN',
-    'win' in sys.platform and 'ffmpeg.exe' or 'ffmpeg'
+    sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
 )
 
 
@@ -135,6 +135,7 @@ def parse_config_file(path):
     config_file = path.absolute().as_posix()
     with open(config_file, 'rt') as f:
         config = list(yaml.load_all(f, SafeLoader))
+        config[0]['config_path'] = config_file # Stash where the config file is, useful for reporting and relative paths.
 
     test_configs = []
     for test_config in config:
