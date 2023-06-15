@@ -1,0 +1,57 @@
+test_osx-prores:
+    name: test_prores_quality
+    description: variations of prores_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    wedges:
+        prores_ks: &base_args
+            -c:v: prores_ks
+            -profile:v: 3
+#            -qscale:v: 16
+            -pix_fmt: yuv422p10le
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+#            -color_trc: iec61966-2-1 
+
+        prores_videotoolbox:
+            << : *base_args
+            -c:v: prores_videotoolbox
+---
+
+reports:
+    graphs:
+    - args:
+        color: -c:v
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: -c:v
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: -c:v
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: osx-prores
+    title: OSX Prores Comparison
+    description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
+    directory: osx_prores-encode
+    templatefile: basic.html.jinja
+
