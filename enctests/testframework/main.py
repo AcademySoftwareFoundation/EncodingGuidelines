@@ -135,6 +135,7 @@ def parse_config_file(path):
     config_file = path.absolute().as_posix()
     with open(config_file, 'rt') as f:
         config = list(yaml.load_all(f, SafeLoader))
+        config[0]['config_path'] = config_file # Stash where the config file is, useful for reporting and relative paths.
 
     test_configs = []
     for test_config in config:

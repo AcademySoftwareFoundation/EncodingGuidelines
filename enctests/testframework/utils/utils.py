@@ -173,6 +173,10 @@ def get_source_metadata_dict(source_clip):
 
 def create_clip(config):
     path = Path(config.get('path'))
+    if not path.is_absolute():
+        if 'config_path' in config:
+            config_path = Path(config.get('config_path'))
+            path = config_path.parent.joinpath(path).resolve()
 
     clip = otio.schema.Clip(name=path.stem)
     clip.metadata.update({'aswf_enctests': {'source_info': deepcopy(config)}})
