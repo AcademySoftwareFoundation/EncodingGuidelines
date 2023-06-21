@@ -218,7 +218,7 @@ def create_source_config_files(args):
     )
 
 
-def get_configs(args, root_path, config_type, comparisontestinfo):
+def get_configs(args, root_path, config_type):
     configs = []
     for item in scantree(args, root_path, suffix=config_type):
         path = Path(item.path)
@@ -242,7 +242,22 @@ def tests_only(test_configs):
     return configs
 
 
-def vmaf_compare(source_clip, test_ref, testname):
+def vmaf_compare(source_clip, test_ref, testname, comparisontestinfo):
+    """
+    Compare the sourceclip to the test_ref using vmaf.
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    vmaf - the vmaf comparison metric.
+    psnr - the PSNR dictionary.
+    psnr_y - The PSNR lumanance value.
+    psnr_cb, psnr_cr - the PNSR chrominance.
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
     vmaf_cmd = '\
 {ffmpeg_bin} \
 {reference} \
@@ -305,10 +320,27 @@ model=path={vmaf_model}\" \
     enc_meta['results'].update(results)
 
 def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
+    """
+    Compare the sourceclip to the test_ref using OIIO idiff.
+    This requires that we extract the movie into an image to do the comparison. We really only want to do this for single frames. This is a good test for checking the color is good.
+
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    mean_error 
+    rms_error
+    peak_snr
+    max_error
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
     default_app_template = "idiff -fail 0.00195 {originalfile} {newfile}"
     apptemplate = comparisontest_info.get("testtemplate", default_app_template)
 
-    default_extract_template = "ffmpeg -y -i {newfile} -frames:v 1 -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
     extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
 
     source_path, _ = get_source_path(source_clip)
@@ -341,10 +373,72 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
                     continue
                 key, value = line.split(" = ")
                 key = key.strip().replace(" ", "_").lower()
-                value = value.strip()
-                result[key] = value
+                if key == "max_error":
+                    value, location = value.split(" @ ")
+                    result['max_location'] = location
+                else:
+                    value = value.strip()
+                result[key] = float(value)
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
+
+def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
+    """
+    Check the results of the tests against known values (or value ranges).
+    We assume that we have already run some tests, and just want to check that the values are good.
+    
+    source_clip -- The original clip that the new media is based on. (not used)
+    test_ref    -- The generated movie we are testing.(not used)
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    testresult - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+    tests = comparisontest_info.get("tests", [])
+    enc_meta = get_test_metadata_dict(test_ref)
+    result = enc_meta['results']
+    resultstatus = True
+    for test in tests:
+        if "assert" not in test:
+            print("WARNING: no test to run in test:", test, " expecting a field called assert with the test type.")
+            continue
+        testname = test.get("assert")
+        testvalue = test.get("value") # which field to test.
+        if testvalue not in result:
+            print("Skipping test ", test, " since value ", testvalue, " is not in results:", result)
+            continue
+        if testname == "between":
+            if "between" not in test:
+                print("WARNING: Skipping test since there is no between values, in :", test)
+            values = test.get("between")
+
+            resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
+        if testname == "greater":
+            if "greater" not in test:
+                print("WARNING: Skipping test since there is no greater values, in :", test)
+            value = test.get("greater")
+            resultstatus = result[testvalue] > value
+        if testname == "less":
+            if "less" not in test:
+                print("WARNING: Skipping test since there is no greater values, in :", test)
+            value = test.get("less")
+            resultstatus = result[testvalue] < value
+ 
+        if testname == "stringmatch":
+            if "string" not in test:
+                print("WARNING: Skipping test since there is no string to match in :", test)
+            value = test.get("string")
+
+            resultstatus = result[testvalue] == value
+        if not resultstatus:
+            break
+    if resultstatus:
+        result['success'] = True
+        result['testresult'] = "Test Passed"
+    else:
+        result['success'] = False
+        result['testresult'] = "Test Failed"
 
 def prep_sources(args, test_sources=None):
     bin = otio.schema.SerializableCollection()
@@ -429,19 +523,20 @@ def run_tests(args, test_configs, timeline):
             # Run tests and get a dict of resulting media references
             results = encoder.run_wedges()
 
-            testtype = "vmaf"
-            comparisontestinfo = {}
+            comparisontests = [{'testtype': 'vmaf'}]
             if "comparisontest" in test_config:
-                comparisontestinfo = test_config.get("comparisontest", {})
-                testtype = comparisontestinfo.get("testtype", "vmaf")
+                comparisontests = test_config.get("comparisontest")
 
             # Compare results against source
             for test_name, test_ref in results.items():
-                if testtype != "idiff":
-                    # Run vmaf by default.
-                    vmaf_compare(source_clip, test_ref, test_name)
-                else:
-                    idiff_compare(source_clip, test_ref, test_name, test_config.get("comparisontest", {}))
+                for test in comparisontests:
+                    testtype = test.get("testtype", "vmaf")
+                    if testtype == "vmaf":
+                        vmaf_compare(source_clip, test_ref, test_name, test)
+                    if testtype == "idiff":
+                        idiff_compare(source_clip, test_ref, test_name, test)
+                    if testtype == "assertresults":
+                        assertresults_compare(source_clip, test_ref, test_name, test)
 
             # Update dict of references
             references.update(results)
