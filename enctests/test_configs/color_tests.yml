@@ -1,60 +1,4 @@
-test_quickstart:
-  app: ffmpeg
-  comparisontest:
-  - testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
-    testtype: idiff
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../Quickstart.md
-    line 25
-  encoding_template: ffmpeg {input_args} -i "{source}"                 -frames:v 100                 {encoding_args}
-    -y "{outfile}"
-  name: test_quickstart
-  sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  suffix: .mp4
-  wedges:
-    wedge0:
-      -c:v: libx264
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: iec61966-2-1
-      -colorspace: bt709
-      -pix_fmt: yuv420p
-      -preset: slower
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
----
-test_proresquickstart:
-  app: ffmpeg
-  comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    testtype: idiff
-    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../Quickstart.md
-    line 75
-  encoding_template: ffmpeg {input_args} -i "{source}" -vframes {duration}         {encoding_args}
-    -y "{outfile}"
-  name: test_proresquickstart
-  sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  suffix: .mov
-  wedges:
-    wedge0:
-      -c:v: prores_ks
-      -pix_fmt: yuv444p10le
-      -profile:v: '5'
-      -qscale:v: '9'
-      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+
 ---
 test_colormatch_raw:
   app: ffmpeg
@@ -146,8 +90,9 @@ test_colormatch_libswscale:
   - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
   suffix: .mp4
   wedges:
-    wedge0:
+    yuv444p10lex264: &basex264
       -c:v: libx264
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -157,8 +102,12 @@ test_colormatch_libswscale:
       -qp: '0'
       -qscale:v: '1'
       -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
       -x264-params: '"keyint=15:no-deblock=1"'
+    yuv444p10lex264full:
+      << : *basex264
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+
 ---
 test_uncompressed:
   app: ffmpeg
@@ -181,25 +130,37 @@ test_uncompressed:
   wedges:
     v410:  &base_args
       -c:v: v410
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
+      -pix_fmt: yuv444p10le
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
-      -pix_fmt: yuv444p10le
-      -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
     v210:
       << : *base_args
       -c:v: v210
       -pix_fmt: yuv422p10le   
-    v408:
+    yuv4:
       << : *base_args
-      -c:v: v208
-      -pix_fmt: yuv422p   
+      -c:v: yuv4
+      -pix_fmt: yuv420p   
     v408:
       << : *base_args
       -c:v: v408
+      -pix_fmt: yuva444p   
+    v408full:
+      << : *base_args
+      -c:v: ß
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_coßlor_matrix=bt709"'
       -pix_fmt: yuv444p   
+      -color_range: pc
+    v410full:
+      << : *base_args
+      -c:v: v410
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -pix_fmt: yuv444p10le  
+      -color_range: pc
 
 ---
 reports:
