@@ -1,0 +1,73 @@
+
+test_preset_yuv420p:
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    wedges:
+        medium_crf_18: &base_args2
+            -c:v: hevc
+            -preset: medium
+            -crf: 18
+            -x264-params: '"keyint=15:no-deblock=1"'
+            -pix_fmt: yuv420p
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        slow_crf_18:
+            << : *base_args2
+            -preset: slow
+
+        slower_crf_18:
+            << : *base_args2
+            -preset: slower
+
+        veryslow_crf_18:
+            << : *base_args2
+            -preset: veryslow
+
+        placebo_crf_18:
+            << : *base_args2
+            -preset: placebo
+---
+
+reports:
+    graphs:
+    - args:
+        color: -preset
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: -preset
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: -preset
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: hevc-test
+    title: HEVC Preset Comparison
+    description: This is a comparison of different Preset values for HEVC encoding, with CRF = 18.
+    directory: hevc-encode
+    templatefile: basic.html.jinja
+

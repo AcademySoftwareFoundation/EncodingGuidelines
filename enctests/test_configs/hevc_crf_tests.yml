@@ -1,0 +1,81 @@
+test_crf_yuv420p:
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    wedges:
+        slow_crf_10: &base_args
+            -c:v: hevc
+            -preset: slow
+            -crf: 10
+            -x264-params: '"keyint=15:no-deblock=1"'
+            -pix_fmt: yuv420p
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        slow_crf_14:
+            << : *base_args
+            -crf: 14
+
+        slow_crf_16:
+            << : *base_args
+            -crf: 16
+
+        slow_crf_18:
+            << : *base_args
+            -crf: 18
+
+        slow_crf_20:
+            << : *base_args
+            -crf: 20
+
+        slow_crf_22:
+            << : *base_args
+            -crf: 22
+
+        slow_crf_25:
+            << : *base_args
+            -crf: 25
+
+        slow_crf_28:
+            << : *base_args
+            -crf: 28
+---
+
+reports:
+    graphs:
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: name
+    name: hevc-crf-test
+    title: HEVC CRF Comparison
+    description: This is a comparison of different CRF values for h264 encoding.
+    directory: hevc-crf-encode
+    templatefile: basic.html.jinja
+
