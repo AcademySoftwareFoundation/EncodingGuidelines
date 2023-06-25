@@ -80,9 +80,15 @@ def processTemplate(test_configs, otio_info):
           results.append(merge_test_info)
           merge_test_info['media'] = track.name
           merge_test_info['output_media'] = test_info.name
-          merge_test_info['vmaf_min'] = float(merge_test_info['vmaf']['min'])
-          merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
-          merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
+          if "vmaf" in merge_test_info:
+            merge_test_info['vmaf_min'] = float(merge_test_info['vmaf']['min'])
+            merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
+            merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
+          else:
+            merge_test_info['psnr_y'] = {}
+            merge_test_info['psnr_cr'] = {}
+            merge_test_info['psnr_cb'] = {}
+
           merge_test_info['filesize'] = merge_test_info['filesize']
 
           # We merge the arguments into the dictionary too, as well as merge it into a single string, to make the graphing simpler.

@@ -33,6 +33,9 @@
 <table border=1>
    <TR>
    <TH>Test Name</TH>
+      <TH>Success</TH>
+   <TH>Mean Error</TH>
+   <TH>Max Error</TH>
    <TH>Encode Duration</TH>
    <TH>File Size</TH>
    <TH>PSNR-Y</TH>
@@ -44,6 +47,9 @@
   {% for enc_info in test.results %}
     <TR>
     <TH>{{ enc_info.name|e }}</TH>
+        <td align=right>{{ enc_info.testresult}} </TD>
+        <td align=right>{{ enc_info.mean_error}} </TD>
+        <td align=right>{{ enc_info.max_error}} </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ enc_info.filesize}} </TD>
         <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
