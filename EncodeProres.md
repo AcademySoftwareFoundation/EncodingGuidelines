@@ -2,7 +2,7 @@
 layout: default
 nav_order: 4.2
 title: Prores Encoding
-parent: Encoding
+parent: Encoding Overview
 ---
 
 # ProRes <a name="prores"></a>
