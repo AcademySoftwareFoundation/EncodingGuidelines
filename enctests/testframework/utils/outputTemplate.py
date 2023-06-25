@@ -71,7 +71,7 @@ def processTemplate(test_configs, otio_info):
       default_media = None
       for ref_name, test_info in track.media_references().items():
           if ref_name == "DEFAULT_MEDIA":
-              default_media = test_info
+              default_media = {'name': test_info.name, 'target_url': test_info.target_url}
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name

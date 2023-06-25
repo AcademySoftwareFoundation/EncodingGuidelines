@@ -1,0 +1,78 @@
+
+---
+test_h265_color:
+  app: ffmpeg
+  comparisontest:
+  - testtemplate: idiff {originalfile} {newfile}
+    testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: h265 color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_h265_color
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/smptehdbars_16.png.yml
+  suffix: .mp4
+  wedges:
+    yuv444p10lex265: &basex265
+      -c:v: libx265
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv444p10le
+      -preset: placebo
+      -x265-params: lossless=1
+      -tag:v: hvc1
+      -profile:v: main444-10
+
+
+    gbrpx265:
+      << : *basex265
+      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      -colorspace: rgb
+      -pix_fmt: gbrp
+
+    gbrp10x265:
+      << : *basex265
+      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      -colorspace: rgb
+      -pix_fmt: gbrp10le
+
+    gbrp12x265:
+      << : *basex265
+      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      -colorspace: rgb
+      -profile:v: main444-12
+      -pix_fmt: gbrp12le
+
+    yuv444p12lefullx265:
+      << : *basex265
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+    
+    videotoolbox_h265_bgra:
+      << : *basex265
+      -c:v: hevc_videotoolbox
+      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      -colorspace: rgb
+      -profile:v: main
+      -pix_fmt: bgra
+
+---
+reports:
+  description: This is testing h265 color encoding.
+  directory: hevc-color-encode
+  name: hevc-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg encoding guide tests
