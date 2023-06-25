@@ -19,8 +19,13 @@ name: test_quickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
@@ -68,8 +73,13 @@ name: test_proresquickstart
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
@@ -96,8 +106,13 @@ name: test_prores444
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
@@ -134,8 +149,13 @@ name: test_fullrange
 sources: 
 - sourceimages/radialgrad.png.yml
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```console
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \

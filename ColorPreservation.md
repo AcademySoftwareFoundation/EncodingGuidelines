@@ -39,8 +39,13 @@ wedges:
       -pix_fmt: yuv444p10le
       -preset: placebo
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
@@ -62,8 +67,13 @@ name: test_colormatch_colorspace
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
@@ -88,8 +98,13 @@ name: test_colormatch_libswscale
 sources: 
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
-   testtype: idiff
-   testtemplate: idiff -fail 0.00195 {originalfile} {newfile}
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
