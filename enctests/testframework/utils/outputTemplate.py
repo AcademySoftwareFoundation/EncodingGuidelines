@@ -15,12 +15,23 @@ def _exportGraph(reportconfig, graph, alltests):
   :param graph: The specific graph to output.
   :param alltest: The raw test data to use.
   """
-  df = pd.DataFrame(alltests)
-  df = df.sort_values(by=graph.get("sortby", "name"))
-  if graph.get("type", "line") == "bar":
-    fig = px.bar(df, **graph.get("args")) 
+  graphargs = graph.get("args")
+
+  if "colororder" in graphargs:
+    colororder = graphargs.get("colororder")
+    del graphargs['colororder']
+    for d in alltests:
+      d['colororder'] = colororder.index(d[graphargs['color']])
+    df = pd.DataFrame(alltests)
+    df = df.sort_values(by='colororder')
   else:
-    fig = px.line(df, **graph.get("args")) 
+    df = pd.DataFrame(alltests)
+    # This sorts the filenames.
+    df = df.sort_values(by=graph.get("sortby", "name"))
+  if graph.get("type", "line") == "bar":
+    fig = px.bar(df, **graphargs) 
+  else:
+    fig = px.line(df, **graphargs) 
 
   filename = reportconfig['name']+"-"+graph.get("name")
   if "directory" in reportconfig:
@@ -57,8 +68,10 @@ def processTemplate(test_configs, otio_info):
   alltests = []
   for track in tracks:
       results = []
+      default_media = None
       for ref_name, test_info in track.media_references().items():
           if ref_name == "DEFAULT_MEDIA":
+              default_media = test_info
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
@@ -66,6 +79,7 @@ def processTemplate(test_configs, otio_info):
             merge_test_info['test_description'] = test_info.metadata['aswf_enctests']['description']
           results.append(merge_test_info)
           merge_test_info['media'] = track.name
+          merge_test_info['output_media'] = test_info.name
           merge_test_info['vmaf_min'] = float(merge_test_info['vmaf']['min'])
           merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
           merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
@@ -81,7 +95,7 @@ def processTemplate(test_configs, otio_info):
       if track.name in tests:
         tests[track.name]['results'].extend(results)
       else:
-        tests[track.name] = {'results': results, 'source_info': track.metadata['aswf_enctests']['source_info']}
+        tests[track.name] = {'results': results, 'source_info': track.metadata['aswf_enctests']['source_info'], 'default_media': default_media}
 
   for graph in reportconfig.get("graphs", []):
     _exportGraph(reportconfig, graph, alltests)

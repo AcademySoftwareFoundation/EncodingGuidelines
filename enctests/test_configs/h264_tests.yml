@@ -10,10 +10,10 @@ test_preset_yuv420p:
     - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     wedges:
-        medium_crf_18: &base_args2
+        veryfast_crf_18: &base_args2
             -c:v: libx264
-            -preset: medium
-            -crf: 18
+            -preset: veryfast
+            -crf: 25
             -x264-params: '"keyint=15:no-deblock=1"'
             -pix_fmt: yuv420p
             -sws_flags: spline+accurate_rnd+full_chroma_int
@@ -22,6 +22,15 @@ test_preset_yuv420p:
             -colorspace: 1
             -color_primaries: 1
             -color_trc: 2
+
+
+        fast_crf_18:
+            << : *base_args2
+            -preset: fast
+
+        medium_crf_18:
+            << : *base_args2
+            -preset: medium
 
         slow_crf_18:
             << : *base_args2
@@ -44,6 +53,7 @@ reports:
     graphs:
     - args:
         color: -preset
+        colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
         barmode: group
         x: media
@@ -55,6 +65,7 @@ reports:
       type: bar
     - args:
         color: -preset
+        colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
         x: media
         barmode: group
@@ -63,6 +74,7 @@ reports:
       type: bar
     - args:
         color: -preset
+        colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
         x: media
         barmode: group
