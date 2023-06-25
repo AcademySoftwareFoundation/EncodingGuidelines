@@ -349,12 +349,18 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     distortedbase, distortedext = os.path.splitext(distorted)
     distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
 
-    extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
-    print("About to extract with cmd:", extractcmd)
-    result = {'success': False,
-              'result': "undefined"
-    }
-    cmdresult = subprocess.call(shlex.split(extractcmd))
+    if not os.path.exists(distorted):
+            result = {'success': False,
+              'testresult': "No movie generated."
+            }
+            cmdresult = 1
+    else:
+        extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
+        print("About to extract with cmd:", extractcmd)
+        result = {'success': False,
+                'testresult': "undefined"
+        }
+        cmdresult = subprocess.call(shlex.split(extractcmd))
     if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
@@ -367,7 +373,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
             result['result'] = "Unable to run idiff"
             result['success'] = False
         else:
-            result = {'success': lines[-1] == "PASS", 'result': lines[-1]}
+            result = {'success': True, 'result': lines[-1]}
             for line in lines[:-1]:
                 if " = " not in line:
                     continue
@@ -399,6 +405,9 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
     enc_meta = get_test_metadata_dict(test_ref)
     result = enc_meta['results']
     resultstatus = True
+    if not result['success']:
+        # If the processing wasnt a success, we fail.
+        return
     for test in tests:
         if "assert" not in test:
             print("WARNING: no test to run in test:", test, " expecting a field called assert with the test type.")
