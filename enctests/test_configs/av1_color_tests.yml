@@ -31,8 +31,6 @@ test_av1_color:
       -usage: good
       -still-picture: 1
       -crf: 10
-      #-tag:v: hvc1
-      #-profile:v: main444-10
 
 
     av1-gbrp:
