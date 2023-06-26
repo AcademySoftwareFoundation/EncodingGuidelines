@@ -15,8 +15,8 @@ test_h265_color:
     -y "{outfile}"
   name: test_h265_color
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
-  - /Users/sam/git/EncodingGuidelines/sourceimages/smptehdbars_16.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mp4
   wedges:
     yuv444p10lex265: &basex265

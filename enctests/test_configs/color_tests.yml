@@ -16,7 +16,7 @@ test_colormatch_raw:
     -y "{outfile}"
   name: test_colormatch_raw
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
   suffix: .mp4
   wedges:
     rawcolor:
@@ -54,7 +54,7 @@ test_colormatch_colorspace:
     -y "{outfile}"
   name: test_colormatch_colorspace
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
   suffix: .mp4
   wedges:
     wedge0:
@@ -87,7 +87,7 @@ test_colormatch_libswscale:
     -y "{outfile}"
   name: test_colormatch_libswscale
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
   suffix: .mp4
   wedges:
     yuv444p10lex264: &basex264
@@ -125,7 +125,7 @@ test_uncompressed:
     -y "{outfile}"
   name: test_uncompressed
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mov
   wedges:
     v410:  &base_args

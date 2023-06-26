@@ -15,8 +15,8 @@ test_dnxhd_color:
     -y "{outfile}"
   name: test_dnxhd_color
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
-  - /Users/sam/git/EncodingGuidelines/sourceimages/smptehdbars_16.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mov
   wedges:
     dnxhd-yuv444p10le: &basednxhd
