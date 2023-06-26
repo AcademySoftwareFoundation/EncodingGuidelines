@@ -3,8 +3,7 @@
 test_dnxhd_color:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - testtype: assertresults
     tests:
     - assert: less

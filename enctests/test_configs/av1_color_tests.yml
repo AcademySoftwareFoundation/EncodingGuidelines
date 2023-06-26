@@ -3,8 +3,7 @@
 test_av1_color:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - testtype: assertresults
     tests:
     - assert: less

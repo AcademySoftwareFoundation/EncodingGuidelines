@@ -3,7 +3,7 @@ test_prores:
     description: variations of prores_quality
     app: ffmpeg
     suffix: .mov
-    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     wedges:
         qscale_16: &base_args
             -c:v: prores_ks

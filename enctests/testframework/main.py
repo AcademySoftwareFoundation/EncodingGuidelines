@@ -43,6 +43,11 @@ FFMPEG_BIN = os.getenv(
     sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
 )
 
+IDIFF_BIN = os.getenv(
+    'IDIFF_BIN',
+    sys.platform == 'win' and 'idiff.exe' or 'idiff'
+)
+
 
 VMAF_LIB_DIR = os.getenv(
     'VMAF_LIB_DIR',
@@ -337,17 +342,18 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     result - Was the test able to run (Completed = Yes)
     success - Boolean, was the test a success. 
     """
-    default_app_template = "idiff -fail 0.00195 {originalfile} {newfile}"
+    default_app_template = "{idiff_bin} {originalfile} {newfile}"
     apptemplate = comparisontest_info.get("testtemplate", default_app_template)
 
-    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+    default_extract_template = "{ffmpeg_bin} -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
     extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
 
     source_path, _ = get_source_path(source_clip)
     distorted = test_ref.target_url
 
+
     distortedbase, distortedext = os.path.splitext(distorted)
-    distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
+    distortedpng = Path(distorted.parent, distorted.stem + ".png")
 
     if not os.path.exists(distorted):
             result = {'success': False,
@@ -355,7 +361,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
             }
             cmdresult = 1
     else:
-        extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
+        extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, newfile=distorted, newpngfile=distortedpng.as_posix())
         print("About to extract with cmd:", extractcmd)
         result = {'success': False,
                 'testresult': "undefined"
@@ -364,7 +370,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
-        cmd = apptemplate.format(originalfile=source_path, newfile=distortedpng)
+        cmd = apptemplate.format(idiff_bin=IDIFF_BIN, originalfile=source_path.as_posix(), newfile=distortedpng.as_posix())
         print("Idiff command:", cmd)
         
         output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout

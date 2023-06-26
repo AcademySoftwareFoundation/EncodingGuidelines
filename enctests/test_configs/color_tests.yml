@@ -3,8 +3,7 @@
 test_colormatch_raw:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - testtype: assertresults
     tests:
     - assert: less
@@ -41,8 +40,7 @@ test_colormatch_raw:
 test_colormatch_colorspace:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - testtype: assertresults
     tests:
     - assert: less
@@ -74,8 +72,7 @@ test_colormatch_colorspace:
 test_colormatch_libswscale:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - testtype: assertresults
     tests:
     - assert: less
@@ -112,8 +109,7 @@ test_colormatch_libswscale:
 test_uncompressed:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff {originalfile} {newfile}
-    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
     testtype: idiff
   - testtype: assertresults
     tests:

@@ -7,7 +7,7 @@ test_crf_yuv420p:
     - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
     - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
-    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     wedges:
         slow_crf_10: &base_args
             -c:v: libx264
