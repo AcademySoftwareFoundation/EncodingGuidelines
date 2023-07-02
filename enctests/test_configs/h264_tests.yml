@@ -74,5 +74,5 @@ reports:
     title: H264 Preset Comparison
     description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
     directory: h264-encode
-    templatefile: basicpictures.html.jinja
+    templatefile: basicmovie.html.jinja
 
