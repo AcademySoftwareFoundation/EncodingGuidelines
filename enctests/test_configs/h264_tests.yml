@@ -4,7 +4,12 @@ test_preset_yuv420p:
     description: variations of colorspace yuv420p
     app: ffmpeg
     suffix: .mov
-    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         medium_crf_18: &base_args2
             -c:v: libx264
