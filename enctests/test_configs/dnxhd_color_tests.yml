@@ -1,0 +1,67 @@
+
+---
+test_dnxhd_color:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: dnxhd color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_dnxhd_color
+  sources:
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
+  suffix: .mov
+  wedges:
+    dnxhd-yuv444p10le: &basednxhd
+      -c:v: dnxhd
+      -profile:v: dnxhr_444
+      -b:v: 3M
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv444p10le
+      -strict: experimental
+      #-preset: 3
+      #-tag:v: hvc1
+
+
+      #-profile:v: main444-10
+
+    dnxhd-gbrp10:
+      << : *basednxhd
+      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      # -color_range: pc
+      -colorspace: rgb
+      -pix_fmt: gbrp10le
+
+    dnxhd-gbrp10full:
+      << : *basednxhd
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      -colorspace: rgb
+      -pix_fmt: gbrp10le
+
+    dnxhd-yuv444full:
+      << : *basednxhd
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      #-colorspace: rgb
+      #-pix_fmt: gbrp10le
+ 
+
+---
+reports:
+  description: This is testing DNxHR color encoding.
+  directory: dnxhd-color-encode
+  name: dnxhd-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg DNxHR encoding guide tests

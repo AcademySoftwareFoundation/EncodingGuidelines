@@ -87,7 +87,8 @@ test_colormatch_libswscale:
     -y "{outfile}"
   name: test_colormatch_libswscale
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mp4
   wedges:
     yuv444p10lex264: &basex264
@@ -125,7 +126,8 @@ test_uncompressed:
     -y "{outfile}"
   name: test_uncompressed
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mov
   wedges:
     v410:  &base_args
@@ -151,8 +153,8 @@ test_uncompressed:
       -pix_fmt: yuva444p   
     v408full:
       << : *base_args
-      -c:v: ß
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_coßlor_matrix=bt709"'
+      -c:v: v408
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p   
       -color_range: pc
     v410full:
