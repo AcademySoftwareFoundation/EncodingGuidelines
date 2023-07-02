@@ -171,11 +171,17 @@ source .venv/bin/activate
 
 # Upgrade pip and install dependencies
 pip install --upgrade pip
-pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2
+pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2 yuvio
 
 # Run tests (for now)
 .venv/bin/python main.py
 ```
+
+## Windows Configuration
+Recommend using MSYS2 - https://www.msys2.org/ once that is installed you can install ffmpeg and openimageio with:
+pacman -S mingw-w64-x86_64-openimageio 
+pacman -S mingw-w64-x86_64-ffmpeg 
+ 
 
 ## OSX Configuration
 
