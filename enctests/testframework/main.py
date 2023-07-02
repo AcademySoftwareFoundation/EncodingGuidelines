@@ -348,14 +348,14 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
     result - Was the test able to run (Completed = Yes)
     success - Boolean, was the test a success. 
     """
-    default_app_template = "idiff -fail 0.00195 {originalfile} {newfile}"
+    default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontest_info.get("testtemplate", default_app_template)
 
     default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
     extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
 
-    source_path, _ = get_source_path(source_clip)
-    distorted = test_ref.target_url
+    # Allow a different image to be compared with, useful for 422 or 420 encoding.
+    sourcepng = comparisontest_info.get("compare_image", source_path.as_posix())
 
     distortedpng = Path(distorted.parent, distorted.stem + ".png")
     diffpng = Path(distorted.parent, distorted.stem + "-x20diff.png")
