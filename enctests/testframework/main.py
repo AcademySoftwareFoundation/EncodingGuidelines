@@ -8,6 +8,7 @@ import pyseq
 import shlex
 import argparse
 import subprocess
+import platform
 
 from pathlib import Path
 
@@ -529,6 +530,16 @@ def run_tests(args, test_configs, timeline):
 
             # Compare results against source
             for test_name, test_ref in results.items():
+                # Lets add some machine stats.
+                enc_meta = get_test_metadata_dict(test_ref)
+                enc_meta['host_config'] = {
+                    'os': platform.system(),
+                    'os_version': platform.release(),
+                    'arch': platform.architecture(),
+                    'processor': platform.processor(),
+                    'hostname': platform.node(),
+                }
+
                 for test in comparisontests:
                     testtype = test.get("testtype", "vmaf")
                     if testtype == "vmaf":
