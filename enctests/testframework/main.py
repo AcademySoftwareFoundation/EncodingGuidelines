@@ -247,7 +247,7 @@ def tests_only(test_configs):
     return configs
 
 
-def vmaf_compare(source_clip, test_ref, testname, comparisontestinfo):
+def vmaf_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Compare the sourceclip to the test_ref using vmaf.
     source_clip -- The original clip that the new media is based on.
@@ -284,11 +284,9 @@ model=path={vmaf_model}\" \
     if source_meta.get('images'):
         input_args = f"-start_number {source_meta.get('in')}"
 
-    source_path, _ = get_source_path(source_clip)
     reference = f'{input_args} -i "{source_path}" '
 
     # Assuming all encoded files are video files for now
-    distorted = test_ref.target_url
 
     cmd = vmaf_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
@@ -297,7 +295,8 @@ model=path={vmaf_model}\" \
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
-    print('VMAF command:', cmd)
+    print('VMAF command:', cmd, file=log_file_object)
+    log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
@@ -306,7 +305,16 @@ model=path={vmaf_model}\" \
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
-    subprocess.call(shlex.split(cmd), env=env)
+    process = subprocess.Popen(
+            shlex.split(cmd),
+            stdout=log_file_object,
+            stderr=log_file_object,
+            universal_newlines=True,
+            env=env
+        )
+
+    process.wait()
+
     with open(f'compare_log.json', 'rb') as f:
         raw_results = json.load(f)
 
@@ -316,6 +324,9 @@ model=path={vmaf_model}\" \
         'result': "Completed"
     }
 
+    # TODO Do this as a pretty print.
+    print("--- VMAF output\n", raw_results['pooled_metrics'], file=log_file_object)
+
     # FFmpeg >= 5.1 have split psnr results
     if not results['psnr']:
         for key in ['psnr_y', 'psnr_cb', 'psnr_cr']:
@@ -324,7 +335,7 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
-def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
+def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_path, distorted, log_file_object):
     """
     Compare the sourceclip to the test_ref using OIIO idiff.
     This requires that we extract the movie into an image to do the comparison. We really only want to do this for single frames. This is a good test for checking the color is good.
@@ -342,18 +353,17 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     result - Was the test able to run (Completed = Yes)
     success - Boolean, was the test a success. 
     """
-    default_app_template = "{idiff_bin} {originalfile} {newfile}"
+    default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontest_info.get("testtemplate", default_app_template)
 
     default_extract_template = "{ffmpeg_bin} -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
     extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
 
-    source_path, _ = get_source_path(source_clip)
-    distorted = test_ref.target_url
+    # Allow a different image to be compared with, useful for 422 or 420 encoding.
+    sourcepng = comparisontest_info.get("compare_image", source_path.as_posix())
 
-
-    distortedbase, distortedext = os.path.splitext(distorted)
     distortedpng = Path(distorted.parent, distorted.stem + ".png")
+    diffpng = Path(distorted.parent, distorted.stem + "-x20diff.png")
 
     if not os.path.exists(distorted):
             result = {'success': False,
@@ -361,20 +371,35 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
             }
             cmdresult = 1
     else:
-        extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, newfile=distorted, newpngfile=distortedpng.as_posix())
-        print("About to extract with cmd:", extractcmd)
+        extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, 
+                                             newfile=distorted, 
+                                             newpngfile=distortedpng.as_posix()
+                                             )
+        print("\n------------\nAbout to extract with cmd:", extractcmd, file=log_file_object)
+        log_file_object.flush()
         result = {'success': False,
                 'testresult': "undefined"
         }
-        cmdresult = subprocess.call(shlex.split(extractcmd))
-    if cmdresult != 0:
+        process = subprocess.Popen(
+                    shlex.split(extractcmd),
+                    stdout=log_file_object,
+                    stderr=log_file_object,
+                    universal_newlines=True
+                )
+
+        process.wait()
+
+    if process.returncode != 0:
         result['result'] = "Unable to extract file for test"
     else:
-        cmd = apptemplate.format(idiff_bin=IDIFF_BIN, originalfile=source_path.as_posix(), newfile=distortedpng.as_posix())
-        print("Idiff command:", cmd)
-        
+        cmd = apptemplate.format(idiff_bin=IDIFF_BIN, 
+                                 originalfile=sourcepng, 
+                                 newfile=distortedpng.as_posix(),
+                                 newfilediff=diffpng.as_posix())
+        print("\n------------\nIdiff command:", cmd, file=log_file_object)
         output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
         lines = output.decode("utf-8").splitlines()
+        print("\n".join(lines), file=log_file_object)
         if len(lines) < 2:
             result['result'] = "Unable to run idiff"
             result['success'] = False
@@ -394,7 +419,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
 
-def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
+def assertresults_compare(source_clip, test_ref, testname, comparisontest_info, source_path, distorted, log_file_object):
     """
     Check the results of the tests against known values (or value ranges).
     We assume that we have already run some tests, and just want to check that the values are good.
@@ -429,23 +454,28 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
             values = test.get("between")
 
             resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
+            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " > ", values[0], " and ", testvalue, " < ", values[1], file=log_file_object)
         if testname == "greater":
             if "greater" not in test:
                 print("WARNING: Skipping test since there is no greater values, in :", test)
             value = test.get("greater")
             resultstatus = result[testvalue] > value
+            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " > ", value, file=log_file_object)
         if testname == "less":
             if "less" not in test:
                 print("WARNING: Skipping test since there is no greater values, in :", test)
             value = test.get("less")
             resultstatus = result[testvalue] < value
- 
+
+            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " < ", value, file=log_file_object)
         if testname == "stringmatch":
             if "string" not in test:
                 print("WARNING: Skipping test since there is no string to match in :", test)
             value = test.get("string")
 
             resultstatus = result[testvalue] == value
+            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " == ", value, file=log_file_object)
+
         if not resultstatus:
             break
     if resultstatus:
@@ -543,15 +573,30 @@ def run_tests(args, test_configs, timeline):
                 comparisontests = test_config.get("comparisontest")
 
             # Compare results against source
+            source_path, _ = get_source_path(source_clip)
             for test_name, test_ref in results.items():
-                for test in comparisontests:
-                    testtype = test.get("testtype", "vmaf")
-                    if testtype == "vmaf":
-                        vmaf_compare(source_clip, test_ref, test_name, test)
-                    if testtype == "idiff":
-                        idiff_compare(source_clip, test_ref, test_name, test)
-                    if testtype == "assertresults":
-                        assertresults_compare(source_clip, test_ref, test_name, test)
+                distorted = Path(test_ref.target_url)
+                print("Testing:", distorted.name)
+                # Send all the log output of the tests to a separate log file.
+                log_file = Path(distorted.parent, distorted.stem+"_tests.log")
+
+                with open(log_file, "w") as log_file_object:
+                    for test in comparisontests:
+                        t1 = time.perf_counter()
+
+                        testtype = test.get("testtype", "vmaf")
+                        print("\t ", testtype)
+                        print("######################", file=log_file_object)
+                        print("Test:", testtype, file=log_file_object)
+
+                        if testtype == "vmaf":
+                            vmaf_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        if testtype == "idiff":
+                            idiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        if testtype == "assertresults":
+                            assertresults_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        enctime = time.perf_counter() - t1
+                        print("\t\t took: %.2f seconds. " %  enctime)
 
             # Update dict of references
             references.update(results)

@@ -4,6 +4,10 @@ test_osx-prores:
     app: ffmpeg
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     wedges:
         prores_ks: &base_args
             -c:v: prores_ks

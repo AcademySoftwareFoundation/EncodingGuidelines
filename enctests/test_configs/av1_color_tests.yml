@@ -15,6 +15,7 @@ test_av1_color:
   name: test_av1_color
   sources:
   - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mp4
   wedges:
@@ -27,7 +28,7 @@ test_av1_color:
       -colorspace: bt709
       -pix_fmt: yuv444p10le
       -strict: experimental
-      -preset: 4
+      #-preset: 4
       -usage: good
       -still-picture: 1
       -crf: 10
@@ -52,7 +53,7 @@ test_av1_color:
       #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -color_range: pc
       -colorspace: rgb
-      -profile:v: main444-12
+      #-profile:v: main444-12
       -pix_fmt: gbrp12le
 
     av1-yuv444p12lefull:
@@ -67,4 +68,4 @@ reports:
   directory: av1-color-encode
   name: av1-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg encoding guide tests
+  title: Ffmpeg AV1 encoding color tests

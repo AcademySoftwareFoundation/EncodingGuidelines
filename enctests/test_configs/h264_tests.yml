@@ -9,6 +9,7 @@ test_preset_yuv420p:
     - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
     - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         veryfast_crf_18: &base_args2
             -c:v: libx264
@@ -85,5 +86,5 @@ reports:
     title: H264 Preset Comparison
     description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
     directory: h264-encode
-    templatefile: basicpictures.html.jinja
+    templatefile: basicmovie.html.jinja
 

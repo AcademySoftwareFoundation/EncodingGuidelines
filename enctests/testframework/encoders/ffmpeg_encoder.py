@@ -1,10 +1,12 @@
 import os
+import sys
 import time
 import shlex
 import pathlib
 import subprocess
 from typing import Tuple
 from datetime import datetime, timezone
+from pathlib import Path
 
 import opentimelineio as otio
 
@@ -21,6 +23,10 @@ VMAF_LIB_DIR = os.getenv(
     f'{os.path.dirname(__file__)}/.venv/usr/local/lib/x86_64-linux-gnu'
 )
 
+FFMPEG_BIN = os.getenv(
+    'FFMPEG_BIN',
+    sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
+)
 
 class FFmpegEncoder(ABCTestEncoder):
     def __init__(
@@ -49,7 +55,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
             cmd = self.prep_encoding_command(wedge, out_file)
 
-            print('ffmpeg command:', cmd)
+            print("Creating Wedge:", test_name, " from ", self.get_source_path()[0].name)
 
             # Ensure proper environment
             env = os.environ
@@ -62,10 +68,23 @@ class FFmpegEncoder(ABCTestEncoder):
             # Time encoding process
             t1 = time.perf_counter()
             # Do the encoding
-            subprocess.call(shlex.split(cmd), env=env)
+            log_file = Path(out_file.parent, out_file.stem+".log")
+            with open(log_file, "w") as log_file_object:
+                print('ffmpeg command:', cmd, file=log_file_object)
+                log_file_object.flush()
+                process = subprocess.Popen(
+                    shlex.split(cmd),
+                    stdout=log_file_object,
+                    stderr=log_file_object,
+                    universal_newlines=True,
+                    env=env
+                )
+
+                process.wait()
+
             # Store timing
             enctime = time.perf_counter() - t1
-
+            print("\t took:: %.2f seconds. " %  enctime)
             # !! Use this function from utils to create a media reference
             # of output the file.
             mr = create_media_reference(out_file, self.source_clip)
@@ -118,6 +137,7 @@ class FFmpegEncoder(ABCTestEncoder):
         duration = self.source_clip.source_range.duration.to_frames()
 
         cmd = template.format(
+            ffmpeg_bin = FFMPEG_BIN,
             input_args=input_args,
             source=source_path,
             duration=duration,

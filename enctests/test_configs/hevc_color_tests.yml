@@ -15,6 +15,7 @@ test_h265_color:
   name: test_h265_color
   sources:
   - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mp4
   wedges:
@@ -67,6 +68,55 @@ test_h265_color:
       -colorspace: rgb
       -profile:v: main
       -pix_fmt: bgra
+
+---
+test_h265_color_420:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: h265 color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_h265_color
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    yuv420p10le: &basex265
+      -c:v: libx265
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv420p10le
+      -preset: placebo
+      -x265-params: lossless=1
+      -tag:v: hvc1
+      -profile:v: main444-10
+
+    yuv420p10le-full:
+      << : *basex265
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+  
+    yuv420p:
+      << : *basex265
+      -pix_fmt: yuv420p
+
+    vyuv420p-videotoolbox:
+      << : *basex265
+      -c:v: hevc_videotoolbox
+      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -color_range: pc
+      -profile:v: main
+      -pix_fmt: yuv420p
 
 ---
 reports:

@@ -15,12 +15,14 @@ test_dnxhd_color:
   name: test_dnxhd_color
   sources:
   - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mov
   wedges:
     dnxhd-yuv444p10le: &basednxhd
       -c:v: dnxhd
       -profile:v: dnxhr_444
+      -b:v: 3M
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
       -color_range: tv
@@ -58,8 +60,8 @@ test_dnxhd_color:
 
 ---
 reports:
-  description: This is testing dnxhd color encoding.
+  description: This is testing DNxHR color encoding.
   directory: dnxhd-color-encode
   name: dnxhd-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg encoding guide tests
+  title: Ffmpeg DNxHR encoding guide tests
