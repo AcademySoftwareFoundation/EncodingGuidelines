@@ -337,7 +337,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     result - Was the test able to run (Completed = Yes)
     success - Boolean, was the test a success. 
     """
-    default_app_template = "idiff -fail 0.00195 {originalfile} {newfile}"
+    default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontest_info.get("testtemplate", default_app_template)
 
     default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
