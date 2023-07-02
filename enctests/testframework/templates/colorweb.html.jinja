@@ -47,8 +47,8 @@
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH>{{ enc_info.name|e }}</TH>
-        <td align=right>{{ enc_info.testresult}} </TD>
+    <TH><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult}}</A> </TD>
         <td align=right>{{ enc_info.mean_error}} </TD>
         <td align=right>{{ enc_info.max_error}} </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
@@ -82,14 +82,16 @@
    <TH>Test Results</TH>
    <TH>PNG</TH>
    <TH>movie</TH>
+   <TH>Diff</TH>
    <TH>Encode Arguments</TH>
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH>{{ enc_info.name|e }}</TH>
-            <td align=right>{{ enc_info.testresult}} </TD>
-        <td align=right><img width="500px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"/> </TD>
-        <td align=right><video width="500px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
+    <TH><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult}}</A> </TD>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"><img max-width="400px" width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"/></A></TD>
+        <td align=right><video width="400px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
+        <td align=right><a target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"><img max-width="400px"  width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"/></A></TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
   {% endfor %}ß
