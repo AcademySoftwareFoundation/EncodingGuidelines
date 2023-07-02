@@ -343,8 +343,8 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
     extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
 
-    source_path, _ = get_source_path(source_clip)
-    distorted = test_ref.target_url
+    # Allow a different image to be compared with, useful for 422 or 420 encoding.
+    sourcepng = comparisontest_info.get("compare_image", source_path.as_posix())
 
     distortedbase, distortedext = os.path.splitext(distorted)
     distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
