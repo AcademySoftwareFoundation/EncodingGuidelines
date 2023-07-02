@@ -4,6 +4,11 @@ test_crf_yuv420p:
     app: ffmpeg
     suffix: .mov
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         slow_crf_10: &base_args
             -c:v: hevc
@@ -77,5 +82,5 @@ reports:
     title: HEVC CRF Comparison
     description: This is a comparison of different CRF values for h264 encoding.
     directory: hevc-crf-encode
-    templatefile: basic.html.jinja
+    templatefile: basicmovie.html.jinja
 
