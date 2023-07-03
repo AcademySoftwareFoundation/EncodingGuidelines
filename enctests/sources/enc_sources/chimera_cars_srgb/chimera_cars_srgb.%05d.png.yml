@@ -1,5 +1,5 @@
 images: true
-path: /Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png
+path: chimera_cars_srgb.%05d.png
 width: 1920
 height: 1080
 pix_fmt: rgb48be
