@@ -22,6 +22,10 @@ python3 -m testframework.otio2html --test-config test_configs/hevc_crf_tests.yml
 
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/color_tests.yml --output color-results.otio --encoded-folder color-encode
 
+# Windows only with nvenc
+python -m testframework.main --source-folder sources/enc_sources --test-config test_configs/hevc_nvenc_color_tests.yml --output hevc-nvenc-color-results.otio --encoded-folder hevc-color-encode
+python -m testframework.main --source-folder sources/enc_sources --test-config test_configs/hevc_nvenc_tests.yml --output hevc-nvenc-results.otio --encoded-folder hevc-nvenc-encode
+python -m testframework.otio2html --test-config test_configs/hevc_nvenc_tests.yml --results hevc-nvenc-results.otio
 
 
 #WIP
