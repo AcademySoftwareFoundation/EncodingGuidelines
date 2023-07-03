@@ -103,7 +103,12 @@ class FFmpegEncoder(ABCTestEncoder):
             result_meta['completed_utc'] = \
                 datetime.now(timezone.utc).isoformat()
             result_meta['encode_time'] = round(enctime, 4)
-            result_meta['filesize'] = out_file.stat().st_size
+            if os.path.exists(out_file):
+                result_meta['filesize'] = out_file.stat().st_size
+            else:
+                print("ERROR: ", test_name, " failed to create a file ", out_file)
+                result_meta['filesize'] = -1
+                
 
             # Add media reference to result list
             results.update({test_name: mr})

@@ -305,6 +305,10 @@ model=path={vmaf_model}\" \
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
+    if os.path.exists("compare_log.json"):
+        # Make sure we remove the old one, so that we know one is generated.
+        os.remove("compare_log.json")
+
     process = subprocess.Popen(
             shlex.split(cmd),
             stdout=log_file_object,
@@ -315,6 +319,14 @@ model=path={vmaf_model}\" \
 
     process.wait()
 
+    if not os.path.exists('compare_log.json'):
+        results = {'result': 'Failed to run'}
+        enc_meta = get_test_metadata_dict(test_ref)
+        enc_meta['results'].update(results)
+        print("\tFailed to generate compare_log.json")
+        print("Failed to generate compare_log.json", file=log_file_object)
+        return
+    
     with open(f'compare_log.json', 'rb') as f:
         raw_results = json.load(f)
 
@@ -372,7 +384,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
             cmdresult = 1
     else:
         extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, 
-                                             newfile=distorted, 
+                                             newfile=distorted.as_posix(), 
                                              newpngfile=distortedpng.as_posix()
                                              )
         print("\n------------\nAbout to extract with cmd:", extractcmd, file=log_file_object)
@@ -389,7 +401,9 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
 
         process.wait()
 
-    if process.returncode != 0:
+        cmdresult = process.returncode
+
+    if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
         cmd = apptemplate.format(idiff_bin=IDIFF_BIN, 
