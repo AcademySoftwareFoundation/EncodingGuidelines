@@ -17,6 +17,8 @@ python3 -m testframework.main --source-folder sources/enc_sources --test-config 
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/dnxhd_color_tests.yml --output dnxhd-color-results.otio --encoded-folder dnxhd-color-encode
 
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/hevc_tests.yml --output hevc-results.otio --encoded-folder hevc-encode
+python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/av1_crf_tests.yml --output av1-crf-results.otio --encoded-folder av1-crf-encode
+
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/hevc_crf_tests.yml --output hevc-crf-results.otio --encoded-folder hevc-crf-encode
 python3 -m testframework.otio2html --test-config test_configs/hevc_crf_tests.yml --results hevc-crf-results.otio
 
