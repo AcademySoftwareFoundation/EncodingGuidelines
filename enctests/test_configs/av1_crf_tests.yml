@@ -1,8 +1,8 @@
 test_crf_yuv420p:
-    name: test_hevc_crf
-    description: variations of hevc crf values.
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
     app: ffmpeg
-    suffix: .mov
+    suffix: .mp4
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
@@ -10,11 +10,12 @@ test_crf_yuv420p:
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        slow_crf_10: &base_args
-            -c:v: hevc
-            -preset: medium
+        p9_crf_10: &base_args
+            -c:v: libsvtav1
             -crf: 10
-            -pix_fmt: yuv420p
+            -svtav1-params: tune=0
+            -preset: 9
+            -pix_fmt: yuv420p10le
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
             -color_range: 1
@@ -22,43 +23,38 @@ test_crf_yuv420p:
             -color_primaries: 1
             -color_trc: 2
 
-        slow_crf_14:
+        p9_crf_14:
             << : *base_args
             -crf: 14
 
-        slow_crf_16:
+        p9_crf_16:
             << : *base_args
             -crf: 16
 
-        slow_crf_18:
+
+        p7_crf_16:
+            << : *base_args
+            -crf: 16
+
+        p9_crf_18:
             << : *base_args
             -crf: 18
 
-        slow_crf_20:
+        p9_crf_20:
             << : *base_args
             -crf: 20
 
-        slow_crf_22:
+        p9_crf_22:
             << : *base_args
             -crf: 22
 
-        slow_crf_25:
+        p9_crf_25:
             << : *base_args
             -crf: 25
 
-        slow_crf_28:
+        p9_crf_28:
             << : *base_args
             -crf: 28
-
-        slow_crf_35:
-            << : *base_args
-            -crf: 35
-
-        slow_crf_45:
-            << : *base_args
-            -crf: 45
-
-
 ---
 
 reports:
@@ -87,9 +83,9 @@ reports:
         markers: True
       name: filesize.png
       sortby: name
-    name: hevc-crf-test
-    title: HEVC CRF medium Comparison
-    description: This is a comparison of different CRF values for h265 encoding.
-    directory: hevc-crfmedium-encode
+    name: av1-crf-test
+    title: AV1 CRF Comparison
+    description: This is a comparison of different CRF values for av1 encoding.
+    directory: av1-crf-encode
     templatefile: basicmovie.html.jinja
 

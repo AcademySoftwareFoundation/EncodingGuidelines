@@ -1,0 +1,112 @@
+
+test_dnxhr:
+    name: test_dnxhr
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        444: &base_args
+            -c:v: dnxhd
+            -profile:v: dnxhr_444
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        gbrp10:
+            << : *base_args
+            -colorspace: rgb
+            -pix_fmt: gbrp10le
+
+        dnxhqx:
+            << : *base_args
+            #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+            # -color_range: pc
+            -profile:v: dnxhr_hqx
+            -pix_fmt: yuv422p10le
+
+        dnxhd-hq:
+            << : *base_args
+            -profile:v: dnxhr_hq
+            -pix_fmt: yuv422p
+
+        dnxhd-p10_440M:
+            << : *base_args
+            -profile:v: dnxhd
+            -pix_fmt: yuv422p10
+            -b:v: 440M
+
+        dnxhd-p10_185M:
+            << : *base_args
+            -profile:v: dnxhd
+            -pix_fmt: yuv422p10
+            -b:v: 185M
+
+        dnxhd-p10_175M:
+            << : *base_args
+            -profile:v: dnxhd
+            -pix_fmt: yuv422p10
+            -b:v: 175M
+    
+        dnxhd-440M:
+            << : *base_args
+            -profile:v: dnxhr_hq
+            -pix_fmt: yuv422p
+            -b:v: 440M
+
+        dnxhd-185M:
+            << : *base_args
+            -profile:v: dnxhr_hq
+            -pix_fmt: yuv422p
+            -b:v: 185M
+
+        dnxhd-115M:
+            << : *base_args
+            -profile:v: dnxhr_hq
+            -pix_fmt: yuv422p
+            -b:v: 115M
+
+reports:
+    graphs:
+    - args:
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: dnxhd-tests
+    title: DNxHR Config Comparison
+    description: This is a comparison of different config values for DNxHD encoding.
+    directory: dnxhd-encode
+    templatefile: basicmovie.html.jinja
+

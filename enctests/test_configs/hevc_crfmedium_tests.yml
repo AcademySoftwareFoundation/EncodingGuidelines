@@ -87,8 +87,8 @@ reports:
         markers: True
       name: filesize.png
       sortby: name
-    name: hevc-crf-test
-    title: HEVC CRF medium Comparison
+    name: hevc-crfmedium-test
+    title: HEVC CRF Comparison
     description: This is a comparison of different CRF values for h265 encoding.
     directory: hevc-crfmedium-encode
     templatefile: basicmovie.html.jinja

@@ -1,0 +1,135 @@
+test_mp4:
+    name: test_mp4
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        libx264-10bit: &base_args
+            -c:v: libx264
+            -pix_fmt: yuv420p10le
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libsvtav1-10bit:
+            << : *base_args
+            -crf: 18
+            -c:v: libsvtav1
+            -preset: slow
+            -svtav1-params: tune=0
+            -preset: 9
+
+        libvpx-vp9-10bit:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+
+        libx265-10bit:
+            << : *base_args
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libx264-8bit: &base_args3
+            -c:v: libx264
+            -pix_fmt: yuv420p
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libsvtav1-8bit:
+            << : *base_args3
+            -crf: 18
+            -c:v: libsvtav1
+            -preset: slow
+            -svtav1-params: tune=0
+            -preset: 9
+
+test_mov:
+    name: test_mov
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        dnxhd: &base_args2
+            -c:v: dnxhd
+            -pix_fmt: yuv422p10le
+            -profile:v: dnxhr_hqx
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        prores_ks:
+            << : *base_args2
+            -c:v: prores_ks
+            -qscale:v: 10
+            -profile:v: 3
+            -vendor: apl0
+---
+
+reports:
+    graphs:
+    - args:
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: codec-test
+    title: Comparison of different codecs
+    description: This is comparing different codecs, with approximately the same tuning factors such that vmaf > 98..
+    directory: codec-encode
+    templatefile: basicmovie.html.jinja
+
