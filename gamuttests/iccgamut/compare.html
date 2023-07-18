@@ -1,0 +1,71 @@
+
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  .grid tbody tr td { cursor: grab }
+  a:link {
+        color:rgb(150, 150, 255);
+   }
+     a:visited {
+        color:rgb(120, 120, 255);
+   }
+  </style>
+  <script>
+  $( function() {
+    if( ! /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent) ) {
+        $( "#sort tbody" ).sortable();
+    $( "#sort2 tbody" ).sortable();
+    }
+    var urlargs = document.location.href.split("?")
+    if (urlargs.length > 1){
+        $(".index").hide();
+        showgroups = urlargs[1].split("+");
+        for(i = 0; i < showgroups.length; i++)
+            $(showgroups[i]).show();
+     }
+  } );
+  </script>
+</head>
+<body style="background-color:#27262b; color:rgb(200,200,200); ">
+
+<H1>Primary comparisons</H1>
+<p> This is comparing two PNG files to ffmpeg converted versions of those files. Ideally you should be able to see rec2020 if your monitor is rec2020, and P3-D65 if you have a P3 display or will not see any text if nothing is displayed. Since most people do not have rec2020 displays, you shouldnt see the rec2020 text at all. The code to generate these files is <a href='../apply-icc2020.py'>here</a>. You can reorder the images to help with comparison by drag and drop.</p>
+Filtered views:
+<p>
+<bl>
+<li><A href="compare.html">See all</a></li>
+<li><A href="compare.html?.groupdisplayp3">display p3</a></li>
+<li><A href="compare.html?.grouprec2020">rec2020</a></li>
+<li><A href="compare.html?.png">png files</a></li>
+<li><A href="compare.html?.mp4">Mp4 files</a></li>
+</bl>
+</p>
+
+<table id="sort" class="grid"  border=0 cellspacing="10" cellpadding="0">
+<tbody>
+
+<TR class="index groupdisplayp3 mp4" id="buttondiosplayp3">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_primaries 12 = display p3 <B>mp4</B></TD><td><video    ><source src='greyscale-displayp3.mp4' type='video/mp4'></video></td><td><p>P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).<p\><p>ffmpeg -loop 1 -y -i  ps-combined-displayp3-g2.2.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 12 -color_trc 13 ./iccgamut/greyscale-displayp3.mp4</p></td>
+</TR>
+
+<TR class="index groupdisplayp3 png"  id="button">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >Display P3 PNG file  <B>png</B></TD><td><img src="ps-combined-displayp3-g2.2.png"/></td><td><p>P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).</p><p></p></td>
+</TR>
+
+<TR class="index grouprec2020 mp4" id="buttonrec2020">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_primaries 9 = rec2020 <B>mp4</B></TD><td><video    ><source src='greyscale-rec2020.mp4' type='video/mp4'></video></td><td><p>rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).<p\><p>ffmpeg -loop 1 -y -i  ps-combined-rec2020-g2.2.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264 -t 10 -pix_fmt yuv420p -qscale:v 1  -color_range 2 -colorspace 1 -color_primaries 9 -color_trc 13 ./iccgamut/greyscale-rec2020.mp4</p></td>
+</TR>
+
+<TR class="index grouprec2020 png"  id="button">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >REC2020 PNG file -  <B>png</B></TD><td><img src="ps-combined-rec2020-g2.2.png"/></td><td><p>rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).</p><p></p></td>
+</TR>
+
+</tbody>
+</table>
+
+</body>
+</html>
+
