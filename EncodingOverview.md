@@ -8,6 +8,7 @@ has_children: true
 
 {: .no_toc }
 
+
 # Media Encoding with ffmpeg  <a name="encodestart"></a>
 
 We will break the encoding process into three parts:
