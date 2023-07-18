@@ -7,6 +7,7 @@ import plotly.express as px
 import opentimelineio as otio
 import pandas as pd
 import jinja2
+from pathlib import Path
 
 def _exportGraph(reportconfig, graph, alltests):
   """
@@ -71,7 +72,9 @@ def processTemplate(test_configs, otio_info):
       default_media = None
       for ref_name, test_info in track.media_references().items():
           if ref_name == "DEFAULT_MEDIA":
-              default_media = {'name': test_info.name, 'test_info': test_info}
+              basename = Path(track.name).stem
+              print("PATH: ", track.name, "\n", basename, "\n", ref_name)
+              default_media = {'name': track.name, 'basename': Path(track.name).stem, 'test_info': test_info}
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
@@ -88,6 +91,7 @@ def processTemplate(test_configs, otio_info):
             merge_test_info['psnr_y'] = {}
             merge_test_info['psnr_cr'] = {}
             merge_test_info['psnr_cb'] = {}
+            merge_test_info['vmaf_harmonic_mean'] = ""
 
           merge_test_info['filesize'] = merge_test_info['filesize']
 
