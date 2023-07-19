@@ -138,3 +138,9 @@ enctests/sources/encsources/chimera_coaster/
 .jekyll-cache/
 enctests/docs-encode/
 enctests/sources/enc_sources/chimera_coaster/
+enctests/vp9-crf2-encode
+enctests/vp9-crf-encode
+enctests/vp9-color-encode
+enctests/hevc-crfmedium-encode
+enctests/osx-prores-encode
+enctests/dnxhdr-encode
