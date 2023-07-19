@@ -16,9 +16,9 @@ There is Browser support for H265 on Microsoft Edge, Google Chrome and Safari, b
 See [ffmpeg h265 docs](https://trac.ffmpeg.org/wiki/Encode/H.265)
 
 There are four HEVC encoders available to ffmpeg:
-   * libx265
-   * hevc_videotoolbox - Available on OSX via the videotoolbox library.
-   * hevc_nvenc - NVIDIA GPU encoder.
+   * [libx265](libx265)
+   * [hevc_videotoolbox](#hevc_videotoolbox) - Available on OSX via the videotoolbox library.
+   * [hevc_nvenc](#hevc_nvenc) - NVIDIA GPU encoder.
    * hevc_qsv - Intel Quick Sync Video Acceleration.
 
 ## libx265
@@ -83,6 +83,7 @@ Its showing that you really can just encode with -preset medium or -preset slow 
 
 ## hevc_videotoolbox
 
+Supported pixel formats: 
 bgra
 p010le
 nv12

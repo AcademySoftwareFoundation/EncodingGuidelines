@@ -22,7 +22,10 @@ the main missing one is Safari.
 
 AV1 is supported by mp4 and webm containers, no support exists for mov.
 
-
+There are three encoders available via ffmpeg:
+* [libsvtav1](#libsvtav1)
+* [libaom-av1](#libaom-av1)
+* [librav1e](#librav1e)
 
 
 ## libsvtav1
@@ -67,6 +70,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 
 See also: 
    * [SVT-AV1 ffmpeg](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)
    * [SVT-AV1 arguments](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Parameters.md)
+   * [SVT-AV1 Common Args](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/CommonQuestions.md)
 
 ### CRF Comparison for libsvtav1
 

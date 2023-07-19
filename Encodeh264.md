@@ -10,9 +10,9 @@ parent: Codec Comparisons
 This is the workhorse encoder for web review, its well supported by ffmpeg, and there is a lot of support for both encoding and decoding in hardware.
 
 There are several h264 encoders available:
-   * x264 - the videolan h264 open source library.
-   * h264_nvenc - the nvidia hardware encoder.
-   * videotoolbox_h264 - osx only apple h264 encoder.
+   * [x264](#x264) - the videolan h264 open source library.
+   * [h264_nvenc](#h264_nvenc) - the nvidia hardware encoder.
+   * [videotoolbox_h264](#videotoolbox_h264) - osx only apple h264 encoder.
 
 ## x264
 

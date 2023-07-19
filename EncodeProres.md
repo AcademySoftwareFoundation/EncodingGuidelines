@@ -10,6 +10,10 @@ There are four Prores encoders, Prores, Prores_ks, Prores_aw and prores_videotoo
 
 From [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) the recommendation is to use Prores_ks with -profile:v 3 and the qscale of 11 unless you are on OSX where we would recommend using prores_videotoolbox. 
 
+The two encoders we are reviewing are:
+* [Prores_ks](#Prores_ks)
+* [videotoolbox_prores](#videotoolbox_prores) - only available on osx.
+
 ## Prores_ks
 
 While prores does support up to 12 bits of resolution, prores_ks can only encode to 10-bits. It is able to decode to > 10 bits (see [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) )
