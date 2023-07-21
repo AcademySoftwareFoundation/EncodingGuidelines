@@ -319,7 +319,7 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
-def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
+def idiff_compare(source_clip, test_ref, testname, comparisontestinfo):
     """
     Compare the sourceclip to the test_ref using OIIO idiff.
     This requires that we extract the movie into an image to do the comparison. We really only want to do this for single frames. This is a good test for checking the color is good.
@@ -338,13 +338,13 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     success - Boolean, was the test a success. 
     """
     default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
-    apptemplate = comparisontest_info.get("testtemplate", default_app_template)
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
     default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
-    extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
+    extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
 
     # Allow a different image to be compared with, useful for 422 or 420 encoding.
-    sourcepng = comparisontest_info.get("compare_image", source_path.as_posix())
+    sourcepng = comparisontestinfo.get("compare_image", source_path.as_posix())
 
     distortedbase, distortedext = os.path.splitext(distorted)
     distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
@@ -382,7 +382,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
 
-def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
+def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo):
     """
     Check the results of the tests against known values (or value ranges).
     We assume that we have already run some tests, and just want to check that the values are good.
