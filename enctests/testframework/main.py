@@ -401,7 +401,7 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
     resultstatus = True
     for test in tests:
         if "assert" not in test:
-            print("WARNING: no test to run in test:", test, " expecting a field called assert with the test type.")
+            print(f"WARNING: no test to run in test: {test} expecting a field called assert with the test type.")
             continue
         testname = test.get("assert")
         testvalue = test.get("value") # which field to test.
