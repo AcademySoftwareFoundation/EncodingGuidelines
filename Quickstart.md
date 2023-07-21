@@ -8,7 +8,7 @@ title: Encoding Cheatsheet
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
-This document is based on results from ffmpeg 4.4, we have not tested with 5.0 yet, but do plan to.
+This document is based on results from ffmpeg 6.0.
 
 # H264 Encoding from an image sequence for Web Review
 
