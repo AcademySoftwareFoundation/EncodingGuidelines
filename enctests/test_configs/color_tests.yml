@@ -10,8 +10,7 @@ test_colormatch_raw:
     - assert: less
       value: max_error
       less: 0.00195
-  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md
-    line 44
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md line 44
   encoding_template: ffmpeg -y {input_args} -i "{source}"                 {encoding_args}
     -y "{outfile}"
   name: test_colormatch_raw
