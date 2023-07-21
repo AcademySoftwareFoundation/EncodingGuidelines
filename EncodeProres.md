@@ -109,3 +109,16 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt
 ```
 
 NOTE, it does not appear to allow `-color_trc iec61966-2-1` (sRGB) -- so this needs more testing.
+
+### Prores_videotoolbox profile
+
+Similar to prores_ks, with the exception of xq. Profile values can be one of:
+
+| Profile | Number | Chroma | Data Rate HD @ 29.97 | Description |
+|:----------|:-----------|:-----------|:-----------|:-----------|
+| proxy | 0 | 4:2:2 | 45Mbps | Proxy |
+| lt | 1 | 4:2:2 | 102Mbps | Light |
+| standard | 2 | 4:2:2 | 147Mbps | Standard |
+| hq | 3 | 4:2:2 | 220Mbps | High Quality 10-bit |
+| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathmatically lossless alpha. |
+| xq | 5 | 4:4:4:4 | 500MBps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |
