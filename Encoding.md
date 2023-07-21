@@ -29,14 +29,22 @@ We have encoding guides for the following:
 5. [VP9](EncodeVP9.html)
 6. [HEVC/H265](EncodeHevc.html)
 
-## Comparing codecs
+## Codecs reviewed
 
-| Codec Family | ffmpeg codec | Bit depth | Pixel format supported | 
-| h264 | x264 | 8 10 | YUV-4:4:4 yuv-4:2:2 YUV-4:2:0 |
-| Prores | prores_js | 10 | 
+| Codec Family | ffmpeg codec | Bit depth | Pixel format supported | Web Support | HDR | 
+|------------|------------|------------|------------|------------|------------|
+| [h264](Encodeh264.html) | x264 | 8 10 | YUV-4:4:4 yuv-4:2:2 YUV-4:2:0 | All Browsers | HLG |
+| [VP9](EncodeVP9.html) | libvpx-vp9 | 8 10 12 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All Browsers | Yes |
+| [HEVC/H265](EncodeHevc.html) | libx265 | 8 10 12 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All browsers | Yes |
+| [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All browsers | Yes |
+| [AV1](EncodeAv1.html) | libsvtav1 | 8 10 | yuv-4:2:0 | Chrome Firefox Edge | Yes |
+| [Prores](EncodeProres.html) | prores_ks | 10 | yuv-4:4:4 yuv-4:2:2 | Safari | ? |
+| [DNxHD](EncodeDNxHD.html) | dnxhd | 8 10 | yuv-4:2:2 yuv-4:4:4 rgb | no | ? |
 
 
-For a high level comparison we have encoded 5 sets of media using our recommended settings, all with the aim of getting the VMAF score > 98.  libx264 libstvav1 and vp9 were all encoded 4:2:0 and DNxHD and Prores were at 10-bit 4:2:2.
+For a high level comparison we have encoded 4 sets of media using our recommended settings, all with the aim of getting the VMAF score > 98.  libx264 libstvav1 and vp9 were all encoded 4:2:0 and DNxHD and Prores were at 10-bit 4:2:2.
+
+For details on codec flags, and how we picked the parameters, do goto the page for each codec.
 
 | ![](enctests/reference-results/codec-test-encode_time.png)  This is showing preset values against encoding time. |
 | ![](enctests/reference-results/codec-test-filesize.png) This is showing preset values against file size. Seeing very little variation in file size for the different presets. |
