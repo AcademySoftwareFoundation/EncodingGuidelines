@@ -10,8 +10,8 @@ test_colormatch_raw:
       value: max_error
       less: 0.00195
   description: What ffmpeg does by default..
-  encoding_template: ffmpeg -y {input_args} -i "{source}"                 {encoding_args}
-    -y "{outfile}"
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md line 44
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
   name: test_colormatch_raw
   sources:
   - ../sourceimages/chip-chart-1080-noicc.png.yml
@@ -63,7 +63,11 @@ test_colormatch_colorspace:
     - assert: less
       value: max_error
       less: 0.00195
+<<<<<<< HEAD
   description: A better conversion using the colorspace filter.
+=======
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md line 67
+>>>>>>> comparisontest
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
   name: test_colormatch_colorspace

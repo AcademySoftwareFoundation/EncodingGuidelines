@@ -11,8 +11,7 @@ test_av1_color:
       value: max_error
       less: 0.00195
   description: av1 color tests of different pix-fmts
-  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
-    -y "{outfile}"
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
   name: test_av1_color
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml

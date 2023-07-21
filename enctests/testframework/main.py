@@ -295,7 +295,7 @@ model=path={vmaf_model}\" \
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
-    print('VMAF command:', cmd, file=log_file_object)
+    print(f'VMAF command: {cmd}', file=log_file_object)
     log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
 
     env = os.environ
@@ -347,7 +347,7 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
-def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_path, distorted, log_file_object):
+def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Compare the sourceclip to the test_ref using OIIO idiff.
     This requires that we extract the movie into an image to do the comparison. We really only want to do this for single frames. This is a good test for checking the color is good.
@@ -366,13 +366,13 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
     success - Boolean, was the test a success. 
     """
     default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
-    apptemplate = comparisontest_info.get("testtemplate", default_app_template)
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
-    default_extract_template = "{ffmpeg_bin} -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
-    extract_template = comparisontest_info.get("extracttemplate", default_extract_template)
+    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 {newpngfile}"
+    extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
 
     # Allow a different image to be compared with, useful for 422 or 420 encoding.
-    sourcepng = comparisontest_info.get("compare_image", source_path.as_posix())
+    sourcepng = comparisontestinfo.get("compare_image", source_path.as_posix())
 
     distortedpng = Path(distorted.parent, distorted.stem + ".png")
     diffpng = Path(distorted.parent, distorted.stem + "-x20diff.png")
@@ -403,14 +403,18 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
 
         cmdresult = process.returncode
 
+    extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
+    print(f"About to extract with cmd: {extractcmd}")
+    result = {'success': False,
+              'result': "undefined"
+    }
+    cmdresult = subprocess.call(shlex.split(extractcmd))
     if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
-        cmd = apptemplate.format(idiff_bin=IDIFF_BIN, 
-                                 originalfile=sourcepng, 
-                                 newfile=distortedpng.as_posix(),
-                                 newfilediff=diffpng.as_posix())
-        print("\n------------\nIdiff command:", cmd, file=log_file_object)
+        cmd = apptemplate.format(originalfile=sourcepng, newfile=distortedpng, idiff_bin=IDIFF_BIN, newfilediff=diffpng)
+        print(f"\n\nIdiff command: {cmd}", file=log_file_object)
+        
         output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
         lines = output.decode("utf-8").splitlines()
         print("\n".join(lines), file=log_file_object)
@@ -433,7 +437,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
 
-def assertresults_compare(source_clip, test_ref, testname, comparisontest_info, source_path, distorted, log_file_object):
+def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Check the results of the tests against known values (or value ranges).
     We assume that we have already run some tests, and just want to check that the values are good.
@@ -446,7 +450,7 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontest_info, 
     testresult - Was the test able to run (Completed = Yes)
     success - Boolean, was the test a success. 
     """
-    tests = comparisontest_info.get("tests", [])
+    tests = comparisontestinfo.get("tests", [])
     enc_meta = get_test_metadata_dict(test_ref)
     result = enc_meta['results']
     resultstatus = True
@@ -455,38 +459,40 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontest_info, 
         return
     for test in tests:
         if "assert" not in test:
-            print("WARNING: no test to run in test:", test, " expecting a field called assert with the test type.")
+            print(f"WARNING: no test to run in test:{test} expecting a field called assert with the test type.")
             continue
         testname = test.get("assert")
         testvalue = test.get("value") # which field to test.
         if testvalue not in result:
-            print("Skipping test ", test, " since value ", testvalue, " is not in results:", result)
+            print(f"Skipping test {test} since value {testvalue} is not in results: {result}")
             continue
+
         if testname == "between":
             if "between" not in test:
-                print("WARNING: Skipping test since there is no between values, in :", test)
+                print(f"WARNING: Skipping test since there is no between values, in: {test}")
             values = test.get("between")
-
             resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
             print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " > ", values[0], " and ", testvalue, " < ", values[1], file=log_file_object)
         if testname == "greater":
             if "greater" not in test:
-                print("WARNING: Skipping test since there is no greater values, in :", test)
+                print(f"WARNING: Skipping test since there is no greater values, in : {test}")
+                continue
             value = test.get("greater")
             resultstatus = result[testvalue] > value
             print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " > ", value, file=log_file_object)
         if testname == "less":
             if "less" not in test:
-                print("WARNING: Skipping test since there is no greater values, in :", test)
+                print(f"WARNING: Skipping test since there is no greater values, in :{test}")
+                continue
             value = test.get("less")
             resultstatus = result[testvalue] < value
 
             print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " < ", value, file=log_file_object)
         if testname == "stringmatch":
             if "string" not in test:
-                print("WARNING: Skipping test since there is no string to match in :", test)
+                print(f"WARNING: Skipping test since there is no string to match in : {test}")
+                continue
             value = test.get("string")
-
             resultstatus = result[testvalue] == value
             print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " == ", value, file=log_file_object)
 
