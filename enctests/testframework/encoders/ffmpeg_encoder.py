@@ -81,7 +81,14 @@ class FFmpegEncoder(ABCTestEncoder):
             result_meta['completed_utc'] = \
                 datetime.now(timezone.utc).isoformat()
             result_meta['encode_time'] = round(enctime, 4)
-            result_meta['filesize'] = out_file.stat().st_size
+            if os.path.exists(out_file) and out_file.stat().st_size > 0:
+                result_meta['filesize'] = out_file.stat().st_size
+            else:
+                log_file_object.close()
+                with open(log_file, "r") as log_file_object:
+                    print("Output from file generation:\n", log_file_object.read())
+                result_meta['filesize'] = -1
+                
 
             # Add media reference to result list
             results.update({test_name: mr})
