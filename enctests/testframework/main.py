@@ -408,29 +408,34 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo):
         if testvalue not in result:
             print(f"Skipping test {test} since value {testvalue} is not in results: {result}")
             continue
+
         if testname == "between":
             if "between" not in test:
                 print(f"WARNING: Skipping test since there is no between values, in: {test}")
             values = test.get("between")
-
             resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
+
         if testname == "greater":
             if "greater" not in test:
                 print(f"WARNING: Skipping test since there is no greater values, in : {test}")
+                continue
             value = test.get("greater")
             resultstatus = result[testvalue] > value
+            
         if testname == "less":
             if "less" not in test:
                 print(f"WARNING: Skipping test since there is no greater values, in :{test}")
+                continue
             value = test.get("less")
             resultstatus = result[testvalue] < value
  
         if testname == "stringmatch":
             if "string" not in test:
                 print(f"WARNING: Skipping test since there is no string to match in : {test}")
+                continue
             value = test.get("string")
-
             resultstatus = result[testvalue] == value
+
         if not resultstatus:
             break
     if resultstatus:
