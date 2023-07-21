@@ -292,7 +292,7 @@ model=path={vmaf_model}\" \
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
-    print('VMAF command:', cmd)
+    print(f'VMAF command: {cmd}")
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
@@ -350,7 +350,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
     distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
 
     extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
-    print("About to extract with cmd:", extractcmd)
+    print(f"About to extract with cmd: {extractcmd}")
     result = {'success': False,
               'result': "undefined"
     }
@@ -359,7 +359,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info):
         result['result'] = "Unable to extract file for test"
     else:
         cmd = apptemplate.format(originalfile=source_path, newfile=distortedpng)
-        print("Idiff command:", cmd)
+        print(f"Idiff command: {cmd}")
         
         output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
         lines = output.decode("utf-8").splitlines()
@@ -395,39 +395,39 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontest_info):
     testresult - Was the test able to run (Completed = Yes)
     success - Boolean, was the test a success. 
     """
-    tests = comparisontest_info.get("tests", [])
+    tests = comparisontestinfo.get("tests", [])
     enc_meta = get_test_metadata_dict(test_ref)
     result = enc_meta['results']
     resultstatus = True
     for test in tests:
         if "assert" not in test:
-            print(f"WARNING: no test to run in test: {test} expecting a field called assert with the test type.")
+            print(f"WARNING: no test to run in test:{test} expecting a field called assert with the test type.")
             continue
         testname = test.get("assert")
         testvalue = test.get("value") # which field to test.
         if testvalue not in result:
-            print("Skipping test ", test, " since value ", testvalue, " is not in results:", result)
+            print(f"Skipping test {test} since value {testvalue} is not in results: {result}")
             continue
         if testname == "between":
             if "between" not in test:
-                print("WARNING: Skipping test since there is no between values, in :", test)
+                print(f"WARNING: Skipping test since there is no between values, in: {test}")
             values = test.get("between")
 
             resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
         if testname == "greater":
             if "greater" not in test:
-                print("WARNING: Skipping test since there is no greater values, in :", test)
+                print(f"WARNING: Skipping test since there is no greater values, in : {test}")
             value = test.get("greater")
             resultstatus = result[testvalue] > value
         if testname == "less":
             if "less" not in test:
-                print("WARNING: Skipping test since there is no greater values, in :", test)
+                print(f"WARNING: Skipping test since there is no greater values, in :{test}")
             value = test.get("less")
             resultstatus = result[testvalue] < value
  
         if testname == "stringmatch":
             if "string" not in test:
-                print("WARNING: Skipping test since there is no string to match in :", test)
+                print(f"WARNING: Skipping test since there is no string to match in : {test}")
             value = test.get("string")
 
             resultstatus = result[testvalue] == value

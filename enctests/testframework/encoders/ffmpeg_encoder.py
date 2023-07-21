@@ -84,6 +84,8 @@ class FFmpegEncoder(ABCTestEncoder):
             if os.path.exists(out_file) and out_file.stat().st_size > 0:
                 result_meta['filesize'] = out_file.stat().st_size
             else:
+                print(f"ERROR: {test_name} failed to create a file {out_file}")
+                print(f"\tERROR: {test_name} failed to create a file ")
                 log_file_object.close()
                 with open(log_file, "r") as log_file_object:
                     print("Output from file generation:\n", log_file_object.read())
