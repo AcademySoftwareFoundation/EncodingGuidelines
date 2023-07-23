@@ -17,9 +17,10 @@ If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.00
 <!---
 name: test_quickstart
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -70,9 +71,11 @@ Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many ca
 <!---
 name: test_proresquickstart
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
    - testtype: assertresults
      tests:
      - assert: less
@@ -102,9 +105,10 @@ As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 <!---
 name: test_prores444
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
    - testtype: assertresults
      tests:
      - assert: less
