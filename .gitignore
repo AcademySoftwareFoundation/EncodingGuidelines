@@ -144,3 +144,7 @@ enctests/vp9-color-encode
 enctests/hevc-crfmedium-encode
 enctests/osx-prores-encode
 enctests/dnxhdr-encode
+enctests/codec-encode
+enctests/dnxhd-encode
+enctests/prores-qscale-encode
+enctests/av1-crf-encode
