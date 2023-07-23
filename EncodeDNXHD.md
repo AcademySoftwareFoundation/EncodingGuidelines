@@ -34,7 +34,7 @@ comparisontest:
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -pix_fmt yuv422p10le -profile:v dnxhr_hqx -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-    -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y  outputfile.mp4
+    -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y  outputfile.mov
 ```
 
 
@@ -52,8 +52,10 @@ There really are not any significant flags to be used, changing bit-rate has no 
 
 Note, the 12-bit depth does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
 
+## ffmpeg RGB support
+
 <!---
-name: test_prores444
+name: test_prores444_rgb
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
