@@ -117,10 +117,24 @@ To help pick appropriate values with the -qscale:v , we have run the [Test Frame
 
 If you are on a OSX M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to prores using:
 
+<!---
+name: test_prores_videotoolbox
+sources: 
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -vframes 100 -c:v prores_videotoolbox -profile:v 3 -pix_fmt yuv422p \
-        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 outputfile.mp4
+        -vframes 100 -c:v prores_videotoolbox -profile:v 3 -pix_fmt yuv422p10le \
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 outputfile.mov
 
 ```
 
