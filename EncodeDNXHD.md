@@ -23,7 +23,6 @@ sources:
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -58,7 +57,6 @@ sources:
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
