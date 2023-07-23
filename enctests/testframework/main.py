@@ -1,7 +1,7 @@
 import os
 import sys
 from copy import deepcopy
-
+import time
 import yaml
 import json
 import pyseq
@@ -242,7 +242,22 @@ def tests_only(test_configs):
     return configs
 
 
-def vmaf_compare(source_clip, test_ref, testname):
+def vmaf_compare(source_clip, test_ref, testname, comparisontestinfo):
+    """
+    Compare the sourceclip to the test_ref using vmaf.
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    vmaf - the vmaf comparison metric.
+    psnr - the PSNR dictionary.
+    psnr_y - The PSNR lumanance value.
+    psnr_cb, psnr_cr - the PNSR chrominance.
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
     vmaf_cmd = '\
 {ffmpeg_bin} \
 {reference} \
@@ -277,7 +292,7 @@ model=path={vmaf_model}\" \
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
-    print('VMAF command:', cmd)
+    print(f'VMAF command: {cmd}")
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
@@ -292,7 +307,8 @@ model=path={vmaf_model}\" \
 
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
-        'psnr': raw_results['pooled_metrics'].get('psnr')   # FFmpeg < 5.1
+        'psnr': raw_results['pooled_metrics'].get('psnr'),   # FFmpeg < 5.1
+        'result': "Completed"
     }
 
     # FFmpeg >= 5.1 have split psnr results
@@ -303,6 +319,131 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
+def idiff_compare(source_clip, test_ref, testname, comparisontestinfo):
+    """
+    Compare the sourceclip to the test_ref using OIIO idiff.
+    This requires that we extract the movie into an image to do the comparison. We really only want to do this for single frames. This is a good test for checking the color is good.
+
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    mean_error 
+    rms_error
+    peak_snr
+    max_error
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+    default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
+
+    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+    extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
+
+    # Allow a different image to be compared with, useful for 422 or 420 encoding.
+    sourcepng = comparisontestinfo.get("compare_image", source_path.as_posix())
+
+    distortedbase, distortedext = os.path.splitext(distorted)
+    distortedpng = os.path.join(os.path.dirname(distorted), distortedbase + ".png")
+
+    extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
+    print(f"About to extract with cmd: {extractcmd}")
+    result = {'success': False,
+              'result': "undefined"
+    }
+    cmdresult = subprocess.call(shlex.split(extractcmd))
+    if cmdresult != 0:
+        result['result'] = "Unable to extract file for test"
+    else:
+        cmd = apptemplate.format(originalfile=source_path, newfile=distortedpng)
+        print(f"Idiff command: {cmd}")
+        
+        output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
+        lines = output.decode("utf-8").splitlines()
+        if len(lines) < 2:
+            result['result'] = "Unable to run idiff"
+            result['success'] = False
+        else:
+            result = {'success': lines[-1] == "PASS", 'result': lines[-1]}
+            for line in lines[:-1]:
+                if " = " not in line:
+                    continue
+                key, value = line.split(" = ")
+                key = key.strip().replace(" ", "_").lower()
+                if key == "max_error":
+                    value, location = value.split(" @ ")
+                    result['max_location'] = location
+                else:
+                    value = value.strip()
+                result[key] = float(value)
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(result)
+
+def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo):
+    """
+    Check the results of the tests against known values (or value ranges).
+    We assume that we have already run some tests, and just want to check that the values are good.
+    
+    source_clip -- The original clip that the new media is based on. (not used)
+    test_ref    -- The generated movie we are testing.(not used)
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    testresult - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+    tests = comparisontestinfo.get("tests", [])
+    enc_meta = get_test_metadata_dict(test_ref)
+    result = enc_meta['results']
+    resultstatus = True
+    for test in tests:
+        if "assert" not in test:
+            print(f"WARNING: no test to run in test:{test} expecting a field called assert with the test type.")
+            continue
+        testname = test.get("assert")
+        testvalue = test.get("value") # which field to test.
+        if testvalue not in result:
+            print(f"Skipping test {test} since value {testvalue} is not in results: {result}")
+            continue
+
+        if testname == "between":
+            if "between" not in test:
+                print(f"WARNING: Skipping test since there is no between values, in: {test}")
+            values = test.get("between")
+            resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
+
+        if testname == "greater":
+            if "greater" not in test:
+                print(f"WARNING: Skipping test since there is no greater values, in : {test}")
+                continue
+            value = test.get("greater")
+            resultstatus = result[testvalue] > value
+            
+        if testname == "less":
+            if "less" not in test:
+                print(f"WARNING: Skipping test since there is no greater values, in :{test}")
+                continue
+            value = test.get("less")
+            resultstatus = result[testvalue] < value
+ 
+        if testname == "stringmatch":
+            if "string" not in test:
+                print(f"WARNING: Skipping test since there is no string to match in : {test}")
+                continue
+            value = test.get("string")
+            resultstatus = result[testvalue] == value
+
+        if not resultstatus:
+            break
+    if resultstatus:
+        result['success'] = True
+        result['testresult'] = "Test Passed"
+    else:
+        result['success'] = False
+        result['testresult'] = "Test Failed"
 
 def prep_sources(args, test_sources=None):
     bin = otio.schema.SerializableCollection()
@@ -387,9 +528,20 @@ def run_tests(args, test_configs, timeline):
             # Run tests and get a dict of resulting media references
             results = encoder.run_wedges()
 
+            comparisontests = [{'testtype': 'vmaf'}]
+            if "comparisontest" in test_config:
+                comparisontests = test_config.get("comparisontest")
+
             # Compare results against source
             for test_name, test_ref in results.items():
-                vmaf_compare(source_clip, test_ref, test_name)
+                for test in comparisontests:
+                    testtype = test.get("testtype", "vmaf")
+                    if testtype == "vmaf":
+                        vmaf_compare(source_clip, test_ref, test_name, test)
+                    if testtype == "idiff":
+                        idiff_compare(source_clip, test_ref, test_name, test)
+                    if testtype == "assertresults":
+                        assertresults_compare(source_clip, test_ref, test_name, test)
 
             # Update dict of references
             references.update(results)

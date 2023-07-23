@@ -10,6 +10,7 @@ python3 -m testframework.main --source-folder sources/enc_sources --test-config 
 
 python3 -m testframework.otio2html --test-config test_configs/h264_crf_tests.yml --results h264-crf-results.otio
 
+python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/color_tests.yml --output color-results.otio --encoded-folder color-encode
 
 #WIP
 python3 -m testframework.generatetests
