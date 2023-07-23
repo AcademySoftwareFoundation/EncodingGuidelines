@@ -38,9 +38,10 @@ Example encoding:
 <!---
 name: test_h265
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
    - testtype: assertresults
      tests:
      - assert: less

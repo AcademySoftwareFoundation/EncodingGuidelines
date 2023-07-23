@@ -32,7 +32,7 @@ e.g.
 <!---
 name: test_colormatch_raw
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 wedges:
    rawcolor:
       -c:v: libx264
@@ -64,7 +64,7 @@ e.g.
 <!---
 name: test_colormatch_colorspace
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
    - testtype: assertresults
@@ -94,7 +94,7 @@ e.g.
 <!---
 name: test_colormatch_libswscale
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
    - testtype: assertresults

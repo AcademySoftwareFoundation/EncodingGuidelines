@@ -29,9 +29,10 @@ Example encoding:
 <!---
 name: test_h264
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chromatest_1080.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chromatest_1080-yuv420p10le.png
    - testtype: assertresults
      tests:
      - assert: less

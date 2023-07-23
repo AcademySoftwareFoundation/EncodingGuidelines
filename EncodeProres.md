@@ -27,7 +27,16 @@ Example encode would look like:
 <!---
 name: test_proresks
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```console
 ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
@@ -51,9 +60,16 @@ Using this with the usual color space flags, seems to work well with the excepti
 
 
 <!---
-name: test_proresks2
+name: test_prores_extract
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
 -->
 ```console
 ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \

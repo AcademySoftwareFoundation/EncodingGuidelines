@@ -18,11 +18,12 @@ Supported pixel formats: yuv422p yuv422p10le yuv444p10le gbrp10le
 Example encoding:
 
 <!---
-name: test_dnxhd
+name: test_dnxhd_mov
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -75,11 +76,24 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 
 AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg.
 
+<!---
+name: test_prores444_mxf
+sources: 
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
+      -c:v dnxhd -profile:v dnxhr_444 \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP" \
-      -b:v 36M -f mxf_opatom "outputfile.mxf" 
+      -b:v 36M -f mxf_opatom outputfile.mxf
  ```
 
  See [https://johnwarburton.net/blog/?p=50731](https://johnwarburton.net/blog/?p=50731)
@@ -88,6 +102,19 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 
 For example below is an example of DNxHD at 175Mbps at yuv422p10 at resolution 1920x1080.
 
+<!---
+name: test_prores422_profile
+sources: 
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
      -c:v dnxhd -b:v 175M \
