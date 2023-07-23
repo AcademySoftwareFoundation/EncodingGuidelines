@@ -1,7 +1,146 @@
+test_dnxhd_mov:
+  app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeDNXHD.md
+    line 32
+  encoding_template: ffmpeg {input_args} -i "{source}" -frames:v 200             -y  {encoding_args}
+    -y "{outfile}"
+  name: test_dnxhd_mov
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mov
+  wedges:
+    wedge0:
+      -c:v: dnxhd
+      -color_primaries: '1'
+      -color_range: '1'
+      -color_trc: '2'
+      -colorspace: '1'
+      -pix_fmt: yuv422p10le
+      -profile:v: dnxhr_hqx
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+---
+test_prores444_rgb:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeDNXHD.md
+    line 68
+  encoding_template: ffmpeg -y {input_args} -i "{source}" -vframes {duration}                     {encoding_args}
+    -y "{outfile}"
+  name: test_prores444_rgb
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mov
+  wedges:
+    wedge0:
+      -c:v: dnxhd
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: rgb
+      -pix_fmt: gbrp10le
+      -profile:v: dnxhr_444
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+---
+test_prores444_mxf:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeDNXHD.md
+    line 92
+  encoding_template: ffmpeg -y {input_args} -i "{source}" -vframes {duration}             -metadata
+    project="MY PROJECT"       -metadata material_package_name="MY CLIP"       -b:v
+    36M -f mxf_opatom {encoding_args} -y "{outfile}"
+  name: test_prores444_mxf
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mxf
+  wedges:
+    wedge0:
+      -c:v: dnxhd
+      -profile:v: dnxhr_444
+---
+test_prores422_profile:
+  app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeDNXHD.md
+    line 119
+  encoding_template: ffmpeg -y {input_args} -i "{source}" -vframes {duration}      -b:v
+    175M                {encoding_args} -y "{outfile}"
+  name: test_prores422_profile
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mov
+  wedges:
+    wedge0:
+      -c:v: dnxhd
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: rgb
+      -pix_fmt: yuv422p10
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+---
+test_libsvtav1:
+  app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeAv1.md
+    line 57
+  encoding_template: ffmpeg {input_args} -i "{source}" -frames:v 200         -crf
+    18                 -svtav1-params tune=0         -y {encoding_args} -y "{outfile}"
+  name: test_libsvtav1
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    wedge0:
+      -c:v: libsvtav1
+      -color_primaries: '1'
+      -color_range: '1'
+      -color_trc: '2'
+      -colorspace: '1'
+      -pix_fmt: yuv420p10le
+      -preset: '9'
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+---
 test_quickstart:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
     testtype: idiff
   - tests:
     - assert: less
@@ -14,7 +153,7 @@ test_quickstart:
     -y "{outfile}"
   name: test_quickstart
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
   wedges:
     wedge0:
@@ -24,13 +163,16 @@ test_quickstart:
       -color_trc: iec61966-2-1
       -colorspace: bt709
       -pix_fmt: yuv420p
-      -preset: slower
+      -preset: slow
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
 ---
 test_proresquickstart:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt
+      rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}
     testtype: idiff
   - tests:
     - assert: less
@@ -38,12 +180,12 @@ test_proresquickstart:
       value: max_error
     testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../Quickstart.md
-    line 83
+    line 84
   encoding_template: ffmpeg {input_args} -i "{source}" -vframes {duration}         {encoding_args}
     -y "{outfile}"
   name: test_proresquickstart
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mov
   wedges:
     wedge0:
@@ -56,7 +198,9 @@ test_proresquickstart:
 test_prores444:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt
+      rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}
     testtype: idiff
   - tests:
     - assert: less
@@ -64,12 +208,12 @@ test_prores444:
       value: max_error
     testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../Quickstart.md
-    line 116
+    line 117
   encoding_template: ffmpeg {input_args} -i "{source}" -vframes {duration}       {encoding_args}
     -y "{outfile}"
   name: test_prores444
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mov
   wedges:
     wedge0:
@@ -82,8 +226,7 @@ test_prores444:
 test_fullrange:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - tests:
     - assert: less
       less: 0.00195
@@ -109,15 +252,85 @@ test_fullrange:
       -sws_flags: spline+accurate_rnd+full_chroma_int
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
 ---
+test_vp9:
+  app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeVP9.md
+    line 47
+  encoding_template: ffmpeg {input_args} -i "{source}" -frames:v 200    -crf 22       -quality
+    good -b:v 0      -y {encoding_args} -y "{outfile}"
+  name: test_vp9
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    wedge0:
+      -c:v: libvpx-vp9
+      -color_primaries: '1'
+      -color_range: '1'
+      -color_trc: '2'
+      -colorspace: '1'
+      -pix_fmt: yuv420p10le
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+---
+test_h265:
+  app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeHevc.md
+    line 50
+  encoding_template: ffmpeg {input_args} -i "{source}" -frames:v 200     -crf 22         -y
+    {encoding_args} -y "{outfile}"
+  name: test_h265
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    wedge0:
+      -c:v: libx265
+      -color_primaries: '1'
+      -color_range: '1'
+      -color_trc: '2'
+      -colorspace: '1'
+      -pix_fmt: yuv420p10le
+      -preset: slow
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+---
 test_proresks:
   app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt
+      rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeProres.md
-    line 33
-  encoding_template: ffmpeg {input_args} -i "{source}"         -vframes {duration}         {encoding_args}
-    -y "{outfile}"
+    line 40
+  encoding_template: 'ffmpeg {input_args} -i "{source}"                 -frames:v
+    100 -vendor apl0  -qscale:v: 10                 -y {encoding_args} -y "{outfile}"'
   name: test_proresks
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mov
   wedges:
     wedge0:
@@ -130,15 +343,22 @@ test_proresks:
       -profile:v: '3'
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
 ---
-test_proresks2:
+test_prores_extract:
   app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeProres.md
-    line 47
+    line 73
   encoding_template: ffmpeg {input_args} -i "{source}"    -vframes {duration}    {encoding_args}
     -y "{outfile}"
-  name: test_proresks2
+  name: test_prores_extract
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .png
   wedges:
     wedge0:
@@ -148,23 +368,84 @@ test_proresks2:
       -sws_flags: spline+accurate_rnd+full_chroma_int
       -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
 ---
-test_colormatch_raw:
+test_prores_videotoolbox:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
+  - compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt
+      rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}
     testtype: idiff
   - tests:
     - assert: less
       less: 0.00195
       value: max_error
     testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../EncodeProres.md
+    line 133
+  encoding_template: ffmpeg {input_args} -i "{source}"         -vframes {duration}         {encoding_args}
+    -y "{outfile}"
+  name: test_prores_videotoolbox
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mov
+  wedges:
+    wedge0:
+      -c:v: prores_videotoolbox
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv422p10le
+      -profile:v: '3'
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+---
+test_h264:
+  app: ffmpeg
+  comparisontest:
+  - compare_image: ../sourceimages/chromatest_1080-yuv420p10le.png
+    testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
+  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../Encodeh264.md
+    line 41
+  encoding_template: ffmpeg {input_args} -i "{source}" -frames:v 200         -crf
+    18                         -y {encoding_args} -y "{outfile}"
+  name: test_h264
+  sources:
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chromatest_1080.png.yml
+  suffix: .mp4
+  wedges:
+    wedge0:
+      -c:v: libx264
+      -color_primaries: '1'
+      -color_range: '1'
+      -color_trc: '2'
+      -colorspace: '1'
+      -pix_fmt: yuv420p10le
+      -preset: slow
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+---
+test_colormatch_raw:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - tests:
+    - assert: less
+      less: 0.00195
+      value: max_error
+    testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md
-    line 49
+    line 48
   encoding_template: ffmpeg -y {input_args} -i "{source}"                 {encoding_args}
     -y "{outfile}"
   name: test_colormatch_raw
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
   wedges:
     rawcolor:
@@ -175,7 +456,7 @@ test_colormatch_raw:
       -c:v: libx264
       -color_primaries: bt709
       -color_range: tv
-      -color_trc: bt709
+      -color_trc: iec61966-2-1
       -colorspace: bt709
       -pix_fmt: yuv444p10le
       -preset: placebo
@@ -188,27 +469,26 @@ test_colormatch_raw:
 test_colormatch_colorspace:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - tests:
     - assert: less
       less: 0.00195
       value: max_error
     testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md
-    line 77
+    line 75
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
   name: test_colormatch_colorspace
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
   wedges:
     wedge0:
       -c:v: libx264
       -color_primaries: bt709
       -color_range: tv
-      -color_trc: bt709
+      -color_trc: iec61966-2-1
       -colorspace: bt709
       -pix_fmt: yuv444p10le
       -preset: placebo
@@ -221,27 +501,26 @@ test_colormatch_colorspace:
 test_colormatch_libswscale:
   app: ffmpeg
   comparisontest:
-  - testtemplate: idiff  {originalfile} {newfile}
-    testtype: idiff
+  - testtype: idiff
   - tests:
     - assert: less
       less: 0.00195
       value: max_error
     testtype: assertresults
   description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md
-    line 108
+    line 105
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
   name: test_colormatch_libswscale
   sources:
-  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-noicc.png.yml
+  - /Users/sam/git/EncodingGuidelines/sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
   wedges:
     wedge0:
       -c:v: libx264
       -color_primaries: bt709
       -color_range: tv
-      -color_trc: bt709
+      -color_trc: iec61966-2-1
       -colorspace: bt709
       -pix_fmt: yuv444p10le
       -preset: placebo
