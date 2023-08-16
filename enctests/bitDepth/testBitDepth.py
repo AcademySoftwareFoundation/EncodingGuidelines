@@ -45,13 +45,13 @@ tests = [
           {'testname': 'prores_vt_12_proxy',
           'pix_fmt': 'yuv444p12le',
           'codec': 'prores_videotoolbox',
-          'otherargs': ' -profile:v proxy', # 4444
+          'otherargs': ' -profile:v proxy', # 444
           'bits': 12
           },
           {'testname': 'prores_vt_10_hq',
           'pix_fmt': 'yuv444p10le',
           'codec': 'prores_videotoolbox',
-          'otherargs': ' -profile:v hq', # hq
+          'otherargs': ' -profile:v hq', # 444
           'bits': 10
           },
            {'testname': 'dnxhd_10_dnxhr_444',
@@ -63,8 +63,21 @@ tests = [
            {'testname': 'dnxhd_10_dnxhqx_422',
           'pix_fmt': 'yuv422p10le',
           'codec': 'dnxhd',
-          'otherargs': ' -profile:v dnxhr_hqx ', # 4444
+          'otherargs': ' -profile:v dnxhr_hqx ', # 422
           'bits': 10
+          },
+           {'testname': 'dnxhd_8_422',
+          'pix_fmt': 'yuv422p',
+          'codec': 'dnxhd',
+          'imagesize': '1920x1080', # Note, we need to scale to HD for this codec.
+          'otherargs': ' -b:v 36M ', # 422 
+          'bits': 8
+          },
+           {'testname': 'dnxhd_8_dnxhqx_422',
+          'pix_fmt': 'yuv422p',
+          'codec': 'dnxhd',
+          'otherargs': ' -profile:v dnxhr_hq ', # 422
+          'bits': 8
           },
           {'testname': 'h264-placebo',
           'pix_fmt': 'yuv444p10le',
@@ -135,6 +148,7 @@ for test in tests:
     test['frames'] = test.get('frames', int(pow(2, test['bits']))) # Make sure we have a frame for each possible value
     test['halfvalue'] = test.get('half', int(test['frames'] / 2)) # Half is used for the Croma values, to get mid-grey.
     test['ext'] = test.get("ext", "mov") # default to quicktime, but it could be other formats.
+    test['imagesize'] = test.get("imagesize", "720x480")
     test['basepath'] = "."
     if not "out_pix_fmt" in test:
         # Default to pix_fmt
@@ -146,7 +160,7 @@ for test in tests:
         exit(1)
         # We need to make sure that each output from the test is unique.
     
-    cmd = "ffmpeg -y -r 24 -f lavfi -i nullsrc=s=720x480,format={pix_fmt} -frames:v {frames} -vf geq=N:{halfvalue}:{halfvalue} -c:v {codec} {otherargs} {basepath}/colors-{testname}.{ext} ".format(**test)
+    cmd = "ffmpeg -y -r 24 -f lavfi -i nullsrc=s={imagesize},format={pix_fmt} -frames:v {frames} -vf geq=N:{halfvalue}:{halfvalue} -c:v {codec} {otherargs} {basepath}/colors-{testname}.{ext} ".format(**test)
 
     if not os.path.exists(outencode) or os.path.getsize(outencode) == 0:
         print(cmd)
@@ -168,7 +182,8 @@ for test in tests:
     
     count = 0
     last = -1
-    yuvreader = yuvio.get_reader(yuvfile, 720, 480, test['out_pix_fmt'])
+    (width, height) = test['imagesize'].split("x")
+    yuvreader = yuvio.get_reader(yuvfile, int(width), int(height), test['out_pix_fmt'])
     framecount = len(yuvreader)
     nearlymissing = []
     nearlymissing1 = []
