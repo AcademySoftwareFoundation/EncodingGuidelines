@@ -58,7 +58,7 @@ python -m testframework.main --prep-sources --source-folder /path/to/source_medi
 sintel_trailer_2k_%04d.png.yml
 ```yaml
 images: true
-path: /path/to/sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%04d.png
+path: sintel_trailer_2k_%04d.png
 width: 1920
 height: 1080
 in: 600
@@ -179,17 +179,17 @@ pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2
 
 ## Native Windows Configuration
 
-Have tried using MSYS2 - https://www.msys2.org/ once that is installed you can install ffmpeg and openimageio with:
+Have tried using MSYS2 - [msys2](https://www.msys2.org/) once that is installed you can install ffmpeg and openimageio with:
 ```
 pacman -S mingw-w64-x86_64-openimageio 
 pacman -S mingw-w64-x86_64-ffmpeg 
 ```
 But had problems getting OTIO working. The build environment doesnt like the windows/ming64x environment.
 
-So have instead used VCPKG:
-``
+So have instead used [VCPKG](https://github.com/microsoft/vcpkg):
+```
 vcpkg install openimageio[tools]:x64-windows ffmpeg[ffmpeg]:x64-windows
-``
+```
 And then used the above virtual environment.
 You will need to add the paths to the above tools to your path, which would be:
 %VCPKGHOME%\installed\x64-windows\tools\ffmpeg;%VCPKGHOME%\installed\x64-windows\tools\openimageio;

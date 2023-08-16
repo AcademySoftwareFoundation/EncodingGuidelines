@@ -2,10 +2,10 @@
 layout: default
 nav_order: 7.1
 title: Reference Source Test Media
-parent: ORI Video Encoding Test Framework
+parent: ORI Encoding Test Framework
 ---
 
-# Reference Source Test Media for HDR Media.
+# Reference Source Test Media for Encoding
 
 We have collected a number of source clips that you can use to test on, these are mostly from the excellent netflix [Open Source Content](https://opencontent.netflix.com/) site. Some of the clips are quite large, so we have tried to extract shorter 100-200 frame clips for the encoding tests, and also extracting individual clips from edited sequences.
 
@@ -19,6 +19,7 @@ The clips that are created include:
 
 
 Other media that could be useful include:
+
 | ![sintel trailer](thumbnails/sintel_trailer_2k_0591.jpg) | [sintel 1080p-png trailer download](https://s3.amazonaws.com/senkorasic.com/test-media/video/sintel/source/Sintel-trailer-1080p-png.zip) | Blender CG created media. |
 
 

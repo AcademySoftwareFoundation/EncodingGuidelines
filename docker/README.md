@@ -3,7 +3,7 @@
 layout: default
 nav_order: 5.6
 title: Docker Container
-parent: Encoding Overview
+parent: ORI Encoding Test Framework
 ---
 
 # Docker container for testing.

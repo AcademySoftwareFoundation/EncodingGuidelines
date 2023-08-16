@@ -46,9 +46,9 @@ For a high level comparison we have encoded 4 sets of media using our recommende
 
 For details on codec flags, and how we picked the parameters, do goto the page for each codec.
 
-| ![](enctests/reference-results/codec-test-encode_time.png)  This is showing preset values against encoding time. |
-| ![](enctests/reference-results/codec-test-filesize.png) This is showing preset values against file size. Seeing very little variation in file size for the different presets. |
-| ![](enctests/reference-results/codec-test-vmaf_harmonic_mean.png) This is showing preset values against VMAF harmonic mean (quality). |
+| ![](enctests/reference-results/codec-test-encode_time.png)  Comparing encoding time for codecs applied to different media. |
+| ![](enctests/reference-results/codec-test-filesize.png) Comparing filesize for codecs applied to different media. |
+| ![](enctests/reference-results/codec-test-vmaf_harmonic_mean.png) Comparing VMAF score for codecs applied to different media. |
 
 
 ## Uncompressed Codecs.

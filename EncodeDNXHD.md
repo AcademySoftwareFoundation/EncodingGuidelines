@@ -10,7 +10,7 @@ parent: Codec Comparisons
 
 Avid [DNxHD](https://en.wikipedia.org/wiki/Avid_DNxHD) ("Digital Nonlinear Extensible High Definition") is a lossy post-production codec that is intended for use for editing as well as a presentation format.
 
-There are a number of pre-defined resolutions, frame-rates and bit-rates that are supported, see [AVID Resolutions](https://en.wikipedia.org/wiki/List_of_Avid_DNxHD_resolutions) for a list. However, we are going to focus on the DNxHR version of the codec, since it allows quite a bit more flexibility for larger image sizes than HD, more flexible frame rates and bit-rates of up toe 3730Mbit/s (See  [DNxHR-Codec-Bandwidth-Specifications](https://avid.secure.force.com/pkb/articles/en_US/White_Paper/DNxHR-Codec-Bandwidth-Specifications) ).
+There are a number of pre-defined resolutions, frame-rates and bit-rates that are supported, see [AVID Resolutions](https://en.wikipedia.org/wiki/List_of_Avid_DNxHD_resolutions) for a list. However, we are going to focus on the DNxHR version of the codec, since it allows quite a bit more flexibility for larger image sizes than HD, more flexible frame rates and bit-rates of up to 3730Mbit/s (See  [DNxHR-Codec-Bandwidth-Specifications](https://avid.secure.force.com/pkb/articles/en_US/White_Paper/DNxHR-Codec-Bandwidth-Specifications) ).
 
 
 Supported pixel formats: yuv422p yuv422p10le yuv444p10le gbrp10le
@@ -50,7 +50,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
 
 There really are not any significant flags to be used, changing bit-rate has no effect.
 
-(*) The 12-bit depth does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
+(*) The 12-bit depth is what the codec can support, but does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
 
 ## ffmpeg RGB support
 
