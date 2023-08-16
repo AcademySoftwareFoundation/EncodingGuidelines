@@ -11,7 +11,7 @@ test_vp9_color_444:
   description: vp9 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
-  name: test_av1_color_444
+  name: test_vp9_color_444
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
@@ -28,12 +28,27 @@ test_vp9_color_444:
       -pix_fmt: yuv444p10le
       -strict: experimental
 
-    vp9-yuv420p-best:
+    vp9-gbrp:
+      << : *basevp9
+      -pix_fmt: gbrp
+
+    vp9-gbrp10le:
+      << : *basevp9
+      -pix_fmt: gbrp10le
+
+    vp9-gbrp12le:
+      << : *basevp9
+      -pix_fmt: gbrp12le
+
+    vp9-yuv444p10le-best:
       << : *basevp9
       -pix_fmt: yuv444p10le
       -quality: best
 
-
+    vp9-yuv444p10le-lossless:
+      << : *basevp9
+      -pix_fmt: yuv444p10le
+      -lossless: 1
 ---
 test_vp9_color_420:
   app: ffmpeg
@@ -48,7 +63,7 @@ test_vp9_color_420:
   description: vp9 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
-  name: test_av1_color_420
+  name: test_vp9_color_420
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
@@ -72,7 +87,7 @@ test_vp9_color_420:
 
 ---
 reports:
-  description: This is testing av1 color encoding.
+  description: This is testing vp9 color encoding.
   directory: vp9-color-encode
   name: vp9-color-tests
   templatefile: colorweb.html.jinja
