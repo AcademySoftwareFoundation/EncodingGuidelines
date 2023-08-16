@@ -39,7 +39,7 @@ test_colormatrix:
   - ../sourceimages/chip-chart-1080-noicc.png.yml
   suffix: .mp4
   wedges:
-    wedge0:
+    wedge0: &swsbase
       -c:v: libx264
       -color_primaries: bt709
       -color_range: tv
@@ -49,9 +49,20 @@ test_colormatrix:
       -preset: placebo
       -qp: '0'
       -qscale:v: '1'
-      -sws_flags: spline+accurate_rnd+full_chroma_int
       -vf: '"colormatrix=bt470bg:bt709"'
       -x264-params: '"keyint=15:no-deblock=1"'
+    
+    wedge1:
+      << : *swsbase
+      -sws_flags: full_chroma_int
+    
+    wedge2:
+      << : *swsbase
+      -sws_flags: accurate_rnd+full_chroma_int
+    
+    wedge3:
+      << : *swsbase
+      -sws_flags: spline+accurate_rnd+full_chroma_int
 
 ---
 test_colormatch_colorspace:
@@ -63,11 +74,7 @@ test_colormatch_colorspace:
     - assert: less
       value: max_error
       less: 0.00195
-<<<<<<< HEAD
   description: A better conversion using the colorspace filter.
-=======
-  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md line 67
->>>>>>> comparisontest
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
   name: test_colormatch_colorspace
@@ -118,8 +125,20 @@ test_colormatch_libswscale:
       -preset: placebo
       -qp: '0'
       -qscale:v: '1'
-      -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
       -x264-params: '"keyint=15:no-deblock=1"'
+          
+    wedge1:
+      << : *basex264
+      -sws_flags: full_chroma_int
+    
+    wedge2:
+      << : *basex264
+      -sws_flags: accurate_rnd+full_chroma_int
+    
+    wedge3:
+      << : *basex264
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+
     yuv444p10lex264full:
       << : *basex264
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
