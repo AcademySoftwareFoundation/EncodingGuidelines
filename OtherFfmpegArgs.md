@@ -9,6 +9,16 @@ parent: Encoding Overview
 
 This is covering other things that can be done directly in ffmpeg that might be useful.
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
+
 ## Audio
 
 ```
@@ -56,7 +66,9 @@ TODO - Provide some examples of speed improvement, as well as a sample command l
 | ffmpeg -h encoder=<ENCODERNAME> | List args for specified encoder, e.g. ffmpeg -h encoder=prores_ks. This also lists what supported pixel formats are supported. |
 | ffmpeg -h decoder=<DECODERNAME> | List args for specified decoder, e.g. ffmpeg -h decoder=exr |
 
-## Filter
+## Useful Filters
+
+Ffmpeg has a crazy number of filters (see [Ffmpeg filters](https://ffmpeg.org/ffmpeg-filters.html)) below are some potentially relevant ones to VFX pipelines.
 
 ### stereo framepack
 
@@ -84,10 +96,12 @@ ffmpeg -re -color_primaries bt709 -colorspace bt709 -color_range tv -color_trc b
 
 This is a 8-bit 444 raw encode.
 
+```
 ffmpeg -re -color_primaries bt709 -colorspace bt709 -color_range tv -color_trc bt709 -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1,format=yuv444p -c:v v408 smptehdbars-v408.mov
 ```
 
 This is a PNG output, warning this would only be to the legal range, so the [pluge](https://en.wikipedia.org/wiki/Picture_line-up_generation_equipment) would be zeroed out:
+
 ```
 ffmpeg -color_primaries bt709 -colorspace bt709 -color_trc bt709 -re -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -vframes 1  smptehdbars.png
 ```
@@ -110,7 +124,7 @@ THis is commonly used with geq.
 
 ### geq
 
-https://www.ffmpeg.org/ffmpeg-filters.html#geq  Apply a generic equation to each pixel 
+[geq](https://www.ffmpeg.org/ffmpeg-filters.html#geq)  Apply a generic equation to each pixel 
 
 ```
 ffmpeg -r 24 -f lavfi -i nullsrc=s=512x512 -pix_fmt yuv444p -frames:v 1024 -vf geq=X/2:128:128 yuv444p_ramp.mov
@@ -125,28 +139,28 @@ ffmpeg -r 24 -f lavfi -i nullsrc=s=1024x512,format=yuv444p10le -frames:v 1024 -v
 ### identity
 
 Calculate the differences between two image streams.
-https://www.ffmpeg.org/ffmpeg-filters.html#toc-identity
+[toc-identity](https://www.ffmpeg.org/ffmpeg-filters.html#toc-identity)
 
-# TODO Test this.
+TODO Test this.
 
 ### lut lutrgb and lutyuv
 
-https://www.ffmpeg.org/ffmpeg-filters.html#toc-lut_002c-lutrgb_002c-lutyuv
+[lut_002c-lutrgb_002c-lutyuv](https://www.ffmpeg.org/ffmpeg-filters.html#toc-lut_002c-lutrgb_002c-lutyuv)
 
 Allows you to create a calculated LUT that is then applied to the picture.
 
 ### PSNR
 Obtain the average, maximum and minimum PSNR (Peak Signal to Noise Ratio) between two input videos
-https://www.ffmpeg.org/ffmpeg-filters.html#toc-psnr
+[psnr](https://www.ffmpeg.org/ffmpeg-filters.html#toc-psnr)
 
 TODO Test this.
 
 ### v360
 
 Convert 360 videos between various formats.
-https://www.ffmpeg.org/ffmpeg-filters.html#toc-v360
+[v360](https://www.ffmpeg.org/ffmpeg-filters.html#toc-v360)
 
 ### vectorscope
 
-https://www.ffmpeg.org/ffmpeg-filters.html#toc-vectorscope
+[vectorscope](https://www.ffmpeg.org/ffmpeg-filters.html#toc-vectorscope)
 

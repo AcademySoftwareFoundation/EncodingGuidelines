@@ -9,7 +9,7 @@ parent: Codec Comparisons
 
 VP9 is an open-source and royalty free codec developed by the [Alliance for Open Media](https://trac.ffmpeg.org/wiki/Encode/VP9) (AOMedia), a non-profit industry consortium. It can be 20-50% higher efficiency than h264. 
 
-General ffmpeg info on VP9 is [here](https://trac.ffmpeg.org/wiki/Encode/VP9).
+General ffmpeg info on VP9 is [here](https://trac.ffmpeg.org/wiki/Encode/VP9), and on the encoder in general [https://developers.google.com/media/vp9/hdr-encoding](https://developers.google.com/media/vp9/hdr-encoding).
 
 VP9 has browser support in:
    * Chrome

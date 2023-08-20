@@ -51,6 +51,10 @@ For details on codec flags, and how we picked the parameters, do goto the page f
 | ![](enctests/reference-results/codec-test-vmaf_harmonic_mean.png) Comparing VMAF score for codecs applied to different media. |
 
 
+## Uncompressed containers
+
+[Y4m](https://wiki.multimedia.cx/index.php/YUV4MPEG2) is a terrific container for uncompressed media. It allows uncompressed raw YCrCb data to be stored with a simple header.
+
 ## Uncompressed Codecs.
 
 Ffmpeg has support for a small number of uncompressed codecs that are worth using for testing. We dont recommend any of them for day-to-day use.
@@ -59,8 +63,7 @@ Ffmpeg has support for a small number of uncompressed codecs that are worth usin
 |:----------|:-----------|:-----------|:-----------|:-----------|:-----------|
 | v410 | 444 10-bit | yuv444p10le | |
 | v408 | 4444 8-bit with alpha | yuva444p | Quicktime compatible |
-| v308 | 444 8-bit packed | yuv444p | |
-| yuv4 | 420 8-bit | yuv420p | |
+| v308 | 444 8-bit packed | yuv444p |
 | v210 | 422 10-bit | yuv422p10le | |
 | r210 | RGB 10-bit |
 | png | PNG inside a quicktime, either 8 or 16-bit with or without alpha | rgb24 rgba rgb48be rgba64be pal8 gray ya8 gray16be ya16be monob |
