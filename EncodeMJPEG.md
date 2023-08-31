@@ -7,7 +7,7 @@ parent: Codec Comparisons
 
 # MJPEG - Motion JPEG
 
-[Motion JPEG](https://en.wikipedia.org/wiki/Motion_JPEG) has historically been quite common in the VFX industry, and is part of the default quicktime codecs, so is well supported everywhere.
+[Motion JPEG](https://en.wikipedia.org/wiki/Motion_JPEG) has historically been quite common in the VFX industry, and is part of the default quicktime codecs, so is well supported on players, although not typically supported in web browsers.
 
 While it does compress quickly, and maintains its quality fairly well, we would recommend other codecs at higher bit-depths such as vp9, h264 or h265 (or even Prores or DNxHD), which will also compress better than mjpeg.
 
