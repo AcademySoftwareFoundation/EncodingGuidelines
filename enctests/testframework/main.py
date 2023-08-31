@@ -402,13 +402,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
         process.wait()
 
         cmdresult = process.returncode
-
-    extractcmd = extract_template.format(newfile=distorted, newpngfile=distortedpng)
-    print(f"About to extract with cmd: {extractcmd}")
-    result = {'success': False,
-              'result': "undefined"
-    }
-    cmdresult = subprocess.call(shlex.split(extractcmd))
+        
     if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
