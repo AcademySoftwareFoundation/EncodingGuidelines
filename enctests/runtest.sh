@@ -16,6 +16,12 @@ python3 -m testframework.otio2html --test-config test_configs/h264_crf_tests.yml
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/color_tests.yml --output color-results.otio --encoded-folder color-encode
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/hevc_color_tests.yml --output hevc-color-results.otio --encoded-folder hevc-color-encode
 
+python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/rgb_color_tests.yml --output rgb-color-results.otio --encoded-folder rgb-color-encode
+
+python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/rgb_tests.yml --output rgb-results.otio --encoded-folder rgb-encode
+
+python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/mjpeg_color_tests.yml --output mjpeg-color-results.otio --encoded-folder mjpeg-color-encode
+
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/av1_color_tests.yml --output av1-color-results.otio --encoded-folder av1-color-encode
 
 python3 -m testframework.main --source-folder sources/enc_sources --test-config test_configs/vp9_color_tests.yml --output vp9-color-results.otio --encoded-folder vp9-color-encode

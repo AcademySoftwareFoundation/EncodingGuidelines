@@ -31,14 +31,20 @@ test_vp9_color_444:
     vp9-gbrp:
       << : *basevp9
       -pix_fmt: gbrp
+      -color_range: pc
+      -colorspace: rgb
 
     vp9-gbrp10le:
       << : *basevp9
       -pix_fmt: gbrp10le
+      -color_range: pc
+      -colorspace: rgb
 
     vp9-gbrp12le:
       << : *basevp9
       -pix_fmt: gbrp12le
+      -color_range: pc
+      -colorspace: rgb
 
     vp9-yuv444p10le-best:
       << : *basevp9

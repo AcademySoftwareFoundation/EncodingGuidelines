@@ -1,0 +1,166 @@
+
+
+test_rgb:
+  app: ffmpeg
+  comparisontest:
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 {newpngfile}
+    testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: Uncompressed tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_rgb
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
+  suffix: .mp4
+  wedges:
+    10bit_h264:
+      -c:v: libx264
+      -preset: placebo
+      -qp: 0
+      -pix_fmt: yuv444p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    16bit_png:
+      -c:v: png
+      -pix_fmt: rgb48be
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+    vp9_10bit_rgb:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -pix_fmt: gbrp10le
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+    vp9_12bit_rgb:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -pix_fmt: gbrp12le
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+
+test_rgb8:
+  app: ffmpeg
+  comparisontest:
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb24 -frames:v 1 {newpngfile}
+    testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: Uncompressed tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_rgb8
+  sources:
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    8bit_h264:
+      -c:v: libx264
+      -pix_fmt: yuv444p
+      -preset: placebo
+      -qp: 0
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    8bit_libx264rgb:
+      -c:v: libx264rgb
+      -pix_fmt: rgb24
+      -preset: placebo 
+      -qp: 0
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -x264-params: "keyint=15:no-deblock=1"
+      -color_range: pc
+      -color_primaries: bt709
+      -color_trc: bt709
+    8bit_png:
+      -c:v: png
+      -pix_fmt: rgb24
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+      -color_primaries: bt709
+      -color_trc: bt709
+    8bit_mjpeg:
+      -c:v: mjpeg
+      -pix_fmt: rgb24
+      -colorspace: rgb
+      -q:v: 2 
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+      -color_primaries: bt709
+      -color_trc: bt709
+    vp9_8bit_rgb:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -pix_fmt: gbrp
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+      -color_primaries: bt709
+      -color_trc: bt709
+
+test_rgb_mov:
+  app: ffmpeg
+  comparisontest:
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
+    testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: Uncompressed tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_rgb
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/smptehdbars_16.png.yml
+  suffix: .mov
+  wedges:
+    10bit_dnxhd:  &base_args2
+      -c:v: dnxhd
+      -pix_fmt: gbrp10le
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -profile:v: dnxhr_444
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: rgb
+---
+reports:
+  description: This is testing the different options for doing RGB to YCrCb and then back to RGB using y4m as an intermediate container of raw YCrCb data. The pass rate for max-error is 0.00195 = 2/1024 = 1/512. So it has to be 1-bit better than 8-bit values.
+  directory: rgb-color-encode
+  name: rgb-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg RGB to YUV conversion options.

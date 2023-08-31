@@ -1,154 +1,9 @@
 
----
-test_colormatch_raw:
-  app: ffmpeg
-  comparisontest:
-  - testtype: idiff
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: What ffmpeg does by default..
-  description: Test from /Users/sam/git/EncodingGuidelines/enctests/../ColorPreservation.md line 44
-  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
-  name: test_colormatch_raw
-  sources:
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
-  suffix: .mp4
-  wedges:
-    rawcolor:
-      -c:v: libx264
-      -pix_fmt: yuv444p10le
-      -preset: placebo
----
-test_colormatrix:
-  app: ffmpeg
-  comparisontest:
-  - testtype: idiff
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: Using colormatrix filter, which does roughly the right conversion, but only at 8-bit.
-  encoding_template: ffmpeg -y {input_args} -i "{source}"                 {encoding_args}
-    -y "{outfile}"
-  name: test_colormatch_raw
-  sources:
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
-  suffix: .mp4
-  wedges:
-    wedge0: &swsbase
-      -c:v: libx264
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: bt709
-      -colorspace: bt709
-      -pix_fmt: yuv444p10le
-      -preset: placebo
-      -qp: '0'
-      -qscale:v: '1'
-      -vf: '"colormatrix=bt470bg:bt709"'
-      -x264-params: '"keyint=15:no-deblock=1"'
-    
-    wedge1:
-      << : *swsbase
-      -sws_flags: full_chroma_int
-    
-    wedge2:
-      << : *swsbase
-      -sws_flags: accurate_rnd+full_chroma_int
-    
-    wedge3:
-      << : *swsbase
-      -sws_flags: spline+accurate_rnd+full_chroma_int
 
----
-test_colormatch_colorspace:
-  app: ffmpeg
-  comparisontest:
-  - testtype: idiff
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: A better conversion using the colorspace filter.
-  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
-    -y "{outfile}"
-  name: test_colormatch_colorspace
-  sources:
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
-  suffix: .mp4
-  wedges:
-    wedge0:
-      -c:v: libx264
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: bt709
-      -colorspace: bt709
-      -pix_fmt: yuv444p10le
-      -preset: placebo
-      -qp: '0'
-      -qscale:v: '1'
-      -sws_flags: spline+accurate_rnd+full_chroma_int
-      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=1"'
-      -x264-params: '"keyint=15:no-deblock=1"'
----
-test_colormatch_libswscale:
-  app: ffmpeg
-  comparisontest:
-  - testtype: idiff
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: The best conversion filter is with the libswscale filter.
-  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
-    -y "{outfile}"
-  name: test_colormatch_libswscale
-  sources:
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
-  - ../sourceimages/smptehdbars_16.png.yml
-  suffix: .mp4
-  wedges:
-    yuv444p10lex264: &basex264
-      -c:v: libx264
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: bt709
-      -colorspace: bt709
-      -pix_fmt: yuv444p10le
-      -preset: placebo
-      -qp: '0'
-      -qscale:v: '1'
-      -x264-params: '"keyint=15:no-deblock=1"'
-          
-    wedge1:
-      << : *basex264
-      -sws_flags: full_chroma_int
-    
-    wedge2:
-      << : *basex264
-      -sws_flags: accurate_rnd+full_chroma_int
-    
-    wedge3:
-      << : *basex264
-      -sws_flags: spline+accurate_rnd+full_chroma_int
-
-    yuv444p10lex264full:
-      << : *basex264
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      -color_range: pc
-
----
 test_uncompressed:
   app: ffmpeg
   comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -sws_flags spline+accurate_rnd+full_chroma_int -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
     testtype: idiff
   - testtype: assertresults
     tests:
@@ -161,47 +16,74 @@ test_uncompressed:
   name: test_uncompressed
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
   - ../sourceimages/smptehdbars_16.png.yml
-  suffix: .mov
+  suffix: .y4m
   wedges:
-    v410:  &base_args
-      -c:v: v410
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-      -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
+    10bit_default:  &base_args
+      #-c:v: v410
+      -strict: -1
+      #-sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
       -pix_fmt: yuv444p10le
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
-    v210:
+    10bit_colorspace:
       << : *base_args
-      -c:v: v210
-      -pix_fmt: yuv422p10le   
-    yuv4:
+      -vf: '"colormatrix=bt470bg:bt709"'
       << : *base_args
-      -c:v: yuv4
-      -pix_fmt: yuv420p   
-    v408:
+    10bit_colorspace:
       << : *base_args
-      -c:v: v408
-      -pix_fmt: yuva444p   
-    v408full:
+      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=1"'
+    10bit_libswscale:
       << : *base_args
-      -c:v: v408
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+    10bit_zscale:
+      << : *base_args
+      -vf: '"zscale=m=709:min=709:rangein=full:range=limited"'
+    12bit_libswscale:
+      << : *base_args
+      -pix_fmt: yuv444p12le   
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+    12bit_zscale:
+      << : *base_args
+      -pix_fmt: yuv444p12le   
+      -vf: '"zscale=m=709:min=709:rangein=full:range=limited"'
+    8bit_libswscale_full:
+      << : *base_args
+      #-c:v: v408
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p   
       -color_range: pc
-    v410full:
+    10bit_libswscale_full:
       << : *base_args
-      -c:v: v410
+      #-c:v: v410
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p10le  
       -color_range: pc
-
+    12bit_libswscale_full:
+      << : *base_args
+      #-c:v: v410
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -pix_fmt: yuv444p12le  
+      -color_range: pc
+    10bit_libswscale_full_chroma_int:
+      << : *base_args
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -sws_flags: full_chroma_int
+    10bit_libswscale_accurate_rnd+full_chroma_int:
+      << : *base_args
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -sws_flags: accurate_rnd+full_chroma_int
+    10bit_libswscale_spline+accurate_rnd+full_chroma_int:
+      << : *base_args
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -sws_flags: spline+accurate_rnd+full_chroma_int
 ---
 reports:
-  description: This is testing the different options for doing RGB to YUV with h264 encoding.
+  description: This is testing the different options for doing RGB to YCrCb and then back to RGB using y4m as an intermediate container of raw YCrCb data. The pass rate for max-error is 0.00195 = 2/1024 = 1/512. So it has to be 1-bit better than 8-bit values.
   directory: color-encode
   name: color-tests
-  templatefile: doctests.html.jinja
+  templatefile: colorweb.html.jinja
   title: Ffmpeg RGB to YUV conversion options.
