@@ -41,6 +41,18 @@ ffmpeg -y -f rawvideo -pixel_format yuv422p -video_size 1920x1080 -i chip-chart-
 # Strip off the alpha, idiff will otherwise complain.
 rm chip-chart-1080-noicc-yuv422p.yuv
 
+
+# chip-chart-1080-noicc.png
+
+ffmpeg  -y -i chip-chart-1080-noicc.png -vframes 1 -c:v rawvideo -pix_fmt yuv422p \
+      -sws_flags spline+accurate_rnd+full_chroma_int -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -y "chip-chart-1080-noicc-yuv422p.yuv"
+ffmpeg  -y -f rawvideo -pixel_format yuv422p -video_size 1920x1080 -i chip-chart-1080-noicc-yuv422p.yuv -pix_fmt rgb24 \
+    -vframes 1 \
+    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 \
+    -colorspace bt709 -color_primaries bt709 -color_trc 2 chip-chart-1080-noicc-yuv422p.png
+# Strip off the alpha, idiff will otherwise complain.
+rm  chip-chart-1080-noicc-yuv422p.yuv
+
 #smptehdbars_16.png
 ffmpeg  -y -i smptehdbars_16.png -vframes 1 -c:v rawvideo -pix_fmt yuv422p10le \
       -sws_flags spline+accurate_rnd+full_chroma_int -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -y "smptehdbars_16-yuv422p10le.yuv"
