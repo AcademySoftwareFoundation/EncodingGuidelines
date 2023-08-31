@@ -28,7 +28,7 @@
   <TR>
     <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
   </TR>
-  <TR>ß
+  <TR>
     <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
   </TR>
   <TR>
@@ -94,7 +94,7 @@
         <td align=right><a target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"><img max-width="400px"  width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"/></A></TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
-  {% endfor %}ß
+  {% endfor %}
 </TABLE>
   {% endfor %}
 
