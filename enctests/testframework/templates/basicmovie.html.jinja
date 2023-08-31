@@ -16,6 +16,8 @@
 
   <img src='{{ config.name }}-vmaf_harmonic_mean.png' /></BR>
   
+  <img src='{{ config.name }}-psnr_y_harmonic_mean.png' /></BR>
+
   Testing with ffmpeg version: {{ testinfo.ffmpeg_version}}
 
   {% for media_name, test in tests.items() %}
@@ -42,19 +44,23 @@
    <TH>Encode Duration</TH>
    <TH>File Size</TH>
    <TH>VMAF Harmonic Mean</TH>
-   <TH>Mean</TH>
-   <TH>Min</TH>
+   <TH>VMAF Min</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>PSNR-CR Harmonic Mean</TH>
+   <TH>PSNR-CB Harmonic Mean</TH>
    <TH>Encode Arguments</TH>
    </TR>
   {% for enc_info in test.results %}
     <TR>
      <TH><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</a></TH>
-        <td align=right><A target="_blank" HREF="{{ test.default_media.basename  }}.-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult }} {{ enc_info.testresult}}</A> </TD>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.basename  }}.-{{ enc_info.name|e }}_tests.log">Result - {{ enc_info.testresult }}</A> </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ enc_info.filesize}} </TD>
         <TD align=right>{{enc_info.vmaf_harmonic_mean |e }}</TD>
-        <TD align=right>{{enc_info.vmaf_mean |e }}</TD>
         <TD align=right>{{enc_info.vmaf_min |e }}</TD>
+         <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_cr.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_cb.harmonic_mean |e }}</TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
   {% endfor %}
