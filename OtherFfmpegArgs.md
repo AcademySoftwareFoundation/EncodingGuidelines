@@ -130,7 +130,7 @@ THis is commonly used with geq.
 ffmpeg -r 24 -f lavfi -i nullsrc=s=512x512 -pix_fmt yuv444p -frames:v 1024 -vf geq=X/2:128:128 yuv444p_ramp.mov
 ```
 
-Unfortunately, this doesnt work directly at 10-bit, for example:
+If you want other bit-depths, you do need to add an additional format flag for example:
 ```
 ffmpeg -r 24 -f lavfi -i nullsrc=s=1024x512,format=yuv444p10le -frames:v 1024 -vf geq=X:512:512 yuv444p10_ramp.mov
 ```
@@ -141,7 +141,18 @@ ffmpeg -r 24 -f lavfi -i nullsrc=s=1024x512,format=yuv444p10le -frames:v 1024 -v
 Calculate the differences between two image streams.
 [toc-identity](https://www.ffmpeg.org/ffmpeg-filters.html#toc-identity)
 
-TODO Test this.
+```
+ffmpeg -i movie1.mov -i movie2.mov -lavfi identity -f null -
+```
+
+Will output a line like:
+```
+ identity Y:0.430940 U:0.516449 V:0.448389 average:0.465259 min:0.452062 max:0.480941``
+```
+
+Where each number is a 0-1 scale, where 1 is identical.
+
+The two images need to be the same resolution and pixel format (at least both RGB or YCrCb).
 
 ### lut lutrgb and lutyuv
 
@@ -153,7 +164,15 @@ Allows you to create a calculated LUT that is then applied to the picture.
 Obtain the average, maximum and minimum PSNR (Peak Signal to Noise Ratio) between two input videos
 [psnr](https://www.ffmpeg.org/ffmpeg-filters.html#toc-psnr)
 
-TODO Test this.
+```
+ffmpeg -i movie1.mov -i movie2.mov -lavfi psnr -f null -
+```
+
+Will output a line like:
+
+```
+PSNR y:46.121876 u:50.295497 v:48.852140 average:46.987439 min:45.790238 max:49.754820
+```
 
 ### v360
 
