@@ -40,6 +40,7 @@ We have encoding guides for the following:
 | [AV1](EncodeAv1.html) | libsvtav1 | 8 10 | yuv-4:2:0 | Chrome Firefox Edge | Yes |
 | [Prores](EncodeProres.html) | prores_ks | 10 | yuv-4:4:4 yuv-4:2:2 | Safari | ? |
 | [DNxHD](EncodeDNxHD.html) | dnxhd | 8 10 | yuv-4:2:2 yuv-4:4:4 rgb | no | ? |
+| [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 | no | no |
 
 
 For a high level comparison we have encoded 4 sets of media using our recommended settings, all with the aim of getting the VMAF score > 98.  libx264 libstvav1 and vp9 were all encoded 4:2:0 and DNxHD and Prores were at 10-bit 4:2:2.
@@ -49,7 +50,7 @@ For details on codec flags, and how we picked the parameters, do goto the page f
 | ![](enctests/reference-results/codec-test-encode_time.png)  Comparing encoding time for codecs applied to different media. |
 | ![](enctests/reference-results/codec-test-filesize.png) Comparing filesize for codecs applied to different media. |
 | ![](enctests/reference-results/codec-test-vmaf_harmonic_mean.png) Comparing VMAF score for codecs applied to different media. |
-
+| ![](enctests/reference-results/codec-test-psnr_y_harmonic_mean.png) Comparing PSNR-Y harmonic mean for codecs applied to different media.|
 
 ## Uncompressed containers
 

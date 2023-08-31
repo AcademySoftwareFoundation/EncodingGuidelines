@@ -34,3 +34,9 @@ cp ../codec-results.otio .
 cp ../codec-encode/codec-test-encode_time.png .
 cp ../codec-encode/codec-test-filesize.png .
 cp ../codec-encode/codec-test-vmaf_harmonic_mean.png .
+cp ../codec-encode/codec-test-psnr_y_harmonic_mean.png .
+cp ../mjpeg-qscale-results.otio .
+cp ../mjpeg-qscale-encode/mjpeg-qscale-tests-encode_time.png .
+cp ../mjpeg-qscale-encode/mjpeg-qscale-tests-filesize.png .
+cp ../mjpeg-qscale-encode/mjpeg-qscale-tests-vmaf_harmonic_mean.png .
+cp ../mjpeg-qscale-encode/mjpeg-qscale-tests-psnr_y_harmonic_mean.png .

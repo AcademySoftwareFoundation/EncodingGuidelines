@@ -93,6 +93,13 @@ test_mov:
             -qscale:v: 10
             -profile:v: 3
             -vendor: apl0
+
+        mjpeg:
+            << : *base_args2
+            -c:v: mjpeg
+            -qscale:v: 4
+            -pix_fmt: yuv444p
+
 ---
 
 reports:
