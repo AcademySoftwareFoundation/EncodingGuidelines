@@ -9,7 +9,7 @@ parent: Encoding Overview
 
 
 # RGB to YCrCb Conversion <a name="yuv"></a>
-We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs are doing some sort of RGB to YUV conversion (technically YCrCb). The notable exception is x264rgb (see below).
+We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically YCrCb). Do be aware that a number of codecs do support native RGB encoding (including h264, hevc, vp9, av1), but they are not typically supported in web browsers.
 
 The main problem is that ffmpeg by default assumes that any unknown still image format has a color space of [rec601](https://en.wikipedia.org/wiki/Rec._601) which is very unlikely to be the color space your source media was generate in. So unless you tell it otherwise it will attempt to convert from that colorspace producing a color shift.
 
