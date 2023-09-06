@@ -47,7 +47,8 @@
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+     <TH><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</a></TH>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.basename  }}.-{{ enc_info.name|e }}_tests.log">Result - {{ enc_info.testresult }}</A> </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ enc_info.filesize}} </TD>
         <TD align=right>{{enc_info.vmaf.harmonic_mean |e }}</TD>
@@ -84,7 +85,7 @@
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
         <td align=right><video width="500px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
