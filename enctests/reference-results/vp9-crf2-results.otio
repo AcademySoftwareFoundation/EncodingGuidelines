@@ -1,0 +1,2501 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {},
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_6.0",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_colorspace_yuv420p"
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:28:08.349571+00:00",
+                                            "encode_time": 46.26,
+                                            "filesize": 9400600,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.44818,
+                                                "max": 50.623328,
+                                                "mean": 49.449784,
+                                                "min": 48.462409
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.022652,
+                                                "max": 51.012813,
+                                                "mean": 49.025008,
+                                                "min": 48.402726
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.693882,
+                                                "max": 50.53402,
+                                                "mean": 47.702264,
+                                                "min": 45.958332
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.853039,
+                                                "max": 100.0,
+                                                "mean": 99.854588,
+                                                "min": 96.589869
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:28:44.842989+00:00",
+                                            "encode_time": 36.4922,
+                                            "filesize": 6282311,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.209305,
+                                                "max": 50.338456,
+                                                "mean": 49.210947,
+                                                "min": 48.229893
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.690209,
+                                                "max": 50.506748,
+                                                "mean": 48.692098,
+                                                "min": 48.100557
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.930878,
+                                                "max": 49.822592,
+                                                "mean": 46.938397,
+                                                "min": 45.413148
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.731396,
+                                                "max": 100.0,
+                                                "mean": 99.734403,
+                                                "min": 96.498217
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:29:17.603476+00:00",
+                                            "encode_time": 32.7594,
+                                            "filesize": 5324935,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.034592,
+                                                "max": 50.173947,
+                                                "mean": 49.036172,
+                                                "min": 48.080181
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.506256,
+                                                "max": 50.301703,
+                                                "mean": 48.507984,
+                                                "min": 47.929359
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.570512,
+                                                "max": 49.506527,
+                                                "mean": 46.577755,
+                                                "min": 45.115327
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.628027,
+                                                "max": 100.0,
+                                                "mean": 99.632298,
+                                                "min": 96.364931
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:29:48.100629+00:00",
+                                            "encode_time": 30.496,
+                                            "filesize": 4711130,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.950619,
+                                                "max": 50.100389,
+                                                "mean": 48.95229,
+                                                "min": 48.042273
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.399074,
+                                                "max": 50.14753,
+                                                "mean": 48.400845,
+                                                "min": 47.837224
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.307822,
+                                                "max": 49.263147,
+                                                "mean": 46.315192,
+                                                "min": 44.891311
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.53073,
+                                                "max": 100.0,
+                                                "mean": 99.536224,
+                                                "min": 96.341924
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:30:16.514472+00:00",
+                                            "encode_time": 28.4126,
+                                            "filesize": 4187695,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.824196,
+                                                "max": 50.006893,
+                                                "mean": 48.825927,
+                                                "min": 47.957813
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.264222,
+                                                "max": 49.999776,
+                                                "mean": 48.265891,
+                                                "min": 47.674616
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.030607,
+                                                "max": 49.066855,
+                                                "mean": 46.037902,
+                                                "min": 44.649041
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.441128,
+                                                "max": 100.0,
+                                                "mean": 99.447795,
+                                                "min": 96.289051
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:30:43.769369+00:00",
+                                            "encode_time": 27.2538,
+                                            "filesize": 3726114,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.744998,
+                                                "max": 49.952024,
+                                                "mean": 48.746798,
+                                                "min": 47.823176
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.196082,
+                                                "max": 49.864008,
+                                                "mean": 48.19772,
+                                                "min": 47.607907
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.763189,
+                                                "max": 48.776295,
+                                                "mean": 45.770213,
+                                                "min": 44.432819
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.323015,
+                                                "max": 100.0,
+                                                "mean": 99.331338,
+                                                "min": 96.214451
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:31:09.172003+00:00",
+                                            "encode_time": 25.4015,
+                                            "filesize": 3113666,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.530557,
+                                                "max": 49.793559,
+                                                "mean": 48.532499,
+                                                "min": 47.562247
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.983056,
+                                                "max": 49.636429,
+                                                "mean": 47.984695,
+                                                "min": 47.404748
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.264444,
+                                                "max": 48.311413,
+                                                "mean": 45.271631,
+                                                "min": 43.9723
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.062494,
+                                                "max": 100.0,
+                                                "mean": 99.074344,
+                                                "min": 96.010467
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T07:31:32.610646+00:00",
+                                            "encode_time": 23.4375,
+                                            "filesize": 2513915,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.262885,
+                                                "max": 49.537871,
+                                                "mean": 48.264949,
+                                                "min": 47.349812
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.730202,
+                                                "max": 49.269358,
+                                                "mean": 47.731874,
+                                                "min": 47.132141
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.606677,
+                                                "max": 47.659376,
+                                                "mean": 44.613612,
+                                                "min": 43.421424
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.555012,
+                                                "max": 100.0,
+                                                "mean": 98.573312,
+                                                "min": 95.140779
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_cars_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_colorspace_yuv420p"
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:33:10.815957+00:00",
+                                            "encode_time": 70.7675,
+                                            "filesize": 19523486,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.660565,
+                                                "max": 49.630781,
+                                                "mean": 46.705133,
+                                                "min": 43.702668
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.044202,
+                                                "max": 49.838585,
+                                                "mean": 47.054665,
+                                                "min": 45.504242
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.461984,
+                                                "max": 47.724202,
+                                                "mean": 44.562343,
+                                                "min": 40.501727
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.957119,
+                                                "max": 100.0,
+                                                "mean": 99.958149,
+                                                "min": 96.043439
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:34:07.404753+00:00",
+                                            "encode_time": 56.5878,
+                                            "filesize": 13359498,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.168105,
+                                                "max": 49.207946,
+                                                "mean": 46.207393,
+                                                "min": 43.327224
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.490631,
+                                                "max": 49.318635,
+                                                "mean": 46.500638,
+                                                "min": 44.916904
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.006667,
+                                                "max": 47.319567,
+                                                "mean": 44.095469,
+                                                "min": 40.299581
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.873954,
+                                                "max": 100.0,
+                                                "mean": 99.875826,
+                                                "min": 95.905648
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:34:59.780347+00:00",
+                                            "encode_time": 52.3745,
+                                            "filesize": 11467047,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.91963,
+                                                "max": 49.000938,
+                                                "mean": 45.956582,
+                                                "min": 43.127265
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.231989,
+                                                "max": 49.107912,
+                                                "mean": 46.242102,
+                                                "min": 44.622355
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.781499,
+                                                "max": 47.167055,
+                                                "mean": 43.86557,
+                                                "min": 40.162912
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.77098,
+                                                "max": 100.0,
+                                                "mean": 99.774056,
+                                                "min": 95.775376
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:35:49.546606+00:00",
+                                            "encode_time": 49.7652,
+                                            "filesize": 10181638,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.786076,
+                                                "max": 48.88219,
+                                                "mean": 45.821495,
+                                                "min": 43.013476
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.064458,
+                                                "max": 48.915073,
+                                                "mean": 46.074566,
+                                                "min": 44.368851
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.612401,
+                                                "max": 47.040241,
+                                                "mean": 43.692684,
+                                                "min": 40.076008
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.685252,
+                                                "max": 100.0,
+                                                "mean": 99.689617,
+                                                "min": 95.73629
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:36:35.846012+00:00",
+                                            "encode_time": 46.2984,
+                                            "filesize": 9027141,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.581418,
+                                                "max": 48.75236,
+                                                "mean": 45.616208,
+                                                "min": 42.811663
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.84683,
+                                                "max": 48.763568,
+                                                "mean": 45.857968,
+                                                "min": 44.103604
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.403697,
+                                                "max": 46.933445,
+                                                "mean": 43.480625,
+                                                "min": 39.963236
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.523451,
+                                                "max": 100.0,
+                                                "mean": 99.530247,
+                                                "min": 95.66486
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:37:20.190180+00:00",
+                                            "encode_time": 44.3432,
+                                            "filesize": 8083149,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.398549,
+                                                "max": 48.550713,
+                                                "mean": 45.431794,
+                                                "min": 42.737199
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.645586,
+                                                "max": 48.559368,
+                                                "mean": 45.657,
+                                                "min": 43.929619
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.218122,
+                                                "max": 46.790728,
+                                                "mean": 43.291701,
+                                                "min": 39.877051
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.369577,
+                                                "max": 100.0,
+                                                "mean": 99.379048,
+                                                "min": 95.586949
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:38:01.663501+00:00",
+                                            "encode_time": 41.4723,
+                                            "filesize": 6696630,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.064573,
+                                                "max": 48.263181,
+                                                "mean": 45.096358,
+                                                "min": 42.436699
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.293997,
+                                                "max": 48.225712,
+                                                "mean": 45.306464,
+                                                "min": 43.51168
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.851717,
+                                                "max": 46.545156,
+                                                "mean": 42.92043,
+                                                "min": 39.636642
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.940843,
+                                                "max": 100.0,
+                                                "mean": 98.958434,
+                                                "min": 94.883018
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:38:40.257392+00:00",
+                                            "encode_time": 38.5929,
+                                            "filesize": 5350856,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 44.649248,
+                                                "max": 47.806786,
+                                                "mean": 44.678965,
+                                                "min": 42.087682
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.845805,
+                                                "max": 47.723691,
+                                                "mean": 44.859121,
+                                                "min": 43.010929
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.370484,
+                                                "max": 46.163121,
+                                                "mean": 42.432328,
+                                                "min": 39.358428
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.139173,
+                                                "max": 100.0,
+                                                "mean": 98.170476,
+                                                "min": 93.569793
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_coaster_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_colorspace_yuv420p"
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:49:35.837805+00:00",
+                                            "encode_time": 155.1001,
+                                            "filesize": 62275649,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.85617,
+                                                "max": 51.415854,
+                                                "mean": 48.862134,
+                                                "min": 48.190704
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.225336,
+                                                "max": 52.755916,
+                                                "mean": 48.242033,
+                                                "min": 47.158233
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.347842,
+                                                "max": 49.810809,
+                                                "mean": 45.382314,
+                                                "min": 43.71823
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976537,
+                                                "max": 100.0,
+                                                "mean": 99.977574,
+                                                "min": 95.514834
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:51:46.518595+00:00",
+                                            "encode_time": 130.6799,
+                                            "filesize": 48004676,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.408287,
+                                                "max": 50.546162,
+                                                "mean": 48.412848,
+                                                "min": 47.762876
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.547957,
+                                                "max": 51.231083,
+                                                "mean": 47.559196,
+                                                "min": 46.60127
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.988919,
+                                                "max": 48.935569,
+                                                "mean": 44.0291,
+                                                "min": 42.2157
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.975981,
+                                                "max": 100.0,
+                                                "mean": 99.977066,
+                                                "min": 95.413294
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:53:48.713905+00:00",
+                                            "encode_time": 122.1944,
+                                            "filesize": 42909537,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.177242,
+                                                "max": 50.209793,
+                                                "mean": 48.180783,
+                                                "min": 47.532371
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.272888,
+                                                "max": 50.727299,
+                                                "mean": 47.281979,
+                                                "min": 46.374876
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.363604,
+                                                "max": 48.511935,
+                                                "mean": 43.406493,
+                                                "min": 41.514152
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.975085,
+                                                "max": 100.0,
+                                                "mean": 99.976251,
+                                                "min": 95.250193
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:55:45.390953+00:00",
+                                            "encode_time": 116.6761,
+                                            "filesize": 39241677,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.031496,
+                                                "max": 50.13442,
+                                                "mean": 48.035098,
+                                                "min": 47.365974
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.064913,
+                                                "max": 50.387479,
+                                                "mean": 47.07282,
+                                                "min": 46.192711
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.874432,
+                                                "max": 48.178261,
+                                                "mean": 42.920555,
+                                                "min": 40.972565
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.974764,
+                                                "max": 100.0,
+                                                "mean": 99.97596,
+                                                "min": 95.19193
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:57:36.648233+00:00",
+                                            "encode_time": 111.2563,
+                                            "filesize": 35881859,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.870765,
+                                                "max": 49.939377,
+                                                "mean": 47.874409,
+                                                "min": 47.181244
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.882232,
+                                                "max": 50.082035,
+                                                "mean": 46.889364,
+                                                "min": 46.02425
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.394322,
+                                                "max": 47.92521,
+                                                "mean": 42.441395,
+                                                "min": 40.454344
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.974347,
+                                                "max": 100.0,
+                                                "mean": 99.975582,
+                                                "min": 95.116318
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T11:59:23.632539+00:00",
+                                            "encode_time": 106.9833,
+                                            "filesize": 33076318,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.732384,
+                                                "max": 49.748594,
+                                                "mean": 47.735907,
+                                                "min": 47.024907
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.72563,
+                                                "max": 49.715852,
+                                                "mean": 46.731981,
+                                                "min": 45.864899
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.969961,
+                                                "max": 47.541642,
+                                                "mean": 42.017608,
+                                                "min": 39.999633
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.973962,
+                                                "max": 100.0,
+                                                "mean": 99.975233,
+                                                "min": 95.046574
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:01:04.405835+00:00",
+                                            "encode_time": 100.7723,
+                                            "filesize": 28425133,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.46863,
+                                                "max": 49.439641,
+                                                "mean": 47.472148,
+                                                "min": 46.772584
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.450717,
+                                                "max": 49.206272,
+                                                "mean": 46.456403,
+                                                "min": 45.63489
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.135462,
+                                                "max": 46.93337,
+                                                "mean": 41.187981,
+                                                "min": 39.104384
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972552,
+                                                "max": 100.0,
+                                                "mean": 99.97396,
+                                                "min": 94.791993
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:02:40.060816+00:00",
+                                            "encode_time": 95.654,
+                                            "filesize": 23699203,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.160898,
+                                                "max": 49.082221,
+                                                "mean": 47.164431,
+                                                "min": 46.447458
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.151918,
+                                                "max": 48.615495,
+                                                "mean": 46.156633,
+                                                "min": 45.329906
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 40.169358,
+                                                "max": 46.091678,
+                                                "mean": 40.222649,
+                                                "min": 38.138426
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.872254,
+                                                "max": 100.0,
+                                                "mean": 99.8744,
+                                                "min": 94.44031
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/chimera_fountains_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1014,
+                                    "images": true,
+                                    "in": 6100,
+                                    "path": "sparks_srgb.%05d.png",
+                                    "pix_fmt": "rgb24",
+                                    "rate": 24,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_colorspace_yuv420p"
+                        },
+                        "name": "sparks_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 24.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 24.0,
+                                "value": 6100.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 6100.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb",
+                                "name_prefix": "sparks_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 6100,
+                                "frame_step": 1,
+                                "rate": 24.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:13:00.664136+00:00",
+                                            "encode_time": 103.8727,
+                                            "filesize": 77405484,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.28354,
+                                                "max": 51.511189,
+                                                "mean": 47.307628,
+                                                "min": 45.892424
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.671003,
+                                                "max": 51.635337,
+                                                "mean": 47.695989,
+                                                "min": 46.267292
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.662865,
+                                                "max": 49.577439,
+                                                "mean": 44.700312,
+                                                "min": 43.306148
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.985683,
+                                                "max": 100.0,
+                                                "mean": 99.986076,
+                                                "min": 97.215172
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_10.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:14:31.560901+00:00",
+                                            "encode_time": 90.8952,
+                                            "filesize": 61269591,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.118166,
+                                                "max": 50.548052,
+                                                "mean": 46.148837,
+                                                "min": 44.632264
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.455735,
+                                                "max": 50.758699,
+                                                "mean": 46.489626,
+                                                "min": 44.976088
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.289358,
+                                                "max": 48.743381,
+                                                "mean": 43.329074,
+                                                "min": 41.95155
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.985343,
+                                                "max": 100.0,
+                                                "mean": 99.985754,
+                                                "min": 97.150816
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_14.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:15:58.267364+00:00",
+                                            "encode_time": 86.7049,
+                                            "filesize": 55555506,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.542642,
+                                                "max": 50.153881,
+                                                "mean": 45.577504,
+                                                "min": 43.979588
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.86822,
+                                                "max": 50.428652,
+                                                "mean": 45.906944,
+                                                "min": 44.326532
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.7004,
+                                                "max": 48.317652,
+                                                "mean": 42.740377,
+                                                "min": 41.319782
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.984673,
+                                                "max": 100.0,
+                                                "mean": 99.985122,
+                                                "min": 97.024438
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_16.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:17:22.614737+00:00",
+                                            "encode_time": 84.3459,
+                                            "filesize": 51488683,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.053774,
+                                                "max": 49.844036,
+                                                "mean": 45.092535,
+                                                "min": 43.372131
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.393318,
+                                                "max": 50.152659,
+                                                "mean": 45.435615,
+                                                "min": 43.747365
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.227074,
+                                                "max": 47.93397,
+                                                "mean": 42.26835,
+                                                "min": 40.859261
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980085,
+                                                "max": 100.0,
+                                                "mean": 99.980562,
+                                                "min": 96.974601
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_18.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:18:44.869168+00:00",
+                                            "encode_time": 82.2529,
+                                            "filesize": 47921999,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 44.605819,
+                                                "max": 49.610488,
+                                                "mean": 44.648556,
+                                                "min": 42.934293
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.944568,
+                                                "max": 49.929571,
+                                                "mean": 44.989048,
+                                                "min": 43.242735
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.779313,
+                                                "max": 47.638244,
+                                                "mean": 41.820355,
+                                                "min": 40.381289
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.970705,
+                                                "max": 100.0,
+                                                "mean": 99.971272,
+                                                "min": 96.927074
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_20.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:20:07.918698+00:00",
+                                            "encode_time": 83.048,
+                                            "filesize": 44847219,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 44.190334,
+                                                "max": 49.303587,
+                                                "mean": 44.235351,
+                                                "min": 42.421786
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.585713,
+                                                "max": 49.643393,
+                                                "mean": 44.629641,
+                                                "min": 42.902691
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.375684,
+                                                "max": 47.213205,
+                                                "mean": 41.416399,
+                                                "min": 39.959614
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.959264,
+                                                "max": 100.0,
+                                                "mean": 99.959989,
+                                                "min": 96.889278
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_22.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:21:31.089703+00:00",
+                                            "encode_time": 83.1695,
+                                            "filesize": 39805273,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 43.400695,
+                                                "max": 48.80034,
+                                                "mean": 43.450314,
+                                                "min": 41.690637
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 43.879535,
+                                                "max": 49.164979,
+                                                "mean": 43.925374,
+                                                "min": 42.186203
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 40.57984,
+                                                "max": 46.533959,
+                                                "mean": 40.623736,
+                                                "min": 39.089875
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.913375,
+                                                "max": 100.0,
+                                                "mean": 99.914965,
+                                                "min": 96.652359
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_25.mp4"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": 0,
+                                            "-c:v": "libvpx-vp9",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-quality": "good",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-08T12:22:53.689116+00:00",
+                                            "encode_time": 82.5978,
+                                            "filesize": 34656756,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 42.499414,
+                                                "max": 48.052388,
+                                                "mean": 42.550912,
+                                                "min": 40.719089
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 43.098058,
+                                                "max": 48.47654,
+                                                "mean": 43.14133,
+                                                "min": 41.413016
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 39.608552,
+                                                "max": 45.597803999999996,
+                                                "mean": 39.654739,
+                                                "min": 38.014441
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.830318,
+                                                "max": 100.0,
+                                                "mean": 99.834461,
+                                                "min": 96.390914
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/vp9_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/vp9-crf2-encode/sparks_srgb.-test_colorspace_yuv420p-medium_crf_28.mp4"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}
