@@ -1,0 +1,117 @@
+
+---
+test_mjpeg_444:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.0039
+  description: mjpeg color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_mjpeg_444
+  sources:
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  suffix: .mov
+  wedges:
+    mjpeg: &basemjpeg
+      -c:v: mjpeg
+      -q:v: 2
+      #-pix_fmt: yuv444p
+
+    mjpeg-yuv444p: 
+      << : *basemjpeg
+      -c:v: mjpeg
+      -q:v: 2
+      -pix_fmt: yuv444p
+
+    mjpeg-yuv444p-libswscale:
+      << : *basemjpeg
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+
+    mjpeg-yuv444p-libswscale-full:
+      << : *basemjpeg
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+ 
+test_mjpeg_422:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-noicc-yuv422p.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.0039
+  description: mjpeg color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_mjpeg_422
+  sources:
+  - ../sourceimages/chip-chart-1080-noicc.png.yml
+  suffix: .mov
+  wedges:
+    mjpeg-yuv422p: &basemjpeg422
+      -c:v: mjpeg
+      -q:v: 2
+      -pix_fmt: yuv444p
+
+    mjpeg-yuv422p-libswscale:
+      << : *basemjpeg422
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+
+    mjpeg-yuv422p-libswscale-full:
+      << : *basemjpeg422
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+
+---
+reports:
+  graphs:
+  - args:
+      color: name
+      height: 400
+      barmode: group
+      x: media
+      y: max_error
+    name: max_error.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      x: media
+      barmode: group
+      y: encode_time
+    name: encode_time.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      x: media
+      barmode: group
+      y: filesize
+    name: filesize.png
+    type: bar
+  description: This is testing mjpeg color encoding, make sure we know what settings do the least amount of damage.
+  directory: mjpeg-color-encode
+  name: mjpeg-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg mjpeg encoding guide tests
