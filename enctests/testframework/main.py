@@ -416,7 +416,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
             result['result'] = "Unable to run idiff"
             result['success'] = False
         else:
-            result = {'success': lines[-1] == "PASS", 'result': lines[-1]}
+            result = {'success': True, 'result': lines[-1]}
             for line in lines[:-1]:
                 if " = " not in line:
                     continue
@@ -448,6 +448,9 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
     enc_meta = get_test_metadata_dict(test_ref)
     result = enc_meta['results']
     resultstatus = True
+    if not result['success']:
+        # If the processing wasnt a success, we fail.
+        return
     for test in tests:
         if "assert" not in test:
             print(f"WARNING: no test to run in test:{test} expecting a field called assert with the test type.")
