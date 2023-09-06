@@ -38,11 +38,14 @@
 <table border=1>
    <TR>
    <TH>Test Name</TH>
+   <TH>Test</TH>
    <TH>Encode Duration</TH>
    <TH>File Size</TH>
    <TH>VMAF Harmonic Mean</TH>
-   <TH>Mean</TH>
-   <TH>Min</TH>
+   <TH>VMAF Min</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>PSNR-CR Harmonic Mean</TH>
+   <TH>PSNR-CB Harmonic Mean</TH>
    <TH>Encode Arguments</TH>
    </TR>
   {% for enc_info in test.results %}
@@ -51,9 +54,11 @@
         <td align=right><A target="_blank" HREF="{{ test.default_media.basename  }}.-{{ enc_info.name|e }}_tests.log">Result - {{ enc_info.testresult }}</A> </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ enc_info.filesize}} </TD>
-        <TD align=right>{{enc_info.vmaf.harmonic_mean |e }}</TD>
-        <TD align=right>{{enc_info.vmaf.mean |e }}</TD>
-        <TD align=right>{{enc_info.vmaf.min |e }}</TD>
+        <TD align=right>{{enc_info.vmaf_harmonic_mean |e }}</TD>
+        <TD align=right>{{enc_info.vmaf_min |e }}</TD>
+         <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_cr.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_cb.harmonic_mean |e }}</TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
   {% endfor %}
