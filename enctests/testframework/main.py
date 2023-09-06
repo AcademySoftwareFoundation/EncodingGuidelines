@@ -43,6 +43,11 @@ FFMPEG_BIN = os.getenv(
     sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
 )
 
+IDIFF_BIN = os.getenv(
+    'IDIFF_BIN',
+    sys.platform == 'win' and 'idiff.exe' or 'idiff'
+)
+
 
 VMAF_LIB_DIR = os.getenv(
     'VMAF_LIB_DIR',
@@ -290,12 +295,8 @@ model=path={vmaf_model}\" \
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
-<<<<<<< HEAD
-    print(f'VMAF command: {cmd}")
-=======
-    print('VMAF command:', cmd, file=log_file_object)
+    print(f'VMAF command: {cmd}', file=log_file_object)
     log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
->>>>>>> fc656da (Sending the output of the ffmpeg test output to a log file in the encode folder, so that its easy to find later.)
 
     env = os.environ
     if 'LD_LIBRARY_PATH' in env:
@@ -346,7 +347,7 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
-def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_path, distorted, log_file_object):
+def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Compare the sourceclip to the test_ref using OIIO idiff.
     This requires that we extract the movie into an image to do the comparison. We really only want to do this for single frames. This is a good test for checking the color is good.
@@ -401,15 +402,13 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
         process.wait()
 
         cmdresult = process.returncode
-
+        
     if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
-        cmd = apptemplate.format(idiff_bin=IDIFF_BIN, 
-                                 originalfile=sourcepng, 
-                                 newfile=distortedpng.as_posix(),
-                                 newfilediff=diffpng.as_posix())
-        print("\n------------\nIdiff command:", cmd, file=log_file_object)
+        cmd = apptemplate.format(originalfile=sourcepng, newfile=distortedpng, idiff_bin=IDIFF_BIN, newfilediff=diffpng)
+        print(f"\n\nIdiff command: {cmd}", file=log_file_object)
+        
         output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
         lines = output.decode("utf-8").splitlines()
         print("\n".join(lines), file=log_file_object)
@@ -432,7 +431,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontest_info, source_p
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
 
-def assertresults_compare(source_clip, test_ref, testname, comparisontest_info, source_path, distorted, log_file_object):
+def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Check the results of the tests against known values (or value ranges).
     We assume that we have already run some tests, and just want to check that the values are good.
