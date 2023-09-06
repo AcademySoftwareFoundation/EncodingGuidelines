@@ -1,7 +1,7 @@
 
 test_preset_yuv420p:
     name: test_colorspace_yuv420p
-    description: variations of colorspace yuv420p
+    description: variations of h264 bit depthß
     app: ffmpeg
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
@@ -9,12 +9,11 @@ test_preset_yuv420p:
     - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
     - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
-    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        veryfast_crf_18: &base_args2
+        yuv420p: &base_args2
             -c:v: libx264
-            -preset: veryfast
-            -crf: 25
+            -preset: slow
+            -crf: 18
             -x264-params: '"keyint=15:no-deblock=1"'
             -pix_fmt: yuv420p
             -sws_flags: spline+accurate_rnd+full_chroma_int
@@ -24,37 +23,33 @@ test_preset_yuv420p:
             -color_primaries: 1
             -color_trc: 2
 
-
-        fast_crf_18:
+        yuv422p:
             << : *base_args2
-            -preset: fast
+            -pix_fmt: yuv422p
 
-        medium_crf_18:
+        yuv444p:
             << : *base_args2
-            -preset: medium
+            -pix_fmt: yuv444p
 
-        slow_crf_18:
+        yuv420p10le:
             << : *base_args2
-            -preset: slow
+            -pix_fmt: yuv420p10le
 
-        slower_crf_18:
+        yuv422p10le:
             << : *base_args2
-            -preset: slower
+            -pix_fmt: yuv422p10le
 
-        veryslow_crf_18:
+        yuv444p10le:
             << : *base_args2
-            -preset: veryslow
+            -pix_fmt: yuv444p10le
 
-        placebo_crf_18:
-            << : *base_args2
-            -preset: placebo
 ---
 
 reports:
     graphs:
     - args:
         color: -preset
-        colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        colororder: ['yuv420p', 'yuv422p', 'yuv444p', 'yuv420p10le', 'yuv422p10le', 'yuv444p10le']
         height: 400
         barmode: group
         x: media
@@ -66,7 +61,7 @@ reports:
       type: bar
     - args:
         color: -preset
-        colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        colororder: ['yuv420p', 'yuv422p', 'yuv444p', 'yuv420p10le', 'yuv422p10le', 'yuv444p10le']
         height: 400
         x: media
         barmode: group
@@ -75,7 +70,7 @@ reports:
       type: bar
     - args:
         color: -preset
-        colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        colororder: ['yuv420p', 'yuv422p', 'yuv444p', 'yuv420p10le', 'yuv422p10le', 'yuv444p10le']
         height: 400
         x: media
         barmode: group
