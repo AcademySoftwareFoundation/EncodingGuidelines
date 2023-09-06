@@ -15,6 +15,8 @@ The main problem is that ffmpeg by default assumes that any unknown still image 
 
 Separately, all the video formats typically do not use the full numeric range [0-255] but instead the Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantisation artifacts for 8-bit encoding (the standard for web playback). This fortunately is something you can change, [see TV vs. Full range](Quickstart.html#tv-vs-full-range-). below. The other option is to use higher bit depth, e.g. 10-bit or 12 bit for formats such as [ProRes](Encoding.html#prores-).
 
+Even if you are sticking to 8-bits encodes, if your source media is able to have a higher bit-depth (e.g. you are able to write out 16-bit PNG's to do the encode) it will help with the accuracy of the RGB to YUV conversion, particularly if you are using libswscale (see below).
+
 For more information, see: [https://trac.ffmpeg.org/wiki/colorspace](https://trac.ffmpeg.org/wiki/colorspace)
 
 TODO -- Review the SWS_Flags.
@@ -32,7 +34,7 @@ e.g.
 <!---
 name: test_colormatch_raw
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 wedges:
    rawcolor:
       -c:v: libx264
@@ -40,7 +42,6 @@ wedges:
       -preset: placebo
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -51,7 +52,7 @@ comparisontest:
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
     -sws_flags spline+accurate_rnd+full_chroma_int -vf "colormatrix=bt470bg:bt709" \
     -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 \
-    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 \
+    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
     ./chip-chart-yuvconvert/spline444colormatrix2.mp4
 ```
 
@@ -65,10 +66,9 @@ e.g.
 <!---
 name: test_colormatch_colorspace
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -79,7 +79,7 @@ comparisontest:
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 \
-   -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709  \
+   -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444colorspace.mp4
 ```
 
@@ -96,10 +96,9 @@ e.g.
 <!---
 name: test_colormatch_libswscale
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -110,6 +109,6 @@ comparisontest:
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -qscale:v 1 \
-   -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709  \
+   -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
