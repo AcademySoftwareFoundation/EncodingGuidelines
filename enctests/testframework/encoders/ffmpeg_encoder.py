@@ -50,6 +50,9 @@ class FFmpegEncoder(ABCTestEncoder):
             test_name = f"{self.test_config.get('name')}-{wedge_name}"
             out_file = self.get_output_filename(test_name)
 
+            if os.path.exists(out_file):
+                os.remove(out_file) # Remove it, so if the new run fails to create anything we are not accidently using the old one.
+
             cmd = self.prep_encoding_command(wedge, out_file)
 
             print("Creating Wedge:", test_name, " from ", self.get_source_path()[0].name)
