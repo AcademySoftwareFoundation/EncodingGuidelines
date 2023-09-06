@@ -28,7 +28,7 @@
   <TR>
     <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
   </TR>
-  <TR>ß
+  <TR>
     <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
   </TR>
   <TR>
@@ -94,7 +94,7 @@
         <td align=right><video width="500px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
-  {% endfor %}ß
+  {% endfor %}
 </TABLE>
   {% endfor %}
 
