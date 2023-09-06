@@ -1,7 +1,7 @@
 
 test_preset_yuv420p:
     name: test_colorspace_yuv420p
-    description: variations of h264 bit depthß
+    description: variations of h264 bit depth
     app: ffmpeg
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
