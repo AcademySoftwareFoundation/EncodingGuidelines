@@ -57,7 +57,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
             cmd = self.prep_encoding_command(wedge, out_file)
 
-            print("Creating Wedge:", test_name, " from ", self.get_source_path()[0].name)
+            print(f"Creating Wedge: {test_name} from {self.get_source_path()[0].name}")
 
             # Ensure proper environment
             env = os.environ
@@ -72,7 +72,7 @@ class FFmpegEncoder(ABCTestEncoder):
             # Do the encoding
             log_file = Path(out_file.parent, out_file.stem).with_suffix(".log")
             with open(log_file, "w") as log_file_object:
-                print('ffmpeg command:', cmd, file=log_file_object)
+                print(f'ffmpeg command: {cmd}', file=log_file_object)
                 log_file_object.flush()
                 process = subprocess.Popen(
                     shlex.split(cmd),
@@ -86,7 +86,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
             # Store timing
             enctime = time.perf_counter() - t1
-            print("\t took:: %.2f seconds. " %  enctime)
+            print("\t took: {enctime:.2f} seconds. ")
             # !! Use this function from utils to create a media reference
             # of output the file.
             mr = create_media_reference(out_file, self.source_clip)

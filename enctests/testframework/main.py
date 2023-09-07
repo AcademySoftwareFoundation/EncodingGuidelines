@@ -321,8 +321,8 @@ model=path={vmaf_model}\" \
         results = {'result': 'Failed to run'}
         enc_meta = get_test_metadata_dict(test_ref)
         enc_meta['results'].update(results)
-        print("\tFailed to generate compare_log.json")
-        print("Failed to generate compare_log.json", file=log_file_object)
+        print(f"\tFailed to generate {compare_log.name}")
+        print(f"Failed to generate {compare_log.name}", file=log_file_object)
         return
     
     with compare_log.open(mode='rb') as f:
@@ -335,7 +335,7 @@ model=path={vmaf_model}\" \
     }
 
     # TODO Do this as a pretty print.
-    print("--- VMAF output\n", raw_results['pooled_metrics'], file=log_file_object)
+    print(f"--- VMAF output\n {raw_results['pooled_metrics']}", file=log_file_object)
 
     # FFmpeg >= 5.1 have split psnr results
     if not results['psnr']:
@@ -385,7 +385,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
                                              newfile=distorted.as_posix(), 
                                              newpngfile=distortedpng.as_posix()
                                              )
-        print("\n------------\nAbout to extract with cmd:", extractcmd, file=log_file_object)
+        print(f"\n------------\nAbout to extract with cmd:{extractcmd}", file=log_file_object)
         log_file_object.flush()
         result = {'success': False,
                 'testresult': "undefined"
@@ -464,14 +464,14 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
                 print(f"WARNING: Skipping test since there is no between values, in: {test}")
             values = test.get("between")
             resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
-            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " > ", values[0], " and ", testvalue, " < ", values[1], file=log_file_object)
+            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} > {values[0]} and {testvalue} < {values[1]} ", file=log_file_object)
         if testname == "greater":
             if "greater" not in test:
                 print(f"WARNING: Skipping test since there is no greater values, in : {test}")
                 continue
             value = test.get("greater")
             resultstatus = result[testvalue] > value
-            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " > ", value, file=log_file_object)
+            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} > {value}", file=log_file_object)
         if testname == "less":
             if "less" not in test:
                 print(f"WARNING: Skipping test since there is no greater values, in :{test}")
@@ -479,14 +479,14 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
             value = test.get("less")
             resultstatus = result[testvalue] < value
 
-            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " < ", value, file=log_file_object)
+            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} < {value}", file=log_file_object)
         if testname == "stringmatch":
             if "string" not in test:
                 print(f"WARNING: Skipping test since there is no string to match in : {test}")
                 continue
             value = test.get("string")
             resultstatus = result[testvalue] == value
-            print("Pass" if resultstatus else "Fail", " Parameter:", testvalue, " == ", value, file=log_file_object)
+            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} == {value}", file=log_file_object)
 
         if not resultstatus:
             break
@@ -588,7 +588,7 @@ def run_tests(args, test_configs, timeline):
             source_path, _ = get_source_path(source_clip)
             for test_name, test_ref in results.items():
                 distorted = Path(test_ref.target_url)
-                print("Testing:", distorted.name)
+                print(f"Testing: {distorted.name}")
                 # Send all the log output of the tests to a separate log file.
                 log_file = Path(distorted.parent, distorted.stem+"_tests").with_suffix(".log")
 
@@ -599,7 +599,7 @@ def run_tests(args, test_configs, timeline):
                         testtype = test.get("testtype", "vmaf")
                         print("\t ", testtype)
                         print("######################", file=log_file_object)
-                        print("Test:", testtype, file=log_file_object)
+                        print(f"Test: {testtype}", file=log_file_object)
 
                         if testtype == "vmaf":
                             vmaf_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
@@ -608,7 +608,7 @@ def run_tests(args, test_configs, timeline):
                         if testtype == "assertresults":
                             assertresults_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         enctime = time.perf_counter() - t1
-                        print("\t\t took: %.2f seconds. " %  enctime)
+                        print(f"\t\t took: {enctime.2f} seconds. ")
 
             # Update dict of references
             references.update(results)
