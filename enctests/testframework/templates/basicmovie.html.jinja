@@ -16,6 +16,8 @@
 
   <img src='{{ config.name }}-vmaf_harmonic_mean.png' /></BR>
   
+  <img src='{{ config.name }}-psnr_y_harmonic_mean.png' /></BR>
+
   Testing with ffmpeg version: {{ testinfo.ffmpeg_version}}
 
   {% for media_name, test in tests.items() %}
@@ -28,7 +30,7 @@
   <TR>
     <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
   </TR>
-  <TR>ß
+  <TR>
     <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
   </TR>
   <TR>
@@ -38,21 +40,27 @@
 <table border=1>
    <TR>
    <TH>Test Name</TH>
+   <TH>Test</TH>
    <TH>Encode Duration</TH>
    <TH>File Size</TH>
    <TH>VMAF Harmonic Mean</TH>
-   <TH>Mean</TH>
-   <TH>Min</TH>
+   <TH>VMAF Min</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>PSNR-CR Harmonic Mean</TH>
+   <TH>PSNR-CB Harmonic Mean</TH>
    <TH>Encode Arguments</TH>
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH>{{ enc_info.name|e }}</TH>
+     <TH><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</a></TH>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.basename  }}.-{{ enc_info.name|e }}_tests.log">Result - {{ enc_info.testresult }}</A> </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ enc_info.filesize}} </TD>
-        <TD align=right>{{enc_info.vmaf.harmonic_mean |e }}</TD>
-        <TD align=right>{{enc_info.vmaf.mean |e }}</TD>
-        <TD align=right>{{enc_info.vmaf.min |e }}</TD>
+        <TD align=right>{{enc_info.vmaf_harmonic_mean |e }}</TD>
+        <TD align=right>{{enc_info.vmaf_min |e }}</TD>
+         <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_cr.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_cb.harmonic_mean |e }}</TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
   {% endfor %}
@@ -79,21 +87,18 @@
 <table border=1>
    <TR>
    <TH>Test Name</TH>
-   <TH>PNG</TH>
    <TH>movie</TH>
    <TH>Encode Arguments</TH>
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH>{{ enc_info.name|e }}</TH>
-        <td align=right><img src="{{ test.default_media.name_prefix}}-{{ enc_info.name|e }}{{test.default_media.name_suffix }}"/> </TD>
+    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
         <td align=right><video width="500px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
-  {% endfor %}ß
+  {% endfor %}
 </TABLE>
   {% endfor %}
-video {videohtml} ><source src='{video}' type='video/mp4'></video>
 
 </body>
 </html>
