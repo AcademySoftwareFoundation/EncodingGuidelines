@@ -8,6 +8,7 @@ import pyseq
 import shlex
 import argparse
 import subprocess
+import platform
 
 from pathlib import Path
 
@@ -587,6 +588,15 @@ def run_tests(args, test_configs, timeline):
             # Compare results against source
             source_path, _ = get_source_path(source_clip)
             for test_name, test_ref in results.items():
+                # Lets add some machine stats.
+                enc_meta = get_test_metadata_dict(test_ref)
+                enc_meta['host_config'] = {
+                    'os': platform.system(),
+                    'os_version': platform.release(),
+                    'arch': platform.architecture(),
+                    'processor': platform.processor(),
+                    'hostname': platform.node(),
+                }
                 distorted = Path(test_ref.target_url)
                 print(f"Testing: {distorted.name}")
                 # Send all the log output of the tests to a separate log file.
@@ -608,7 +618,7 @@ def run_tests(args, test_configs, timeline):
                         if testtype == "assertresults":
                             assertresults_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         enctime = time.perf_counter() - t1
-                        print(f"\t\t took: {enctime.2f} seconds. ")
+                        print(f"\t\t took: {enctime:.2f} seconds. ")
 
             # Update dict of references
             references.update(results)
