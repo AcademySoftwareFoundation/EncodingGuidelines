@@ -305,10 +305,10 @@ model=path={vmaf_model}\" \
     else:
         env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
-    if os.path.exists("compare_log.json"):
+    compare_log = Path("compare_log.json")
+    if compare_log.exists():
         # Make sure we remove the old one, so that we know one is generated.
-        os.remove("compare_log.json")
-
+        compare_log.unlink()
     process = subprocess.Popen(
             shlex.split(cmd),
             stdout=log_file_object,
@@ -316,10 +316,8 @@ model=path={vmaf_model}\" \
             universal_newlines=True,
             env=env
         )
-
     process.wait()
-
-    if not os.path.exists('compare_log.json'):
+    if not compare_log.exists():
         results = {'result': 'Failed to run'}
         enc_meta = get_test_metadata_dict(test_ref)
         enc_meta['results'].update(results)
@@ -327,7 +325,7 @@ model=path={vmaf_model}\" \
         print("Failed to generate compare_log.json", file=log_file_object)
         return
     
-    with open(f'compare_log.json', 'rb') as f:
+    with compare_log.open(mode='rb') as f:
         raw_results = json.load(f)
 
     results = {
@@ -374,10 +372,10 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     # Allow a different image to be compared with, useful for 422 or 420 encoding.
     sourcepng = comparisontestinfo.get("compare_image", source_path.as_posix())
 
-    distortedpng = Path(distorted.parent, distorted.stem + ".png")
-    diffpng = Path(distorted.parent, distorted.stem + "-x20diff.png")
+    distortedpng = Path(distorted.parent, distorted.stem).with_suffix(".png")
+    diffpng = Path(distorted.parent, distorted.stem + "-x20diff").with_suffix(".png")
 
-    if not os.path.exists(distorted):
+    if not distorted.exists():
             result = {'success': False,
               'testresult': "No movie generated."
             }
@@ -592,7 +590,7 @@ def run_tests(args, test_configs, timeline):
                 distorted = Path(test_ref.target_url)
                 print("Testing:", distorted.name)
                 # Send all the log output of the tests to a separate log file.
-                log_file = Path(distorted.parent, distorted.stem+"_tests.log")
+                log_file = Path(distorted.parent, distorted.stem+"_tests").with_suffix(".log")
 
                 with open(log_file, "w") as log_file_object:
                     for test in comparisontests:

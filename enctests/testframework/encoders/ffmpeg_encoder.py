@@ -50,8 +50,10 @@ class FFmpegEncoder(ABCTestEncoder):
             test_name = f"{self.test_config.get('name')}-{wedge_name}"
             out_file = self.get_output_filename(test_name)
 
-            if os.path.exists(out_file):
-                os.remove(out_file) # Remove it, so if the new run fails to create anything we are not accidently using the old one.
+            # Remove it, so if the new run fails to create anything 
+            # we are not accidently using the old one.
+            if out_file.exists():
+                out_file.unlink()
 
             cmd = self.prep_encoding_command(wedge, out_file)
 
@@ -68,7 +70,7 @@ class FFmpegEncoder(ABCTestEncoder):
             # Time encoding process
             t1 = time.perf_counter()
             # Do the encoding
-            log_file = Path(out_file.parent, out_file.stem+".log")
+            log_file = Path(out_file.parent, out_file.stem).with_suffix(".log")
             with open(log_file, "w") as log_file_object:
                 print('ffmpeg command:', cmd, file=log_file_object)
                 log_file_object.flush()
