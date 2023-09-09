@@ -46,6 +46,8 @@ TODO - Provide some examples of speed improvement, as well as a sample command l
 
 ## ffmpeg help
 
+If you find the below to be too terse, [ffimprovisr](https://amiaopensource.github.io/ffmprovisr/) is a great resource to find more friendly descriptions/examples of common ffmpeg use-cases.
+
 | | |
 | ffmpeg -codecs | list all codecs (encoders and decoders) |
 | ffmpeg -encoders | list just encoders | 
