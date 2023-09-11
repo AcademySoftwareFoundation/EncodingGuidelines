@@ -86,7 +86,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
             # Store timing
             enctime = time.perf_counter() - t1
-            print("\t took: {enctime:.2f} seconds. ")
+            print(f"\t took: {enctime:.2f} seconds. ")
             # !! Use this function from utils to create a media reference
             # of output the file.
             mr = create_media_reference(out_file, self.source_clip)

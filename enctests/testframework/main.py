@@ -607,7 +607,7 @@ def run_tests(args, test_configs, timeline):
                         t1 = time.perf_counter()
 
                         testtype = test.get("testtype", "vmaf")
-                        print("\t ", testtype)
+                        print(f"\t {testtype}")
                         print("######################", file=log_file_object)
                         print(f"Test: {testtype}", file=log_file_object)
 
