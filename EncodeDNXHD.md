@@ -100,6 +100,12 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 
  See [https://johnwarburton.net/blog/?p=50731](https://johnwarburton.net/blog/?p=50731)
 
+## AAF Creation
+
+If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) is an example of using OTIO and pyaaf2 to create a AAF file from an OTIO file.
+
+Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesnt require any media transcoding).
+
 ## DNxHD Profiles
 
 For example below is an example of DNxHD at 175Mbps at yuv422p10 at resolution 1920x1080.
@@ -128,7 +134,7 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 Other combinations of resolution, bitrate and format are:
 
 | Resolution | Bit Rate | Pix Format | Frame Rates |
-|:----------|:-----------|:-----------|:-----------|
+|:----------|-----------:|:-----------|:-----------|
 | 1920x1080p|  175M  |  yuv422p10 | 23.98, 24 |
 | 1920x1080p|  185M  |  yuv422p10 | 25 |
 | 1920x1080p|  365M  |  yuv422p10 | 50 |
