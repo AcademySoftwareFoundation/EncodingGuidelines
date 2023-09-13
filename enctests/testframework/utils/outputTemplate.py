@@ -86,10 +86,13 @@ def processTemplate(test_configs, otio_info):
             merge_test_info['vmaf_min'] = float(merge_test_info['vmaf']['min'])
             merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
             merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
+            merge_test_info['psnr_y_harmonic_mean'] = float(merge_test_info['psnr_y']['harmonic_mean'])
           else:
             merge_test_info['psnr_y'] = {}
             merge_test_info['psnr_cr'] = {}
             merge_test_info['psnr_cb'] = {}
+            merge_test_info['vmaf_harmonic_mean'] = -1
+            merge_test_info['psnr_y_harmonic_mean'] = -1
 
           merge_test_info['filesize'] = merge_test_info['filesize']
 
