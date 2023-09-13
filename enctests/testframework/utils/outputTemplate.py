@@ -15,12 +15,23 @@ def _exportGraph(reportconfig, graph, alltests):
   :param graph: The specific graph to output.
   :param alltest: The raw test data to use.
   """
-  df = pd.DataFrame(alltests)
-  df = df.sort_values(by=graph.get("sortby", "name"))
-  if graph.get("type", "line") == "bar":
-    fig = px.bar(df, **graph.get("args")) 
+  graphargs = graph.get("args")
+
+  if "colororder" in graphargs:
+    colororder = graphargs.get("colororder")
+    del graphargs['colororder']
+    for d in alltests:
+      d['colororder'] = colororder.index(d[graphargs['color']])
+    df = pd.DataFrame(alltests)
+    df = df.sort_values(by='colororder')
   else:
-    fig = px.line(df, **graph.get("args")) 
+    df = pd.DataFrame(alltests)
+    # This sorts the filenames.
+    df = df.sort_values(by=graph.get("sortby", "name"))
+  if graph.get("type", "line") == "bar":
+    fig = px.bar(df, **graphargs) 
+  else:
+    fig = px.line(df, **graphargs) 
 
   filename = reportconfig['name']+"-"+graph.get("name")
   if "directory" in reportconfig:
