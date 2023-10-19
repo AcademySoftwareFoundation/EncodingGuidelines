@@ -19,8 +19,7 @@ def _exportGraph(reportconfig, graph, alltests):
   graphargs = graph.get("args")
 
   if "colororder" in graphargs:
-    colororder = graphargs.get("colororder")
-    del graphargs['colororder']
+    colororder = graphargs.pop("colororder")
     for d in alltests:
       d['colororder'] = colororder.index(d[graphargs['color']])
     df = pd.DataFrame(alltests)
