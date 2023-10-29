@@ -334,7 +334,7 @@ model=path={vmaf_model}\" \
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
         'psnr': raw_results['pooled_metrics'].get('psnr'),   # FFmpeg < 5.1
-        'result': "Completed"
+        'testresult': "Completed"
     }
 
     # TODO Do this as a pretty print.
