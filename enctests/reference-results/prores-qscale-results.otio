@@ -1,0 +1,2009 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {},
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_6.0",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_prores_quality"
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 0
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:19:56.942239+00:00",
+                                            "encode_time": 5.9419,
+                                            "filesize": 193796773,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 56.914593,
+                                                "max": 57.397004,
+                                                "mean": 56.915194,
+                                                "min": 56.591451
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 55.086882,
+                                                "max": 55.603915,
+                                                "mean": 55.087731,
+                                                "min": 54.71263
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 53.896243,
+                                                "max": 54.351607,
+                                                "mean": 53.897181,
+                                                "min": 53.496038
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.90846,
+                                                "max": 100.0,
+                                                "mean": 99.909684,
+                                                "min": 95.813188
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 2
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:00.066197+00:00",
+                                            "encode_time": 3.1222,
+                                            "filesize": 251268930,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 61.03442,
+                                                "max": 61.105991,
+                                                "mean": 61.034434,
+                                                "min": 60.972028
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.04348,
+                                                "max": 60.12326,
+                                                "mean": 60.043501,
+                                                "min": 59.967125
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 59.478746,
+                                                "max": 59.542455,
+                                                "mean": 59.478756,
+                                                "min": 59.436079
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.984066,
+                                                "max": 100.0,
+                                                "mean": 99.984551,
+                                                "min": 96.910117
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 4
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:02.973455+00:00",
+                                            "encode_time": 2.9056,
+                                            "filesize": 141447620,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 57.200739,
+                                                "max": 57.348538,
+                                                "mean": 57.200802,
+                                                "min": 57.070069
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 55.57724,
+                                                "max": 55.728532,
+                                                "mean": 55.577311,
+                                                "min": 55.444641
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 54.593154,
+                                                "max": 54.718121,
+                                                "mean": 54.593212,
+                                                "min": 54.493574
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.977554,
+                                                "max": 100.0,
+                                                "mean": 99.978262,
+                                                "min": 96.293637
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 6
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:05.717843+00:00",
+                                            "encode_time": 2.7417,
+                                            "filesize": 97781195,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 55.475119,
+                                                "max": 55.686759,
+                                                "mean": 55.475246,
+                                                "min": 55.294705
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 53.422844,
+                                                "max": 53.636398,
+                                                "mean": 53.422979,
+                                                "min": 53.235017
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 52.145002,
+                                                "max": 52.326845,
+                                                "mean": 52.145142,
+                                                "min": 51.998149
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.907207,
+                                                "max": 100.0,
+                                                "mean": 99.908466,
+                                                "min": 95.69166
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": "08"
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:08.534423+00:00",
+                                            "encode_time": 2.8152,
+                                            "filesize": 76437653,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 54.415985,
+                                                "max": 54.673822,
+                                                "mean": 54.41618,
+                                                "min": 54.191869
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 52.148835,
+                                                "max": 52.411809,
+                                                "mean": 52.149035,
+                                                "min": 51.918036
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 50.565576,
+                                                "max": 50.77583,
+                                                "mean": 50.565806,
+                                                "min": 50.376599
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.747219,
+                                                "max": 100.0,
+                                                "mean": 99.750134,
+                                                "min": 95.073549
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 10
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:11.757926+00:00",
+                                            "encode_time": 3.2222,
+                                            "filesize": 63591441,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 53.572205,
+                                                "max": 53.825142,
+                                                "mean": 53.572405,
+                                                "min": 53.35184
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 51.213269,
+                                                "max": 51.508921,
+                                                "mean": 51.213512,
+                                                "min": 50.9657
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 49.304513,
+                                                "max": 49.56555,
+                                                "mean": 49.304814,
+                                                "min": 49.085096
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.487168,
+                                                "max": 100.0,
+                                                "mean": 99.493005,
+                                                "min": 94.489546
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 12
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:14.308714+00:00",
+                                            "encode_time": 2.5498,
+                                            "filesize": 54780632,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.895742,
+                                                "max": 53.178256,
+                                                "mean": 52.895965,
+                                                "min": 52.665476
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.460301,
+                                                "max": 50.785344,
+                                                "mean": 50.460586,
+                                                "min": 50.190769
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.269404,
+                                                "max": 48.560461,
+                                                "mean": 48.269764,
+                                                "min": 48.027386
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.157905,
+                                                "max": 100.0,
+                                                "mean": 99.168121,
+                                                "min": 93.893794
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 14
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:20:16.673273+00:00",
+                                            "encode_time": 2.3634,
+                                            "filesize": 48275960,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.288376,
+                                                "max": 52.589091,
+                                                "mean": 52.288651,
+                                                "min": 52.039458
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.923914,
+                                                "max": 50.269047,
+                                                "mean": 49.924224,
+                                                "min": 49.645464
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.440469,
+                                                "max": 47.759413,
+                                                "mean": 47.440869,
+                                                "min": 47.190281
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.755489,
+                                                "max": 100.0,
+                                                "mean": 98.771175,
+                                                "min": 93.278397
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 16
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:19:50.989864+00:00",
+                                            "encode_time": 2.5087,
+                                            "filesize": 43260996,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.737877,
+                                                "max": 52.047972,
+                                                "mean": 51.738177,
+                                                "min": 51.498214
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.466185,
+                                                "max": 49.837304,
+                                                "mean": 49.466521,
+                                                "min": 49.17944
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.727057,
+                                                "max": 47.067098,
+                                                "mean": 46.727489,
+                                                "min": 46.471386
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.262804,
+                                                "max": 100.0,
+                                                "mean": 98.283297,
+                                                "min": 92.63724
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_cars_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_prores_quality"
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 0
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:35.674245+00:00",
+                                            "encode_time": 4.8519,
+                                            "filesize": 194111552,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 57.448871,
+                                                "max": 59.643633,
+                                                "mean": 57.465844,
+                                                "min": 55.465907
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 56.816811,
+                                                "max": 59.045553,
+                                                "mean": 56.834866,
+                                                "min": 54.76152
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 55.614567,
+                                                "max": 57.756918,
+                                                "mean": 55.629997,
+                                                "min": 53.763137
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980491,
+                                                "max": 100.0,
+                                                "mean": 99.981213,
+                                                "min": 96.242692
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 2
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:38.463709+00:00",
+                                            "encode_time": 2.788,
+                                            "filesize": 246389929,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 61.146081,
+                                                "max": 61.345163,
+                                                "mean": 61.146309,
+                                                "min": 60.89732
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.642425,
+                                                "max": 60.908407,
+                                                "mean": 60.642704,
+                                                "min": 60.324785
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 59.549761,
+                                                "max": 59.643008,
+                                                "mean": 59.549796,
+                                                "min": 59.439972
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.983986,
+                                                "max": 100.0,
+                                                "mean": 99.984476,
+                                                "min": 96.895101
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 4
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:41.129799+00:00",
+                                            "encode_time": 2.6611,
+                                            "filesize": 141841473,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 57.054303,
+                                                "max": 57.519695,
+                                                "mean": 57.055644,
+                                                "min": 56.544198
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 56.371094,
+                                                "max": 56.886825,
+                                                "mean": 56.372388,
+                                                "min": 55.785406
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 54.791985,
+                                                "max": 55.062522,
+                                                "mean": 54.792288,
+                                                "min": 54.502164
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980696,
+                                                "max": 100.0,
+                                                "mean": 99.981404,
+                                                "min": 96.280704
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 6
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:43.603225+00:00",
+                                            "encode_time": 2.472,
+                                            "filesize": 99614570,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 54.899995,
+                                                "max": 55.632066,
+                                                "mean": 54.902918,
+                                                "min": 54.20258
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 54.146302,
+                                                "max": 54.890645,
+                                                "mean": 54.149056,
+                                                "min": 53.367845
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 52.482199,
+                                                "max": 52.981439,
+                                                "mean": 52.483239,
+                                                "min": 51.984882
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.971753,
+                                                "max": 100.0,
+                                                "mean": 99.972751,
+                                                "min": 95.656821
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": "08"
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:46.007291+00:00",
+                                            "encode_time": 2.403,
+                                            "filesize": 79009564,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 53.443988,
+                                                "max": 54.367073,
+                                                "mean": 53.448282,
+                                                "min": 52.611268
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 52.689468,
+                                                "max": 53.61118,
+                                                "mean": 52.693964,
+                                                "min": 51.748748
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 51.006902,
+                                                "max": 51.706734,
+                                                "mean": 51.009017,
+                                                "min": 50.33503
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.950353,
+                                                "max": 100.0,
+                                                "mean": 99.951831,
+                                                "min": 95.030274
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 10
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:48.397277+00:00",
+                                            "encode_time": 2.3889,
+                                            "filesize": 66647224,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.301541,
+                                                "max": 53.367669,
+                                                "mean": 52.307015,
+                                                "min": 51.361256
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 51.563603,
+                                                "max": 52.612865,
+                                                "mean": 51.569084,
+                                                "min": 50.547369
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 49.855958,
+                                                "max": 50.685362,
+                                                "mean": 49.858976,
+                                                "min": 49.076165
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.895757,
+                                                "max": 100.0,
+                                                "mean": 99.898101,
+                                                "min": 94.411676
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 12
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:50.793678+00:00",
+                                            "encode_time": 2.3951,
+                                            "filesize": 58129897,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.375221,
+                                                "max": 52.536319,
+                                                "mean": 51.381742,
+                                                "min": 50.370215
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.663024,
+                                                "max": 51.809755,
+                                                "mean": 50.669278,
+                                                "min": 49.592828
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.898825,
+                                                "max": 49.825868,
+                                                "mean": 48.902623,
+                                                "min": 48.040814
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.773547,
+                                                "max": 100.0,
+                                                "mean": 99.777526,
+                                                "min": 93.856448
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 14
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:53.151767+00:00",
+                                            "encode_time": 2.3571,
+                                            "filesize": 51770732,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.582149,
+                                                "max": 51.764255,
+                                                "mean": 50.588963,
+                                                "min": 49.557504
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.918701,
+                                                "max": 51.124234,
+                                                "mean": 49.926037,
+                                                "min": 48.791737
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.093781,
+                                                "max": 49.10566,
+                                                "mean": 48.098371,
+                                                "min": 47.177265
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.527647,
+                                                "max": 100.0,
+                                                "mean": 99.534554,
+                                                "min": 93.205706
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 16
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:27:30.821166+00:00",
+                                            "encode_time": 2.4855,
+                                            "filesize": 46808367,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.909571,
+                                                "max": 51.1165,
+                                                "mean": 49.916732,
+                                                "min": 48.856688
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.279098,
+                                                "max": 50.530629,
+                                                "mean": 49.287311,
+                                                "min": 48.107387
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.394228,
+                                                "max": 48.485185,
+                                                "mean": 47.399573,
+                                                "min": 46.424453
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.22132,
+                                                "max": 100.0,
+                                                "mean": 99.232794,
+                                                "min": 92.553862
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_coaster_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_prores_quality"
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_quality-qscale_00": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 0
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:19.760034+00:00",
+                                            "encode_time": 5.3962,
+                                            "filesize": 194508895,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 54.807018,
+                                                "max": 55.572592,
+                                                "mean": 54.810234,
+                                                "min": 53.75611
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 53.21075,
+                                                "max": 54.096877,
+                                                "mean": 53.216895,
+                                                "min": 51.611177
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 51.30232,
+                                                "max": 52.375271,
+                                                "mean": 51.311156,
+                                                "min": 49.442245
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976628,
+                                                "max": 100.0,
+                                                "mean": 99.977657,
+                                                "min": 95.531456
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_00.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_00.mov"
+                            },
+                            "test_prores_quality-qscale_02": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 2
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:22.837126+00:00",
+                                            "encode_time": 3.0759,
+                                            "filesize": 340246117,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.695337,
+                                                "max": 60.755676,
+                                                "mean": 60.695355,
+                                                "min": 60.603514
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 59.981433,
+                                                "max": 60.076381,
+                                                "mean": 59.981513,
+                                                "min": 59.770267
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 59.153071,
+                                                "max": 59.240549,
+                                                "mean": 59.153114,
+                                                "min": 59.022981
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.9835,
+                                                "max": 100.0,
+                                                "mean": 99.984019,
+                                                "min": 96.803883
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_02.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_02.mov"
+                            },
+                            "test_prores_quality-qscale_04": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 4
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:25.857574+00:00",
+                                            "encode_time": 3.0192,
+                                            "filesize": 219978008,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 56.358338,
+                                                "max": 56.437599,
+                                                "mean": 56.358384,
+                                                "min": 56.219009
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 55.256115,
+                                                "max": 55.43295,
+                                                "mean": 55.256388,
+                                                "min": 54.881004
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 53.808586,
+                                                "max": 54.02311,
+                                                "mean": 53.808862,
+                                                "min": 53.503676
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.979532,
+                                                "max": 100.0,
+                                                "mean": 99.980325,
+                                                "min": 96.065026
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_04.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_04.mov"
+                            },
+                            "test_prores_quality-qscale_06": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 6
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:28.549205+00:00",
+                                            "encode_time": 2.6905,
+                                            "filesize": 163994119,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 54.189433,
+                                                "max": 54.336614,
+                                                "mean": 54.189528,
+                                                "min": 54.004728
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 52.791324,
+                                                "max": 53.047648,
+                                                "mean": 52.791811,
+                                                "min": 52.320199
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 50.917149,
+                                                "max": 51.240461,
+                                                "mean": 50.917801,
+                                                "min": 50.46128
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.975429,
+                                                "max": 100.0,
+                                                "mean": 99.976563,
+                                                "min": 95.312689
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_06.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_06.mov"
+                            },
+                            "test_prores_quality-qscale_08": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": "08"
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:31.033291+00:00",
+                                            "encode_time": 2.4831,
+                                            "filesize": 131514642,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.85789,
+                                                "max": 53.064907,
+                                                "mean": 52.858059,
+                                                "min": 52.650299
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 51.226337,
+                                                "max": 51.540952,
+                                                "mean": 51.227039,
+                                                "min": 50.69053
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.963588,
+                                                "max": 49.378534,
+                                                "mean": 48.964648,
+                                                "min": 48.394972
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.971369,
+                                                "max": 100.0,
+                                                "mean": 99.972898,
+                                                "min": 94.579523
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_08.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_08.mov"
+                            },
+                            "test_prores_quality-qscale_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 10
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:33.659021+00:00",
+                                            "encode_time": 2.6247,
+                                            "filesize": 110313533,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.917642,
+                                                "max": 52.180026,
+                                                "mean": 51.917896,
+                                                "min": 51.689526
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.144825,
+                                                "max": 50.507075,
+                                                "mean": 50.145719,
+                                                "min": 49.57051
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.490175,
+                                                "max": 47.96167,
+                                                "mean": 47.491594,
+                                                "min": 46.839622
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.967111,
+                                                "max": 100.0,
+                                                "mean": 99.969113,
+                                                "min": 93.82257
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_10.mov"
+                            },
+                            "test_prores_quality-qscale_12": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 12
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:36.220855+00:00",
+                                            "encode_time": 2.5608,
+                                            "filesize": 95316512,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.211829,
+                                                "max": 51.500367,
+                                                "mean": 51.212146,
+                                                "min": 50.956441
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.360255,
+                                                "max": 49.768728,
+                                                "mean": 49.361317,
+                                                "min": 48.764577
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.300549,
+                                                "max": 46.805408,
+                                                "mean": 46.302249,
+                                                "min": 45.601411
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.96275,
+                                                "max": 100.0,
+                                                "mean": 99.965297,
+                                                "min": 93.059397
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_12.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_12.mov"
+                            },
+                            "test_prores_quality-qscale_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 14
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:38.780487+00:00",
+                                            "encode_time": 2.5585,
+                                            "filesize": 84116117,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.676938,
+                                                "max": 51.003678,
+                                                "mean": 50.677336,
+                                                "min": 50.400994
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.745173,
+                                                "max": 49.176061,
+                                                "mean": 48.746324,
+                                                "min": 48.141916
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.313929,
+                                                "max": 45.85054,
+                                                "mean": 45.315876,
+                                                "min": 44.565702
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.958655,
+                                                "max": 100.0,
+                                                "mean": 99.961769,
+                                                "min": 92.353833
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_14.mov"
+                            },
+                            "test_prores_quality-qscale_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of prores_quality",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": 3,
+                                            "-qscale:v": 16
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-15T13:35:14.362566+00:00",
+                                            "encode_time": 2.5231,
+                                            "filesize": 75413318,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.238229,
+                                                "max": 50.576859,
+                                                "mean": 50.238677,
+                                                "min": 49.950841
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.246693,
+                                                "max": 48.696933,
+                                                "mean": 48.247935,
+                                                "min": 47.640684
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.465731,
+                                                "max": 45.018903,
+                                                "mean": 44.467883,
+                                                "min": 43.68208
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.954373,
+                                                "max": 100.0,
+                                                "mean": 99.958136,
+                                                "min": 91.627247
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/prores_qscale_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_prores_quality-qscale_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/prores-qscale-encode/chimera_fountains_srgb.-test_prores_quality-qscale_16.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}
