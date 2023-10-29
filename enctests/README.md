@@ -58,7 +58,7 @@ python -m testframework.main --prep-sources --source-folder /path/to/source_medi
 sintel_trailer_2k_%04d.png.yml
 ```yaml
 images: true
-path: /path/to/sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%04d.png
+path: sintel_trailer_2k_%04d.png
 width: 1920
 height: 1080
 in: 600
