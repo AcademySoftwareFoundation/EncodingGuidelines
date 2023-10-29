@@ -86,7 +86,7 @@
   {% for enc_info in test.results %}
     <TR>
     <TH>{{ enc_info.name|e }}</TH>
-        <td align=right><img width='500px' src="{{ test.default_media.name_prefix}}-{{ enc_info.name|e }}{{test.default_media.name_suffix }}"/> </TD>
+        <td align=right><img width='500px' src="{{ test.default_media.name_prefix}}.-{{ enc_info.name|e }}{{test.default_media.name_suffix }}"/> </TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
   {% endfor %}
