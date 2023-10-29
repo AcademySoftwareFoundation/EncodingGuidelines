@@ -12,11 +12,11 @@ VP9 is an open-source and royalty free codec developed by the [Alliance for Open
 General ffmpeg info on VP9 is [here](https://trac.ffmpeg.org/wiki/Encode/VP9), and on the encoder in general [https://developers.google.com/media/vp9/hdr-encoding](https://developers.google.com/media/vp9/hdr-encoding).
 
 VP9 has browser support in:
-   * Chrome
-   * Edge
-   * Firefox
-   * Opera
-   * Safari.
+   * Chrome - works on all configurations.
+   * Edge - works on all configurations.
+   * Firefox - works for 8-bit and 10-bit but fails with 12-bit.
+   * Opera - works on all configurations.
+   * Safari - works for 8-bit and 10-bit but fails on 10-bit 444 and 12-bit RGB.
 
 VP9 is supported by mp4 and webm containers, no support exists for mov.
 
