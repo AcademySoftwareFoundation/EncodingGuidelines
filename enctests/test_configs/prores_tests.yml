@@ -1,6 +1,6 @@
 test_prores:
-    name: test_prores_quality
-    description: variations of prores_quality
+    name: test_prores_profiles
+    description: variations of prores profiles
     app: ffmpeg
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
@@ -9,83 +9,74 @@ test_prores:
     - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     wedges:
-        qscale_16: &base_args
+        proxy: &base_args
             -c:v: prores_ks
-            -profile:v: 3
-            -qscale:v: 16
+            -profile:v: proxy
+            -qscale:v: 10
             -pix_fmt: yuv422p10le
             -color_range: tv
             -colorspace: bt709
             -color_primaries: bt709
             -color_trc: iec61966-2-1 
 
+        lt:
+            << : *base_args
+            -profile:v: lt
 
-        qscale_00:
+        standard:
             << : *base_args
-            -qscale:v: 0
+            -profile:v: standard
 
-        qscale_02:
+        hq:
             << : *base_args
-            -qscale:v: 2
-            
-        qscale_04:
-            << : *base_args
-            -qscale:v: 4
+            -profile:v: hq
 
-        qscale_06:
+        4444:
             << : *base_args
-            -qscale:v: 6
+            -profile:v: 4444  
+            -pix_fmt: yuv444p10le  
 
-        qscale_08:
+        4444xq:
             << : *base_args
-            -qscale:v: 08
-
-        qscale_10:
-            << : *base_args
-            -qscale:v: 10
-
-        qscale_12:
-            << : *base_args
-            -qscale:v: 12
-
-        qscale_14:
-            << : *base_args
-            -qscale:v: 14
-
-        qscale_14:
-            << : *base_args
-            -qscale:v: 14
+            -profile:v: 4444xq   
+            -pix_fmt: yuv444p10le  
 
 ---
 
 reports:
     graphs:
     - args:
-        color: media
+        color: -profile:v
+        colororder: ['proxy', 'lt', 'standard', 'hq', 4444, '4444xq', '4444-alpha', '4444xq-alpha']
         height: 400
-        x: -qscale:v
+        barmode: group
+        x: media
         y: vmaf_harmonic_mean
-        markers: True
+        range_y:  
+            - 90
+            - 100
       name: vmaf_harmonic_mean.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: -profile:v
+        colororder: ['proxy', 'lt', 'standard', 'hq', 4444, '4444xq', '4444-alpha', '4444xq-alpha']
         height: 400
-        x: -qscale:v
+        x: media
+        barmode: group
         y: encode_time
-        markers: True
       name: encode_time.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: -profile:v
+        colororder: ['proxy', 'lt', 'standard', 'hq', 4444, '4444xq', '4444-alpha', '4444xq-alpha']
         height: 400
-        x: -qscale:v
+        x: media
+        barmode: group
         y: filesize
-        markers: True
       name: filesize.png
-      sortby: name
+      type: bar
     name: prores-test
-    title: Prores quality comparison.
-    description: This is a comparison of different quality settings for the prores_ks encoder.
+    title: Prores profile comparison.
+    description: This is a comparison of different profiles for the prores_ks encoder, with a fixed qscale of 10.
     directory: prores-encode
     templatefile: basic.html.jinja
