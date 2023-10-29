@@ -48,7 +48,6 @@ You can see the default ffmpeg conversion introduces a dramatic colorshift that 
 	2. [Color Range](ColorPreservation.html#range)
 8. [Web Review](ColorPreservation.html#webreview)
 
-
 ### Acknowledgements  <a name="Acknowledgements"></a>
 
 This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
