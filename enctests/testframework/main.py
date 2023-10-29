@@ -55,6 +55,8 @@ VMAF_LIB_DIR = os.getenv(
     f'{os.path.dirname(__file__)}/../.venv/usr/local/lib/x86_64-linux-gnu'
 )
 
+if not Path(VMAF_LIB_DIR, "model", "vmaf_v0.6.1.json").exists():
+    print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_LIB_DIR}")
 
 def parse_args():
     parser = argparse.ArgumentParser()
