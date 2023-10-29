@@ -11,7 +11,6 @@ if not os.path.exists(rootpath):
 	os.makedirs(rootpath)
 
 source_image = os.path.join("..", "sourceimages", "chip-chart-1080-noicc.png")
-source_image = 'I:/jobs/W/EC/FW/ENER/saus01w/shots/GAL_5000/vfx/cmp/_ren/GAL_5000_vfx_cmp_main_output_v013/3840x3840_sRGB_png/saus01w_GAL_5000_vfx_cmp_main_output_v013_sRGB.89900.png'
 shutil.copyfile(source_image, os.path.join(rootpath, os.path.basename(source_image)))
 
 
@@ -54,19 +53,13 @@ for proc in processes:
     if proc['color_range'] == "2":
         proc['out_range'] = "full"
     if 'ffmpeg_extract' not in proc:
-<<<<<<< Updated upstream
-        proc['ffmpeg_extract'] = ' -compression_level 10 -pred mixed -pix_fmt rgb24 -sws_flags spline+accurate_rnd+full_chroma_int'
-    proc['video'] = '{id}.mp4'.format(**proc)
-    cmd = 'ffmpeg -y -i  {source_image} {conv} -c:v libx264  -preset placebo -qp {qp} -x264-params "keyint=15:no-deblock=1"  -pix_fmt {pix_fmt} -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 {rootpath}/{id}.mp4'.format(**proc)
-=======
         proc['ffmpeg_extract'] = ' -compression_level 10 -pred mixed -pix_fmt rgba64be -sws_flags spline+accurate_rnd+full_chroma_int'
-    proc['video'] = '{id}.mov'.format(**proc)
+    proc['video'] = '{id}.mp4'.format(**proc)
     cmd = 'ffmpeg -y -r 1 -i {source_image} {conv} -c:v libx264  -preset placebo -qp {qp} -x264-params "keyint=15:no-deblock=1"  -pix_fmt {pix_fmt} -qscale:v 1  -color_range {color_range} -colorspace 1 -color_primaries 1 -color_trc 13 {rootpath}/{id}.mp4'.format(**proc)
-    cmd = 'ffmpeg -y -r 1 -i {source_image} -c:v prores_ks -profile:v 3 -qscale:v 1  {conv}  -pix_fmt {pix_fmt} {rootpath}/{id}.mov'.format(**proc)
+    # cmd = 'ffmpeg -y -r 1 -i {source_image} -c:v prores_ks -profile:v 3 -qscale:v 1  {conv}  -pix_fmt {pix_fmt} {rootpath}/{id}.mov'.format(**proc)
     #1w_GAL_5000_vfx_cmp_colorSpaceTestsam_colorTestAceshprores_p003.3_sRGB.mov']
     # ('Running:', 'ffmpeg -threads auto -y -r 60 -start_number 89900 -framerate 60 -i {source_image} -vframes 1 -c:v prores_ks -profile:v 3 -qscale:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le -metadata title=saus01w_GAL_5000_vfx_cmp_colorSpaceTestsam_colorTestAceshprores_p003.3_sRGB.mov I:/jobs/W/EC/FW/ENER/saus01w/shots/GAL_5000/vfx/_pub/cmp/_enc/saus01w_GAL_5000_vfx_cmp_colorSpaceTestsam_colorTestAceshprores_p003.3_sRGB.mov'
     
->>>>>>> Stashed changes
     os.system(cmd)
     proc['cmd'] = cmd
     listimages.append(proc)
@@ -87,7 +80,7 @@ for proc in processes:
         output = subprocess.check_output(oiiocmd, shell=True)
     except Exception as e:
         output = str(e.output) + "ERROR!"
-    output = str(oiiocmd)+"\n"+str(output) #.replace("\\n", "<BR/>")
+    output = str(oiiocmd)+"\n"+str(output).replace("\\n", "<BR/>")
     proc['cmd'] = "<h3>ffmpeg flags to add: %s</H3><p>Full creation commandline:<BR/>%s</p><H3>OIIO idiff output</H3><PRE>%s</PRE>" % (proc['conv'], proc['cmd'], output)
 
 
