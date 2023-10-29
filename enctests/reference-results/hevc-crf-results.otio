@@ -1,0 +1,3013 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {},
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_6.0",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_hevc_crf"
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_hevc_crf-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:15:49.791207+00:00",
+                                            "encode_time": 66.0753,
+                                            "filesize": 14579302,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.878136,
+                                                "max": 50.389916,
+                                                "mean": 49.879442,
+                                                "min": 48.948267
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.551417,
+                                                "max": 50.276626,
+                                                "mean": 49.553417,
+                                                "min": 49.02113
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.569059,
+                                                "max": 49.848565,
+                                                "mean": 48.576817,
+                                                "min": 46.726021
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.928683,
+                                                "max": 100.0,
+                                                "mean": 99.929633,
+                                                "min": 96.56851
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_10.mov"
+                            },
+                            "test_hevc_crf-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:16:47.385717+00:00",
+                                            "encode_time": 57.5955,
+                                            "filesize": 6892636,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.42763,
+                                                "max": 49.82765,
+                                                "mean": 49.428654,
+                                                "min": 48.53646
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.937803,
+                                                "max": 49.374799,
+                                                "mean": 48.938598,
+                                                "min": 48.464878
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.451039,
+                                                "max": 48.558594,
+                                                "mean": 47.456656,
+                                                "min": 45.988779
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.814299,
+                                                "max": 100.0,
+                                                "mean": 99.816446,
+                                                "min": 96.177351
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_14.mov"
+                            },
+                            "test_hevc_crf-slow_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:17:42.496421+00:00",
+                                            "encode_time": 55.1112,
+                                            "filesize": 5033717,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.134776,
+                                                "max": 49.528521,
+                                                "mean": 49.135749,
+                                                "min": 48.289517
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.621419,
+                                                "max": 48.995476,
+                                                "mean": 48.622057,
+                                                "min": 48.140079
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.806355,
+                                                "max": 47.823009,
+                                                "mean": 46.810959,
+                                                "min": 45.523658
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.716645,
+                                                "max": 100.0,
+                                                "mean": 99.719944,
+                                                "min": 95.909683
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_16.mov"
+                            },
+                            "test_hevc_crf-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:18:33.583497+00:00",
+                                            "encode_time": 51.0876,
+                                            "filesize": 3762687,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.839227,
+                                                "max": 49.261036,
+                                                "mean": 48.840247,
+                                                "min": 48.062628
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.237609,
+                                                "max": 48.587969,
+                                                "mean": 48.238173,
+                                                "min": 47.769879
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.081213,
+                                                "max": 46.970411,
+                                                "mean": 46.084863,
+                                                "min": 44.99027
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.547036,
+                                                "max": 100.0,
+                                                "mean": 99.552288,
+                                                "min": 95.607388
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_18.mov"
+                            },
+                            "test_hevc_crf-slow_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:19:23.289387+00:00",
+                                            "encode_time": 49.7066,
+                                            "filesize": 2835941,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.480536,
+                                                "max": 48.922556,
+                                                "mean": 48.481649,
+                                                "min": 47.726071
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.791335,
+                                                "max": 48.130871,
+                                                "mean": 47.791916,
+                                                "min": 47.32599
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.317079,
+                                                "max": 46.123701,
+                                                "mean": 45.319964,
+                                                "min": 44.430777
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.278628,
+                                                "max": 100.0,
+                                                "mean": 99.287707,
+                                                "min": 94.971792
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_20.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_20.mov"
+                            },
+                            "test_hevc_crf-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:20:11.419718+00:00",
+                                            "encode_time": 48.1312,
+                                            "filesize": 2174314,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.80753,
+                                                "max": 48.2637,
+                                                "mean": 47.808575,
+                                                "min": 47.139783
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.238537,
+                                                "max": 47.602763,
+                                                "mean": 47.239204,
+                                                "min": 46.784126
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.505031,
+                                                "max": 45.250231,
+                                                "mean": 44.507353,
+                                                "min": 43.742737
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.791145,
+                                                "max": 100.0,
+                                                "mean": 98.805331,
+                                                "min": 94.120897
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_22.mov"
+                            },
+                            "test_hevc_crf-slow_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:20:58.086752+00:00",
+                                            "encode_time": 46.6678,
+                                            "filesize": 1483980,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.976145,
+                                                "max": 47.447012,
+                                                "mean": 46.977288,
+                                                "min": 46.412185
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.4743,
+                                                "max": 46.95223,
+                                                "mean": 46.475173,
+                                                "min": 46.055484
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.145565,
+                                                "max": 43.810009,
+                                                "mean": 43.147358,
+                                                "min": 42.53842
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 97.297455,
+                                                "max": 100.0,
+                                                "mean": 97.319628,
+                                                "min": 92.592115
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_25.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_25.mov"
+                            },
+                            "test_hevc_crf-slow_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:21:44.025851+00:00",
+                                            "encode_time": 45.9396,
+                                            "filesize": 1021250,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.10122,
+                                                "max": 46.560919,
+                                                "mean": 46.102369,
+                                                "min": 45.545949
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.580768,
+                                                "max": 46.003796,
+                                                "mean": 45.581692,
+                                                "min": 45.145878
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.651214,
+                                                "max": 42.295253,
+                                                "mean": 41.65275,
+                                                "min": 41.128841
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 94.548103,
+                                                "max": 98.528615,
+                                                "mean": 94.571795,
+                                                "min": 89.723043
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_28.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_28.mov"
+                            },
+                            "test_hevc_crf-slow_crf_35": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 35,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:22:29.458690+00:00",
+                                            "encode_time": 45.4337,
+                                            "filesize": 458179,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 43.776159,
+                                                "max": 44.314372,
+                                                "mean": 43.777437,
+                                                "min": 43.254617
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 43.950831,
+                                                "max": 44.455357,
+                                                "mean": 43.952171,
+                                                "min": 43.382388
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 37.983518,
+                                                "max": 38.61808,
+                                                "mean": 37.984951,
+                                                "min": 37.470313
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 82.355901,
+                                                "max": 87.537556,
+                                                "mean": 82.384546,
+                                                "min": 78.607683
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_35.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_35.mov"
+                            },
+                            "test_hevc_crf-slow_crf_45": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 45,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:23:09.948528+00:00",
+                                            "encode_time": 40.4905,
+                                            "filesize": 158407,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 40.780031,
+                                                "max": 41.636719,
+                                                "mean": 40.783558,
+                                                "min": 39.786714
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 41.553433,
+                                                "max": 42.5832,
+                                                "mean": 41.561455,
+                                                "min": 39.80029
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 32.586022,
+                                                "max": 33.178582,
+                                                "mean": 32.587933,
+                                                "min": 31.948647
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 45.753832,
+                                                "max": 52.600298,
+                                                "mean": 45.847795,
+                                                "min": 41.174362
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_hevc_crf-slow_crf_45.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_cars_srgb.-test_hevc_crf-slow_crf_45.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_hevc_crf"
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_hevc_crf-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:32:34.132968+00:00",
+                                            "encode_time": 103.0887,
+                                            "filesize": 26972502,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.211623,
+                                                "max": 48.910449,
+                                                "mean": 47.259654,
+                                                "min": 44.181263
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.661373,
+                                                "max": 49.138665,
+                                                "mean": 47.66884,
+                                                "min": 46.337052
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.879138,
+                                                "max": 47.731069,
+                                                "mean": 44.990048,
+                                                "min": 40.757864
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.966136,
+                                                "max": 100.0,
+                                                "mean": 99.967034,
+                                                "min": 96.038178
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_10.mov"
+                            },
+                            "test_hevc_crf-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:34:03.786793+00:00",
+                                            "encode_time": 89.6538,
+                                            "filesize": 13825586,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.628376,
+                                                "max": 48.176153,
+                                                "mean": 46.669303,
+                                                "min": 43.807301
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.986432,
+                                                "max": 48.097414,
+                                                "mean": 46.992776,
+                                                "min": 45.709586
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.288812,
+                                                "max": 46.951274,
+                                                "mean": 44.381582,
+                                                "min": 40.5151
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.921062,
+                                                "max": 100.0,
+                                                "mean": 99.922738,
+                                                "min": 95.417446
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_14.mov"
+                            },
+                            "test_hevc_crf-slow_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:35:29.742834+00:00",
+                                            "encode_time": 85.9562,
+                                            "filesize": 10360428,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.270717,
+                                                "max": 47.736685,
+                                                "mean": 46.307447,
+                                                "min": 43.542252
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.577211,
+                                                "max": 47.535562,
+                                                "mean": 46.58328,
+                                                "min": 45.310494
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.927508,
+                                                "max": 46.511436,
+                                                "mean": 44.011052,
+                                                "min": 40.289936
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.825822,
+                                                "max": 100.0,
+                                                "mean": 99.82864,
+                                                "min": 95.035809
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_16.mov"
+                            },
+                            "test_hevc_crf-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:36:53.043793+00:00",
+                                            "encode_time": 83.3012,
+                                            "filesize": 7881026,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.842413,
+                                                "max": 47.271046,
+                                                "mean": 45.874857,
+                                                "min": 43.262969
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.108549,
+                                                "max": 46.923801,
+                                                "mean": 46.114786,
+                                                "min": 44.851474
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.518271,
+                                                "max": 46.078215,
+                                                "mean": 43.592659,
+                                                "min": 40.057434
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.605509,
+                                                "max": 100.0,
+                                                "mean": 99.611348,
+                                                "min": 94.521789
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_18.mov"
+                            },
+                            "test_hevc_crf-slow_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:38:18.528206+00:00",
+                                            "encode_time": 85.4847,
+                                            "filesize": 6045250,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.359177,
+                                                "max": 46.789634,
+                                                "mean": 45.387614,
+                                                "min": 42.931709
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.586964,
+                                                "max": 46.430015,
+                                                "mean": 45.593477,
+                                                "min": 44.33989
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.051694,
+                                                "max": 45.567814,
+                                                "mean": 43.116945,
+                                                "min": 39.786014
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.187345,
+                                                "max": 100.0,
+                                                "mean": 99.199911,
+                                                "min": 93.8694
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_20.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_20.mov"
+                            },
+                            "test_hevc_crf-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:39:38.054628+00:00",
+                                            "encode_time": 79.5209,
+                                            "filesize": 4650541,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 44.820494,
+                                                "max": 46.171087,
+                                                "mean": 44.844794,
+                                                "min": 42.533609
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.991006,
+                                                "max": 45.831832,
+                                                "mean": 44.997938,
+                                                "min": 43.760841
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.516913,
+                                                "max": 44.994699,
+                                                "mean": 42.573391,
+                                                "min": 39.390931
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.429966,
+                                                "max": 100.0,
+                                                "mean": 98.454091,
+                                                "min": 93.163291
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_22.mov"
+                            },
+                            "test_hevc_crf-slow_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:40:52.687738+00:00",
+                                            "encode_time": 74.6308,
+                                            "filesize": 3145896,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 43.891667,
+                                                "max": 45.289844,
+                                                "mean": 43.911594,
+                                                "min": 41.894098
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.008984,
+                                                "max": 45.090078,
+                                                "mean": 44.017061,
+                                                "min": 42.792412
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.595827,
+                                                "max": 43.967328,
+                                                "mean": 41.639838,
+                                                "min": 38.767307
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 96.385101,
+                                                "max": 100.0,
+                                                "mean": 96.433078,
+                                                "min": 91.137369
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_25.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_25.mov"
+                            },
+                            "test_hevc_crf-slow_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:42:02.503719+00:00",
+                                            "encode_time": 69.8159,
+                                            "filesize": 2122907,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 42.900353,
+                                                "max": 44.342403,
+                                                "mean": 42.917289,
+                                                "min": 41.06125
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 42.978581,
+                                                "max": 44.145747,
+                                                "mean": 42.987239,
+                                                "min": 41.799659
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 40.506638,
+                                                "max": 42.780376,
+                                                "mean": 40.540307,
+                                                "min": 37.963929
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 93.056544,
+                                                "max": 99.950734,
+                                                "mean": 93.126286,
+                                                "min": 86.020401
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_28.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_28.mov"
+                            },
+                            "test_hevc_crf-slow_crf_35": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 35,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:43:03.901956+00:00",
+                                            "encode_time": 61.3982,
+                                            "filesize": 860468,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 40.549806,
+                                                "max": 42.121927,
+                                                "mean": 40.565258,
+                                                "min": 39.038281
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 40.645129,
+                                                "max": 41.899558,
+                                                "mean": 40.656603,
+                                                "min": 39.218835
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 37.442641,
+                                                "max": 39.173736,
+                                                "mean": 37.458382,
+                                                "min": 35.646943
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 79.06476,
+                                                "max": 86.458553,
+                                                "mean": 79.196917,
+                                                "min": 67.723543
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_35.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_35.mov"
+                            },
+                            "test_hevc_crf-slow_crf_45": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 45,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:43:56.148911+00:00",
+                                            "encode_time": 52.2467,
+                                            "filesize": 220699,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 36.843137,
+                                                "max": 38.241037,
+                                                "mean": 36.858596,
+                                                "min": 35.272266
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 37.31373,
+                                                "max": 38.739441,
+                                                "mean": 37.331867,
+                                                "min": 35.478203
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 31.988262,
+                                                "max": 33.38862,
+                                                "mean": 31.997656,
+                                                "min": 30.928243
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 38.008793,
+                                                "max": 46.941602,
+                                                "mean": 38.349151,
+                                                "min": 28.947766
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_hevc_crf-slow_crf_45.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_coaster_srgb.-test_hevc_crf-slow_crf_45.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_hevc_crf"
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_hevc_crf-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:54:48.715103+00:00",
+                                            "encode_time": 188.8043,
+                                            "filesize": 74310027,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.801633,
+                                                "max": 49.630095,
+                                                "mean": 48.804177,
+                                                "min": 48.310012
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.218974,
+                                                "max": 49.494569,
+                                                "mean": 48.225354,
+                                                "min": 47.454605
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.31537,
+                                                "max": 47.722114,
+                                                "mean": 46.323145,
+                                                "min": 45.469374
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.975891,
+                                                "max": 100.0,
+                                                "mean": 99.976984,
+                                                "min": 95.396805
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_10.mov"
+                            },
+                            "test_hevc_crf-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T17:57:36.233466+00:00",
+                                            "encode_time": 167.4746,
+                                            "filesize": 49154061,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.018863,
+                                                "max": 48.692207,
+                                                "mean": 48.020429,
+                                                "min": 47.51507
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.005191,
+                                                "max": 47.963597,
+                                                "mean": 47.008423,
+                                                "min": 46.277493
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.20851,
+                                                "max": 45.768188,
+                                                "mean": 44.218839,
+                                                "min": 43.049567
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972181,
+                                                "max": 100.0,
+                                                "mean": 99.973627,
+                                                "min": 94.725395
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_14.mov"
+                            },
+                            "test_hevc_crf-slow_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:00:19.828641+00:00",
+                                            "encode_time": 163.5936,
+                                            "filesize": 40071521,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.635328,
+                                                "max": 48.267389,
+                                                "mean": 47.636744,
+                                                "min": 47.098344
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.530909,
+                                                "max": 47.42808,
+                                                "mean": 46.533489,
+                                                "min": 45.837624
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.0622,
+                                                "max": 44.672618,
+                                                "mean": 43.073922,
+                                                "min": 41.801966
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.968919,
+                                                "max": 100.0,
+                                                "mean": 99.970712,
+                                                "min": 94.14243
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_16.mov"
+                            },
+                            "test_hevc_crf-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:02:59.246293+00:00",
+                                            "encode_time": 159.4161,
+                                            "filesize": 32535521,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.240301,
+                                                "max": 47.834125,
+                                                "mean": 47.24155,
+                                                "min": 46.714794
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.112408,
+                                                "max": 46.948394,
+                                                "mean": 46.114521,
+                                                "min": 45.438251
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.869378,
+                                                "max": 43.574827,
+                                                "mean": 41.882184,
+                                                "min": 40.530467
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.965626,
+                                                "max": 100.0,
+                                                "mean": 99.967806,
+                                                "min": 93.561221
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_18.mov"
+                            },
+                            "test_hevc_crf-slow_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:05:34.586310+00:00",
+                                            "encode_time": 155.3385,
+                                            "filesize": 26119294,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.823015,
+                                                "max": 47.390284,
+                                                "mean": 46.824163,
+                                                "min": 46.31849
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.729831,
+                                                "max": 46.520447,
+                                                "mean": 45.731522,
+                                                "min": 45.103568
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 40.628273,
+                                                "max": 42.414733,
+                                                "mean": 40.642411,
+                                                "min": 39.234287
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.959235,
+                                                "max": 100.0,
+                                                "mean": 99.962266,
+                                                "min": 92.453143
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_20.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_20.mov"
+                            },
+                            "test_hevc_crf-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:08:05.226358+00:00",
+                                            "encode_time": 150.6384,
+                                            "filesize": 20768217,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 46.4094,
+                                                "max": 46.925699,
+                                                "mean": 46.410366,
+                                                "min": 45.930323
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.382154,
+                                                "max": 46.099443,
+                                                "mean": 45.383433,
+                                                "min": 44.788718
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 39.385613,
+                                                "max": 41.196796,
+                                                "mean": 39.400237,
+                                                "min": 37.979212
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.940589,
+                                                "max": 100.0,
+                                                "mean": 99.944775,
+                                                "min": 91.215971
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_22.mov"
+                            },
+                            "test_hevc_crf-slow_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:10:27.920904+00:00",
+                                            "encode_time": 142.6929,
+                                            "filesize": 14440289,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.755716,
+                                                "max": 46.169039,
+                                                "mean": 45.756438,
+                                                "min": 45.375206
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.914574,
+                                                "max": 45.50659,
+                                                "mean": 44.915591,
+                                                "min": 44.409493
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 37.543315,
+                                                "max": 39.380115,
+                                                "mean": 37.558479,
+                                                "min": 36.135544
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 97.319132,
+                                                "max": 100.0,
+                                                "mean": 97.36282,
+                                                "min": 88.213803
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_25.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_25.mov"
+                            },
+                            "test_hevc_crf-slow_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:12:41.059496+00:00",
+                                            "encode_time": 133.1368,
+                                            "filesize": 9727772,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.064428,
+                                                "max": 45.494941,
+                                                "mean": 45.06519,
+                                                "min": 44.659243
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.375103,
+                                                "max": 44.891995,
+                                                "mean": 44.375944,
+                                                "min": 43.853474
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 35.739047,
+                                                "max": 37.55742,
+                                                "mean": 35.754315,
+                                                "min": 34.398829
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 90.562727,
+                                                "max": 99.096004,
+                                                "mean": 90.673023,
+                                                "min": 83.96432
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_28.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_28.mov"
+                            },
+                            "test_hevc_crf-slow_crf_35": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 35,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:14:38.171207+00:00",
+                                            "encode_time": 117.1103,
+                                            "filesize": 3415166,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 43.356845,
+                                                "max": 43.967584,
+                                                "mean": 43.357741,
+                                                "min": 42.937824
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 43.03796,
+                                                "max": 43.523292,
+                                                "mean": 43.038939,
+                                                "min": 42.516323
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 31.885107,
+                                                "max": 33.554086,
+                                                "mean": 31.898673,
+                                                "min": 30.686163
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 64.458028,
+                                                "max": 75.878927,
+                                                "mean": 64.839744,
+                                                "min": 55.561918
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_35.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_35.mov"
+                            },
+                            "test_hevc_crf-slow_crf_45": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 45,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:15:59.364802+00:00",
+                                            "encode_time": 81.1923,
+                                            "filesize": 560837,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 40.556905,
+                                                "max": 41.507381,
+                                                "mean": 40.561101,
+                                                "min": 39.657291
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 40.803581,
+                                                "max": 41.529457,
+                                                "mean": 40.805111,
+                                                "min": 40.154601
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 27.640433,
+                                                "max": 28.865596,
+                                                "mean": 27.647518,
+                                                "min": 26.786941
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 24.98483,
+                                                "max": 35.077648,
+                                                "mean": 25.336914,
+                                                "min": 19.186545
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_hevc_crf-slow_crf_45.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/chimera_fountains_srgb.-test_hevc_crf-slow_crf_45.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1014,
+                                    "images": true,
+                                    "in": 6100,
+                                    "path": "sparks_srgb.%05d.png",
+                                    "pix_fmt": "rgb24",
+                                    "rate": 24,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_hevc_crf"
+                        },
+                        "name": "sparks_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 24.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 24.0,
+                                "value": 6100.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 6100.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb",
+                                "name_prefix": "sparks_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 6100,
+                                "frame_step": 1,
+                                "rate": 24.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_hevc_crf-slow_crf_10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 10,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:25:48.669571+00:00",
+                                            "encode_time": 116.5172,
+                                            "filesize": 93669414,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.473652,
+                                                "max": 50.071065,
+                                                "mean": 47.484609,
+                                                "min": 46.393428
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.850005,
+                                                "max": 50.497579,
+                                                "mean": 47.861073,
+                                                "min": 46.819627
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.58951,
+                                                "max": 48.845155,
+                                                "mean": 45.608723,
+                                                "min": 44.424437
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.985672,
+                                                "max": 100.0,
+                                                "mean": 99.986066,
+                                                "min": 97.213163
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_10.mov"
+                            },
+                            "test_hevc_crf-slow_crf_14": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 14,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:27:30.191581+00:00",
+                                            "encode_time": 101.5209,
+                                            "filesize": 60673316,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.29671,
+                                                "max": 48.273728,
+                                                "mean": 45.313958,
+                                                "min": 44.057606
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.677757,
+                                                "max": 48.804193,
+                                                "mean": 45.695973,
+                                                "min": 44.383849
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.14236,
+                                                "max": 46.282422,
+                                                "mean": 43.161695,
+                                                "min": 41.962939
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.982941,
+                                                "max": 100.0,
+                                                "mean": 99.983495,
+                                                "min": 96.699061
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_14.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_14.mov"
+                            },
+                            "test_hevc_crf-slow_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:29:06.952381+00:00",
+                                            "encode_time": 96.7598,
+                                            "filesize": 49517354,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 44.067157,
+                                                "max": 47.367347,
+                                                "mean": 44.08867,
+                                                "min": 42.636588
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 44.472011,
+                                                "max": 47.905632,
+                                                "mean": 44.493994,
+                                                "min": 42.96409
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 41.940651,
+                                                "max": 44.939062,
+                                                "mean": 41.958821,
+                                                "min": 40.721984
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980414,
+                                                "max": 100.0,
+                                                "mean": 99.981142,
+                                                "min": 96.228363
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_16.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_16.mov"
+                            },
+                            "test_hevc_crf-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:30:40.023447+00:00",
+                                            "encode_time": 93.0698,
+                                            "filesize": 40990660,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 42.765889,
+                                                "max": 46.325304,
+                                                "mean": 42.791135,
+                                                "min": 41.219162
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 43.277675,
+                                                "max": 46.904956,
+                                                "mean": 43.302227,
+                                                "min": 41.711603
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 40.705878,
+                                                "max": 43.656946,
+                                                "mean": 40.724357,
+                                                "min": 39.427089
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.968943,
+                                                "max": 100.0,
+                                                "mean": 99.969963,
+                                                "min": 95.602713
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_18.mov"
+                            },
+                            "test_hevc_crf-slow_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:32:09.370178+00:00",
+                                            "encode_time": 89.3456,
+                                            "filesize": 34272778,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 41.517874,
+                                                "max": 45.293562,
+                                                "mean": 41.544558,
+                                                "min": 40.075031
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 42.253817,
+                                                "max": 45.884784,
+                                                "mean": 42.277291,
+                                                "min": 40.848415
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 39.405672,
+                                                "max": 42.382887,
+                                                "mean": 39.425216,
+                                                "min": 38.079313
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.917993,
+                                                "max": 100.0,
+                                                "mean": 99.920136,
+                                                "min": 94.60754
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_20.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_20.mov"
+                            },
+                            "test_hevc_crf-slow_crf_22": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 22,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:33:35.992009+00:00",
+                                            "encode_time": 86.6208,
+                                            "filesize": 28925813,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 40.542867,
+                                                "max": 44.217324,
+                                                "mean": 40.567275,
+                                                "min": 39.024795
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 41.539709,
+                                                "max": 44.923955,
+                                                "mean": 41.560627,
+                                                "min": 40.194761
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 38.025704,
+                                                "max": 41.087295,
+                                                "mean": 38.047471,
+                                                "min": 36.641346
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.754782,
+                                                "max": 100.0,
+                                                "mean": 99.760821,
+                                                "min": 93.348957
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_22.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_22.mov"
+                            },
+                            "test_hevc_crf-slow_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:34:58.445514+00:00",
+                                            "encode_time": 82.4524,
+                                            "filesize": 22201228,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 39.160466,
+                                                "max": 42.924232,
+                                                "mean": 39.187093,
+                                                "min": 37.750591
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 40.680896,
+                                                "max": 43.928348,
+                                                "mean": 40.70168,
+                                                "min": 39.533594
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 35.792176,
+                                                "max": 39.182805,
+                                                "mean": 35.819654,
+                                                "min": 34.307357
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 97.375033,
+                                                "max": 100.0,
+                                                "mean": 97.411486,
+                                                "min": 90.611023
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_25.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_25.mov"
+                            },
+                            "test_hevc_crf-slow_crf_28": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 28,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:36:16.797505+00:00",
+                                            "encode_time": 78.351,
+                                            "filesize": 16774297,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 38.13133,
+                                                "max": 41.669111,
+                                                "mean": 38.155159,
+                                                "min": 36.913683
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 40.095146,
+                                                "max": 43.095666,
+                                                "mean": 40.113975,
+                                                "min": 39.066186
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 33.494104,
+                                                "max": 37.237439,
+                                                "mean": 33.527537,
+                                                "min": 31.892813
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 91.437292,
+                                                "max": 97.846789,
+                                                "mean": 91.504768,
+                                                "min": 85.576421
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_28.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_28.mov"
+                            },
+                            "test_hevc_crf-slow_crf_35": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 35,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:37:25.458582+00:00",
+                                            "encode_time": 68.66,
+                                            "filesize": 7350733,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 36.605664,
+                                                "max": 39.647978,
+                                                "mean": 36.626365,
+                                                "min": 35.582684
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 39.210729,
+                                                "max": 41.802696,
+                                                "mean": 39.227164,
+                                                "min": 38.334903
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 28.072847,
+                                                "max": 32.570744,
+                                                "mean": 28.126084,
+                                                "min": 26.023322
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 65.721703,
+                                                "max": 75.502685,
+                                                "mean": 65.998901,
+                                                "min": 60.427801
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_35.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_35.mov"
+                            },
+                            "test_hevc_crf-slow_crf_45": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of hevc crf values.",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 45,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-07-16T18:38:22.734406+00:00",
+                                            "encode_time": 57.2747,
+                                            "filesize": 895030,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 35.36396,
+                                                "max": 38.125213,
+                                                "mean": 35.380511,
+                                                "min": 34.222769
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 38.117398,
+                                                "max": 40.535815,
+                                                "mean": 38.13111,
+                                                "min": 37.167536
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 22.36393,
+                                                "max": 25.979013,
+                                                "mean": 22.408091,
+                                                "min": 20.580521
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 12.790457,
+                                                "max": 23.479171,
+                                                "mean": 13.54202,
+                                                "min": 6.385879
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/hevc_crf_tests.yml"
+                                    }
+                                },
+                                "name": "sparks_srgb.-test_hevc_crf-slow_crf_45.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 24.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/hevc-crf-encode/sparks_srgb.-test_hevc_crf-slow_crf_45.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}
