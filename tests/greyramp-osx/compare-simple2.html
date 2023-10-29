@@ -1,0 +1,57 @@
+
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  .grid tbody tr td { cursor: grab }
+  a:link { 
+        color:rgb(150, 150, 255);
+   }
+     a:visited { 
+        color:rgb(120, 120, 255);
+   }
+  </style>
+  <script>
+  $( function() {
+    if( ! /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent) ) {
+        $( "#sort tbody" ).sortable();
+    $( "#sort2 tbody" ).sortable();
+    }
+    var urlargs = document.location.href.split("?")
+    if (urlargs.length > 1){
+        $(".index").hide();
+        showgroups = urlargs[1].split("+");
+        for(i = 0; i < showgroups.length; i++)
+            $(showgroups[i]).show();
+     }
+  } );
+  </script>
+</head>
+<body style="background-color:rgb(65 65 65); color:rgb(200,200,200); ">
+
+<li class="index  groupgamma22dup"  ><A href="compare-simple2.html?.groupgamma22">One video element</a></li>
+<li class="index groupgamma22  "  ><A href="compare-simple2.html?.groupgamma22dup">Two video elements</a></li>
+
+<p>
+on windows there appears to be no color shift in the mp4 file (the bottom two grads). the two video elements are literally identical to the case where we 
+</p>
+<table id="sort" class="grid"  border=0 cellspacing="1" cellpadding="0">
+<tbody>
+<TR class="index groupgamma22 groupgamma22dup"  id="buttong22png">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD >gamma2.2 <B>png</B></TD><td><img src="greyscale-srgb.png"/></td>
+</TR>
+<TR class="index groupgamma22 groupgamma22dup" id="buttongamma22mp4">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 <B>mp4</B></TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td>
+</TR>
+<TR class="index groupgamma22dup " id="buttongamma22mp4">
+	<TD><img width=25 src="../../static/reorder.png"></td><TD>-color_trc 4 = gamma 2.2 <B>mp4</B></TD><td><video    ><source src='greyscale-srgb.mp4' type='video/mp4'></video></td>
+</TR>
+
+</tbody>
+</table>
+
+</body>
+</html>
+
