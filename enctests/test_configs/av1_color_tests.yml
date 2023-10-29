@@ -4,6 +4,7 @@ test_av1_color:
   app: ffmpeg
   comparisontest:
   - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
   - testtype: assertresults
     tests:
     - assert: less
@@ -13,54 +14,37 @@ test_av1_color:
   encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
   name: test_av1_color
   sources:
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mp4
   wedges:
-    av1-yuv444p10le: &baseav1
-      -c:v: libaom-av1
+    av1-yuv420p10le-preset3: &baseav1
+      -c:v: libsvtav1
+      -crf: 20
+      -svtav1-params: tune=0
+      -preset: 3
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
-      -pix_fmt: yuv444p10le
+      -pix_fmt: yuv420p10le
       -strict: experimental
-      #-preset: 4
-      -usage: good
-      -still-picture: 1
       -crf: 10
 
-
-    av1-gbrp:
+    av1-yuv420p-preset5:
       << : *baseav1
-      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      -color_range: pc
-      -colorspace: rgb
-      -pix_fmt: gbrp
-
-    av1-gbrp10:
-      << : *baseav1
-      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      -color_range: pc
-      -colorspace: rgb
-      -pix_fmt: gbrp10le
-
-    av1-gbrp12:
-      << : *baseav1
-      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      -color_range: pc
-      -colorspace: rgb
-      #-profile:v: main444-12
-      -pix_fmt: gbrp12le
-
-    av1-yuv444p12lefull:
-      << : *baseav1
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      -color_range: pc
+      -pix_fmt: yuv420p10le
+      -preset: 5
  
+    av1-yuv420p-preset7:
+      << : *baseav1
+      -pix_fmt: yuv420p10le
+      -preset: 7
 
+    av1-yuv420p-preset9:
+      << : *baseav1
+      -pix_fmt: yuv420p10le
+      -preset: 9
 ---
 reports:
   description: This is testing av1 color encoding.
