@@ -47,29 +47,45 @@ comparisontest:
 -->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9 \
-   -pix_fmt yuv420p10le -crf 22 -sws_flags spline+accurate_rnd+full_chroma_int \
+   -pix_fmt yuv420p10le -crf 22 -speed 2 -row-mt 1 -sws_flags spline+accurate_rnd+full_chroma_int \
    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
    -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -quality good -b:v 0 \
      -y outputfile.mp4
 ```
 
 
+
 ## Recomended Flags
 
 ```
--crf 22 -quality good -b:v 0
+-crf 22 -quality good -b:v 0  -speed 2 -row-mt 1 
 ```
 
 | --- | --- |
 | **-crf 23** | This is the constant quality rate factor, controlling the default quality, similar to h264. The range is a little different to h264, so you may need to test. |
 | *-quality good* | May require additional testing, but so far switching to *-quality best* increased the duration, but didnt increase the vmaf score (which is already pretty high with these values of crf). |
 | -b:v 0 | Unlike with h264, you can set a constant quality rate factor unless it exceeds a specified bit-rate, if the bit-rate is set to 0, it ignores the bit-rate as a factor. |
+| -speed 2 | This is also accessible as -cpu_used, it sets how efficient the compression will be. The default is 0, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy. (See below). |
+| -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
+
 
 ### CRF Comparison
 
 Below is a comparison of different CRF rates, with -b:v 0 and -quality good
 
-| ![](enctests/reference-results/vp9-crf2-test-encode_time.png)  This is showing CRF values against encoding time. |
-| ![](enctests/reference-results/vp9-crf2-test-filesize.png) This is showing CRF values against file size. |
-| ![](enctests/reference-results/vp9-crf2-test-vmaf_harmonic_mean.png) This is showing CRF values against VMAF harmonic mean |
+| ![](enctests/reference-results/vp9-crf-test-encode_time.png)  This is showing CRF values against encoding time. |
+| ![](enctests/reference-results/vp9-crf-test-filesize.png) This is showing CRF values against file size. |
+| ![](enctests/reference-results/vp9-crf-test-vmaf_harmonic_mean.png) This is showing CRF values against VMAF harmonic mean |
+| ![](enctests/reference-results/vp9-crf-test-psnr_y_harmonic_mean.png) This is showing CRF values against psnr y harmonic mean |
 
+### Speed Comparison
+
+Below is a comparison of different speed rates, with and without the -row-mt 1 flag, with -crf 22, -b:v 0 and -quality good.
+
+This shows that the -row-mt flag creates an almost identical result, but can be up to twice as quick (for -speed 0).
+Also at least with this crf value, even with speed 4, the quality is still pretty good.
+
+| ![](enctests/reference-results/vp9-speed-tests-encode_time.png)  This is showing speed against encoding time. |
+| ![](enctests/reference-results/vp9-speed-tests-filesize.png) This is showing speed values against file size. |
+| ![](enctests/reference-results/vp9-speed-tests-vmaf_harmonic_mean.png) This is showing speed values against VMAF harmonic mean |
+| ![](enctests/reference-results/vp9-speed-tests-psnr_y_harmonic_mean.png) This is showing speed values against psnr y harmonic mean |

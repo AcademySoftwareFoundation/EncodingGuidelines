@@ -10,13 +10,11 @@ test_crf_yuv420p:
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        medium_crf_02: &base_args
+        crf22: &base_args
             -c:v: libvpx-vp9
             -quality: good
-            -crf: 2
+            -crf: 22
             -b:v: 0
-            -speed: 2
-            -row-mt: 1
             -pix_fmt: yuv420p
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
@@ -25,80 +23,100 @@ test_crf_yuv420p:
             -color_primaries: 1
             -color_trc: 2
 
-        medium_crf_05:
+        crf22_speed0:
             << : *base_args
-            -crf: 5
+            -speed: 0
 
-        medium_crf_10:
+        crf22_speed1:
             << : *base_args
-            -crf: 10
+            -speed: 1
 
-        medium_crf_14:
+        crf22_speed2:
             << : *base_args
-            -crf: 14
+            -speed: 2
 
-        medium_crf_16:
+        crf22_speed3:
             << : *base_args
-            -crf: 16
+            -speed: 3
 
-        medium_crf_18:
+        crf22_speed4:
             << : *base_args
-            -crf: 18
+            -speed: 4
 
-        medium_crf_20:
+        crf22_speed0_mt1:
             << : *base_args
-            -crf: 20
+            -speed: 0
+            -row-mt: 1
 
-        medium_crf_22:
+        crf22_speed1_mt1:
             << : *base_args
-            -crf: 22
+            -speed: 1
+            -row-mt: 1
 
-        medium_crf_25:
+        crf22_speed2_mt1:
             << : *base_args
-            -crf: 25
+            -speed: 2
+            -row-mt: 1
 
-        medium_crf_28:
+        crf22_speed3_mt1:
             << : *base_args
-            -crf: 28
+            -speed: 3
+            -row-mt: 1
+
+        crf22_speed4_mt1:
+            << : *base_args
+            -speed: 4
+            -row-mt: 1
+
 ---
 
 reports:
     graphs:
     - args:
-        color: media
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
-        x: -crf
+        barmode: group
+        x: media
         y: psnr_y_harmonic_mean
-        markers: True
+        range_y:  
+            - 40
+            - 55
       name: psnr_y_harmonic_mean.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
-        x: -crf
+        barmode: group
+        x: media
         y: vmaf_harmonic_mean
-        markers: True
+        range_y:  
+            - 90
+            - 100
       name: vmaf_harmonic_mean.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
-        x: -crf
+        x: media
+        barmode: group
         y: encode_time
-        markers: True
       name: encode_time.png
-      sortby: name
+      type: bar
     - args:
-        color: media
+        color: name
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
         height: 400
-        x: -crf
+        x: media
+        barmode: group
         y: filesize
-        markers: True
       name: filesize.png
-      sortby: name
-    name: vp9-crf-test
-    title: VP9 CRF Comparison
-    description: This is a comparison of different CRF values for vp9 encoding.
-    directory: vp9-crf-encode
+      type: bar
+    name: vp9-speed-tests
+    title: VP9 Speed Comparison
+    description: This is a comparison of different Speed values for vp9 encoding.
+    directory: vp9-speed-encode
     templatefile: basicmovie.html.jinja
 
