@@ -1,0 +1,100 @@
+---
+test_vp9_color_444:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: vp9 color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_vp9_color_444
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    vp9-yuv420p10le-good: &basevp9
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv444p10le
+      -strict: experimental
+
+    vp9-gbrp:
+      << : *basevp9
+      -pix_fmt: gbrp
+      -color_range: pc
+      -colorspace: rgb
+
+    vp9-gbrp10le:
+      << : *basevp9
+      -pix_fmt: gbrp10le
+      -color_range: pc
+      -colorspace: rgb
+
+    vp9-gbrp12le:
+      << : *basevp9
+      -pix_fmt: gbrp12le
+      -color_range: pc
+      -colorspace: rgb
+
+    vp9-yuv444p10le-best:
+      << : *basevp9
+      -pix_fmt: yuv444p10le
+      -quality: best
+
+    vp9-yuv444p10le-lossless:
+      << : *basevp9
+      -pix_fmt: yuv444p10le
+      -lossless: 1
+---
+test_vp9_color_420:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: vp9 color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_vp9_color_420
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    vp9-yuv420p10le-good: &basevp9
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv420p10le
+      -strict: experimental
+
+    vp9-yuv420p-best:
+      << : *basevp9
+      -pix_fmt: yuv420p10le
+      -quality: best
+
+---
+reports:
+  description: This is testing vp9 color encoding.
+  directory: vp9-color-encode
+  name: vp9-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg vp9 encoding color tests
