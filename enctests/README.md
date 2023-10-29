@@ -58,7 +58,7 @@ python -m testframework.main --prep-sources --source-folder /path/to/source_medi
 sintel_trailer_2k_%04d.png.yml
 ```yaml
 images: true
-path: /path/to/sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%04d.png
+path: sintel_trailer_2k_%04d.png
 width: 1920
 height: 1080
 in: 600
@@ -171,10 +171,35 @@ source .venv/bin/activate
 
 # Upgrade pip and install dependencies
 pip install --upgrade pip
-pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2
+pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2 yuvio
 
 # Run tests (for now)
 .venv/bin/python main.py
+```
+
+## Native Windows Configuration
+
+Have tried using MSYS2 - [msys2](https://www.msys2.org/) once that is installed you can install ffmpeg and openimageio with:
+```
+pacman -S mingw-w64-x86_64-openimageio 
+pacman -S mingw-w64-x86_64-ffmpeg 
+```
+But had problems getting OTIO working. The build environment doesnt like the windows/ming64x environment.
+
+So have instead used [VCPKG](https://github.com/microsoft/vcpkg):
+```
+vcpkg install openimageio[tools]:x64-windows ffmpeg[ffmpeg]:x64-windows
+```
+And then used the above virtual environment.
+You will need to add the paths to the above tools to your path, which would be:
+%VCPKGHOME%\installed\x64-windows\tools\ffmpeg;%VCPKGHOME%\installed\x64-windows\tools\openimageio;
+which you can do in the .venv/Scripts/activate.bat file.
+
+This does not get you the vmaf model though which can be downloaded 
+https://raw.githubusercontent.com/Netflix/vmaf/master/model/vmaf_v0.6.1.json
+Also you need to install an eariler version of kaleido since the current one will hang when generating an image.
+```
+pip install kaleido==0.1.0post1 
 ```
 
 ## OSX Configuration

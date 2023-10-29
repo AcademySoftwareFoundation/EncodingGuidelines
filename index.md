@@ -6,7 +6,7 @@ title: Introduction
 
 # ORI Video Encoding Guidelines.
 
-A project from within the [https://openreviewinitiative.org/](ASWF Open Review Initiative), attempts to establish best practices for encoding Video media for VFX/Animation media review. We aim to explain what various parameters do, and in what situations you might want to choose to modify them.
+A project from within the [ASWF Open Review Initiative](https://openreviewinitiative.org/), attempts to establish best practices for encoding Video media for VFX/Animation media review. We aim to explain what various parameters do, and in what situations you might want to choose to modify them.
 
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
@@ -35,9 +35,14 @@ You can see the default ffmpeg conversion introduces a dramatic colorshift that 
 	1. [RGB to YCrCb Conversion](ColorPreservation.html#yuv)
 	2. [TV vs. Full range.](ColorPreservation.html#tvfull)
 	3. [RGB encode](ColorPreservation.html#rgbencode)
-6. [Encoding](Encoding.html#encode)
-	1. [h264](Encoding.html#h264)
-	2. [Prores](Encoding.html#prores)
+6. [Codec Comparsions](Encoding.html#encode)
+	1. [h264](Encodeh264.html)
+	2. [Prores](EncodeProres.html)
+	3. [AV1](EncodeAv1.html)
+	4. [HEVC/H.265](EncodeHevc.html)
+	5. [MJPEG](EncodeMJPEG.html)
+	6. [VP9](EncodeVP9.html)
+	7. [DNxHD](EncodeDNXHD.html)
 7. [Metadata NCLC/NCLX](ColorPreservation.html#nclc)
 	1. [Gamut - colorprimaries](ColorPreservation.html#gamut)
 	2. [Color Range](ColorPreservation.html#range)

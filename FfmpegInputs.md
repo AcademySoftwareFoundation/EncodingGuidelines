@@ -57,12 +57,12 @@ The following aliases are defined for framerate values, either `-r` or `-framera
 
 | ntsc | 30000/1001 | 29.97 fps equivalent. |
 | pal | 25| |
-| qntsc | 30000/1001 | VCD compliant NTSC |
+| qntsc | 30000/1001 | VCD compliant NTSC - 29.97 fps |
 | qpal |  25 | VCD compliant PAL |
-| sntsc | 30000/1001 | square pixel NTSC |
+| sntsc | 30000/1001 | square pixel NTSC - 29.97 fps  |
 | spal |   25 | square pixel PAL |
 | film |  24 | |
-| ntsc-film |  24000/1001 | correct  23.98 |
+| ntsc-film |  24000/1001 |  23.98 fps |
 
 Is is prefereable to use a fractional rate, or one of the above settings where possible, for example `-r 30000/1001` is the more precise version of 29.97. 
 
