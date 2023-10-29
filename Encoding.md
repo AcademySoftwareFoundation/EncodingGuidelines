@@ -14,20 +14,9 @@ We are going to focus on codecs that match one of the following conditions:
    * Supported by common web browsers.
    * Have good compression ratios with good color fidelity.
    * Supported by common apps, e.g. Resolve, RV, AVID.
+   * Commonly requested as a delivery format by studios or clients.
 
 ## Encoding <a name="encode"></a>
-
-
-A good starting point for encoding options is here: [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX)
-
-
-We have encoding guides for the following:
-1. [h264](Encodeh264.html)
-2. [Prores](EncodeProres.html)
-3. [DNxHD](EncodeDNxHD.html)
-4. [AV1](EncodeAv1.html)
-5. [VP9](EncodeVP9.html)
-6. [HEVC/H265](EncodeHevc.html)
 
 ## Codecs reviewed
 
@@ -103,3 +92,6 @@ See:
 TODO:
 * Figure out the missing metadata so that ffmpeg can correctly decode a quicktime to still.
 * 
+
+### See Also
+   * Another good reference for encoding options is here: [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) although the page is a little out of date.
