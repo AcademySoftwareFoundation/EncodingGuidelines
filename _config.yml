@@ -4,6 +4,7 @@ exclude: ["ICC", "*.yml", "enctests/*/*.mov",
           "enctests/sources/encsources/*/*.png", "enctests/sources/encsources/*/*.exr", 
           "enctests/sources/encsources/*/*.tif", "enctests/sources/hdr_sources/*/*.png", 
           "enctests/*/*.mov",
+          "MarkdownNotes.md",
           "enctests/sources/hdr_sources/*/*.exr", "enctests/sources/Sintel-trailer-1080p-png",
           "enctests/sources/1080p"]
 
