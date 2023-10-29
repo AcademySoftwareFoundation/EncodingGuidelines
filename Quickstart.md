@@ -12,7 +12,7 @@ This document is based on results from ffmpeg 4.4, we have not tested with 5.0 y
 
 # H264 Encoding from an image sequence for Web Review
 
-If you are encoding from an image sequence (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
+If you are encoding from an [image sequence](FfmpegInputs.html) (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
 
 <!---
 name: test_quickstart
@@ -46,7 +46,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 **-color_range tv** | mp4 metadata - specifying color range as 16-235 (which is default for web playback).
 **-colorspace bt709** | mp4 metadata - specifying bt709 yuv color pixel format
 **-color_primaries bt709** | mp4 metadata - bt709 color gamut primaries
-**-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests below.
+**-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests [here](WebColorPreservation.html). In some cases, you may also want -color_trc bt709 see (
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
