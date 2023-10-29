@@ -1,0 +1,231 @@
+
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  a:link {
+        color:rgb(150, 150, 255);
+   }
+     a:visited {
+        color:rgb(120, 120, 255);
+   }
+  .grid tbody tr td { cursor: grab }
+  .ui-button {margin: 5px; border-radius: 8px}
+  </style>
+  <script>
+$(document).ready(function(){
+
+
+        $("#buttonnone").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#none" ).show();
+           }
+        );
+
+        $("#buttongreyramppng").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#greyramppng" ).show();
+           }
+        );
+
+        $("#buttongreytv").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#greytv" ).show();
+           }
+        );
+
+        $("#buttongreyfull").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#greyfull" ).show();
+           }
+        );
+
+        $("#buttonnone").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#none" ).show();
+           }
+        );
+
+        $("#buttonradialgradpng").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradpng" ).show();
+           }
+        );
+
+        $("#buttonradialgradtv").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradtv" ).show();
+           }
+        );
+
+        $("#buttonradialgradfull").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfull" ).show();
+           }
+        );
+
+        $("#buttonradialgradfullj").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfullj" ).show();
+           }
+        );
+
+        $("#buttonradialgradfull0").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfull0" ).show();
+           }
+        );
+
+        $("#buttonradialgradfull444").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradfull444" ).show();
+           }
+        );
+
+        $("#buttonradialgradtv10").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradtv10" ).show();
+           }
+        );
+
+        $("#buttonradialgradrgb").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#radialgradrgb" ).show();
+           }
+        );
+
+        $("#buttonnone").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#none" ).show();
+           }
+        );
+
+        $("#buttonmarcieraw").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#marcieraw" ).show();
+           }
+        );
+
+        $("#buttonmarcietv").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#marcietv" ).show();
+           }
+        );
+
+        $("#buttonmarciefull").click( function()
+           {
+             $( ".videogroup" ).hide();
+			 $( "#marciefull" ).show();
+           }
+        );
+
+		$( ".videogroup" ).hide();
+		$( "#greyramppng" ).show();
+});
+    </script>
+
+</head>
+
+<body style="background-color:#27262b; color:rgb(200,200,200)">
+
+<H1>Full range vs TV Range</H1><p> Comparing full range encoding vs. tv range, but also yuv420p vs. yuvj420p. We believe that this is well supported on web browsers, and dont see a downside to it. There may be cases where other applications do not read it. The code to generate these files is <a href='../icctest-fulltv.py'>here</a>. Full screen view is <a href='/ffmpeg-tests/tests/greyramp-fulltv/compare.html'>here</a></p>
+
+    <div data-role="page" data-theme='a'>
+
+      <div data-role="content"><TABLE><TR><TD width='100' align='center' valign="top">
+
+        <div ><B>Test-1: Greyramp</B></div><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreyramppng" data-role="button">Source png file</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreytv" data-role="button">Normal encode</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttongreyfull" data-role="button">Full range encoding.</button><BR/>
+
+        <div ><B>Test-2: Radial gradent</B></div><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradpng" data-role="button">Source png file</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradtv" data-role="button">Normal encode</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull" data-role="button">Full range encoding.</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfullj" data-role="button">Alternate full range encoding</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull0" data-role="button">Using full range without color_range flag</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull444" data-role="button">Full range with yuv444 (chrome only)</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradtv10" data-role="button">10-bit encoding, tv-range (chrome only)</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradrgb" data-role="button">This is using RGB encoding</button><BR/>
+
+        <div ><B>Test-3: Marcie</B></div><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonmarcieraw" data-role="button">Source png file</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonmarcietv" data-role="button">Normal encoding</button><BR/>
+
+        <button class="ui-button ui-widget ui-corner-all" id="buttonmarciefull" data-role="button">Full Range</button><BR/>
+</div></TD><TD align='left' valign='top'>
+<div id="none" class="videogroup"><h2>Test-1: Greyramp</h2><p></p><p></p></div>
+
+<div id="greyramppng" class="videogroup"><h2>Source png file</h2><img   width=920  src='.././greyramp-fulltv/greyscale-raw.png'/><p></p><p></p></div>
+
+<div id="greytv" class="videogroup"><h2>Normal encode</h2><video  width=920  ><source src='greyscale-tv.mp4' type='video/mp4'/></video><p>Using the PNG greyramp, with the normal "TV" out range of 16-235, and using yuv420p encoding. </p><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/greyscale-tv.mp4</p></div>
+
+<div id="greyfull" class="videogroup"><h2>Full range encoding.</h2><video  width=920  ><source src='greyscale-full.mp4' type='video/mp4'/></video><p>Greyramp encoded using out_range=full yuv420p encoding, here we also set color_range=2 to let the decoder know to process it correctly.</p><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/greyscale-full.mp4</p></div>
+
+<div id="none" class="videogroup"><h2>Test-2: Radial gradent</h2><p></p><p></p></div>
+
+<div id="radialgradpng" class="videogroup"><h2>Source png file</h2><img   width=920  src='../../sourceimages/radialgrad.png'/><p>This is a less forgiving test image</p><p></p></div>
+
+<div id="radialgradtv" class="videogroup"><h2>Normal encode</h2><video  width=920  ><source src='radialgrad-tv.mp4' type='video/mp4'/></video><p>Using the radial gradent with normal yuv420p encoding and yuv420p.</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-tv.mp4</p></div>
+
+<div id="radialgradfull" class="videogroup"><h2>Full range encoding.</h2><video  width=920  ><source src='radialgrad-full.mp4' type='video/mp4'/></video><p>Using the full range yuv420p encoding with color_range=2</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4</p></div>
+
+<div id="radialgradfullj" class="videogroup"><h2>Alternate full range encoding</h2><video  width=920  ><source src='radialgrad-fullj.mp4' type='video/mp4'/></video><p>This is an older alternative to full-range encoding, that ffmpeg is currently deprecating. </p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuvj420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-fullj.mp4</p></div>
+
+<div id="radialgradfull0" class="videogroup"><h2>Using full range without color_range flag</h2><video  width=920  ><source src='radialgrad-full0.mp4' type='video/mp4'/></video><p>This is what happens if you specify full range without the color_range flag (color_range=0). DONT DO THIS!</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range unknown -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full0.mp4</p></div>
+
+<div id="radialgradfull444" class="videogroup"><h2>Full range with yuv444 (chrome only)</h2><video  width=920  ><source src='radialgrad-full444.mp4' type='video/mp4'/></video><p>This is testing yuv444p but still 8-bit, this will only work on chrome.</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv444p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full444.mp4</p></div>
+
+<div id="radialgradtv10" class="videogroup"><h2>10-bit encoding, tv-range (chrome only)</h2><video  width=920  ><source src='radialgrad-raw-10bit.mp4' type='video/mp4'/></video><p>This is testing 10-bit encoding, yuv444p10le</p><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264 -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ./greyramp-fulltv/radialgrad-raw-10bit.mp4</p></div>
+
+<div id="radialgradrgb" class="videogroup"><h2>This is using RGB encoding</h2><video  width=920  ><source src='radialgrad-raw-rgb.mp4' type='video/mp4'/></video><p>libx264rgb 8-bit mp4 (not supported)</p><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264rgb -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" ./greyramp-fulltv/radialgrad-raw-rgb.mp4</p></div>
+
+<div id="none" class="videogroup"><h2>Test-3: Marcie</h2><p></p><p></p></div>
+
+<div id="marcieraw" class="videogroup"><h2>Source png file</h2><img   width=920  src='../../sourceimages/Digital_LAD_raw.png'/><p></p><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264rgb -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" ./greyramp-fulltv/radialgrad-raw-rgb.mp4</p></div>
+
+<div id="marcietv" class="videogroup"><h2>Normal encoding</h2><video  width=920  ><source src='marcie-tv.mp4' type='video/mp4'/></video><p>marcie out_range=tv -pix_fmt yuv420p 16-235 range</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/marcie-tv.mp4</p></div>
+
+<div id="marciefull" class="videogroup"><h2>Full Range</h2><video  width=920  ><source src='marcie-full.mp4' type='video/mp4'/></video><p></p><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/marcie-full.mp4</p></div>
+
+      </TD></TR></TABLE>
+      </div>
+
+   </div>
+</body>
+</html>
+
+
+
