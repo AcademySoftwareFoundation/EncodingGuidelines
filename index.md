@@ -64,3 +64,4 @@ This document is primarily the work of Sam Richards. The test suite was develope
 ### Feedback and error reporting.
 
 We welcome feedback on this document, please report any errors or suggestions to the [github issues](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/issues) page. 
+
