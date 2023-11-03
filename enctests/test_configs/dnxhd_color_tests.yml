@@ -1,6 +1,6 @@
 
 ---
-test_dnxhd_color:
+test_dnxhd_444:
   app: ffmpeg
   comparisontest:
   - testtype: idiff
@@ -14,15 +14,12 @@ test_dnxhd_color:
     -y "{outfile}"
   name: test_dnxhd_color
   sources:
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  - ../sourceimages/smptehdbars_16.png.yml
   suffix: .mov
   wedges:
     dnxhd-yuv444p10le: &basednxhd
       -c:v: dnxhd
       -profile:v: dnxhr_444
-      -b:v: 3M
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
       -color_range: tv
@@ -35,6 +32,10 @@ test_dnxhd_color:
 
 
       #-profile:v: main444-10
+
+    dnxhd-yuv444p10le-440m:
+      << : *basednxhd
+      -b:v: 440m
 
     dnxhd-gbrp10:
       << : *basednxhd
@@ -57,9 +58,109 @@ test_dnxhd_color:
       #-colorspace: rgb
       #-pix_fmt: gbrp10le
  
+test_dnxhd_422:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: dnxhd color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_dnxhd_color
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mov
+  wedges:
+    dnxhqx: &basednxhqx
+      -c:v: dnxhd
+      -profile:v: dnxhr_hqx
+      -b:v: 440m
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv422p10le
+      #-preset: 3
+      #-tag:v: hvc1
+
+
+      #-profile:v: main444-10
+
+    p10_440M:
+      << : *basednxhqx
+      -profile:v: dnxhd
+      -pix_fmt: yuv422p10
+      -b:v: 440M
+
+    p10_365M:
+      << : *basednxhqx
+      -profile:v: dnxhd
+      -pix_fmt: yuv422p10
+      -b:v: 365M
+
+    p10_185M:
+      << : *basednxhqx
+      -profile:v: dnxhd
+      -pix_fmt: yuv422p10
+      -b:v: 185M
+
+    p10_175M:
+      << : *basednxhqx
+      -profile:v: dnxhd
+      -pix_fmt: yuv422p10
+      -b:v: 175M
+  
+    440M:
+      << : *basednxhqx
+      -profile:v: dnxhr_hq
+      -pix_fmt: yuv422p
+      -b:v: 440M
+
+    185M:
+      << : *basednxhqx
+      -profile:v: dnxhr_hq
+      -pix_fmt: yuv422p
+      -b:v: 185M
+
+    115M:
+      << : *basednxhqx
+      -profile:v: dnxhr_hq
+      -pix_fmt: yuv422p
+      -b:v: 115M
 
 ---
 reports:
+  graphs:
+  - args:
+      color: name
+      height: 400
+      barmode: group
+      x: media
+      y: max_error
+    name: max_error.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      x: media
+      barmode: group
+      y: encode_time
+    name: encode_time.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      x: media
+      barmode: group
+      y: filesize
+    name: filesize.png
+    type: bar
   description: This is testing DNxHR color encoding.
   directory: dnxhd-color-encode
   name: dnxhd-color-tests
