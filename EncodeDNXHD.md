@@ -42,11 +42,11 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
 
 | Profile name | Profile description | Profile # | Pix Fmt | Bit Depth | Compression Ratio |
 |:----------|:-----------|:-----------|:-----------|:-----------|:-----------|
-| dnxhr_lb | Low Bandwidth | 1 | YUV 4:2:2 | 8 | 22:1 |
-| dnxhr_sq | Standard Quality | 2 | YUV 4:2:2 | 8 | 7:1 |
-| dnxhr_hq | High Quality | 3 | YUV 4:2:2 | 8 | 4.5:1 |
-| dnxhr_hqx | High Quality | 4 | YUV 4:2:2 | 12 (*) | 5.5: 1 |
-| dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB | 12 (*) | 4.5:1 |
+| dnxhr_lb | Low Bandwidth | 1 | YUV 4:2:2 (yuv422p) | 8 | 22:1 |
+| dnxhr_sq | Standard Quality | 2 | YUV 4:2:2  (yuv422p) | 8 | 7:1 |
+| dnxhr_hq | High Quality | 3 | YUV 4:2:2  (yuv422p) | 8 | 4.5:1 |
+| dnxhr_hqx | High Quality | 4 | YUV 4:2:2  (yuv422p, yuv422p10)  | 12 (*) | 5.5: 1 |
+| dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB  (yuv444p10, gbrp10) | 12 (*) | 4.5:1 |
 
 There really are not any significant flags to be used, changing bit-rate has no effect.
 
@@ -76,6 +76,36 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 
 ## AVID friendly MXF
 
+{: .warning }
+This is currently under development, use at your own risk.
+
+There are two types of MXF files, Op-atom and OP1a. Op-atom is designed for a single piece of media, whether its audio or video, so a clip with both would be split into two sections. OP1a is a streaming format, where the audio and video streams are interleaved (see [MXF](https://web.archive.org/web/20121119151859/http://www.avid.com/static/resources/common/documents/mxf.pdf)). 
+
+### OP1a MXF
+
+This is appropriate for deliveries where this only a video compoent, not a mixed format.
+
+<!---
+name: test_prores444_mxf
+sources: 
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
+```ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
+      -c:v dnxhd -profile:v dnxhr_sq \
+      -metadata project="MY PROJECT" \
+      -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 -metadata:s:v:0 reel_name=ABCD123 \
+      -b:v 36M  timecode_OP1a_dnxhr_sq.mxf
+```
+
+### Op-Atom
+
 AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg.
 
 <!---
@@ -91,8 +121,8 @@ comparisontest:
        less: 0.00195
 -->
 ```
-ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-      -c:v dnxhd -profile:v dnxhr_444 \
+ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
+      -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP" \
       -b:v 36M -f mxf_opatom outputfile.mxf
@@ -102,7 +132,7 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 
 ## AAF Creation
 
-If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) is an example of using OTIO and pyaaf2 to create a AAF file from an OTIO file.
+If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). In particular the [Embedding footage example](https://pyaaf.readthedocs.io/en/latest/quickstart.html#embedding-footage) which does allow you to specify the tape-name, but also the [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) which using OTIO and pyaaf2 to create a AAF file from an OTIO file, showing a full conformed AAF file.
 
 Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesnt require any media transcoding).
 
@@ -190,6 +220,6 @@ Other combinations of resolution, bitrate and format are:
 | 1440x1080i|  100M  |  yuv422p |
 | 1440x1080i|  110M  |  yuv422p |
 
-## TODO
-
-   * The output sizes dont vary with different profiles, which seems wildly wrong.
+## See Also
+   * https://dovidenko.com/2019/999/ffmpeg-dnxhd-dnxhr-mxf-proxies-and-optimized-media.html
+   * https://askubuntu.com/questions/907398/how-to-convert-a-video-with-ffmpeg-into-the-dnxhd-dnxhr-format
