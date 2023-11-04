@@ -602,7 +602,7 @@ def run_tests(args, test_configs, timeline):
                 distorted = Path(test_ref.target_url)
                 print(f"Testing: {distorted.name}")
                 # Send all the log output of the tests to a separate log file.
-                log_file = Path(distorted.parent, distorted.stem+"_tests.log")
+                log_file = Path(distorted.parent, distorted.stem + "_tests.log")
                 with open(log_file, "w") as log_file_object:
                     for test in comparisontests:
                         t1 = time.perf_counter()
