@@ -42,11 +42,11 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
 
 | Profile name | Profile description | Profile # | Pix Fmt | Bit Depth | Compression Ratio |
 |:----------|:-----------|:-----------|:-----------|:-----------|:-----------|
-| dnxhr_lb | Low Bandwidth | 1 | YUV 4:2:2 | 8 | 22:1 |
-| dnxhr_sq | Standard Quality | 2 | YUV 4:2:2 | 8 | 7:1 |
-| dnxhr_hq | High Quality | 3 | YUV 4:2:2 | 8 | 4.5:1 |
-| dnxhr_hqx | High Quality | 4 | YUV 4:2:2 | 12 (*) | 5.5: 1 |
-| dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB | 12 (*) | 4.5:1 |
+| dnxhr_lb | Low Bandwidth | 1 | YUV 4:2:2 (yuv422p) | 8 | 22:1 |
+| dnxhr_sq | Standard Quality | 2 | YUV 4:2:2  (yuv422p) | 8 | 7:1 |
+| dnxhr_hq | High Quality | 3 | YUV 4:2:2  (yuv422p) | 8 | 4.5:1 |
+| dnxhr_hqx | High Quality | 4 | YUV 4:2:2  (yuv422p, yuv422p10)  | 12 (*) | 5.5: 1 |
+| dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB  (yuv444p10, gbrp10) | 12 (*) | 4.5:1 |
 
 There really are not any significant flags to be used, changing bit-rate has no effect.
 
