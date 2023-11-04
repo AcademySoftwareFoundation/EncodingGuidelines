@@ -121,8 +121,8 @@ comparisontest:
        less: 0.00195
 -->
 ```
-ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-      -c:v dnxhd -profile:v dnxhr_444 \
+ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
+      -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP" \
       -b:v 36M -f mxf_opatom outputfile.mxf
