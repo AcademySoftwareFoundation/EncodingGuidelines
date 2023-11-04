@@ -7,7 +7,7 @@ parent: Encoding Overview
 
 # HDR Encoding.
 
-*This is under development*
+{: .warning } This is currently under development, use at your own risk.
 
 There are a lot of competing standards for [HDR](https://www.lightillusion.com/what_is_hdr.html), we are going to focus only on two due to their relative simplicity (not requiring dynamic metadata), and lack of licensing fees. 
 1. [HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma) encoding, developed by NHK and the BBC.
