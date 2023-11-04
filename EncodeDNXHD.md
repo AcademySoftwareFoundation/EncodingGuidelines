@@ -76,6 +76,36 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
 
 ## AVID friendly MXF
 
+{: .warning }
+This is currently under development, use at your own risk.
+
+There are two types of MXF files, Op-atom and OP1a. Op-atom is designed for a single piece of media, whether its audio or video, so a clip with both would be split into two sections. OP1a is a streaming format, where the audio and video streams are interleaved (see [MXF](https://web.archive.org/web/20121119151859/http://www.avid.com/static/resources/common/documents/mxf.pdf)). 
+
+### OP1a MXF
+
+This is appropriate for deliveries where this only a video compoent, not a mixed format.
+
+<!---
+name: test_prores444_mxf
+sources: 
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
+```ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
+      -c:v dnxhd -profile:v dnxhr_sq \
+      -metadata project="MY PROJECT" \
+      -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 -metadata:s:v:0 reel_name=ABCD123 \
+      -b:v 36M  timecode_OP1a_dnxhr_sq.mxf
+```
+
+### Op-Atom
+
 AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg.
 
 <!---
