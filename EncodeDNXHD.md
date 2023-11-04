@@ -132,7 +132,7 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p -vf scale=19
 
 ## AAF Creation
 
-If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) is an example of using OTIO and pyaaf2 to create a AAF file from an OTIO file.
+If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). In particular the [Embedding footage example](https://pyaaf.readthedocs.io/en/latest/quickstart.html#embedding-footage) which does allow you to specify the tape-name, but also the [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) which using OTIO and pyaaf2 to create a AAF file from an OTIO file, showing a full conformed AAF file.
 
 Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesnt require any media transcoding).
 
@@ -220,6 +220,6 @@ Other combinations of resolution, bitrate and format are:
 | 1440x1080i|  100M  |  yuv422p |
 | 1440x1080i|  110M  |  yuv422p |
 
-## TODO
-
-   * The output sizes dont vary with different profiles, which seems wildly wrong.
+## See Also
+   * https://dovidenko.com/2019/999/ffmpeg-dnxhd-dnxhr-mxf-proxies-and-optimized-media.html
+   * https://askubuntu.com/questions/907398/how-to-convert-a-video-with-ffmpeg-into-the-dnxhd-dnxhr-format
