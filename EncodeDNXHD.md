@@ -8,6 +8,15 @@ parent: Codec Comparisons
 
 # DNxHD/DNxHR
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 Avid [DNxHD](https://en.wikipedia.org/wiki/Avid_DNxHD) ("Digital Nonlinear Extensible High Definition") is a lossy post-production codec that is intended for use for editing as well as a presentation format.
 
 There are a number of pre-defined resolutions, frame-rates and bit-rates that are supported, see [AVID Resolutions](https://en.wikipedia.org/wiki/List_of_Avid_DNxHD_resolutions) for a list. However, we are going to focus on the DNxHR version of the codec, since it allows quite a bit more flexibility for larger image sizes than HD, more flexible frame rates and bit-rates of up to 3730Mbit/s (See  [DNxHR-Codec-Bandwidth-Specifications](https://avid.secure.force.com/pkb/articles/en_US/White_Paper/DNxHR-Codec-Bandwidth-Specifications) ).
@@ -34,7 +43,7 @@ comparisontest:
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -pix_fmt yuv422p10le -profile:v dnxhr_hqx -sws_flags spline+accurate_rnd+full_chroma_int \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-    -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y  outputfile.mov
+    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
 ```
 
 
@@ -55,7 +64,7 @@ There really are not any significant flags to be used, changing bit-rate has no 
 ## ffmpeg RGB support
 
 <!---
-name: test_prores444_rgb
+name: test_dnxhd_rgb
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
@@ -69,7 +78,6 @@ comparisontest:
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
      -c:v dnxhd -profile:v dnxhr_444 \
-     -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace rgb \
      -pix_fmt gbrp10le outputfile.mov
 ```
@@ -83,10 +91,10 @@ There are two types of MXF files, Op-atom and OP1a. Op-atom is designed for a si
 
 ### OP1a MXF
 
-This is appropriate for deliveries where this only a video compoent, not a mixed format.
+This is appropriate for deliveries where this only a video component, not a mixed format.
 
 <!---
-name: test_prores444_mxf
+name: test_dnxhd_op1a_mxf
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
@@ -97,23 +105,30 @@ comparisontest:
        value: max_error
        less: 0.00195
 -->
-```ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
-      -c:v dnxhd -profile:v dnxhr_sq \
-      -metadata project="MY PROJECT" \
-      -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 -metadata:s:v:0 reel_name=ABCD123 \
-      -b:v 36M  timecode_OP1a_dnxhr_sq.mxf
 ```
+ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 \
+    -sws_flags spline+accurate_rnd+full_chroma_int \
+    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -pix_fmt yuv422p -c:v dnxhd -profile:v dnxhr_sq \
+      -metadata project="MY PROJECT" \
+      -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
+    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709  \
+    outputfile.mxf
+```
+
+These can be imported directly into the AVID, although it will need to do some unpacking. For the fastest import you probably want to use OpAtom (see below). If you want to import with a reel-name, using the AAF wrapper (see below) is the recommended approach.
 
 ### Op-Atom
 
 AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg. This worked for a single piece of media (i.e. just video, or audio, not both).
 
 <!---
-name: test_prores444_mxf
+name: test_dnxhd_opatom_mxf
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/chromatest_1080.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chromatest_1080-yuv420p.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -121,11 +136,15 @@ comparisontest:
        less: 0.00195
 -->
 ```
-ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
-      -c:v dnxhd -profile:v dnxhr_sq \
+ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p \
+    -sws_flags spline+accurate_rnd+full_chroma_int \
+    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
+    -pix_fmt yuv422p -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
-      -f mxf_opatom outputfile.mxf
+      -f mxf_opatom \
+      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 \
+       outputfile.mxf
  ```
 
 Typically you will want "MY CLIP" to match the outputfile, but its not necessary. Also note, that if you want a reel-name to also be on the clip that you will need to wrap the MXF file in an AAF (See below) to get the extra metadata imported.
@@ -138,11 +157,14 @@ These do not get directly imported into the avid, instead you copy them directly
 
 If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). In particular the [Embedding footage example](https://pyaaf.readthedocs.io/en/latest/quickstart.html#embedding-footage) which does allow you to specify the tape-name, but also the [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) which using OTIO and pyaaf2 to create a AAF file from an OTIO file, showing a full conformed AAF file.
 
-Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesnt require any media transcoding).
+Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesn't require any media transcoding).
 
 A simple example of this is to convert all your clips to raw dnxhd files, e.g.:
 ```
-ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p -vf scale=1920:1080 \
+ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
+    -sws_flags spline+accurate_rnd+full_chroma_int \
+    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+      -pix_fmt yuv422p \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name=$clip  -timecode 01:00:20:00 \
@@ -202,12 +224,12 @@ In this simplistic example, I'm overwriting the Shot and Scene metadata columns,
 For example below is an example of DNxHD at 175Mbps at yuv422p10 at resolution 1920x1080.
 
 <!---
-name: test_prores422_profile
+name: test_dnxhd_profile
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/chromatest_1080.png.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     compare_image: ../sourceimages/chromatest_1080-yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -216,10 +238,12 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-     -c:v dnxhd -b:v 175M \
+     -sws_flags spline+accurate_rnd+full_chroma_int \
+    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -pix_fmt yuv422p10 -c:v dnxhd -b:v 175M \
      -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-     -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace rgb \
-     -pix_fmt yuv422p10 outputfile.mov
+     -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 \
+      outputfile.mov
 ```
 
 Other combinations of resolution, bitrate and format are:
