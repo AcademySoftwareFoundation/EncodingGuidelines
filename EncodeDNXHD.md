@@ -106,7 +106,7 @@ comparisontest:
 
 ### Op-Atom
 
-AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg.
+AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg. This worked for a single piece of media (i.e. just video, or audio, not both).
 
 <!---
 name: test_prores444_mxf
@@ -124,9 +124,13 @@ comparisontest:
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p -vf scale=1920:1080 \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
-      -metadata material_package_name="MY CLIP" \
-      -b:v 36M -f mxf_opatom outputfile.mxf
+      -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
+      -f mxf_opatom outputfile.mxf
  ```
+
+Typically you will want "MY CLIP" to match the outputfile, but its not necessary. Also note, that if you want a reel-name to also be on the clip that you will need to wrap the MXF file in an AAF (See below) to get the extra metadata imported.
+
+These do not get directly imported into the avid, instead you copy them directly into the /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/{NUMBER} folder (e.g. /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/2) on OSX or C:\Avid MediaFiles\MXF\{NUMBER} on windows. I have typically created a new folder for each import. Once imported, Media composer will scan the files and create a msmMMOB.mdb file, which is a database of the MOB ID's of the files. This can then be dragged into a Avid Bin.
 
  See [https://johnwarburton.net/blog/?p=50731](https://johnwarburton.net/blog/?p=50731)
 
@@ -135,6 +139,63 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p -vf scale=19
 If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). In particular the [Embedding footage example](https://pyaaf.readthedocs.io/en/latest/quickstart.html#embedding-footage) which does allow you to specify the tape-name, but also the [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) which using OTIO and pyaaf2 to create a AAF file from an OTIO file, showing a full conformed AAF file.
 
 Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesnt require any media transcoding).
+
+A simple example of this is to convert all your clips to raw dnxhd files, e.g.:
+```
+ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p -vf scale=1920:1080 \
+      -c:v dnxhd -profile:v dnxhr_sq \
+      -metadata project="MY PROJECT" \
+      -metadata material_package_name=$clip  -timecode 01:00:20:00 \
+      $clip.dnxhd
+```
+
+and then to wrap these resulting files in an AAF with:
+```python
+import aaf2
+import os, sys
+
+for filename in sys.argv[1:]:
+  if "dnxhd" not in filename:
+    print("Skipping file:", filename)
+    continue
+
+  outputfilename = filename.replace(".dnxhd", ".aaf")
+  clipname = filename.replace(".dnxhd", "")
+
+  with aaf2.open(outputfilename, 'w') as f:
+
+    # objects are create with a factory
+    # on the AAFFile Object
+    mob = f.create.MasterMob(clipname)
+    mob.comments["Shot"] = clipname
+    mob.comments["Scene"] = "mk"
+
+    # add the mob to the file
+    f.content.mobs.append(mob)
+
+    edit_rate = 24
+
+    # lets also create a tape so we can add timecode (optional)
+    tape_mob = f.create.SourceMob()
+    f.content.mobs.append(tape_mob)
+
+    timecode_rate = 24
+    start_time = timecode_rate * 60 * 60 # 1 hour
+    tape_name = "Demo Tape"
+
+    # add tape slots to tape mob
+    tape_mob.create_tape_slots(tape_name, edit_rate,
+                               timecode_rate, media_kind='picture')
+
+    # create sourceclip that references timecode
+    tape_clip = tape_mob.create_source_clip(1, start_time)
+
+    # now finally import the generated media
+    mob.import_dnxhd_essence(filename, edit_rate, tape_clip)
+    # mob.import_audio_essence("sample.wav", edit_rate)
+```
+In this simplistic example, I'm overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py). 
+
 
 ## DNxHD Profiles
 
