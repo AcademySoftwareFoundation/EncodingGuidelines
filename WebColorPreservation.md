@@ -47,7 +47,7 @@ Using the `-color_trc iec61966-2-1` flag (the sRGB spec is defined as [iec61966-
 </table>
 
 ## bt709
-Using the `-color_trc bt709` flag (AKA rec709). This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera bt709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
+Using the `-color_trc bt709` flag (AKA rec709). This is often the default tag, however produces the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera bt709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX. See [Apple quicktime gamma](#apple-quicktime-gamma-and-bt1886) for the workaround.
 
 <table  class='compare'>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the bt709 mp4.</TD></TR>
@@ -62,7 +62,7 @@ Screenshots
 </table>
 
 ## Gamma 2.2
-Using the `-color_trc gamma22` flag. This does not work correctly on safari.
+Using the `-color_trc gamma22` flag. This does not work correctly on safari, see [Color-TRC Comparison for OSX](/EncodingGuidelines/tests/greyramp-osx/compare.html)
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-g22.png"/></TD><TD>Source gamma 2.2 PNG</TD></TR>
@@ -76,6 +76,32 @@ Using the `-color_trc linear` flag. This is unlikely to ever be used for video, 
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-lin.png"/></TD><TD>Source linear PNG</TD></TR>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-lin.mp4"></video></TD><TD>Mp4 Video should match PNG</TD></TR>
 </table>
+
+## Apple Quicktime Gamma and bt1886
+
+Apple has a workaround flag for quicktime files that allows you to explicitly set the gamma of the file. Adding the flags
+`-color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4` would correctly set the gamma of the media to bt1886 on Apple hardware. You can similarly use this for any other gamma, see: [Color-TRC Comparison for OSX](/EncodingGuidelines/tests/greyramp-osx/compare.html). NOTE, you do need the `-color_trc unknown` so that it knows to fall back on the mov_gamma value. 
+
+<!---
+name: test_quickstart
+sources: 
+- sourceimages/chip-chart-1080-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+     testtemplate: idiff  {originalfile} {newfile}
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
+```console
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
+-sws_flags spline+accurate_rnd+full_chroma_int \
+-vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+-c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 \
+-color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 ./greyramp-osx/greyscale-gamma24.mov
+```
 
 ## Summary
 We recommend the use of `-color_trc iec61966-2-1` to use sRGB. There is no support for a gamma 2.4, if you still need it, we recommend that you use -color_trc unknown and ensure that your monitor is set correctly
