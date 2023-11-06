@@ -47,7 +47,7 @@ Using the `-color_trc iec61966-2-1` flag (the sRGB spec is defined as [iec61966-
 </table>
 
 ## bt709
-Using the `-color_trc bt709` flag (AKA rec709). This is often the default tag, however producers the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera bt709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX.
+Using the `-color_trc bt709` flag (AKA rec709). This is often the default tag, however produces the most confusing results. On Chrome this will actually match sRGB, but on safari it will match the camera bt709 parameters, which roughly match gamma 1.95. NOTE, there is no support at all for BT1886, which is what we would conventionally use for the TV gamma of 2.4, the closest you can get is using quicktime on OSX. See [Apple quicktime gamma](#apple-quicktime-gamma-and-bt1886) for the workaround.
 
 <table  class='compare'>
 <TR><TD><video width=400><source src="tests/greyramp-osx/greyscale-rec709.mp4"></video></TD><TD>This is the bt709 mp4.</TD></TR>
@@ -62,7 +62,7 @@ Screenshots
 </table>
 
 ## Gamma 2.2
-Using the `-color_trc gamma22` flag. This does not work correctly on safari.
+Using the `-color_trc gamma22` flag. This does not work correctly on safari, see [Color-TRC Comparison for OSX](/EncodingGuidelines/tests/greyramp-osx/compare.html)
 
 <table class='compare'>
 <TR><TD><img width=400 src="tests/greyramp-osx/greyscale-g22.png"/></TD><TD>Source gamma 2.2 PNG</TD></TR>
