@@ -6,7 +6,7 @@ title: Introduction
 
 # ORI Video Encoding Guidelines.
 
-A project from within the [ASWF Open Review Initiative](https://openreviewinitiative.org/), attempts to establish best practices for encoding Video media for VFX/Animation media review. We aim to explain what various parameters do, and in what situations you might want to choose to modify them.
+This project is from the [ASWF Open Review Initiative](https://openreviewinitiative.org/). It attempts to establish best practices for encoding Video media for VFX/Animation media review. We aim to explain what various parameters do, and in what situations you might want to choose to modify them.
 
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
@@ -32,9 +32,12 @@ You can see the default ffmpeg conversion introduces a dramatic color shift that
 3. [Encoding Overview](Encoding.html#Encoding-Overview)
 4. [Color space conversion](ColorPreservation.html#Color-space-conversion)
 5. [Media Encoding with ffmpeg](ColorPreservation.html#encodestart)
-	1. [RGB to YCrCb Conversion](ColorPreservation.html#yuv)
-	2. [TV vs. Full range.](ColorPreservation.html#tvfull)
-	3. [RGB encode](ColorPreservation.html#rgbencode)
+    1. [Frame sequence specification](FfmpegInputs.html)
+	2. [RGB to YCrCb Conversion](ColorPreservation.html#yuv)
+	3. [TV vs. Full range.](ColorPreservation.html#tvfull)
+	4. [RGB encode](ColorPreservation.html#rgbencode)
+	5. [Useful Ffmpeg Filters.](OtherFfmpegArgs.html)
+	6. [HDR Encoding](HDR_Encoding.html)
 6. [Codec Comparsions](Encoding.html#encode)
 	1. [h264](Encodeh264.html)
 	2. [Prores](EncodeProres.html)

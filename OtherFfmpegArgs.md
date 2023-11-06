@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Other ffmpeg arguments.
+title: Useful Ffmpeg Filters.
 nav_order: 5.5
 parent: Encoding Overview
 ---
 
-# Other ffmpeg arguments.
+# Useful Ffmpeg Filters.
 
 This is covering other things that can be done directly in ffmpeg that might be useful.
 

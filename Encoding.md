@@ -6,7 +6,16 @@ has_children: true
 
 ---
 
-## Codec Comparisons <a name="Encoding-Overview"></a>
+# Codec Comparisons <a name="Encoding-Overview"></a>
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 Ffmpeg supports over 100 video codecs, but only a fraction of those are really worth a deeper dive.
 
@@ -16,9 +25,8 @@ We are going to focus on codecs that match one of the following conditions:
    * Supported by common apps, e.g. Resolve, RV, AVID.
    * Commonly requested as a delivery format by studios or clients.
 
-## Encoding <a name="encode"></a>
 
-## Codecs reviewed
+## Codecs reviewed <a name="encode"></a>
 
 | Codec Family | ffmpeg codec | Bit depth | Pixel format supported | Web Support | HDR | 
 |------------|------------|------------|------------|------------|------------|
@@ -86,12 +94,7 @@ See:
 * https://htj2k.com/
    * https://www.frontiersin.org/articles/10.3389/frsip.2022.885644/full
    * https://github.com/osamu620/OpenHTJ2K
-
-
-
-TODO:
-* Figure out the missing metadata so that ffmpeg can correctly decode a Quicktime to still.
-* 
+ 
 
 ### See Also
    * Another good reference for encoding options is here: [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) although the page is a little out of date.
