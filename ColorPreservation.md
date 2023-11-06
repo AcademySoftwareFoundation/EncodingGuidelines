@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Color Preservation
+title: RGB to YCrCb Conversion
 nav_order: 3
 parent: Encoding Overview
 

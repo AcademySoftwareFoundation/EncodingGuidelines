@@ -8,7 +8,7 @@ title: Encoding Cheatsheet
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
-This document is based on results from ffmpeg 4.4, we have not tested with 5.0 yet, but do plan to.
+This document is based on results from ffmpeg 6.0.
 
 # H264 Encoding from an image sequence for Web Review
 
@@ -46,7 +46,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 **-color_range tv** | mp4 metadata - specifying color range as 16-235 (which is default for web playback).
 **-colorspace bt709** | mp4 metadata - specifying bt709 yuv color pixel format
 **-color_primaries bt709** | mp4 metadata - bt709 color gamut primaries
-**-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests [here](WebColorPreservation.html). In some cases, you may also want -color_trc bt709 see (
+**-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests [here](WebColorPreservation.html). In some cases, you may also want -color_trc bt709 |
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
@@ -59,9 +59,9 @@ The combination of this and in_color_matrix will mean the color encoding will ma
 Separately, if you are converting from exr's in other colorspaces, **please use [OCIO](https://opencolorio.org/) to do the color space conversions.** [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
 
 For more details see:
-   * [H264 Encoding](Encoding.md#h264)
-   * [YUV Conversion](ColorPreservation.md#yuv)
-   * [Browser color issues](ColorPreservation.md#nclc)
+   * [H264 Encoding](EncodeH264.html)
+   * [YUV Conversion](ColorPreservation.html#yuv)
+   * [Browser color issues](WebColorPreservation.html)
 
 
 # ProRes 422 encoding with ffmpeg.
@@ -89,13 +89,13 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
 
 | --- | --- |
 | **-profile:v 3** | Prores profile |
-| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.* |
+| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](/EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
-| **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the quicktime |
+| **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the Quicktime |
 
 For more details see:
-   * [Prores](Encoding.md#prores)
-   * [YUV Conversion](ColorPreservation.md#yuv)
+   * [Prores](EncodeProres.html)
+   * [YUV Conversion](ColorPreservation.html#yuv)
 
 # ProRes 4444 encoding with ffmpeg.
 
@@ -122,7 +122,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
 
 | ---------           | ----------- |
 | **-profile:v 4444** | Prores profile for 4444 |
-| **-qscale:v 9**     | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.*  |
+| **-qscale:v 9**     | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](/EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4444 |
 
 For more details see:
