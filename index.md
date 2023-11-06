@@ -25,7 +25,7 @@ An example of why this is important is to compare:
 <TR><TD style='padding-top:0px; padding-bottom: 0px'>Using the libavscale library</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/libswscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
 </table>
 
-You can see the default ffmpeg conversion introduces a dramatic colorshift that if you use the right flags, you can match the original. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
+You can see the default ffmpeg conversion introduces a dramatic color shift that if you use the right flags, you can match the original. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
 
 1. [Acknowledgements](#Acknowledgements)
 2. [Encoding Cheat Sheet](Quickstart.html)

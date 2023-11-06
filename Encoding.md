@@ -47,7 +47,7 @@ For details on codec flags, and how we picked the parameters, do goto the page f
 
 ## Uncompressed Codecs.
 
-Ffmpeg has support for a small number of uncompressed codecs that are worth using for testing. We dont recommend any of them for day-to-day use.
+Ffmpeg has support for a small number of uncompressed codecs that are worth using for testing. We don't recommend any of them for day-to-day use.
 
 | Codec | Description | Pix Fmt | Notes |
 |:----------|:-----------|:-----------|:-----------|:-----------|:-----------|
@@ -56,7 +56,7 @@ Ffmpeg has support for a small number of uncompressed codecs that are worth usin
 | v308 | 444 8-bit packed | yuv444p |
 | v210 | 422 10-bit | yuv422p10le | |
 | r210 | RGB 10-bit |
-| png | PNG inside a quicktime, either 8 or 16-bit with or without alpha | rgb24 rgba rgb48be rgba64be pal8 gray ya8 gray16be ya16be monob |
+| png | PNG inside a Quicktime, either 8 or 16-bit with or without alpha | rgb24 rgba rgb48be rgba64be pal8 gray ya8 gray16be ya16be monob |
 
 ## Other codecs worth considering.
 
@@ -75,7 +75,7 @@ See:
    
 ### HTJ2K
 
-HTJ2K is a modification of the JPEG2000 codecs, where it has been modified to be more scalable, and sigificantly faster than the original jpeg2000 codec at the expense of a slight increase in file-size. The modification is now part of the JPEG2000 spec, and the decoder is now built into ffmpeg.
+HTJ2K is a modification of the JPEG2000 codecs, where it has been modified to be more scalable, and significantly faster than the original jpeg2000 codec at the expense of a slight increase in file-size. The modification is now part of the JPEG2000 spec, and the decoder is now built into ffmpeg.
 
 The codec is royalty free, and there are several open source implementations with non-GPL licenses.
 
@@ -90,7 +90,7 @@ See:
 
 
 TODO:
-* Figure out the missing metadata so that ffmpeg can correctly decode a quicktime to still.
+* Figure out the missing metadata so that ffmpeg can correctly decode a Quicktime to still.
 * 
 
 ### See Also
