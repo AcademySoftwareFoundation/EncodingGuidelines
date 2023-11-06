@@ -56,7 +56,7 @@ Options that can be used include:
 
 
 
-Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognised, e.g.:
+Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognized, e.g.:
 
 
 <!---
@@ -77,7 +77,7 @@ ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 OUTPUTFILE.png
 ```
 
-However, other encoders seem to be recognised correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
+However, other encoders seem to be recognized correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
 
 ```console
 ffmpeg -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
@@ -94,7 +94,7 @@ Profile values can be one of:
 | lt | 1 | 4:2:2 | 102Mbps | Light |
 | standard | 2 | 4:2:2 | 147Mbps | Standard |
 | hq | 3 | 4:2:2 | 220Mbps | High Quality 10-bit |
-| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathmatically lossless alpha. |
+| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathematically lossless alpha. |
 | 4444xq | 5 | 4:4:4:4 | 500MBps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |
 
 See [https://support.apple.com/en-us/HT202410](https://support.apple.com/en-us/HT202410)
@@ -150,5 +150,5 @@ Similar to prores_ks, with the exception of xq. Profile values can be one of:
 | lt | 1 | 4:2:2 | 102Mbps | Light |
 | standard | 2 | 4:2:2 | 147Mbps | Standard |
 | hq | 3 | 4:2:2 | 220Mbps | High Quality 10-bit |
-| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathmatically lossless alpha. |
+| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathematically lossless alpha. |
 | xq | 5 | 4:4:4:4 | 500MBps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |

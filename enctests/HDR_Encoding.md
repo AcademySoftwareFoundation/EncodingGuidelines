@@ -87,7 +87,7 @@ We explicitly define the X265 parameters (see [x265](https://x265.readthedocs.io
 
 ## HLG
 
-[HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma) encoding, developed by NHK and the BBC. Its designed to be backwards compatible with the EOTF to SDR but with an exension for higher intensities. It has a more limited maximum peak brightness of 5000 nits rather than 10000 nits for PQ. 
+[HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma) encoding, developed by NHK and the BBC. Its designed to be backwards compatible with the EOTF to SDR but with an extension for higher intensities. It has a more limited maximum peak brightness of 5000 nits rather than 10000 nits for PQ. 
 
 It is also designed to adapt to the surrounding room light levels, unlike PQ which is fixed. The downside is that this adaption could affect the media in unexpected ways.
 
@@ -159,8 +159,8 @@ We explicitly define the X265 parameters (see [x265](https://x265.readthedocs.io
 | transfer=arib-std-b67 | Set the ETOF to HLG (aka. arib-std-bt67 ) |
 | colormatrix=bt2020nc | UTagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
 | range=limited | Set the source range to be tv range. |
-| master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\) | SMPTE ST 2086 mastering display color volume SEI info, specified as a string which is parsed when the stream header Essentially setting the X,Y display primaries for rec2020 along with the Whitepoint, and the Max,min luminance values in units of 0.00001 NITs. See the above docs for more info. |
-| max-cll=1000,400 | Set the Maximum content light level (in this case 2000 nits = max content light level and 400 = the MaxFall - the maxiumum frame-average light level) |
+| master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\) | SMPTE ST 2086 mastering display color volume SEI info, specified as a string which is parsed when the stream header Essentially setting the X,Y display primaries for rec2020 along with the White-point, and the Max,min luminance values in units of 0.00001 NITs. See the above docs for more info. |
+| max-cll=1000,400 | Set the Maximum content light level (in this case 2000 nits = max content light level and 400 = the MaxFall - the maximum frame-average light level) |
 
 TODO - We do need to understand if the max-cll and master-display parameters are even used for HLG display.
 

@@ -91,7 +91,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
 | **-profile:v 3** | Prores profile |
 | **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. *TODO Need to do testing with different values.* |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
-| **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isnt), helps some tools correctly read the quicktime |
+| **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the quicktime |
 
 For more details see:
    * [Prores](Encoding.md#prores)

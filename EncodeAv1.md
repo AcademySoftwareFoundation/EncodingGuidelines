@@ -18,7 +18,7 @@ AV1 has browser support in:
    * Edge
    * Firefox
    * Opera
-the main missing one is Safari. Apple has now joing the AOM group, and we are starting to see AV1 hardware support in their latest hardware, but currently safari does still not support it.
+the main missing one is Safari. Apple has now joined the AOM group, and we are starting to see AV1 hardware support in their latest hardware, but currently safari does still not support it.
 
 Outside of the web browser, AV1 support is pretty much limited to ffmpeg and VLC.
 

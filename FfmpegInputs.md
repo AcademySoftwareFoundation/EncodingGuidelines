@@ -42,7 +42,7 @@ TODO TEST.
 
 ### Globbing image sequence definition.
 
-There is a globbing option that makes it a little easier to specify a block of frames, since you dont need to specify the first frame.
+There is a globbing option that makes it a little easier to specify a block of frames, since you don't need to specify the first frame.
 
 ```console
 ffmpeg -pattern_type glob -i "img.*.png" foo.mov
@@ -64,11 +64,11 @@ The following aliases are defined for framerate values, either `-r` or `-framera
 | film |  24 | |
 | ntsc-film |  24000/1001 |  23.98 fps |
 
-Is is prefereable to use a fractional rate, or one of the above settings where possible, for example `-r 30000/1001` is the more precise version of 29.97. 
+Is is preferable to use a fractional rate, or one of the above settings where possible, for example `-r 30000/1001` is the more precise version of 29.97. 
 
 Other common fractional rates not defined with presets include:
 
-| 60000/1001 | 59.94 fps equiavalent. |
+| 60000/1001 | 59.94 fps equivalent |
 | 120000/1001 | 119.88 fps equivalent |
 
 If not specified, the default framerate chosen is 25 fps (i.e. pal).

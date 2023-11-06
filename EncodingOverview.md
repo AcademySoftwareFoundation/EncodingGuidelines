@@ -72,8 +72,8 @@ Adding the `-d uint16` flag forces the intermediate file format to be 16-bit, ra
 ## Image resizing.
 
 There are a couple of gotchas with image resizing to watch out for:
-   * A number of the encoders require that the resulting movie file be a factor of 2, there isnt a direct way to do this in oiiotool, you would need to read the source image file to determine the right output scale.
-   * Watch for filter options, if you choose to do the filtering in ffmpeg, it defaults to bicubic, which is not a great choice for downrezing image formats. For reasons why lancozs is prefered, see:
+   * A number of the encoders require that the resulting movie file be a factor of 2, there isn't a direct way to do this in oiiotool, you would need to read the source image file to determine the right output scale.
+   * Watch for filter options, if you choose to do the filtering in ffmpeg, it defaults to bicubic, which is not a great choice for downrezing image formats. For reasons why lancozs is preferred, see:
       * [https://legacy.imagemagick.org/Usage/filter/](https://legacy.imagemagick.org/Usage/filter/)
       * [https://www.cambridgeincolour.com/tutorials/image-resize-for-web.htm](https://www.cambridgeincolour.com/tutorials/image-resize-for-web.htm)
 
