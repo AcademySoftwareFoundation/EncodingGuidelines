@@ -70,7 +70,7 @@ class FFmpegEncoder(ABCTestEncoder):
             # Time encoding process
             t1 = time.perf_counter()
             # Do the encoding
-            log_file = Path(out_file.parent, out_file.stem).with_suffix(".log")
+            log_file = Path(out_file.parent, out_file.stem + ".log")
             with open(log_file, "w") as log_file_object:
                 print(f'ffmpeg command: {cmd}', file=log_file_object)
                 log_file_object.flush()

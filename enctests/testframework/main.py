@@ -55,6 +55,8 @@ VMAF_LIB_DIR = os.getenv(
     f'{os.path.dirname(__file__)}/../.venv/usr/local/lib/x86_64-linux-gnu'
 )
 
+if not Path(VMAF_LIB_DIR, "model", "vmaf_v0.6.1.json").exists():
+    print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_LIB_DIR}")
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -332,7 +334,7 @@ model=path={vmaf_model}\" \
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
         'psnr': raw_results['pooled_metrics'].get('psnr'),   # FFmpeg < 5.1
-        'result': "Completed"
+        'testresult': "Completed"
     }
 
     # TODO Do this as a pretty print.
@@ -600,8 +602,7 @@ def run_tests(args, test_configs, timeline):
                 distorted = Path(test_ref.target_url)
                 print(f"Testing: {distorted.name}")
                 # Send all the log output of the tests to a separate log file.
-                log_file = Path(distorted.parent, distorted.stem+"_tests").with_suffix(".log")
-
+                log_file = Path(distorted.parent, distorted.stem + "_tests.log")
                 with open(log_file, "w") as log_file_object:
                     for test in comparisontests:
                         t1 = time.perf_counter()
