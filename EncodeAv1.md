@@ -59,9 +59,9 @@ comparisontest:
 -->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 \
-        -pix_fmt yuv420p10le -crf 18 -preset 9 -sws_flags spline+accurate_rnd+full_chroma_int \
+        -pix_fmt yuv420p10le -crf 18 -preset 9  -svtav1-params tune=0 -sws_flags spline+accurate_rnd+full_chroma_int \
         -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-        -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -svtav1-params tune=0 \
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
         -y outputfile.mp4
 ```
 
