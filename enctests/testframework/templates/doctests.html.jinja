@@ -38,28 +38,62 @@
    <TH>Max Error</TH>
    <TH>Encode Duration</TH>
    <TH>File Size</TH>
-   <TH>PSNR-Y</TH>
-   <TH>PSNR-CR</TH>
-   <TH>PSNR-CB</TH>
    <TH>Encode Arguments</TH>
    <TH>Test Description</TH>
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
-        <td align=right><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult}}</A> </TD>
+    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult}}</A> </TD>
         <td align=right>{{ enc_info.mean_error}} </TD>
-        <td align=right><A target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}-x20diff.png">{{ enc_info.max_error}} </A></TD>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}-x20diff.png">{{ enc_info.max_error}} </A></TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ enc_info.filesize}} </TD>
-        <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
-        <TD align=right>{{enc_info.psnr_cr.harmonic_mean |e }}</TD>
-        <TD align=right>{{enc_info.psnr_cb.harmonic_mean |e }}</TD>
-        <TD>{{enc_info.encode_arguments | e}}</TD>
+        <TD>{{enc_info.command | e}}</TD>
         <TD>{{enc_info.test_description | e}}</TD>
     </TR>
   {% endfor %}
 </TABLE>
   {% endfor %}
+
+<H2> Pictures </H2>
+  {% for media_name, test in tests.items() %}
+  <h1>{{ media_name }} Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>{{test.source_info.path}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>{{test.source_info.in}} - {{test.source_info.in + test.source_info.duration}}</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Test Results</TH>
+   <TH>PNG</TH>
+   <TH>movie</TH>
+   <TH>Diff</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  {% for enc_info in test.results %}
+    <TR>
+    <TH><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult}}</A> </TD>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"><img max-width="400px" width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"/></A></TD>
+        <td align=right><video width="400px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
+        <td align=right><a target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"><img max-width="400px"  width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"/></A></TD>
+        <TD>{{enc_info.command | e}}</TD>
+    </TR>
+  {% endfor %}
+</TABLE>
+  {% endfor %}
+
 </body>
 </html>

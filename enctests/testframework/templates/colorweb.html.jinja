@@ -47,8 +47,8 @@
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
-        <td align=right><A  target="_blank" HREF="{{ test.default_media.basename }}.-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult }}</A> </TD>
+    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult }}</A> </TD>
         <td align=right>{{ enc_info.mean_error}} </TD>
         <td align=right>{{ enc_info.max_error}} </TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
