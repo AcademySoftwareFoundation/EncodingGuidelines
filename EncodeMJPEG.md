@@ -27,7 +27,6 @@ sources:
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv444p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -36,10 +35,7 @@ comparisontest:
 -->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 \
-   -c:v mjpeg -crf 18 -pix_fmt rgb24 -vf "scale=in_range=full:out_range=full" -color_primaries bt709 -color_range pc -color_trc bt709 -colorspace rgb -qscale:v 3 -y "/Users/sam/git/EncodingGuidelines/enctests/rgb-encode/chimera_cars_srgb.-test_rgb-8bit_mjpeg.mp4"
-   ffmpeg command: ffmpeg -start_number 2500 -i inputfile.%04d.png -vframes 200 \
-   -c:v mjpeg -qscale:v 4 -pix_fmt yuv444p \
-   -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 outputfile.mov
+   -c:v mjpeg -qscale:v 4  outputfile.mov
 
 ```
 

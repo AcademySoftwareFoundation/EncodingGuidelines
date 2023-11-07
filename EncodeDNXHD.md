@@ -108,7 +108,7 @@ comparisontest:
 ```
 ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 \
     -sws_flags spline+accurate_rnd+full_chroma_int \
-    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
     -pix_fmt yuv422p -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -138,7 +138,7 @@ comparisontest:
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p \
     -sws_flags spline+accurate_rnd+full_chroma_int \
-    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
+    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
     -pix_fmt yuv422p -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -163,7 +163,7 @@ A simple example of this is to convert all your clips to raw dnxhd files, e.g.:
 ```
 ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
     -sws_flags spline+accurate_rnd+full_chroma_int \
-    -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
       -pix_fmt yuv422p \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
