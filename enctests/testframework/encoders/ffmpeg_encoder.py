@@ -98,6 +98,7 @@ class FFmpegEncoder(ABCTestEncoder):
             test_meta['test_config_path'] = self.test_config.get(
                 'test_config_path'
             )
+            test_meta['command'] = cmd
             test_meta['encode_arguments'] = wedge
             test_meta['description'] = self.test_config.get('description')
 

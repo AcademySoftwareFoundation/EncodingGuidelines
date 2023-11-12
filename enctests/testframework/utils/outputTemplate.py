@@ -101,6 +101,7 @@ def processTemplate(test_configs, otio_info):
             args.extend([k,str(v)])
             merge_test_info[k] = v 
           merge_test_info['encode_arguments'] = " ".join(args)
+          merge_test_info["command"] = test_info.metadata['aswf_enctests']['command']
           alltests.append(merge_test_info)
       if track.name in tests:
         tests[track.name]['results'].extend(results)

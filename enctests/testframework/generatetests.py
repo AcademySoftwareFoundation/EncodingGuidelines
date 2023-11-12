@@ -3,6 +3,7 @@ import os
 import argparse
 import yaml
 import re
+import shlex
 from pathlib import Path
 
 try:
@@ -101,13 +102,29 @@ def main():
         wedge = {}
 
         # Main args.
-        for arg in ["-qp", "-x264-params", "-qscale:v", "-vf", '-color_range', '-colorspace', '-color_primaries', '-profile:v', '-compression_level', '-pred', '-color_trc', '-pix_fmt', '-preset', '-c:v', '-sws_flags']:
-            match = re.search("\s%s\s(\S+)\s" % arg, template)
-            if match:
-                wedge[arg] = match.group(1)
-                template = template.replace(match.group(0), ' ')
+        templateargs = shlex.split(template)
+        newtemplate = ""
+        while templateargs:
+            arg = templateargs.pop(0) # Grab first
+            if arg in ["-y"]:
+                newtemplate = newtemplate + arg + " "
+                continue
+            if arg in ["-i", "-vframes"]:
+                # Assume its an argument followed by something.
+                nextarg = templateargs.pop(0)
+                newtemplate = f"{newtemplate}{arg} {nextarg} "
+                continue
+            if arg[0] == "-":
+                # Assume its an argument followed by something.
+                nextarg = templateargs.pop(0)
+                if " " in nextarg:
+                    nextarg = f'"{nextarg}"' # Wrap quotes around it.
+                wedge[arg] = nextarg
+            else:
+                newtemplate = newtemplate + arg + " "
         
         #print("Wedge:", wedge)
+        template = newtemplate
 
 
         print("Name:", testname)
@@ -137,7 +154,7 @@ def main():
     tests.append(reports)
 
     with open(args.output_config_file, "w") as f:
-        yaml.dump_all(tests, f)
+        yaml.dump_all(tests, f, sort_keys=False)
 
 
 if __name__== '__main__':
