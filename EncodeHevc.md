@@ -67,6 +67,11 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
 
 To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
 
+If you are trying to map crf values from h264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
+```
+x265_crf(x264_crf) = 1.09 * x264_crf −  4.19
+```
+
 | ![](enctests/reference-results/hevc-crf-test-encode_time.png)  This is showing CRF values against encoding time. |
 | ![](enctests/reference-results/hevc-crf-test-filesize.png) This is showing CRF values against file size. |
 | ![](enctests/reference-results/hevc-crf-test-vmaf_harmonic_mean.png) This is showing CRF values against VMAF harmonic mean |

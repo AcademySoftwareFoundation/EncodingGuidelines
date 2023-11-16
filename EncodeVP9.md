@@ -71,10 +71,19 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 | -speed 2 | This is also accessible as -cpu_used, it sets how efficient the compression will be. The default is 0, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy. (See below). |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 
+Its possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the -g flag), since the default is 240 frames. Unlike h264 and h265 VP9 does behave strangely with GOP values less than 10, the closer you get to 1, the longer the encoding takes and the larger the file (which is not true for other codecs). 
+
 
 ### CRF Comparison
 
 Below is a comparison of different CRF rates, with -b:v 0 and -quality good
+
+
+If you are trying to map crf values from h264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
+```
+vp9_crf (x264_crf) = 1.98 * x264_crf − 14.46
+```
+
 
 | ![](enctests/reference-results/vp9-crf-test-encode_time.png)  This is showing CRF values against encoding time. |
 | ![](enctests/reference-results/vp9-crf-test-filesize.png) This is showing CRF values against file size. |
