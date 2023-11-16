@@ -48,7 +48,7 @@
         <td align=right>{{ enc_info.mean_error}} </TD>
         <td align=right><A target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}-x20diff.png">{{ enc_info.max_error}} </A></TD>
         <td align=right>{{ enc_info.encode_time}} </TD>
-        <td align=right>{{ enc_info.filesize}} </TD>
+        <td align=right>{{ "{:,}".format(enc_info.filesize) }} </TD>
         <TD>{{enc_info.command | e}}</TD>
         <TD>{{enc_info.test_description | e}}</TD>
     </TR>

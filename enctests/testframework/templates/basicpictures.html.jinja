@@ -49,7 +49,7 @@
     <TR>
     <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
         <td align=right>{{ enc_info.encode_time}} </TD>
-        <td align=right>{{ enc_info.filesize}} </TD>
+        <td align=right>{{ "{:,}".format(enc_info.filesize) }} </TD>
         <TD align=right>{{enc_info.vmaf.harmonic_mean |e }}</TD>
         <TD align=right>{{enc_info.vmaf.mean |e }}</TD>
         <TD align=right>{{enc_info.vmaf.min |e }}</TD>
