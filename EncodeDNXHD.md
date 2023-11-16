@@ -29,10 +29,10 @@ Example encoding:
 <!---
 name: test_dnxhd_mov
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -40,8 +40,8 @@ comparisontest:
        less: 0.00195
 -->
 ```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
-    -pix_fmt yuv422p10le -profile:v dnxhr_hqx -sws_flags spline+accurate_rnd+full_chroma_int \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -sws_flags area+accurate_rnd+full_chroma_int -c:v dnxhd \
+    -pix_fmt yuv422p10le -profile:v dnxhr_hqx \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
 ```
@@ -69,6 +69,7 @@ sources:
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -77,7 +78,7 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-     -c:v dnxhd -profile:v dnxhr_444 \
+     -sws_flags area+accurate_rnd -c:v dnxhd -profile:v dnxhr_444 \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace rgb \
      -pix_fmt gbrp10le outputfile.mov
 ```
@@ -96,9 +97,10 @@ This is appropriate for deliveries where this only a video component, not a mixe
 <!---
 name: test_dnxhd_op1a_mxf
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/smptehdbars_8.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/smptehdbars_8_yuv422p.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -107,9 +109,9 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 \
-    -sws_flags spline+accurate_rnd+full_chroma_int \
+    -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-    -pix_fmt yuv422p -c:v dnxhd -profile:v dnxhr_sq \
+    -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709  \
@@ -125,10 +127,10 @@ AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-A
 <!---
 name: test_dnxhd_opatom_mxf
 sources: 
-- sourceimages/chromatest_1080.png.yml
+- sourceimages/smptehdbars_8.png.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chromatest_1080-yuv420p.png
+     compare_image: ../sourceimages/smptehdbars_8_yuv422p.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -137,9 +139,9 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p \
-    -sws_flags spline+accurate_rnd+full_chroma_int \
+    -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
-    -pix_fmt yuv422p -c:v dnxhd -profile:v dnxhr_sq \
+    -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
       -f mxf_opatom \
@@ -162,9 +164,8 @@ Ideally with AAF files, you would be importing MXF files (like the example above
 A simple example of this is to convert all your clips to raw dnxhd files, e.g.:
 ```
 ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
-    -sws_flags spline+accurate_rnd+full_chroma_int \
+    -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-      -pix_fmt yuv422p \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name=$clip  -timecode 01:00:20:00 \
@@ -226,10 +227,10 @@ For example below is an example of DNxHD at 175Mbps at yuv422p10 at resolution 1
 <!---
 name: test_dnxhd_profile
 sources: 
-- sourceimages/chromatest_1080.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chromatest_1080-yuv422p10le.png
+     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -238,7 +239,7 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-     -sws_flags spline+accurate_rnd+full_chroma_int \
+     -sws_flags area+accurate_rnd+full_chroma_int \
     -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
     -pix_fmt yuv422p10 -c:v dnxhd -b:v 175M \
      -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \

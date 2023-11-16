@@ -18,6 +18,10 @@ This is covering other things that can be done directly in ffmpeg that might be 
 {:toc}
 </details>
 
+## Other FFmpeg Resources
+
+   * [GOP values explained](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second)
+   * [ffimprovisr](https://amiaopensource.github.io/ffmprovisr/) is a great resource to find more friendly descriptions/examples of common ffmpeg use-cases.
 
 ## Audio
 
@@ -55,8 +59,6 @@ The merge process is not quick, so there are limits to how much you can split th
 TODO - Provide some examples of speed improvement, as well as a sample command line.
 
 ## ffmpeg help
-
-If you find the below to be too terse, [ffimprovisr](https://amiaopensource.github.io/ffmprovisr/) is a great resource to find more friendly descriptions/examples of common ffmpeg use-cases.
 
 | | |
 | ffmpeg -formats | list all file formats |

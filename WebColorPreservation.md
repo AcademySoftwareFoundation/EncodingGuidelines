@@ -96,10 +96,10 @@ Apple has a workaround flag for quicktime files that allows you to explicitly se
 <!---
 name: test_quickstart
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/smptehdbars_8.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
+     compare_image: ../sourceimages/smptehdbars_8_yuv420p.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -108,10 +108,10 @@ comparisontest:
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
--sws_flags spline+accurate_rnd+full_chroma_int \
+-sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv420p \
 -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
--c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 \
--color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 ./greyramp-osx/greyscale-gamma24.mov
+-c:v libx264 -t 5 -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 \
+-color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 outputfile.mov
 ```
 
 ## Summary

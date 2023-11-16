@@ -31,7 +31,7 @@ sources:
 comparisontest:
    - testtype: idiff
      compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags area+accurate_rnd+full_chroma_int {newpngfile}"
    - testtype: assertresults
      tests:
      - assert: less
@@ -39,9 +39,9 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
-        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -frames:v 100 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le -vendor apl0  -qscale:v: 10 \
+ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png  -sws_flags area+accurate_rnd+full_chroma_int \
+         -pix_fmt yuv422p10le -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -frames:v 100 -c:v prores_ks -profile:v 3 -vendor apl0  -qscale:v: 10 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         -y outputfile.mov
 ```
@@ -59,18 +59,6 @@ Options that can be used include:
 Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognized, e.g.:
 
 
-<!---
-name: test_prores_extract
-sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
-comparisontest:
-   - testtype: idiff
-   - testtype: assertresults
-     tests:
-     - assert: less
-       value: max_error
-       less: 0.00195
--->
 ```console
 ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
    -sws_flags spline+accurate_rnd+full_chroma_int -vframes 1 \
@@ -132,8 +120,10 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -vframes 100 -c:v prores_videotoolbox -profile:v 3 -pix_fmt yuv422p10le \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  -sws_flags area+accurate_rnd+full_chroma_int \
+         -pix_fmt yuv422p10le \
+        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vframes 100 -c:v prores_videotoolbox -profile:v 3  \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 outputfile.mov
 
 ```

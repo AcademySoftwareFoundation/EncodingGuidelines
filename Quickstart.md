@@ -20,7 +20,6 @@ sources:
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -28,9 +27,9 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -sws_flags area+accurate_rnd+full_chroma_int  -pix_fmt yuv420p \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -frames:v 100 -c:v libx264 -preset slower -pix_fmt yuv420p \
+        -frames:v 100 -c:v libx264 -preset slower \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         outputfile.mp4
 ```
@@ -74,7 +73,6 @@ sources:
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -82,9 +80,10 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -sws_flags area+accurate_rnd+full_chroma_int \
+    -pix_fmt yuv422p10le -vframes 100 \
     -c:v prores_ks -profile:v 3 -qscale:v 9 \
-    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv422p10le outputfile.mov
+    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 outputfile.mov
 ```
 
 | --- | --- |
@@ -107,7 +106,6 @@ sources:
 - sourceimages/chip-chart-1080-noicc.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -115,9 +113,10 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -vframes 100 \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  -sws_flags area+accurate_rnd+full_chroma_int \
+    -pix_fmt yuv444p10le -vframes 100 \
    -c:v prores_ks -profile:v 4444 -qscale:v 9 \
-   -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -pix_fmt yuv444p10le outputfile.mov
+   -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 outputfile.mov
 ```
 
 | ---------           | ----------- |
@@ -150,7 +149,6 @@ sources:
 - sourceimages/radialgrad.png.yml
 comparisontest:
    - testtype: idiff
-     testtemplate: idiff  {originalfile} {newfile}
    - testtype: assertresults
      tests:
      - assert: less
@@ -158,9 +156,9 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags spline+accurate_rnd+full_chroma_int \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
-    -c:v libx264 -t 5 -pix_fmt yuv420p -qscale:v 1 \
+ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags area+accurate_rnd+full_chroma_int \
+    -pix_fmt yuv420p -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
+    -c:v libx264 -t 5  -qscale:v 1 \
     -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
