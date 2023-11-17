@@ -53,7 +53,7 @@ You can see the default ffmpeg conversion introduces a dramatic color shift that
 
 ### Acknowledgements  <a name="Acknowledgements"></a>
 
-This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
+This document is a result of feedback from many people, in particular I would like to thank Kevin Wheatley, Trevor Aylward, Mark Reid, Gates Roberg Clark, Rick Sayre, Wendy Heffner and J Schulte for their time and patience.  
 
 ### Status
 
