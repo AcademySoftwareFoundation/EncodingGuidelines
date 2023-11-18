@@ -92,6 +92,8 @@ For a Op1a mxf file it can be defined with a -metadata flag:
 ffmpeg -f lavfi -i testsrc -t 1 -timecode 01:00:00:00 -metadata reel_name=ABCD123 OUTPUT.mxf
 ```
 
+However, metadata for reel-name is not consistently supported across the applications:
+
 <table>
   <tr>
    <td>
