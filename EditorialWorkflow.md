@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Timecode and Editorial Workflow
+title: Adding Timecode and Editorial Workflow
 nav_order: 5
 parent: Encoding Overview
 ---
