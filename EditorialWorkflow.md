@@ -50,8 +50,6 @@ There are three approaches for what to use for the timecode:
 
 It's extremely common to use a start frame of 1001 for a shot at the beginning of production, rather than frame 0. The three big reasons for this are:
 
-
-
 1. Frames are automatically padded to 4 digits (which is really common for VFX work).
 2. If you do need to add additional frames to the head of the shot, either because editorial requests it, then there is plenty of wiggle room without requiring moving animation (which can be problematic if multiple departments are involved).
 3. It's easy for simulation to have ‘pre-roll’ time without going into negative frames.
@@ -80,7 +78,7 @@ This has a similar benefit in terms of conform, you can add or remove frames, an
 
 While tracking the timecode for dailies may be too complex, it can be extremely useful for making proxies for source camera files. But the timecode alone is not enough, you also would need the reel-name, which typically is closely mapped to the filename of the original camera files.
 
-For a quicktime the reel name can be defined with the -metadata:s:v:0 flag:
+For a Quicktime the reel name can be defined with the -metadata:s:v:0 flag:
 
 ```
 ffmpeg -f lavfi -i testsrc -t 1 -timecode 01:00:00:00 -metadata:s:v:0 reel_name=ABCD123 OUTPUT.mov
@@ -171,18 +169,16 @@ For examples of the conform workflow, see: [VFX Subclipping relink](https://www.
 ## AVID Media Composer Workflows
 
 Deciding on whether to create Op1a vs. OpAtom does depend on which version of media composer you are using. Newer ones tend to prefer op-atom, but you should check with your editor.
+For details on creating MXF files, see [OpAtom](/EncodeDNXHD.html#op-atom-mxf) and [Op1a](EncodeDNXHD.html#op1a-mxf).
 
 Part of the decision is whether you want a single file to also contain the audio, and whether you want to additionally use AAF files (see below).
 
 If an AVID imports a media file with no timecode, it will default to 01:00:00:00.
-
 For this reason it can be desirable to do one of the above approaches, but do work with editorial to confirm what they would like. 
 
-See [OpAtom](/EncodeDNXHD.html#op-atom) for how to make OpAtom.mxf files. 
+[OpAtom](/EncodeDNXHD.html#op-atom-mxf) files do not get directly imported into the AVID, instead you copy them directly into the /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/{NUMBER} folder (e.g. /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/2) on OSX or C:\Avid MediaFiles\MXF\{NUMBER} on windows. You can make a higher number, but Media Composer will also scan existing folders. Media composer will scan for new files and create (or update) a msmMMOB.mdb file, which is a database of the MOB ID's of the files. This can then be dragged into a Avid Bin to import the new files.
 
-These do not get directly imported into the avid, instead you copy them directly into the /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/{NUMBER} folder (e.g. /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/2) on OSX or C:\Avid MediaFiles\MXF\{NUMBER} on windows. I have typically created a new folder for each import. Once imported, Media composer will scan the files and create a msmMMOB.mdb file, which is a database of the MOB ID's of the files. This can then be dragged into a Avid Bin.
-
-NOTE, there is also an associated folder called UME - /Users/Shared/AvidMediaComposer/Avid MediaFiles/UME/{NUMBER} that can take Op1A files. However, with recent testing (version 2023.8.2.58057.0), the metadata does not reliably get imported.
+NOTE, there is also an associated folder called UME - /Users/Shared/AvidMediaComposer/Avid MediaFiles/UME/{NUMBER} that can take [Op1a](EncodeDNXHD.html#op1a-mxf) files. However, with recent testing (version 2023.8.2.58057.0), the metadata does not reliably get imported.
 
 ## AAF Creation
 
@@ -190,10 +186,10 @@ If you are tightly integrating your pipeline into an AVID workflow, you should c
 
 Ideally with AAF files, you would be importing MXF files (like the example above) to minimize the import time to the AVID (so it doesn't require any media transcoding).
 
-A simple example of this is to convert all your clips to raw dnxhd files, e.g.:
+A simple example of this is to convert all your clips to raw DNxHD files, e.g.:
 ```
 ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
-    -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv422p \
+    -sws_flags area -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
@@ -248,9 +244,6 @@ for filename in sys.argv[1:]:
 ```
 
 In this simplistic example, I'm overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py). 
-
-
-
 
 ## See Also
    * [Feature Turnover Guide](https://www.evanschiff.com/articles/feature-turnover-guide-vfx/)
