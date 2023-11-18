@@ -31,7 +31,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -sws_flags area+accurate_rnd+
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -frames:v 100 -c:v libx264 -preset slower \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-        outputfile.mp4
+       -movflags faststart outputfile.mp4
 ```
 
 | --- | --- |
@@ -46,6 +46,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -sws_flags area+accurate_rnd+
 **-colorspace bt709** | mp4 metadata - specifying bt709 yuv color pixel format
 **-color_primaries bt709** | mp4 metadata - bt709 color gamut primaries
 **-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See tests [here](WebColorPreservation.html). In some cases, you may also want -color_trc bt709 |
+**-movflags faststart | This re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 
 **-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
 
