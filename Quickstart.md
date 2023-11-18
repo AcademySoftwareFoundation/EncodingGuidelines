@@ -17,9 +17,10 @@ If you are encoding from an [image sequence](FfmpegInputs.html) (e.g. imagefile.
 <!---
 name: test_quickstart
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -71,9 +72,10 @@ Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many ca
 <!---
 name: test_proresquickstart
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
+     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less
@@ -104,7 +106,7 @@ As above, but using 4444 (i.e. a color value for each pixel + an alpha)
 <!---
 name: test_prores444
 sources: 
-- sourceimages/chip-chart-1080-noicc.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
    - testtype: assertresults

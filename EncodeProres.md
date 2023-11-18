@@ -27,10 +27,10 @@ Example encode would look like:
 <!---
 name: test_proresks
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
      extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags area+accurate_rnd+full_chroma_int {newpngfile}"
    - testtype: assertresults
      tests:
@@ -108,10 +108,10 @@ If you are on a OSX M1 machine and are using ffmpeg 5.0 or higher, you can use t
 <!---
 name: test_prores_videotoolbox
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
      extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
    - testtype: assertresults
      tests:
