@@ -178,6 +178,12 @@ If an AVID imports a media file with no timecode, it will default to 01:00:00:00
 
 For this reason it can be desirable to do one of the above approaches, but do work with editorial to confirm what they would like. 
 
+See [OpAtom](/EncodeDNXHD.html#op-atom) for how to make OpAtom.mxf files. 
+
+These do not get directly imported into the avid, instead you copy them directly into the /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/{NUMBER} folder (e.g. /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/2) on OSX or C:\Avid MediaFiles\MXF\{NUMBER} on windows. I have typically created a new folder for each import. Once imported, Media composer will scan the files and create a msmMMOB.mdb file, which is a database of the MOB ID's of the files. This can then be dragged into a Avid Bin.
+
+NOTE, there is also an associated folder called UME - /Users/Shared/AvidMediaComposer/Avid MediaFiles/UME/{NUMBER} that can take Op1A files. However, with recent testing (version 2023.8.2.58057.0), the metadata does not reliably get imported.
+
 ## AAF Creation
 
 If you are tightly integrating your pipeline into an AVID workflow, you should checkout [pyaaf2](https://github.com/markreidvfx/pyaaf2). In particular the [Embedding footage example](https://pyaaf.readthedocs.io/en/latest/quickstart.html#embedding-footage) which does allow you to specify the tape-name, but also the [OTIO To Multi AAF Transcode example](https://github.com/markreidvfx/otio_to_multi_aaf_alab_example) which using OTIO and pyaaf2 to create a AAF file from an OTIO file, showing a full conformed AAF file.
@@ -238,7 +244,13 @@ for filename in sys.argv[1:]:
 
     # now finally import the generated media
     mob.import_dnxhd_essence(filename, edit_rate, tape_clip)
-    # mob.import_audio_essence("sample.wav", edit_rate)
+    # mob.import_audio_essence("sample.wav", edit_rate) #Modify if you have audio too.
 ```
+
 In this simplistic example, I'm overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py). 
 
+
+
+
+## See Also
+   * [Feature Turnover Guide](https://www.evanschiff.com/articles/feature-turnover-guide-vfx/)
