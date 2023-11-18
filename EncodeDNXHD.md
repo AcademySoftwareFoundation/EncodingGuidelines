@@ -66,10 +66,9 @@ There really are not any significant flags to be used, changing bit-rate has no 
 <!---
 name: test_dnxhd_rgb
 sources: 
-- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+- sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
    - testtype: assertresults
      tests:
      - assert: less

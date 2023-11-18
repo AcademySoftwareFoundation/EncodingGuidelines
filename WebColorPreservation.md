@@ -94,7 +94,7 @@ Apple has a workaround flag for quicktime files that allows you to explicitly se
 `-color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4` would correctly set the gamma of the media to bt1886 on Apple hardware. You can similarly use this for any other gamma, see: [Color-TRC Comparison for OSX](/EncodingGuidelines/tests/greyramp-osx/compare.html). NOTE, you do need the `-color_trc unknown` so that it knows to fall back on the mov_gamma value. 
 
 <!---
-name: test_quickstart
+name: test_movgama
 sources: 
 - sourceimages/smptehdbars_8.png.yml
 comparisontest:

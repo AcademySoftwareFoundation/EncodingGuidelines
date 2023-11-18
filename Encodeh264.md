@@ -44,7 +44,8 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
         -pix_fmt yuv420p10le -crf 18 -preset slow \
         -sws_flags spline+accurate_rnd+full_chroma_int \
         -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-        -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y outputfile.mp4
+        -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 \
+        -movflags faststart -y outputfile.mp4
 ```
 
 
@@ -54,6 +55,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
 | **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ) |
 | **-qscale:v 9** | Generic quality scale flag: [https://www.ffmpeg.org/ffmpeg.html#toc-Main-options](https://www.ffmpeg.org/ffmpeg.html#toc-Main-options) - TODO experiment with this. |
 | **-tune film** | See below. |
+**-movflags faststart | This re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 
 ### Tune Parameter
 
