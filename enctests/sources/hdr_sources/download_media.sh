@@ -25,8 +25,8 @@ if [ ! -d sparks_srgb ]
 then
     mkdir sparks_srgb
 	echo Building sparks png
-	oiiotool -v --framepadding 5 --frames 6100-6299 sparks/SPARKS_ACES_#.exr --resize 1920x1014 \
-       --colorconvert linear srgb --dither -o sparks_srgb/sparks_srgb.#.png
+	oiiotool -v --framepadding 5 --frames 6100-6299 sparks/SPARKS_ACES_#.exr --fit 1920x1080 \
+       --colorconvert linear srgb -d uint16  -o sparks_srgb/sparks_srgb.#.png
 
 fi
 
@@ -34,8 +34,8 @@ if [ ! -d sparks2_srgb ]
 then
     mkdir sparks2_srgb
 	echo Building sparks2_srgb
-	oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
-       --colorconvert acescg out_srgb --dither -o sparks2_srgb/sparks2_srgb.#.png
+	oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 \
+        --iscolorspace "ACEScg"  --ociodisplay "sRGB - Display" "ACES 1.0 - SDR Video" -d uint16  -o sparks2_srgb/sparks2_srgb.#.png
 
 fi
 
@@ -43,21 +43,21 @@ if [ ! -d sparks2_hlg ]
 then
     mkdir sparks2_hlg
 	echo Building sparks2_hlg
-    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 --colorconvert acescg out_rec2020hlg1000nits -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
+    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 --colorconvert acescg out_rec2020hlg1000nits -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 fi
 
 if [ ! -d sparks2_pq1000 ]
 then
     mkdir sparks2_pq1000
 	echo Building sparks2_pq1000
-    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 --colorconvert acescg out_rec2020st20841000nits -d uint16 -o sparks2_pq1000/sparks2_pq1000.#.png
+    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 --colorconvert acescg out_rec2020st20841000nits -d uint16 -o sparks2_pq1000/sparks2_pq1000.#.png
 fi
 
 if [ ! -d sparks2_pq2000 ]
 then
     mkdir sparks2_pq2000
 	echo Building sparks2_pq2000
-    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 --colorconvert acescg out_rec2020st20842000nits -d uint16 -o sparks2_pq2000/sparks2_pq2000.#.png
+    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 --colorconvert acescg out_rec2020st20842000nits -d uint16 -o sparks2_pq2000/sparks2_pq2000.#.png
 fi
 
  # Encoding test
