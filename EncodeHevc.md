@@ -63,7 +63,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
 | -x265-params lossless=1 | Does lossless encoding, -crf 0 is not required |
 | -tag:v hvc1 | To make it "Apple "Industry standard" compliant |
 | -profile main | Profile can be one of main or main10 or main12 |
-**-movflags faststart | This re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+**-movflags faststart** | This re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 ## libx265 crf values
 
 To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
