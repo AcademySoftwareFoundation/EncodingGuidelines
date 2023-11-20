@@ -15,8 +15,8 @@
 # This first bit of media is really just for sparks, which hopefully should stress encoders.
 if [ ! -d chimera_wind_srgb ]
 then
-	aws s3 cp --no-sign-request s3://download.opencontent.netflix.com/Chimera/tif_DCI4k5994p/ chimera_wind --recursive --exclude "*" --include "*_790*.tif"
-	aws s3 cp --no-sign-request s3://download.opencontent.netflix.com/Chimera/tif_DCI4k5994p/ chimera_wind --recursive --exclude "*" --include "*_791*.tif"
+	aws s3 cp --no-sign-request s3://download.opencontent.netflix.com/Chimera/tif_DCI4k5994p/ chimera_wind --recursive --exclude '*' --include '*_0666*.tif'
+	aws s3 cp --no-sign-request s3://download.opencontent.netflix.com/Chimera/tif_DCI4k5994p/ chimera_wind --recursive --exclude "*" --include "*_0667*.tif"
 fi
 
 if [[ ! -d chimera_coaster_srgb && ! -d chimera_coaster ]]
@@ -47,7 +47,7 @@ if [ ! -d chimera_wind_srgb ]
 then
     mkdir chimera_wind_srgb
 	echo Building chimera_wind png
-	oiiotool -v --framepadding 6 --frames 79000-79199 -i chimera_wind/Chimera_DCI4k5994p_HDR_P3PQ_@@@@@@.tif --resize 1920x1080  --powc 2  -dither -o chimera_wind_srgb/chimera_wind_srgb.#.png
+	oiiotool -v --framepadding 6 --frames 66600-667199 -i chimera_wind/Chimera_DCI4k5994p_HDR_P3PQ_@@@@@@.tif --resize 1920x1080  --powc 2 -d uint16 -o chimera_wind_srgb/chimera_wind_srgb.#.png
 	rm -rf chimera_wind
 fi
 

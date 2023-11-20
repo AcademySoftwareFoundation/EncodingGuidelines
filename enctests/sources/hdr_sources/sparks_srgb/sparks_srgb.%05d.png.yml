@@ -1,0 +1,8 @@
+images: true
+path: sparks_srgb.%05d.png
+width: 1920
+height: 1080
+pix_fmt: rgb48be
+in: 6100
+duration: 200
+rate: 25.0
