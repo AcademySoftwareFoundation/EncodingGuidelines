@@ -2,6 +2,8 @@
 
 #downloading sparks
 
+export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
+
 # https://opencontent.netflix.com/
 # This first bit of media is really just for sparks, which hopefully should stress encoders.
 if [ ! -d sparks ]
