@@ -63,7 +63,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
 | -x265-params lossless=1 | Does lossless encoding, -crf 0 is not required |
 | -tag:v hvc1 | To make it "Apple "Industry standard" compliant |
 | -profile main | Profile can be one of main or main10 or main12 |
-**-movflags faststart | This re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+**-movflags faststart** | This re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 ## libx265 crf values
 
 To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
@@ -95,6 +95,9 @@ p010le
 nv12
 
 ## hevc_nvenc
+
+Supported pixel formats:
+yuv420p nv12 p010le yuv444p p016le yuv444p16le bgr0 bgra rgb0 rgba x2rgb10le x2bgr10le gbrp gbrp16le cuda d3d11
 
 https://gist.github.com/jbboehr/f487b659cac086b176703c718d797f3b
 https://superuser.com/questions/1296374/best-settings-for-ffmpeg-with-nvenc

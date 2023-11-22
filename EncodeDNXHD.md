@@ -19,7 +19,7 @@ parent: Codec Comparisons
 
 Avid [DNxHD](https://en.wikipedia.org/wiki/Avid_DNxHD) ("Digital Nonlinear Extensible High Definition") is a lossy post-production codec that is intended for use for editing as well as a presentation format.
 
-There are a number of pre-defined resolutions, frame-rates and bit-rates that are supported, see [AVID Resolutions](https://en.wikipedia.org/wiki/List_of_Avid_DNxHD_resolutions) for a list. However, we are going to focus on the DNxHR version of the codec, since it allows quite a bit more flexibility for larger image sizes than HD, more flexible frame rates and bit-rates of up to 3730Mbit/s (See  [DNxHR-Codec-Bandwidth-Specifications](https://avid.secure.force.com/pkb/articles/en_US/White_Paper/DNxHR-Codec-Bandwidth-Specifications) ).
+There are a number of pre-defined resolutions, frame-rates and bit-rates that are supported, see [AVID Resolutions](#dnxhd-profiles) for a list, and these are commonly requested by Editorial. However, we recommend using the DNxHR version of the codec, since it allows quite a bit more flexibility for larger image sizes than HD, more flexible frame rates and bit-rates of up to 3730Mbit/s (See  [DNxHR-Codec-Bandwidth-Specifications](https://avid.secure.force.com/pkb/articles/en_US/White_Paper/DNxHR-Codec-Bandwidth-Specifications) ).
 
 
 Supported pixel formats: yuv422p yuv422p10le yuv444p10le gbrp10le
@@ -57,9 +57,11 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -sws_flags area
 | dnxhr_hqx | High Quality | 4 | YUV 4:2:2  (yuv422p, yuv422p10)  | 12 (*) | 5.5: 1 |
 | dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB  (yuv444p10, gbrp10) | 12 (*) | 4.5:1 |
 
-There really are not any significant flags to be used, changing bit-rate has no effect.
+There really are not any significant flags to be used, since the quality is adjusted automatically to fit the compression ratio. Similarly the bit-rate flag has no impact on this. For more Bit-rate control, see the [DNxHD settings](#dnxhd-profiles) below.
 
 (*) The 12-bit depth is what the codec can support, but does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
+
+NOTE, we have sometimes seen incompatibility issues with DNxHD Quicktimes not being read by Black Magic devices (e.g. the HyperDeck Studio), so there may be cases where you will need to use Resolve or Adobe Media Encoder to create compatible media.
 
 ## ffmpeg RGB support
 
