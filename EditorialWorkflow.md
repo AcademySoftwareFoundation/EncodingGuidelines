@@ -171,14 +171,14 @@ For examples of the conform workflow, see: [VFX Subclipping relink](https://www.
 ## AVID Media Composer Workflows
 
 Deciding on whether to create Op1a vs. OpAtom does depend on which version of media composer you are using. Newer ones tend to prefer op-atom, but you should check with your editor.
-For details on creating MXF files, see [OpAtom](/EncodeDNXHD.html#op-atom-mxf) and [Op1a](EncodeDNXHD.html#op1a-mxf).
+For details on creating MXF files, see [OpAtom](EncodeDNXHD.html#op-atom-mxf) and [Op1a](EncodeDNXHD.html#op1a-mxf).
 
 Part of the decision is whether you want a single file to also contain the audio, and whether you want to additionally use AAF files (see below).
 
 If an AVID imports a media file with no timecode, it will default to 01:00:00:00.
 For this reason it can be desirable to do one of the above approaches, but do work with editorial to confirm what they would like. 
 
-[OpAtom](/EncodeDNXHD.html#op-atom-mxf) files do not get directly imported into the AVID, instead you copy them directly into the /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/{NUMBER} folder (e.g. /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/2) on OSX or C:\Avid MediaFiles\MXF\{NUMBER} on windows. You can make a higher number, but Media Composer will also scan existing folders. Media composer will scan for new files and create (or update) a msmMMOB.mdb file, which is a database of the MOB ID's of the files. This can then be dragged into a Avid Bin to import the new files.
+[OpAtom](EncodeDNXHD.html#op-atom-mxf) files do not get directly imported into the AVID, instead you copy them directly into the /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/{NUMBER} folder (e.g. /Users/Shared/AvidMediaComposer/Avid MediaFiles/MXF/2) on OSX or C:\Avid MediaFiles\MXF\{NUMBER} on windows. You can make a higher number, but Media Composer will also scan existing folders. Media composer will scan for new files and create (or update) a msmMMOB.mdb file, which is a database of the MOB ID's of the files. This can then be dragged into a Avid Bin to import the new files.
 
 NOTE, there is also an associated folder called UME - /Users/Shared/AvidMediaComposer/Avid MediaFiles/UME/{NUMBER} that can take [Op1a](EncodeDNXHD.html#op1a-mxf) files. However, with recent testing (version 2023.8.2.58057.0), the metadata does not reliably get imported.
 

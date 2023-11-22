@@ -16,12 +16,12 @@ test_uncompressed:
   name: test_uncompressed
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  - ../sourceimages/chip-chart-1080-noicc.png.yml
-  - ../sourceimages/smptehdbars_16.png.yml
+  - ../sourceimages/smptehdbars_10.dpx.yml
   suffix: .y4m
   wedges:
     10bit_default:  &base_args
       #-c:v: v410
+      -loglevel: verbose
       -strict: -1
       #-sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
       -pix_fmt: yuv444p10le
@@ -80,6 +80,37 @@ test_uncompressed:
       << : *base_args
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
       -sws_flags: spline+accurate_rnd+full_chroma_int
+
+test_bt709:
+  app: ffmpeg
+  comparisontest:
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
+    testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: Uncompressed tests.
+  encoding_template: ffmpeg -y -color_range pc   -color_trc iec61966-2-1   -color_primaries bt709   -colorspace bt709 {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_bt709
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  suffix: .y4m
+  wedges:
+    10bit_bt709:  &base_args2
+      #-c:v: v410
+      -strict: -1
+      -loglevel: verbose
+      #-sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
+      -pix_fmt: yuv444p10le
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+
 ---
 reports:
   description: This is testing the different options for doing RGB to YCrCb and then back to RGB using y4m as an intermediate container of raw YCrCb data. The pass rate for max-error is 0.00195 = 2/1024 = 1/512. So it has to be 1-bit better than 8-bit values.

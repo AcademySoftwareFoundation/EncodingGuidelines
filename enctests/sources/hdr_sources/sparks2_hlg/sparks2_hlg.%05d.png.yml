@@ -1,7 +1,7 @@
 images: true
 path: /Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks2_hlg/sparks2_hlg.%05d.png
 width: 1920
-height: 1014
+height: 1080
 pix_fmt: rgb48be
 in: 6700
 duration: 200

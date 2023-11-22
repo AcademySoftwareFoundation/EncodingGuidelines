@@ -40,7 +40,7 @@ TODO - Provide other approaches for quickly getting going (e.g. vcpkg)
 ## Quick introduction to color conversion using oiiotool
 
 ```
-export OCIO=~/git/OpenColorIO-Configs/aces_1.2/config.ocio # Or wherever your OCIO is.
+export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1 # Or wherever your OCIO is, this is using a builtin OCIO config, with OCIO 2.2 or newer.
 oiiotool --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 1920x0 \
        --colorconvert acescg srgb --dither -o outputimage.#.png
 ```
