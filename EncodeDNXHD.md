@@ -57,7 +57,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -sws_flags area
 | dnxhr_hqx | High Quality | 4 | YUV 4:2:2  (yuv422p, yuv422p10)  | 12 (*) | 5.5: 1 |
 | dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB  (yuv444p10, gbrp10) | 12 (*) | 4.5:1 |
 
-There really are not any significant flags to be used, changing bit-rate has no effect.
+There really are not any significant flags to be used, since the quality is adjusted automatically to fit the compression ratio. Similarly the bit-rate flag has no impact on this. For more Bit-rate control, see the [DNxHD settings](#dnxhd-profiles) below.
 
 (*) The 12-bit depth is what the codec can support, but does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
 
