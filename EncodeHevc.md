@@ -96,6 +96,9 @@ nv12
 
 ## hevc_nvenc
 
+Supported pixel formats:
+yuv420p nv12 p010le yuv444p p016le yuv444p16le bgr0 bgra rgb0 rgba x2rgb10le x2bgr10le gbrp gbrp16le cuda d3d11
+
 https://gist.github.com/jbboehr/f487b659cac086b176703c718d797f3b
 https://superuser.com/questions/1296374/best-settings-for-ffmpeg-with-nvenc
 
