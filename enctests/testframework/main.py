@@ -590,23 +590,23 @@ def run_tests(args, config_data, timeline):
             # Update dict of references
             references.update(results)
 
-        # Add media references to clip
-        source_clip.set_media_references(
-            references, source_clip.DEFAULT_MEDIA_KEY
-        )
+            # Add media references to clip
+            source_clip.set_media_references(
+                references, source_clip.DEFAULT_MEDIA_KEY
+            )
 
-        # Get or create a track to hold test results
-        encoder_version = encoder.get_application_version()
-        track = track_map.setdefault(
-            encoder_version,
-            otio.schema.Track(name=encoder_version)
-        )
+            # Get or create a track to hold test results
+            encoder_version = encoder.get_application_version()
+            track = track_map.setdefault(
+                encoder_version,
+                otio.schema.Track(name=encoder_version)
+            )
 
-        # We need to copy the clip since there can only be one instance
-        # pr/timeline
-        # Add clip to track
-        if source_clip not in track:
-            track.append(deepcopy(source_clip))
+            # We need to copy the clip since there can only be one instance
+            # pr/timeline
+            # Add clip to track
+            if source_clip not in track:
+                track.append(deepcopy(source_clip))
 
     timeline.tracks.extend(track_map.values())
 
