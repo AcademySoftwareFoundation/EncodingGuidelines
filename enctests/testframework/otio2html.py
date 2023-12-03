@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 import jinja2
 from testframework.main import *
+from .test_suite import TestSuite, SourceConfig
 from testframework.utils.outputTemplate import processTemplate, outputSummaryIndex
 # This code ideally ends up in main.py but may also make sense as a standalone.
 
@@ -57,7 +58,7 @@ def otio2htmlmain():
 
     test_configs = []
     if args.test_config_file:
-        test_configs.extend(TestSuite(Path(args.test_config_file)))
+        test_configs.append(TestSuite(Path(args.test_config_file)))
     else:
         test_configs.extend(
             get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
