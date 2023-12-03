@@ -67,10 +67,15 @@ def otio2htmlmain():
     results = []
 
     for test_config in test_configs:
+        destination_folder = destination_from_config(
+            test_config,
+            args.results,
+            Path(args.results_folder)
+        )
         output_file = args.results
         if output_file == '':
             # We base it on the test filename
-            output_file = Path(args.results_folder) / f"{test_config.config_file().stem}.otio"
+            output_file = destination_folder / f"{test_config.config_file().stem}.otio"
             print("Outputfile:", output_file)
         else:
             output_file = Path(output_file)
@@ -81,14 +86,7 @@ def otio2htmlmain():
         
         first_test = test_config.tests()[0]
         
-        encoder = encoder_factory(
-            None,
-            first_test,
-            Path(args.encoded_folder),
-            test_config,
-            Path(args.results_folder)
-        )
-        test_config.set_destination(first_test.get("destination"))
+
 
         result = processTemplate(test_config, timeline)
         if result is not None:
