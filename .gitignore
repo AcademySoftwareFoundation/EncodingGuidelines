@@ -138,3 +138,8 @@ enctests/sources/encsources/chimera_coaster/
 .jekyll-cache/
 enctests/docs-encode/
 enctests/sources/enc_sources/chimera_coaster/
+enctests/old-results
+enctests/sources/enc_sources/chimera_cars_srgb_jpg
+enctests/sources/enc_sources/chimera_wind
+enctests/results.old
+tmp

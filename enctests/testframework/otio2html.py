@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
-
+import jinja2
 from testframework.main import *
-from testframework.utils.outputTemplate import processTemplate
+from testframework.utils.outputTemplate import processTemplate, outputSummaryIndex
 # This code ideally ends up in main.py but may also make sense as a standalone.
 
 def parse_args():
@@ -23,15 +23,27 @@ def parse_args():
         help='Specify a single test config file to run'
     )
 
-
     parser.add_argument(
         '--results',
         action='store',
-        default='encoding-test-results.otio',
+        default='',
         help='Path to results file including ".otio" extenstion '
              '(default: ./encoding-test-results.otio)'
     )
 
+    parser.add_argument(
+        '--encoded-folder',
+        action='store',
+        default='', # If its '', we determine the path procedurally.
+        help='Where to store the encoded files'
+    )
+
+    parser.add_argument(
+        '--results-folder',
+        action='store',
+        default='./results',
+        help='Basepath for all the results, not used if --encoded-folder is defined.'
+    )
 
     args = parser.parse_args()
 
@@ -45,15 +57,44 @@ def otio2htmlmain():
 
     test_configs = []
     if args.test_config_file:
-        test_configs.extend(parse_config_file(Path(args.test_config_file)))
+        test_configs.extend(TestSuite(Path(args.test_config_file)))
     else:
         test_configs.extend(
             get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
         )
-    
-    timeline = otio.adapters.read_from_file(args.results)
 
-    processTemplate(test_configs, timeline)
+    results = []
+
+    for test_config in test_configs:
+        output_file = args.results
+        if output_file == '':
+            # We base it on the test filename
+            output_file = Path(args.results_folder) / f"{test_config.config_file().stem}.otio"
+            print("Outputfile:", output_file)
+        else:
+            output_file = Path(output_file)
+        if not output_file.exists():
+            continue
+        timeline = otio.adapters.read_from_file(str(output_file))
+        # Create an encoder instance, since this will configure the destination folder.
+        
+        first_test = test_config.tests()[0]
+        
+        encoder = encoder_factory(
+            None,
+            first_test,
+            Path(args.encoded_folder),
+            test_config,
+            Path(args.results_folder)
+        )
+        test_config.set_destination(first_test.get("destination"))
+
+        result = processTemplate(test_config, timeline)
+        if result is not None:
+            result["relativeurl"] = Path(result['reporturl']).relative_to(args.results_folder)
+            results.append(result)
+        
+    outputSummaryIndex(args.results_folder)
 
 if __name__== '__main__':
     otio2htmlmain()

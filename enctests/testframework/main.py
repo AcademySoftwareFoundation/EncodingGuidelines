@@ -11,15 +11,8 @@ import subprocess
 import platform
 
 from pathlib import Path
-
-from .encoders import encoder_factory
-
-try:
-    from yaml import CSafeLoader as SafeLoader
-    from yaml import CSafeDumper as SafeDumper
-
-except ImportError:
-    from yaml import SafeLoader, SafeDumper
+from .test_suite import TestSuite, SourceConfig
+from .encoders import encoder_factory, destination_from_config
 
 import opentimelineio as otio
 
@@ -33,7 +26,7 @@ from .utils import (
     get_source_metadata_dict
 )
 
-from .utils.outputTemplate import processTemplate
+from .utils.outputTemplate import processTemplate, outputSummaryIndex
 
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
@@ -65,7 +58,7 @@ def parse_args():
         '--sources',
         action='store',
         nargs='+',
-        default=[],
+        default=[""],
         help='Provide a list of paths to sources in stead of running all '
              'from source folder. '
              'Please note this overrides the --source-folder argument.'
@@ -104,8 +97,16 @@ def parse_args():
     parser.add_argument(
         '--encoded-folder',
         action='store',
-        default='./encoded',
+        default='', # If its '', we determine the path procedurally.
         help='Where to store the encoded files'
+    )
+
+
+    parser.add_argument(
+        '--results-folder',
+        action='store',
+        default='./results',
+        help='Basepath for all the results, not used if --encoded-folder is defined.'
     )
 
     parser.add_argument(
@@ -126,36 +127,17 @@ def parse_args():
     parser.add_argument(
         '--output',
         action='store',
-        default='encoding-test-results.otio',
+        default='',
         help='Path to results file including ".otio" extenstion '
              '(default: ./encoding-test-results.otio)'
     )
 
     args = parser.parse_args()
 
-    if not args.output.endswith('.otio'):
+    if args.output != '' and not args.output.endswith('.otio'):
         args.output += '.otio'
 
     return args
-
-
-def parse_config_file(path):
-    config_file = path.absolute().as_posix()
-    with open(config_file, 'rt') as f:
-        config = list(yaml.load_all(f, SafeLoader))
-        config[0]['config_path'] = config_file # Stash where the config file is, useful for reporting and relative paths.
-
-    test_configs = []
-    for test_config in config:
-        # Store path to config file for future reference.
-        test_name = next(iter(test_config))
-        if test_name.startswith('test_'):
-            # Only store config path for tests
-            test_config[test_name]['test_config_path'] = config_file
-
-        test_configs.append(test_config)
-
-    return test_configs
 
 
 def create_config_from_source(path, startframe=None):
@@ -225,27 +207,28 @@ def create_source_config_files(args):
         f'Make sure to do adjustments of in point, duration and so on.'
     )
 
+def get_source_configs(args, root_path, config_type):
+    sourceconfigs = []
+    for item in scantree(args, root_path, suffix=config_type):
+        path = Path(item.path)
+        if path.suffix == config_type:
+            try:
+                sourceconfigs.append(SourceConfig(path))
+            except Exception as e:
+                print(f"ERROR: Failed to load {path} error is: {e}")
+
+    return sourceconfigs
+
 
 def get_configs(args, root_path, config_type):
     configs = []
     for item in scantree(args, root_path, suffix=config_type):
         path = Path(item.path)
         if path.suffix == config_type:
-            configs.extend(parse_config_file(path))
-
-    return configs
-
-
-def tests_only(test_configs):
-    """
-    Scan the test-configs for just the test configurations (since it can be co-mingled with output and source info).
-    Each test must start with the label test" to not confuse it with other configs.
-    """
-    configs = []
-    for config in test_configs:
-        for section in config:
-            if section.lower().startswith('test'):
-                configs.append(config[section])
+            try:
+                configs.append(TestSuite(path))
+            except Exception as e:
+                print(f"ERROR: Failed to load {path} error is: {e}")
 
     return configs
 
@@ -507,25 +490,24 @@ def prep_sources(args, test_sources=None):
     # args.source | test_configs | source_folder
 
     source_configs = []
-    if args.sources:
-        for path in args.sources:
-            source_configs.extend(parse_config_file(Path(path)))
+    #if args.sources:
+    #    for path in args.sources:
+    #        source_configs.extend(parse_config_file(Path(path)))
 
-    elif test_sources:
+    if test_sources:
         source_configs.extend(test_sources)
-
     else:
-        source_configs = get_configs(args, args.source_folder, SOURCE_SUFFIX)
+        source_configs = get_source_configs(args, args.source_folder, SOURCE_SUFFIX)
 
-    for config in source_configs:
+    for clipconfig in source_configs:
         test_name = None
         # A tuple indicates the source is from a test_config
-        if isinstance(config, tuple):
+        if isinstance(clipconfig, tuple):
             # We need to split source and test name
-            config, test_name = config
+            clipconfig, test_name = clipconfig
 
         # Create an OTIO clip
-        source_clip = create_clip(config)
+        source_clip = create_clip(clipconfig)
 
         # Add breadcrumb indicating this source came from a test config.
         if test_name:
@@ -537,36 +519,22 @@ def prep_sources(args, test_sources=None):
     return bin
 
 
-def check_for_sources(test_configs):
-    """Grab the image source paths from the test_configs file (which are optional)"""
-    sources = []
-    for test_config in test_configs:
-        # Check if config contains sources to test against
-        for source in test_config.get('sources', []):
-            for source_config in parse_config_file(Path(source)):
-                sources.append(
-                    (source_config, test_config.get('name'))
-                )
 
-    return sources
-
-
-def run_tests(args, test_configs, timeline):
+def run_tests(args, config_data, timeline):
     track_map = {}
 
+    print(f"\n\nRunning test suite {config_data.config_file()}\n")
+
     # Gather test configs
-    test_configs = tests_only(test_configs)
+    tests = config_data.tests()
+    for test_config in tests:
+        # Check for sources in test configs
+        test_sources = test_config.sources()
 
-    # Check for sources in test configs
-    test_sources = check_for_sources(test_configs)
-
-    # Prepare sources for tests
-    source_bin = prep_sources(args, test_sources)
-
-    for source_clip in source_bin:
-        references = source_clip.media_references()
-
-        for test_config in test_configs:
+        # Prepare sources for tests
+        source_bin = prep_sources(args, test_sources)
+        for source_clip in source_bin:
+            references = source_clip.media_references()
             # Check if source is defined in test config
             source_test_name = source_clip.metadata.get('source_test_name')
             if source_test_name and source_test_name != test_config.get('name'):
@@ -577,15 +545,13 @@ def run_tests(args, test_configs, timeline):
             encoder = encoder_factory(
                 source_clip,
                 test_config,
-                Path(args.encoded_folder)
+                config_data.get("destination")
             )
 
             # Run tests and get a dict of resulting media references
             results = encoder.run_wedges()
 
-            comparisontests = [{'testtype': 'vmaf'}]
-            if "comparisontest" in test_config:
-                comparisontests = test_config.get("comparisontest")
+            comparisontests = test_config.get("comparisontest", [{'testtype': 'vmaf'}])
 
             # Compare results against source
             source_path, _ = get_source_path(source_clip)
@@ -655,31 +621,57 @@ def main():
         create_source_config_files(args)
         return
 
-    # Make sure we have a destination folder
-    Path(args.encoded_folder).mkdir(parents=True, exist_ok=True)
-
     # Load test config file(s)
     test_configs = []
     if args.test_config_file:
-        test_configs.extend(parse_config_file(Path(args.test_config_file)))
+        test_configs.append(TestSuite(Path(args.test_config_file)))
 
     else:
         test_configs.extend(
             get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
         )
 
-    # Store results in a timeline, so we can view the results in otioview
-    timeline = otio.schema.Timeline(name='aswf-encoding-tests')
+    for test_config in test_configs:
+        # Figure out where we are writing the otio file to
+        # Which if args.output is not defined it will goto the encode
+        # folder based on the first test in the config file.
+        destination_folder = destination_from_config(
+            test_config,
+            args.output,
+            Path(args.results_folder)
+        )
+        output_file = args.output
+        if output_file == '':
+            # We base it on the test filename
+            output_file = destination_folder / f"{Path(test_config.config_file()).stem}.otio"
+            print("Outputfile:", output_file)
+        
+        if output_file.exists() and output_file.stat().st_mtime > test_config.config_file().stat().st_mtime:
+            print(f"Skipping test {test_config.config_file()}")
+            continue
 
-    # Run tests
-    run_tests(args, test_configs, timeline)
+        # Want to get the encoder version, we make a dummy encoder-factory.
 
-    # Serialize to *.otio
-    otio.adapters.write_to_file(timeline, args.output)
+        # Store results in a timeline, so we can view the results in otioview
+        timeline = otio.schema.Timeline(name='aswf-encoding-tests')
+        timeline.metadata['config_file'] = test_config.config_file().as_posix()
+        timeline.metadata['test_start'] = time.strftime("%Y-%m-%d %I:%M:%S")
+        t = time.time()
+        # Run tests
+        run_tests(args, test_config, timeline)
 
-    # Generate any reports (if specified in file)
-    if not args.skip_reports:
-        processTemplate(test_configs, timeline)
+        timeline.metadata["test_duration"] = time.time() - t
+        timeline.metadata['test_end'] = time.strftime("%Y-%m-%d %I:%M:%S")
+
+        # Serialize to *.otio
+        otio.adapters.write_to_file(timeline, str(output_file))
+
+        # Generate any reports (if specified in file)
+        if not args.skip_reports:
+            processTemplate(test_config, timeline)
+    
+    # Output the index of all the reports in the specified folder.
+    outputSummaryIndex(args.results_folder)
 
 
 if __name__== '__main__':
