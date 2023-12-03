@@ -151,10 +151,10 @@ class FFmpegEncoder(ABCTestEncoder):
         cmd = template.format(
             ffmpeg_bin = FFMPEG_BIN,
             input_args=input_args,
-            source=source_path,
+            source=source_path.as_posix(),
             duration=duration,
             encoding_args=encoding_args,
-            outfile=out_file
+            outfile=out_file.as_posix()
         )
 
         return cmd
