@@ -264,6 +264,16 @@ feature="name=psnr":\
 model=path={vmaf_model}\" \
 -f null -\
 '
+
+    if not distorted.exists():
+        results = {'success': False,
+            'testresult': "No movie generated."
+        }
+    
+        enc_meta = get_test_metadata_dict(test_ref)
+        enc_meta['results'].update(results)
+        return
+
     # Get settings from metadata used as basis for encoded media
     source_meta = get_source_metadata_dict(source_clip)
     input_args = ''
@@ -277,7 +287,7 @@ model=path={vmaf_model}\" \
     cmd = vmaf_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
         reference=reference,
-        distorted=distorted,
+        distorted=distorted.as_posix(),
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
     )
@@ -457,7 +467,10 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     if cmdresult != 0:
         result['result'] = "Unable to extract file for test"
     else:
-        cmd = apptemplate.format(originalfile=sourcepng, newfile=distortedpng, idiff_bin=IDIFF_BIN, newfilediff=diffpng)
+        cmd = apptemplate.format(originalfile=sourcepng, 
+                                 newfile=distortedpng.as_posix(),
+                                idiff_bin=IDIFF_BIN, 
+                                newfilediff=diffpng.as_posix())
         print(f"\n\nIdiff command: {cmd}", file=log_file_object)
         
         output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
