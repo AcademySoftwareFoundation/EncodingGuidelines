@@ -144,6 +144,8 @@ def outputSummaryIndex(output_dir):
                 #Load the test 
                 testsuite = TestSuite(Path(configfile))
                 reportconfig = testsuite.report()
+                if reportconfig is None:
+                   continue
                 htmlreport = path.parent / (reportconfig['name']+".html")
                 results = {'title': reportconfig["title"],
                            'description': reportconfig['description'],
@@ -159,7 +161,7 @@ def outputSummaryIndex(output_dir):
                     if ref_name == "DEFAULT_MEDIA":
                        continue
                     merge_test_info = test_info.metadata['aswf_enctests']['results']
-                    if merge_test_info['success']:
+                    if merge_test_info.get('success', True):
                        results['success_tests'] += 1
                     else:
                        results['error_tests'] += 1
