@@ -331,6 +331,73 @@ model=path={vmaf_model}\" \
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(results)
 
+def identity_compare(source_dict, source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the sourceclip to the test_ref using ffmpeg identity.
+    We allow it to compare one wedge to another.
+
+    compare_movie -- The image we are comparing to, which by default we assume is the output of the first test.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    mean_error 
+    rms_error
+    peak_snr
+    max_error
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+    if source_clip not in source_dict:
+        source_dict[source_clip] = distorted
+        enc_meta = get_test_metadata_dict(test_ref)
+        result = {'success': True, 'result': "Using image as reference"}
+
+        enc_meta['results'].update(result)
+        return
+    compare_movie = source_dict[source_clip]
+
+
+    default_app_template = "{ffmpeg_bin} -nostats -hide_banner -i {originalfile} -i {newfile} -lavfi identity -f null -"
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
+
+    if "compare_image" in comparisontestinfo:
+        compare_movie = comparisontestinfo.get("compare_image")
+
+    if not distorted.exists():
+        result = {'success': False,
+            'testresult': "No movie generated."
+        }
+    else:
+        cmd = apptemplate.format(originalfile=compare_movie, newfile=distorted, ffmpeg_bin=FFMPEG_BIN)
+        print(f"\n\identity command: {cmd}", file=log_file_object)
+        
+        result = subprocess.run(shlex.split(cmd), 
+                                check=False, 
+                                capture_output=True, text=True
+                                )
+        lines = result.stderr.splitlines()
+        print("\n".join(lines), file=log_file_object)
+        if len(lines) < 2:
+            result['result'] = "Unable to run ffmpeg"
+            result['success'] = False
+        else:
+            result = {'success': True, 'result': lines[-1]}
+            for line in lines[-2:]:
+                if "identity " not in line:
+                    continue
+                line = line.split(" identity ")[1]
+                kv_pairs = line.split(" ")
+    
+                # Create a dictionary from the list
+                for pair in kv_pairs:
+                    key, value = pair.split(":")
+                    result[key] = float(value)
+
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(result)
+
 def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Compare the sourceclip to the test_ref using OIIO idiff.
@@ -527,9 +594,12 @@ def run_tests(args, config_data, timeline):
 
     # Gather test configs
     tests = config_data.tests()
+
     for test_config in tests:
         # Check for sources in test configs
         test_sources = test_config.sources()
+
+        identity_distort_clips = {}
 
         # Prepare sources for tests
         source_bin = prep_sources(args, test_sources)
@@ -566,6 +636,7 @@ def run_tests(args, config_data, timeline):
                     'hostname': platform.node(),
                 }
                 distorted = Path(test_ref.target_url)
+
                 print(f"Testing: {distorted.name}")
                 # Send all the log output of the tests to a separate log file.
                 log_file = Path(distorted.parent, distorted.stem + "_tests.log")
@@ -578,6 +649,8 @@ def run_tests(args, config_data, timeline):
                         print("######################", file=log_file_object)
                         print(f"Test: {testtype}", file=log_file_object)
 
+                        if testtype == 'identity':
+                            identity_compare(identity_distort_clips, source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         if testtype == "vmaf":
                             vmaf_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         if testtype == "idiff":
