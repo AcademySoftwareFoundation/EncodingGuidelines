@@ -286,7 +286,7 @@ model=path={vmaf_model}\" \
 
     cmd = vmaf_cmd.format(
         ffmpeg_bin=FFMPEG_BIN,
-        reference=reference,
+        reference=reference.replace("\\", "/"),
         distorted=distorted.as_posix(),
         duration=source_meta.get('duration'),
         vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
@@ -380,7 +380,8 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
             'testresult': "No movie generated."
         }
     else:
-        cmd = apptemplate.format(originalfile=compare_movie, newfile=distorted, ffmpeg_bin=FFMPEG_BIN)
+        cmd = apptemplate.format(originalfile=compare_movie, 
+                                 newfile=distorted.as_posix(), ffmpeg_bin=FFMPEG_BIN)
         print(f"\n\identity command: {cmd}", file=log_file_object)
         
         result = subprocess.run(shlex.split(cmd), 
