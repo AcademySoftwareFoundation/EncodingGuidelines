@@ -8,8 +8,9 @@ import opentimelineio as otio
 import pandas as pd
 import jinja2
 from pathlib import Path
+from ..test_suite import TestSuite, SourceConfig
 
-def _exportGraph(reportconfig, graph, alltests):
+def _exportGraph(config, reportconfig, graph, alltests):
   """
   Export a graph using all the test data.
   :param reportconfig: The report configuration to output. 
@@ -35,7 +36,7 @@ def _exportGraph(reportconfig, graph, alltests):
 
   filename = reportconfig['name']+"-"+graph.get("name")
   if "directory" in reportconfig:
-    filename = os.path.join(reportconfig['directory'], filename)
+    filename = os.path.join(config.get('destination'), filename)
   if os.path.exists(filename):
     # Running inside docker sometimes doesnt let you write over files. 
     os.remove(filename)
@@ -45,23 +46,19 @@ def _exportGraph(reportconfig, graph, alltests):
 
 
 
-def processTemplate(test_configs, otio_info):
+def processTemplate(config, timeline):
   """
   Look for any report configs in the test_configurations and apply them to the specified otio file.
   :param test_configs: a list of test configurations.
   :param otio_info: A otio object containing the test results.
   """
 
-  reportconfig = None
-  for config in test_configs:
-    if "reports" in config:
-      reportconfig = config['reports']
-    
+  reportconfig = config.report()
   if reportconfig is None:
     print("Failed to find report config. Skipping html export.")
-    exit(0)
+    return
 
-  tracks = otio_info.tracks[0]
+  tracks = timeline.tracks[0]
   testinfo = {'ffmpeg_version': tracks.name.replace("ffmpeg_version_", "")}
 
   tests = {}
@@ -76,6 +73,7 @@ def processTemplate(test_configs, otio_info):
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
+          merge_test_info['wedge'] = ref_name.replace(track.metadata.get('source_test_name', '')+"-", "")
           if 'description' in test_info.metadata['aswf_enctests']:
             merge_test_info['test_description'] = test_info.metadata['aswf_enctests']['description']
           results.append(merge_test_info)
@@ -109,14 +107,14 @@ def processTemplate(test_configs, otio_info):
         tests[track.name] = {'results': results, 'source_info': track.metadata['aswf_enctests']['source_info'], 'default_media': default_media}
 
   for graph in reportconfig.get("graphs", []):
-    _exportGraph(reportconfig, graph, alltests)
+    _exportGraph(config, reportconfig, graph, alltests)
 
   environment = jinja2.Environment(loader=jinja2.FileSystemLoader("testframework/templates/"))
 
   template = environment.get_template(reportconfig['templatefile'])
   htmlreport = reportconfig['name']+".html"
-  if "directory" in reportconfig:
-    htmlreport = os.path.join(reportconfig['directory'], htmlreport)
+  #if "directory" in reportconfig:
+  htmlreport = os.path.join(config.get('destination'), htmlreport)
   if os.path.exists(htmlreport):
     # Running inside docker sometimes doesnt let you write over files.
     os.remove(htmlreport)
@@ -124,4 +122,53 @@ def processTemplate(test_configs, otio_info):
   f.write(template.render(tests=tests, testinfo=testinfo, config=reportconfig))
   f.close()
   print("Written out:", htmlreport)
+  return {'reporturl': htmlreport, 'tests': tests, 'testinfo': testinfo, 'config': reportconfig}
 
+def outputSummaryIndex(output_dir):
+    """
+    Create a summary index of all the test results in the specified folder.
+    :param output folder.
+    """
+
+    test_results = []
+    for root, dirs, files in os.walk(output_dir):
+        for filename in files:
+            if filename.endswith(".otio"):
+                path = Path(root) / filename
+                timeline = otio.adapters.read_from_file(path.as_posix())
+                # Now we need to figure out the config file.
+                tracks = timeline.tracks[0]
+
+                configfile = timeline.metadata['config_file']
+
+                #Load the test 
+                testsuite = TestSuite(Path(configfile))
+                reportconfig = testsuite.report()
+                htmlreport = path.parent / (reportconfig['name']+".html")
+                results = {'title': reportconfig["title"],
+                           'description': reportconfig['description'],
+                           'relativeurl': htmlreport.relative_to(output_dir),
+                           'error_tests': 0,
+                           'success_tests': 0,
+                           'test_start': timeline.metadata.get("test_start", "unknown"),
+                           'platform': timeline.metadata.get("platform", "unknown"),
+                           'test_duration': timeline.metadata.get("test_duration", "unknown")
+                           }
+                for track in tracks:
+                  for ref_name, test_info in track.media_references().items():
+                    if ref_name == "DEFAULT_MEDIA":
+                       continue
+                    merge_test_info = test_info.metadata['aswf_enctests']['results']
+                    if merge_test_info['success']:
+                       results['success_tests'] += 1
+                    else:
+                       results['error_tests'] += 1
+                test_results.append(results)
+
+    environment = jinja2.Environment(loader=jinja2.FileSystemLoader("testframework/templates/"))
+
+    template = environment.get_template('index.html.jinja')
+    htmlreport = Path(output_dir) / "index.html"
+    f = open(htmlreport, "w")
+    f.write(template.render(results=test_results))
+    f.close()

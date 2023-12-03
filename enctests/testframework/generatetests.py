@@ -123,12 +123,8 @@ def main():
             else:
                 newtemplate = newtemplate + arg + " "
         
-        #print("Wedge:", wedge)
         template = newtemplate
 
-
-        print("Name:", testname)
-        print("Template:", template)
         if "sources" in test['config']:
             for i in range(0, len(test['config']['sources'])):
                 test['config']['sources'][i] = os.path.abspath(os.path.join(args.root, test['config']['sources'][i]))
