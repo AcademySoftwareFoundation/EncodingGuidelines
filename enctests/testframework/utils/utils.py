@@ -43,7 +43,7 @@ def get_nearest_model(width):
     }
     diff = lambda list_value: abs(list_value - width)
 
-    return models[min(models, key=diff)]
+    return models[min(models, key=diff)].as_posix()
 
 
 def get_media_info(path, startframe=None):
