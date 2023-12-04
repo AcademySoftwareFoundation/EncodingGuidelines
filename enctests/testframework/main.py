@@ -539,14 +539,14 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
             values = test.get("between")
             resultstatus = result[testvalue] > values[0] and result[testvalue] < values[1]
             print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} > {values[0]} and {testvalue} < {values[1]} ", file=log_file_object)
-        if testname == "greater":
+        elif testname == "greater":
             if "greater" not in test:
                 print(f"WARNING: Skipping test since there is no greater values, in : {test}")
                 continue
             value = test.get("greater")
             resultstatus = result[testvalue] > value
             print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} > {value}", file=log_file_object)
-        if testname == "less":
+        elif testname == "less":
             if "less" not in test:
                 print(f"WARNING: Skipping test since there is no greater values, in :{test}")
                 continue
@@ -554,13 +554,23 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
             resultstatus = result[testvalue] < value
 
             print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} < {value}", file=log_file_object)
-        if testname == "stringmatch":
+        elif testname == "equal":
+            if "equal" not in test:
+                print(f"WARNING: Skipping test since there is no greater values, in :{test}")
+                continue
+            value = test.get("equal")
+            resultstatus = result[testvalue] == value
+
+            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} < {value}", file=log_file_object)
+        elif testname == "stringmatch":
             if "string" not in test:
                 print(f"WARNING: Skipping test since there is no string to match in : {test}")
                 continue
             value = test.get("string")
             resultstatus = result[testvalue] == value
             print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} == {value}", file=log_file_object)
+        else:
+            print(f"ERROR: Unknown test {testname}")
 
         if not resultstatus:
             break
