@@ -124,7 +124,7 @@ def create_media_reference(path, source_clip, is_sequence=False):
         )
         mr = otio.schema.ImageSequenceReference(
             target_url_base=Path(seq.directory()).as_posix(),
-            name_prefix=seq.head(),
+            name_prefix=seq.head()[:-1],
             name_suffix=seq.tail(),
             start_frame=seq.start(),
             frame_step=1,
