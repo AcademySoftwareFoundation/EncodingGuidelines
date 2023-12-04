@@ -36,6 +36,7 @@ class BaseYamlConfig:
     def __init__(self,
                  test_config_file: pathlib.Path):
         self.__config__ = {}
+        self.__config_path = None
         self.parse_config_file(test_config_file)
 
     def dictcopy(self):
@@ -68,13 +69,24 @@ class SourceConfig(BaseYamlConfig):
     """
     def __init__(self,
                  test_config_file: pathlib.Path):
+        self.__image_directly = False
         super(SourceConfig, self).__init__(test_config_file)
 
     def parse_config_file(self, path: pathlib.Path):
+        if path.suffix in [".png", ".dpx", ".tif"]:
+            self.__config__ = {'images': False,
+                               'path': path.as_posix(),
+                               'in': 0,
+                               'duration': 1,
+                               'rate': 25}
+            self.__image_directly = True
+            return
         self.__config__ = super(SourceConfig, self).parse_config_file(path)[0]
 
     def path(self):
         """Get the path to the imagery"""
+        if self.__image_directly:
+            return pathlib.Path(self.__config__['path'])
         p = pathlib.Path(self.__config__["path"])
         if not p.is_absolute():
             p = self.config_file().parent.joinpath(p).resolve()
