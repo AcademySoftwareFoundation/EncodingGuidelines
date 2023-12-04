@@ -95,6 +95,13 @@ def parse_args():
     )
 
     parser.add_argument(
+        '--force',
+        action='store_true',
+        default=False,
+        help='Force generation of results.'
+    )
+
+    parser.add_argument(
         '--encoded-folder',
         action='store',
         default='', # If its '', we determine the path procedurally.
@@ -733,7 +740,7 @@ def main():
             output_file = destination_folder / f"{Path(test_config.config_file()).stem}.otio"
             print("Outputfile:", output_file)
         
-        if output_file.exists() and output_file.stat().st_mtime > test_config.config_file().stat().st_mtime:
+        if not args.force and output_file.exists() and output_file.stat().st_mtime > test_config.config_file().stat().st_mtime:
             print(f"Skipping test {test_config.config_file()}")
             continue
 
