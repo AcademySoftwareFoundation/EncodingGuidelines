@@ -682,12 +682,14 @@ def run_tests(args, config_data, timeline):
 
                         if testtype == 'identity':
                             identity_compare(identity_distort_clips, source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
-                        if testtype == "vmaf":
+                        elif testtype == "vmaf":
                             vmaf_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
-                        if testtype == "idiff":
+                        elif testtype == "idiff":
                             idiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
-                        if testtype == "assertresults":
+                        elif testtype == "assertresults":
                             assertresults_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        else:
+                            print(f"ERROR: Unknown test type {testtype}, skipping.")
                         enctime = time.perf_counter() - t1
                         print(f"\t\t took: {enctime:.2f} seconds. ")
 
