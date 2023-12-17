@@ -86,17 +86,19 @@ class SourceConfig(BaseYamlConfig):
     
     def path(self):
         """Get the path to the imagery"""
-        if self.__image_directly:
-            return pathlib.Path(self.__config__['path'])
-        p = pathlib.Path(self.__config__["path"])
+        if self._image_directly:
+            return self._config['path']
+        # We convert to pathlib.Path class here, since SourceConfig will typically be getting the path from a yml config,
+        # but to be consistent, we want to use the resulting path as a Path class object.
+        p = pathlib.Path(self._config["path"])
         if not p.is_absolute():
             p = self.config_file().parent.joinpath(p).resolve()
         return p
             
-    def __getattr__(self, __name: str) -> Any:
-        if __name == "path":
+    def __getattr__(self, name: str) -> Any:
+        if name == "path":
             return self.path()
-        return self.__config__[__name]
+        return self._config[name]
     
 class TestConfig:
     """
