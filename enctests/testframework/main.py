@@ -481,7 +481,11 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
                                 newfilediff=diffpng.as_posix())
         print(f"\n\nIdiff command: {cmd}", file=log_file_object)
         
-        output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
+        try:
+            output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
+        except FileNotFoundError as e:
+            print(f"ERROR: File not found, when executing {cmd}, check that the executable exists.")
+            exit(1)
         lines = output.decode("utf-8").splitlines()
         print("\n".join(lines), file=log_file_object)
         if len(lines) < 2:
