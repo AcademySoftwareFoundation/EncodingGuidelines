@@ -222,7 +222,7 @@ def get_source_configs(args, root_path, config_type):
             try:
                 sourceconfigs.append(SourceConfig(path))
             except Exception as e:
-                print(f"ERROR: Failed to load {path} error is: {e}")
+                print(f"ERROR: Failed to load source config {path} error is: {e}")
 
     return sourceconfigs
 
@@ -235,7 +235,7 @@ def get_configs(args, root_path, config_type):
             try:
                 configs.append(TestSuite(path))
             except Exception as e:
-                print(f"ERROR: Failed to load {path} error is: {e}")
+                print(f"ERROR: Failed to load test config {path} error is: {e} skipping it.")
 
     return configs
 
