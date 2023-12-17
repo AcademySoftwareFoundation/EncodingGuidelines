@@ -35,28 +35,28 @@ class BaseYamlConfig:
     """
     def __init__(self,
                  test_config_file: pathlib.Path):
-        self.__config__ = {}
-        self.__config_path = None
+        self._config = {}
+        self._config_path = None
         self.parse_config_file(test_config_file)
 
     def dictcopy(self):
-        return deepcopy(self.__config__)
+        return deepcopy(self._config)
 
     def parse_config_file(self, path: pathlib.Path):
-        self.__config_path = path
+        self._config_path = path
         path = path.absolute().as_posix()
-        self.__config__ = {}
+        self._config = {}
         with open(path, 'rt') as f:
-            self.__config__ = list(yaml.load_all(f, SafeLoader))
-        return self.__config__
+            self._config = list(yaml.load_all(f, SafeLoader))
+        return self._config
     
     def config_file(self):
         """Return the path to the config file that was read in."""
-        return self.__config_path
+        return self._config_path
 
             
-    def __getattr__(self, __name: str) -> Any:
-        return self.__config__[__name]
+    def __getattr__(self, name: str) -> Any:
+        return self._config[name]
 
     def get(self, key, default=None):
         return self.__getattr__(key)
@@ -69,20 +69,21 @@ class SourceConfig(BaseYamlConfig):
     """
     def __init__(self,
                  test_config_file: pathlib.Path):
-        self.__image_directly = False
+        self._image_directly = False
         super(SourceConfig, self).__init__(test_config_file)
 
     def parse_config_file(self, path: pathlib.Path):
-        if path.suffix in [".png", ".dpx", ".tif"]:
-            self.__config__ = {'images': False,
-                               'path': path.as_posix(),
+        if path.suffix not in [".yml", ".yaml"]:
+            self._config = {'images': False,
+                               'path': path,
                                'in': 0,
                                'duration': 1,
                                'rate': 25}
-            self.__image_directly = True
-            return
-        self.__config__ = super(SourceConfig, self).parse_config_file(path)[0]
-
+            self._image_directly = True
+            return self._config
+        self._config = super(SourceConfig, self).parse_config_file(path)[0]
+        return self._config
+    
     def path(self):
         """Get the path to the imagery"""
         if self.__image_directly:
@@ -103,16 +104,16 @@ class TestConfig:
     There could be still be multiple wedges within this test config.
     """
     def __init__(self, test_name: str, test_dict: dict, test_config: str):
-        self.__name = test_name
-        self.__config_path = test_config
-        self.__test_dict = test_dict
+        self._name = test_name
+        self._config_path = test_config
+        self._test_dict = test_dict
     
     def sources(self):
-        sources = self.__test_dict.get('sources', [])
+        sources = self._test_dict.get('sources', [])
         return [SourceConfig(pathlib.Path(path)) for path in sources]
     
-    def __getattr__(self, __name: str) -> Any:
-        return self.__test_dict[__name]
+    def __getattr__(self, name: str) -> Any:
+        return self._test_dict[name]
     
     def get(self, key, default=None):
         try:
@@ -122,10 +123,10 @@ class TestConfig:
     
     def set_destination(self, destination: pathlib.Path):
         """Record where we are writing out the test results to."""
-        self.__test_dict['destination'] = destination
+        self._test_dict['destination'] = destination
 
     def config_file(self):
-        return self.__config_path
+        return self._config_path
     
 class TestSuite(BaseYamlConfig):
     """
@@ -134,10 +135,10 @@ class TestSuite(BaseYamlConfig):
     def __init__(self,
                  test_config_file: pathlib.Path):
         self.test_configs = []
-        self.__report = None
+        self._report = None
         self._tests = None
-        self.__destination = None
-        self.__config__ = {}
+        self._destination = None
+        self._config = {}
         super(TestSuite, self).__init__(test_config_file)
 
     def parse_config_file(self, path: pathlib.Path):
@@ -161,13 +162,13 @@ class TestSuite(BaseYamlConfig):
                     test_configs.append(tst)
                 else:
                     print(f"Unattached param:{test_name} = {test_config}")
-                    self.__config__[test_name] = test_config
+                    self._config[test_name] = test_config
     
-        self.__tests = test_configs
-        self.__report = report
+        self._tests = test_configs
+        self._report = report
     
     def tests(self):
-        return self.__tests
+        return self._tests
 
     def sources(self):
         """Return all the sources in this testSuite"""
@@ -175,17 +176,17 @@ class TestSuite(BaseYamlConfig):
         return sources
     
     def report(self):
-        return self.__report
+        return self._report
 
-    def __getattr__(self, __name: str) -> Any:
-        if __name == "path":
+    def __getattr__(self, name: str) -> Any:
+        if name == "path":
             return self.path()
-        if __name == "destination":
-            return self.__destination
-        if __name == "app":
+        if name == "destination":
+            return self._destination
+        if name == "app":
             # We are going to grab the app from the first test
             return self.tests()[0].get("app")
-        return self.__config__[__name]
+        return self._config[name]
     
     def set_destination(self, destination: pathlib.Path):
-        self.__destination = destination
+        self._destination = destination
