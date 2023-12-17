@@ -34,12 +34,12 @@ SOURCE_SUFFIX = '.yml'
 # We assume macos and linux both have the same binary name
 FFMPEG_BIN = os.getenv(
     'FFMPEG_BIN',
-    sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
+    sys.platform in ['win', 'win32'] and 'ffmpeg.exe' or 'ffmpeg'
 )
 
 IDIFF_BIN = os.getenv(
     'IDIFF_BIN',
-    sys.platform == 'win' and 'idiff.exe' or 'idiff'
+    sys.platform in ['win', 'win32'] and 'idiff.exe' or 'idiff'
 )
 
 

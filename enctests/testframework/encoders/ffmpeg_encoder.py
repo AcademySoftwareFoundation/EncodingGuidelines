@@ -25,7 +25,7 @@ VMAF_LIB_DIR = os.getenv(
 
 FFMPEG_BIN = os.getenv(
     'FFMPEG_BIN',
-    sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
+    sys.platform  in ['win', 'win32'] and 'ffmpeg.exe' or 'ffmpeg'
 )
 
 class FFmpegEncoder(ABCTestEncoder):
