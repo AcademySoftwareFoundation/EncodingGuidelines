@@ -137,7 +137,7 @@ def outputSummaryIndex(output_dir):
                 path = Path(root) / filename
                 timeline = otio.adapters.read_from_file(path.as_posix())
                 # Now we need to figure out the config file.
-                tracks = timeline.tracks[0]
+                track = timeline.tracks[0]
 
                 configfile = timeline.metadata['config_file']
 
@@ -156,8 +156,8 @@ def outputSummaryIndex(output_dir):
                            'platform': timeline.metadata.get("platform", "unknown"),
                            'test_duration': timeline.metadata.get("test_duration", "unknown")
                            }
-                for track in tracks:
-                  for ref_name, test_info in track.media_references().items():
+                for trackitem in track:
+                  for ref_name, test_info in trackitem.media_references().items():
                     if ref_name == "DEFAULT_MEDIA":
                        continue
                     merge_test_info = test_info.metadata['aswf_enctests']['results']
