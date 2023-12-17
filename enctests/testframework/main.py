@@ -646,7 +646,7 @@ def run_tests(args, config_data, timeline):
             encoder = encoder_factory(
                 source_clip,
                 test_config,
-                config_data.get("destination")
+                Path(config_data.get("destination"))
             )
 
             # Run tests and get a dict of resulting media references
