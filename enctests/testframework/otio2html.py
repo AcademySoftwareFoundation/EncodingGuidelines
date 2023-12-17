@@ -76,11 +76,13 @@ def otio2htmlmain():
         if output_file == '':
             # We base it on the test filename
             output_file = destination_folder / f"{test_config.config_file().stem}.otio"
-            print("Outputfile:", output_file)
         else:
             output_file = Path(output_file)
         if not output_file.exists():
             continue
+        
+        print("Outputfile:", output_file)
+
         timeline = otio.adapters.read_from_file(str(output_file))
         # Create an encoder instance, since this will configure the destination folder.
         
