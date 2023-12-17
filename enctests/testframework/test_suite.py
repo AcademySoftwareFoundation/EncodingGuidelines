@@ -53,6 +53,10 @@ class BaseYamlConfig:
     def config_file(self):
         """Return the path to the config file that was read in."""
         return self._config_path
+<<<<<<< HEAD
+=======
+
+>>>>>>> fb3f021 (Cleanup of class variables.)
             
     def __getattr__(self, name: str) -> Any:
         return self._config[name]
@@ -74,7 +78,11 @@ class SourceConfig(BaseYamlConfig):
     def parse_config_file(self, path: pathlib.Path):
         if path.suffix not in [".yml", ".yaml"]:
             self._config = {'images': False,
+<<<<<<< HEAD
                                'path': path.as_posix(), #Dont want it as a pathLib here, since this can end up referenced in otio
+=======
+                               'path': path,
+>>>>>>> fb3f021 (Cleanup of class variables.)
                                'in': 0,
                                'duration': 1,
                                'rate': 25}
