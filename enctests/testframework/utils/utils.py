@@ -123,15 +123,15 @@ def create_media_reference(path, source_clip, is_sequence=False):
             )
         )
 
-        prefix = seq.head()
+        #prefix = seq.head()
         # Lets strip off any periods or "_" at the end of a image sequence
         # so image.0001.jpg would become image
-        if prefix[-1] in [".", "_"]:
-            prefix = prefix[:-1]
+        #if prefix[-1] in [".", "_"]:
+        #    prefix = prefix[:-1]
 
         mr = otio.schema.ImageSequenceReference(
             target_url_base=Path(seq.directory()).as_posix(),
-            name_prefix=prefix,
+            name_prefix=seq.head(),
             name_suffix=seq.tail(),
             start_frame=seq.start(),
             frame_step=1,
