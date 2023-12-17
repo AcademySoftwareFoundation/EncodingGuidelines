@@ -40,9 +40,9 @@ def encoder_factory(
     
     encoder = encoder_cls(source_clip, test_config, destination)
 
-    encoder.destination = pathlib.Path(destination)
     print(f"Output directory: {destination}")
+    
     # Make sure we have a destination folder
-    pathlib.Path(destination).mkdir(parents=True, exist_ok=True)
+    encoder.destination.mkdir(parents=True, exist_ok=True)
 
     return encoder

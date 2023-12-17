@@ -114,10 +114,10 @@ def processTemplate(config, timeline):
   template = environment.get_template(reportconfig['templatefile'])
   htmlreport = reportconfig['name']+".html"
   #if "directory" in reportconfig:
-  htmlreport = os.path.join(config.get('destination'), htmlreport)
-  if os.path.exists(htmlreport):
+  htmlreport = config.get('destination') / htmlreport
+  if htmlreport.exists():
     # Running inside docker sometimes doesnt let you write over files.
-    os.remove(htmlreport)
+    htmlreport.unlink()
   f = open(htmlreport, "w")
   f.write(template.render(tests=tests, testinfo=testinfo, config=reportconfig))
   f.close()
@@ -171,6 +171,5 @@ def outputSummaryIndex(output_dir):
 
     template = environment.get_template('index.html.jinja')
     htmlreport = Path(output_dir) / "index.html"
-    f = open(htmlreport, "w")
-    f.write(template.render(results=test_results))
-    f.close()
+    with htmlreport.open("w") as f:
+      f.write(template.render(results=test_results))
