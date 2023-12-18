@@ -75,7 +75,7 @@ class SourceConfig(BaseYamlConfig):
     def parse_config_file(self, path: pathlib.Path):
         if path.suffix not in [".yml", ".yaml"]:
             self._config = {'images': False,
-                               'path': path,
+                               'path': path.as_posix(), #Dont want it as a pathLib here, since this can end up referenced in otio
                                'in': 0,
                                'duration': 1,
                                'rate': 25}
@@ -87,7 +87,7 @@ class SourceConfig(BaseYamlConfig):
     def path(self):
         """Get the path to the imagery"""
         if self._image_directly:
-            return self._config['path']
+            return pathlib.Path(self._config['path'])
         # We convert to pathlib.Path class here, since SourceConfig will typically be getting the path from a yml config,
         # but to be consistent, we want to use the resulting path as a Path class object.
         p = pathlib.Path(self._config["path"])
