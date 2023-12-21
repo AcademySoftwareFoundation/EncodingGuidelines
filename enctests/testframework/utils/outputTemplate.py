@@ -153,7 +153,8 @@ def outputSummaryIndex(output_dir):
                            'error_tests': 0,
                            'success_tests': 0,
                            'test_start': timeline.metadata.get("test_start", "unknown"),
-                           'platform': timeline.metadata.get("platform", "unknown"),
+                           'platform': timeline.metadata.get("platform", path.parent.parent.parent.name),
+                           'applicationVersion': timeline.metadata.get("applicationVersion", path.parent.parent.name),
                            'test_duration': timeline.metadata.get("test_duration", "unknown")
                            }
                 for trackitem in track:
