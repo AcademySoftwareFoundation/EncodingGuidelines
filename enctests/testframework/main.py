@@ -552,7 +552,7 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
             print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} > {value}", file=log_file_object)
         elif testname == "less":
             if "less" not in test:
-                print(f"WARNING: Skipping test since there is no greater values, in :{test}")
+                print(f"WARNING: Skipping test since there is no less values, in :{test}")
                 continue
             value = test.get("less")
             resultstatus = result[testvalue] < value
@@ -560,7 +560,7 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
             print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} < {value}", file=log_file_object)
         elif testname == "equal":
             if "equal" not in test:
-                print(f"WARNING: Skipping test since there is no greater values, in :{test}")
+                print(f"WARNING: Skipping test since there is no equal values, in :{test}")
                 continue
             value = test.get("equal")
             resultstatus = result[testvalue] == value
