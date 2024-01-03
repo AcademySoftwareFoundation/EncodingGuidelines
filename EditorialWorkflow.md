@@ -78,7 +78,7 @@ This has a similar benefit in terms of conform, you can add or remove frames, an
 
 While tracking the timecode for dailies may be too complex, it can be extremely useful for making proxies for source camera files. But the timecode alone is not enough, you also would need the reel-name, which typically is closely mapped to the filename of the original camera files.
 
-For a Quicktime the reel name can be defined with the -metadata:s:v:0 flag:
+For a QuickTime the reel name can be defined with the -metadata:s:v:0 flag:
 
 ```
 ffmpeg -f lavfi -i testsrc -t 1 -timecode 01:00:00:00 -metadata:s:v:0 reel_name=ABCD123 OUTPUT.mov
