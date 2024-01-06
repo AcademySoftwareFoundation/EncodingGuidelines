@@ -485,6 +485,9 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
             output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
         except FileNotFoundError as e:
             print(f"ERROR: File not found, when executing {cmd}, check that the executable exists.")
+            # We are in pretty bad shape if we cannot extract a frame.
+            # If it cannot find it for this test, its likely to fail for other
+            # tests, so we are going to exit.
             exit(1)
         lines = output.decode("utf-8").splitlines()
         print("\n".join(lines), file=log_file_object)
