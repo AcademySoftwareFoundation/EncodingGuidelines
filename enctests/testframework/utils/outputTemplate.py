@@ -34,9 +34,9 @@ def _exportGraph(config, reportconfig, graph, alltests):
   else:
     fig = px.line(df, **graphargs) 
 
-  filename = reportconfig['name']+"-"+graph.get("name")
+  filename = Path(reportconfig['name']+"-"+graph.get("name"))
   if "directory" in reportconfig:
-    filename = os.path.join(config.get('destination'), filename)
+    filename = config.get('destination') / filename
   if filename.exists():
     # Running inside docker sometimes doesnt let you write over files. 
     filename.unlink()
