@@ -369,7 +369,7 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
     if source_clip not in source_dict:
         source_dict[source_clip] = distorted
         enc_meta = get_test_metadata_dict(test_ref)
-        result = {'success': True, 'result': "Using image as reference"}
+        result = {'success': True, 'testresult': "Reference Image", 'stopProcessing': True}
 
         enc_meta['results'].update(result)
         return
@@ -699,6 +699,9 @@ def run_tests(args, config_data, timeline):
                             print(f"ERROR: Unknown test type {testtype}, skipping.")
                         enctime = time.perf_counter() - t1
                         print(f"\t\t took: {enctime:.2f} seconds. ")
+                        if enc_meta['results'].get('stopProcessing', False):
+                            print("Aborting further processing due to 'stopProcessing'", file=log_file_object)
+                            break
 
             # Update dict of references
             references.update(results)
