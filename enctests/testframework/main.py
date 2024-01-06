@@ -437,7 +437,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
-    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 {newpngfile}"
+    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {newpngfile}"
     extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
 
     # Allow a different image to be compared with, useful for 422 or 420 encoding.
