@@ -110,6 +110,22 @@ This is a PNG output, warning this would only be to the legal range, so the [plu
 ffmpeg -color_primaries bt709 -colorspace bt709 -color_trc bt709 -re -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -vframes 1  smptehdbars.png
 ```
 
+### Zoneplate
+
+Creates a [Zoneplate test chart](https://ffmpeg.org/ffmpeg-filters.html#zoneplate). This was introduced in ffmpeg 6.1 and is great for testing filtering.
+
+Creating it with ffmpeg directly to RGB:
+
+```
+ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt rgb48be zoneplate_rgb16.png
+```
+
+Creating it with ffmpeg directly to YCrCb:
+
+```
+ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv420p10 -strict -1 zoneplate_yuv420p10.y4m
+```
+
 ### Nullsrc
 A dummy source video signal.
 
