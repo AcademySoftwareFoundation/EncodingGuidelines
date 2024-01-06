@@ -565,7 +565,7 @@ def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, s
             value = test.get("equal")
             resultstatus = result[testvalue] == value
 
-            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} < {value}", file=log_file_object)
+            print(f"{'Pass' if resultstatus else 'Fail'} Parameter:{testvalue} == {value}", file=log_file_object)
         elif testname == "stringmatch":
             if "string" not in test:
                 print(f"WARNING: Skipping test since there is no string to match in : {test}")
