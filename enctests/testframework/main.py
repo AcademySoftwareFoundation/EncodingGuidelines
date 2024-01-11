@@ -391,15 +391,17 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
                                  newfile=distorted.as_posix(), ffmpeg_bin=FFMPEG_BIN)
         print(f"\n\identity command: {cmd}", file=log_file_object)
         
-        result = subprocess.run(shlex.split(cmd), 
+        cmdresult = subprocess.run(shlex.split(cmd), 
                                 check=False, 
                                 capture_output=True, text=True
                                 )
-        lines = result.stderr.splitlines()
+        lines = cmdresult.stderr.splitlines()
         print("\n".join(lines), file=log_file_object)
-        if len(lines) < 2:
-            result['result'] = "Unable to run ffmpeg"
-            result['success'] = False
+        if len(lines) < 2 or cmdresult.returncode != 0:
+            result = {'testresult': f"Unable to run ffmpeg, error code {cmdresult.returncode}",
+                      'returncode': cmdresult.returncode,
+                      'success': False
+            }
         else:
             result = {'success': True, 'result': lines[-1]}
             for line in lines[-2:]:

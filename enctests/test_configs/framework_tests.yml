@@ -1,0 +1,39 @@
+
+
+test_framework:
+  app: ffmpeg
+  comparisontest:
+  - testtype: identity
+    testtemplate: "{ffmpeg_bin} -v"
+  - testtype: assertresults
+    tests:
+    - assert: equal
+      value: returncode
+      equal: 234
+  description: Framework tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_sws_422
+  sources:
+  - ../sourceimages/smptehdbars_10_yuv422p10le.y4m
+  - ../sourceimages/zoneplate_yuv422p10.y4m
+  suffix: .png
+  wedges:
+    lanczos_full_chroma_int:  &base_args
+      -frames:v: 1
+      -loglevel: verbose
+      -sws_flags: lanczos+full_chroma_int+print_info
+      -pix_fmt: rgb48be
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+
+    default:
+      << : *base_args
+      -sws_flags: print_info
+
+---
+reports:
+  description: Testing the test framework itself.
+  directory: frameworktest-encode
+  name: frameworktest-tests
+  templatefile: colorweb.html.jinja
+  title: framework test.
