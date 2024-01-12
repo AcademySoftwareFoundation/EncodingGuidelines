@@ -118,9 +118,8 @@ def processTemplate(config, timeline):
   if htmlreport.exists():
     # Running inside docker sometimes doesnt let you write over files.
     htmlreport.unlink()
-  f = open(htmlreport, "w")
-  f.write(template.render(tests=tests, testinfo=testinfo, config=reportconfig))
-  f.close()
+  with htmlreport.open("w") as f:
+      f.write(template.render(tests=tests, testinfo=testinfo, config=reportconfig))
   print("Written out:", htmlreport)
   return {'reporturl': htmlreport, 'tests': tests, 'testinfo': testinfo, 'config': reportconfig}
 
