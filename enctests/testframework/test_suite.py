@@ -53,7 +53,6 @@ class BaseYamlConfig:
     def config_file(self):
         """Return the path to the config file that was read in."""
         return self._config_path
-
             
     def __getattr__(self, name: str) -> Any:
         return self._config[name]
@@ -181,8 +180,6 @@ class TestSuite(BaseYamlConfig):
         return self._report
 
     def __getattr__(self, name: str) -> Any:
-        if name == "path":
-            return self.path()
         if name == "destination":
             return self._destination
         if name == "app":
