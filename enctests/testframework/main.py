@@ -227,7 +227,7 @@ def get_source_configs(args, root_path, config_type):
     return sourceconfigs
 
 
-def get_configs(args, root_path, config_type):
+def get_test_configs(args, root_path, config_type):
     configs = []
     for item in scantree(args, root_path, suffix=config_type):
         path = Path(item.path)
@@ -741,7 +741,7 @@ def main():
 
     else:
         test_configs.extend(
-            get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
+            get_test_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
         )
 
     for test_config in test_configs:

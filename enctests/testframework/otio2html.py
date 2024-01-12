@@ -61,7 +61,7 @@ def otio2htmlmain():
         test_configs.append(TestSuite(Path(args.test_config_file)))
     else:
         test_configs.extend(
-            get_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
+            get_test_configs(args, args.test_config_dir, ENCODE_TEST_SUFFIX)
         )
 
     results = []
