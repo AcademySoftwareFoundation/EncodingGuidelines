@@ -31,7 +31,7 @@ There are three encoders available via ffmpeg:
 
 
 ## Libsvtav1
-Libsvtav1 was originally developed by Intel with Netflix. In 2022 it was adopted by AOMedia as the basis of future development for AV1.
+[SVT-AV1](https://gitlab.com/AOMediaCodec/SVT-AV1) was originally developed by Intel with Netflix. In 2022 it was adopted by AOMedia as the basis of future development for AV1.
 It has a more limited support for pix-formats currently only supporting: yuv420p yuv420p10le
 
 Supported pixel formats: yuv420p yuv420p10le
