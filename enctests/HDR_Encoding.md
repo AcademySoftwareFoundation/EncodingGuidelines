@@ -209,5 +209,5 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 
 Further Reading:
    * [H.273 Specification.](https://www.itu.int/rec/T-REC-H.273-202107-I/en)
-   * https://www.lightillusion.com/what_is_hdr.html
+   * [What is HDR](https://www.lightillusion.com/what_is_hdr.html)
    * [HDR Color Bars - BT.2111](https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2111-2-202012-I!!PDF-E.pdf)
