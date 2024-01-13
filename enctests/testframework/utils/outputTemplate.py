@@ -141,7 +141,11 @@ def outputSummaryIndex(output_dir):
                 configfile = timeline.metadata['config_file']
 
                 #Load the test 
-                testsuite = TestSuite(Path(configfile))
+                try:
+                  testsuite = TestSuite(Path(configfile))
+                except FileNotFoundError:
+                   print(f"Warning: config file {configfile} is missing, skipping report.")
+                   continue
                 reportconfig = testsuite.report()
                 if reportconfig is None:
                    continue
