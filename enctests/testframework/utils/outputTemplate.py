@@ -68,8 +68,7 @@ def processTemplate(config, timeline):
       default_media = None
       for ref_name, test_info in track.media_references().items():
           if ref_name == "DEFAULT_MEDIA":
-              basename = Path(track.name).stem
-              default_media = {'name': track.name, 'basename': Path(track.name).stem, 'test_info': test_info}
+              default_media = {'name': track.name, 'basename': track.name, 'test_info': test_info}
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
