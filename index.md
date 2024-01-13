@@ -37,7 +37,7 @@ You can see the default ffmpeg conversion introduces a dramatic color shift that
 	3. [TV vs. Full range.](ColorPreservation.html#tvfull)
 	4. [RGB encode](ColorPreservation.html#rgbencode)
 	5. [Useful Ffmpeg Filters.](OtherFfmpegArgs.html)
-	6. [HDR Encoding](HDR_Encoding.html)
+	6. [HDR Encoding](enctests/HDR_Encoding.html)
 	7. [Adding Timecode and Editorial Workflow](EditorialWorkflow.html)
 6. [Codec Comparsions](Encoding.html#encode)
 	1. [h264](Encodeh264.html)
