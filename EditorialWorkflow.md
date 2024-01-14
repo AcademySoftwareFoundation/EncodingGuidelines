@@ -191,7 +191,7 @@ Ideally with AAF files, you would be importing MXF files (like the example above
 A simple example of this is to convert all your clips to raw DNxHD files, e.g.:
 ```
 ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
-    -sws_flags area -pix_fmt yuv422p \
+    -sws_flags lanczos -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \

@@ -88,8 +88,6 @@ def otio2htmlmain():
         
         first_test = test_config.tests()[0]
         
-
-
         result = processTemplate(test_config, timeline)
         if result is not None:
             result["relativeurl"] = Path(result['reporturl']).relative_to(args.results_folder)

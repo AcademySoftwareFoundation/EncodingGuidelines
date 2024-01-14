@@ -1,0 +1,56 @@
+test_swsopt_420:
+  app: ffmpeg
+  comparisontest:
+  - testtype: identity
+  - testtype: assertresults
+    tests:
+    - assert: equal
+      value: R
+      equal: 1
+    - assert: equal
+      value: G
+      equal: 1
+    - assert: equal
+      value: B
+      equal: 1
+  description: SWS tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_swsopt_420
+  sources:
+  - ../sourceimages/smptehdbars_10_yuv420p10le.y4m
+  - ../sourceimages/zoneplate_yuv420p10.y4m
+  - ../sourceimages/yuv420p10_chromaramp.y4m
+  suffix: .png
+  wedges:
+    full_chroma_int:  &base_args2
+      -frames:v: 1
+      -loglevel: verbose
+      -sws_flags: full_chroma_int+print_info
+      -pix_fmt: rgb48le
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+
+    accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+print_info
+
+    full_chroma_inp:
+      << : *base_args2
+      -sws_flags: full_chroma_inp+print_info
+
+    full_chroma_inp_int_inp_acc:
+      << : *base_args2
+      -sws_flags: accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    default:
+      << : *base_args2
+      -sws_flags: print_info
+
+
+---
+reports:
+  description: This is testing different sws_flags options for extracting from YCrCb to RGB.
+  directory: swsrgbopts-encode
+  name: swsrgbopts-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg YCrCb to RGB SWS-Flags options.

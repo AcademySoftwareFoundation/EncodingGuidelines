@@ -28,7 +28,7 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -sws_flags area+accurate_rnd+full_chroma_int  -pix_fmt yuv420p \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -frames:v 100 -c:v libx264 -preset slower \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
@@ -83,7 +83,7 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -sws_flags area+accurate_rnd+full_chroma_int \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
     -pix_fmt yuv422p10le -vframes 100 \
     -c:v prores_ks -profile:v 3 -qscale:v 9 \
     -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 outputfile.mov
@@ -116,7 +116,7 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  -sws_flags area+accurate_rnd+full_chroma_int \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  \
     -pix_fmt yuv444p10le -vframes 100 \
    -c:v prores_ks -profile:v 4444 -qscale:v 9 \
    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 outputfile.mov
@@ -159,7 +159,7 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png -sws_flags area+accurate_rnd+full_chroma_int \
+ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
     -pix_fmt yuv420p -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
     -c:v libx264 -t 5  -qscale:v 1 \
     -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
