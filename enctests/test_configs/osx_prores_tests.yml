@@ -104,9 +104,9 @@ reports:
         y: filesize
       name: filesize.png
       type: bar
-    name: osx-prores
-    title: OSX Prores Comparison
-    description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
+    name: osx-videotoolbox
+    title: OSX Videotoolbox Comparison
+    description: This is a comparison of different videotoolbox encodes.
     directory: osx-prores-encode
     templatefile: basic.html.jinja
 

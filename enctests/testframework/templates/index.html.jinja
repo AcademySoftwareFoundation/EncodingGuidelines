@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Test Index</title>
+  <link rel="stylesheet" href="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/css/just-the-docs-default.css"> 
+  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/vendor/lunr.min.js"></script> 
+  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/just-the-docs.js"></script>
+</head>
+
+<body>
+
+
+<H1>ORI Encoding Test Report Index</H1>
+<table>
+<TR>
+<TH>Test</TH>
+<TH>Description</TH>
+<TH> Plaform/App version</TH>
+<TH>Success</TH>
+<TH>Fail</TH>
+<TH>Started</TH>
+<TH>Duration</TH>
+</TR>
+
+{% for report in results|sort(attribute='title') %}
+<TR>
+<TD><A href="{{ report.relativeurl }}">{{report.title}}</a></TD>
+<TD>{{report.description}}</TD>
+<TD>{{report.platform}} {{report.applicationVersion}}
+<TD align=right>{{report.success_tests}}</TD>
+<TD align=right>{{report.error_tests}}</TD>
+<TD >{{report.test_start}}</TD>
+<TD align=right>{{"%.2f"|format(report.test_duration) }}</TD>
+
+</TR>
+  {% endfor %}
+</TABLE>
+</body>
+</html>

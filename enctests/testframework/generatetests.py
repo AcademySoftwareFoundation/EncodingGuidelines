@@ -37,7 +37,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    rootdir = Path(args.root).absolute()
+    rootdir = Path(args.root)
 
     markdownfiles = []
     for root, dirs, files in os.walk(rootdir):
@@ -49,12 +49,14 @@ def main():
 
     for markdownfile in markdownfiles:
         with open(markdownfile, "r") as f:
+            print("Reading:", markdownfile)
             incomment = False
             incommand = False
             command = ""
             info = ""
             lastcommandstart = -1
             for linenumber, line in enumerate(f):
+
                 if "<!---" in line:
                     incomment = True
                     continue
@@ -123,15 +125,14 @@ def main():
             else:
                 newtemplate = newtemplate + arg + " "
         
-        #print("Wedge:", wedge)
         template = newtemplate
 
 
-        print("Name:", testname)
-        print("Template:", template)
+
         if "sources" in test['config']:
             for i in range(0, len(test['config']['sources'])):
-                test['config']['sources'][i] = os.path.abspath(os.path.join(args.root, test['config']['sources'][i]))
+                sourcefile = rootdir / test['config']['sources'][i]
+                test['config']['sources'][i] = sourcefile.as_posix()
         testconfigs[testname] = test['config']
         testconfigs[testname]['encoding_template'] = template
         testconfigs[testname]['suffix'] = "." + outputfileext

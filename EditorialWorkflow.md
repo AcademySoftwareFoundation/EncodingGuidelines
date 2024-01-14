@@ -71,14 +71,14 @@ timecode = otio.opentime.RationalTime(start_frame, rate=frame_rate).to_timecode(
 
 Another scenario is that the client is delivering a single clip, that your facility is adding media to, and for a similar reason to the above, it would be helpful if the timecode of the media that you return to the client, contains the same timecode as the delivered media.
 
-This has a similar benefit in terms of conform, you can add or remove frames, and the conform will do the right thing, but it does require *a lot* more tracking, since if the frames are trimmed off the beginning, you will need to calculate the new timecode. Equally problematic is if you have multiple plates since you would need to track which clip is the “Master” in terms of timecode and make sure any deliveries for the shot are appropriately using that timecode.
+This has a similar benefit in terms of conform, you can add or remove frames, and the conform will do the right thing, but it does require *a lot* more tracking, since if the frames are trimmed off the beginning, you will need to calculate the new timecode. Equally problematic is if you have multiple plates since you would need to track which clip is the baseline in terms of timecode and make sure any deliveries for the shot are appropriately using that timecode.
 
 
 ## Reel Name
 
 While tracking the timecode for dailies may be too complex, it can be extremely useful for making proxies for source camera files. But the timecode alone is not enough, you also would need the reel-name, which typically is closely mapped to the filename of the original camera files.
 
-For a Quicktime the reel name can be defined with the -metadata:s:v:0 flag:
+For a QuickTime the reel name can be defined with the -metadata:s:v:0 flag:
 
 ```
 ffmpeg -f lavfi -i testsrc -t 1 -timecode 01:00:00:00 -metadata:s:v:0 reel_name=ABCD123 OUTPUT.mov
@@ -249,3 +249,4 @@ In this simplistic example, I'm overwriting the Shot and Scene metadata columns,
 
 ## See Also
    * [Feature Turnover Guide](https://www.evanschiff.com/articles/feature-turnover-guide-vfx/)
+   

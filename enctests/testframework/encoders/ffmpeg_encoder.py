@@ -25,7 +25,7 @@ VMAF_LIB_DIR = os.getenv(
 
 FFMPEG_BIN = os.getenv(
     'FFMPEG_BIN',
-    sys.platform == 'win' and 'ffmpeg.exe' or 'ffmpeg'
+    sys.platform  in ['win', 'win32'] and 'ffmpeg.exe' or 'ffmpeg'
 )
 
 class FFmpegEncoder(ABCTestEncoder):
@@ -95,9 +95,9 @@ class FFmpegEncoder(ABCTestEncoder):
             # !! Use this function from utils to make sure we find the metadata
             # later on
             test_meta = get_test_metadata_dict(mr)
-            test_meta['test_config_path'] = self.test_config.get(
+            test_meta['test_config_path'] = str(self.test_config.get(
                 'test_config_path'
-            )
+            ))
             test_meta['command'] = cmd
             test_meta['encode_arguments'] = wedge
             test_meta['description'] = self.test_config.get('description')
@@ -151,10 +151,10 @@ class FFmpegEncoder(ABCTestEncoder):
         cmd = template.format(
             ffmpeg_bin = FFMPEG_BIN,
             input_args=input_args,
-            source=source_path,
+            source=source_path.as_posix(),
             duration=duration,
             encoding_args=encoding_args,
-            outfile=out_file
+            outfile=out_file.as_posix()
         )
 
         return cmd
@@ -175,7 +175,9 @@ class FFmpegEncoder(ABCTestEncoder):
     def get_output_filename(self, test_name: str) -> pathlib.Path:
         source_path, symbol = self.get_source_path()
         stem = source_path.stem.replace(symbol, '')
-
+        if stem[-1] == ".":
+            stem = stem[:-1]
+    
         out_file = self.destination.absolute().joinpath(
             f"{stem}-{test_name}{self.test_config.get('suffix')}"
         )

@@ -111,7 +111,7 @@ test_wdi-mpeg2:
             -vf: colormatrix=bt601:bt709
 
 ---
-tes_wdi-prores444_scale:
+test_wdi-prores444_scale:
     name: tes_wdi-prores444_scale
     description: tes_wdi-prores444_scale
     app: ffmpeg
