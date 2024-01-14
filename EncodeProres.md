@@ -31,7 +31,7 @@ sources:
 comparisontest:
    - testtype: idiff
      compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags area+accurate_rnd+full_chroma_int {newpngfile}"
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags lanczos+accurate_rnd+full_chroma_int {newpngfile}"
    - testtype: assertresults
      tests:
      - assert: less
@@ -39,7 +39,7 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png  -sws_flags area+accurate_rnd+full_chroma_int \
+ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
          -pix_fmt yuv422p10le -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -frames:v 100 -c:v prores_ks -profile:v 3 -vendor apl0  -qscale:v: 10 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
@@ -120,7 +120,7 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  -sws_flags area+accurate_rnd+full_chroma_int \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  \
          -pix_fmt yuv422p10le \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
         -vframes 100 -c:v prores_videotoolbox -profile:v 3  \
