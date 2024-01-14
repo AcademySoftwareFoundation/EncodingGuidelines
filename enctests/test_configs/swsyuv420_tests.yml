@@ -1,0 +1,102 @@
+
+
+test_sws:
+  app: ffmpeg
+  comparisontest:
+  - testtype: identity
+  - testtype: assertresults
+    tests:
+    - assert: equal
+      value: Y
+      equal: 1
+    - assert: equal
+      value: U
+      equal: 1
+    - assert: equal
+      value: V
+      equal: 1
+  description: Sws tests
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_sws
+  sources:
+  - ../sourceimages/zoneplate_rgb16.png
+  - ../sourceimages/smptehdbars_10.dpx
+  - ../sourceimages/bellnuitHDTestchart.tif
+  - ../sourceimages/SonyF35.StillLife_srgb.png
+  - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
+  - /Users/sam/Downloads/mm-test-close3/hcw_mmtest_close.0105.png
+  suffix: .y4m
+  wedges:
+    default:  &base_args2
+      -loglevel: verbose
+      -strict: -1
+      -sws_flags: print_info
+      -pix_fmt: yuv420p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    area:
+      << : *base_args2
+      -sws_flags: area+print_info
+    zscale:
+      << : *base_args2
+      -vf: '"zscale=m=709:min=709:rangein=full:range=limited"'
+    zscale_lanczos:
+      << : *base_args2
+      -vf: '"zscale=m=709:min=709:rangein=full:range=limited:filter=lanczos"'
+    zscale_spline16:
+      << : *base_args2
+      -vf: '"zscale=m=709:min=709:rangein=full:range=limited:filter=spline16"'
+    zscale_spline36:
+      << : *base_args2
+      -vf: '"zscale=m=709:min=709:rangein=full:range=limited:filter=spline36"'
+    accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+print_info
+    full_chroma_int:
+      << : *base_args2
+      -sws_flags: full_chroma_int+print_info
+    accurate_rnd+full_chroma_int:
+      << : *base_args2
+      -sws_flags: accurate_rnd+full_chroma_int+print_info
+    accurate_rnd+full_chroma_int+full_chroma_inp:
+      << : *base_args2
+      -sws_flags: accurate_rnd+full_chroma_int+print_info
+    neighbor+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+neighbor+print_info
+    bicublin+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+bicublin+print_info
+    area+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+area+print_info
+    spline+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+spline+print_info
+    lanczos+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+lanczos+print_info
+    bilinear+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+bilinear+print_info
+    bicubic+accurate_rnd:
+      << : *base_args2
+      -sws_flags: accurate_rnd+bicubic+print_info
+    filter_neighbor+accurate_rnd:
+      << : *base_args2
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=accurate_rnd+neighbor+print_info"'
+    filter_spline+accurate_rnd:
+      << : *base_args2
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=spline+accurate_rnd+print_info"'
+
+---
+reports:
+  description: This is testing different options of sws_flags encoding to yuv420p10
+  directory: swsyuv420-encode
+  name: sws420-tests
+  templatefile: basicimagecompare.html.jinja
+  title: sws_flags encoding to 420

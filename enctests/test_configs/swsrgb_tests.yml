@@ -1,0 +1,193 @@
+
+
+test_sws_422:
+  app: ffmpeg
+  comparisontest:
+  - testtype: identity
+  - testtype: assertresults
+    tests:
+    - assert: equal
+      value: R
+      equal: 1
+    - assert: equal
+      value: G
+      equal: 1
+    - assert: equal
+      value: B
+      equal: 1
+  description: SWS tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_sws_422
+  sources:
+  - ../sourceimages/smptehdbars_10_yuv422p10le.y4m
+  - ../sourceimages/zoneplate_yuv422p10.y4m
+  suffix: .png
+  wedges:
+    lanczos_full_chroma_int:  &base_args
+      -frames:v: 1
+      -loglevel: verbose
+      -sws_flags: lanczos+full_chroma_int+print_info
+      -pix_fmt: rgb48be
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+
+    default:
+      << : *base_args
+      -sws_flags: print_info
+
+    area:
+      << : *base_args
+      -sws_flags: area+print_info
+
+    spline:
+      << : *base_args
+      -sws_flags: spline+print_info
+
+    lanczos:
+      << : *base_args
+      -sws_flags: lanczos+print_info
+
+    bicubic:
+      << : *base_args
+      -sws_flags: bicubic+print_info
+
+    area_full_chroma_inp_all:
+      << : *base_args
+      -sws_flags: area+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    bicubic_full_chroma_inp_all:
+      << : *base_args
+      -sws_flags: bicubic+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    lanczos_full_chroma_inp_all:
+      << : *base_args
+      -sws_flags: lanczos+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    lanczos_full_chroma_inp_all_no_dither:
+      << : *base_args
+      -sws_flags: lanczos+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709:sws_dither=none
+
+    lanczos5_full_chroma_inp_all:
+      << : *base_args
+      -sws_flags: print_info
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709:flags=lanczos+accurate_rnd+full_chroma_int+print_info:sws_dither=none:param0=5
+
+    spline_full_chroma_inp_all:
+      << : *base_args
+      -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    zscale:  &base_args2
+      -frames:v: 1
+      -loglevel: verbose
+      -pix_fmt: rgb48be
+      -vf: zscale=m=709:min=709
+    zscale_lanczos:
+      << : *base_args2
+      -vf: zscale=m=709:min=709:filter=lanczos
+    zscale_spline16:
+      << : *base_args2
+      -vf: zscale=m=709:min=709:filter=spline16
+    zscale_spline36:
+      << : *base_args2
+      -vf: zscale=m=709:min=709:filter=spline36
+
+test_sws_420:
+  app: ffmpeg
+  comparisontest:
+  - testtype: identity
+  - testtype: assertresults
+    tests:
+    - assert: equal
+      value: R
+      equal: 1
+    - assert: equal
+      value: G
+      equal: 1
+    - assert: equal
+      value: B
+      equal: 1
+  description: SWS tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_sws_420
+  sources:
+  - ../sourceimages/smptehdbars_10_yuv420p10le.y4m
+  - ../sourceimages/zoneplate_yuv420p10.y4m
+  suffix: .png
+  wedges:
+    lanczos_full_chroma_int:  &base_args3
+      -frames:v: 1
+      -loglevel: verbose
+      -sws_flags: lanczos+full_chroma_int+print_info
+      -pix_fmt: rgb48be
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+
+    default:
+      << : *base_args3
+      -sws_flags: print_info
+
+    area:
+      << : *base_args3
+      -sws_flags: area+print_info
+
+    spline:
+      << : *base_args3
+      -sws_flags: spline+print_info
+
+    lanczos:
+      << : *base_args3
+      -sws_flags: lanczos+print_info
+
+    bicubic:
+      << : *base_args3
+      -sws_flags: bicubic+print_info
+
+    area_full_chroma_inp_all:
+      << : *base_args3
+      -sws_flags: area+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    bicubic_full_chroma_inp_all:
+      << : *base_args3
+      -sws_flags: bicubic+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    lanczos_full_chroma_inp_all:
+      << : *base_args3
+      -sws_flags: lanczos+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    lanczos_full_chroma_inp_all_no_dither:
+      << : *base_args3
+      -sws_flags: lanczos+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709:sws_dither=none
+
+    lanczos5_full_chroma_inp_all:
+      << : *base_args3
+      -sws_flags: print_info
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709:flags=lanczos+accurate_rnd+full_chroma_int+print_info:sws_dither=none:param0=5
+
+    spline_full_chroma_inp_all:
+      << : *base_args3
+      -sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp+print_info
+
+    zscale:  &base_args4
+      -frames:v: 1
+      -loglevel: verbose
+      -pix_fmt: rgb48be
+      -vf: zscale=m=709:min=709
+    zscale_lanczos:
+      << : *base_args4
+      -vf: zscale=m=709:min=709:filter=lanczos
+    zscale_spline16:
+      << : *base_args4
+      -vf: zscale=m=709:min=709:filter=spline16
+    zscale_spline36:
+      << : *base_args4
+      -vf: zscale=m=709:min=709:filter=spline36
+
+---
+reports:
+  description: This is testing different sws_flags filter options for extracting from YCrCb to RGB.
+  directory: swsrgb-encode
+  name: swsrgb-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg YCrCb to RGB SWS-Flags filter comparisons.

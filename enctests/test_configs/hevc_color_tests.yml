@@ -114,7 +114,7 @@ test_h265_color_420:
       << : *basex265
       -c:v: hevc_videotoolbox
       #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      -color_range: pc
+      -color_range: tv
       -profile:v: main
       -pix_fmt: yuv420p
 
@@ -124,4 +124,4 @@ reports:
   directory: hevc-color-encode
   name: hevc-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg encoding guide tests
+  title: h265 color tests

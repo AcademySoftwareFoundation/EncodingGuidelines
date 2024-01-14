@@ -369,7 +369,7 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
     if source_clip not in source_dict:
         source_dict[source_clip] = distorted
         enc_meta = get_test_metadata_dict(test_ref)
-        result = {'success': True, 'result': "Using image as reference"}
+        result = {'success': True, 'testresult': "Reference Image", 'stopProcessing': True}
 
         enc_meta['results'].update(result)
         return
@@ -391,15 +391,17 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
                                  newfile=distorted.as_posix(), ffmpeg_bin=FFMPEG_BIN)
         print(f"\n\identity command: {cmd}", file=log_file_object)
         
-        result = subprocess.run(shlex.split(cmd), 
+        cmdresult = subprocess.run(shlex.split(cmd), 
                                 check=False, 
                                 capture_output=True, text=True
                                 )
-        lines = result.stderr.splitlines()
+        lines = cmdresult.stderr.splitlines()
         print("\n".join(lines), file=log_file_object)
-        if len(lines) < 2:
-            result['result'] = "Unable to run ffmpeg"
-            result['success'] = False
+        if len(lines) < 2 or cmdresult.returncode != 0:
+            result = {'testresult': f"Unable to run ffmpeg, error code {cmdresult.returncode}",
+                      'returncode': cmdresult.returncode,
+                      'success': False
+            }
         else:
             result = {'success': True, 'result': lines[-1]}
             for line in lines[-2:]:
@@ -437,7 +439,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
-    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 {newpngfile}"
+    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {newpngfile}"
     extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
 
     # Allow a different image to be compared with, useful for 422 or 420 encoding.
@@ -699,6 +701,9 @@ def run_tests(args, config_data, timeline):
                             print(f"ERROR: Unknown test type {testtype}, skipping.")
                         enctime = time.perf_counter() - t1
                         print(f"\t\t took: {enctime:.2f} seconds. ")
+                        if enc_meta['results'].get('stopProcessing', False):
+                            print("Aborting further processing due to 'stopProcessing'", file=log_file_object)
+                            break
 
             # Update dict of references
             references.update(results)

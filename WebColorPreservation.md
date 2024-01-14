@@ -108,10 +108,10 @@ comparisontest:
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
--sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv420p \
--vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
--c:v libx264 -t 5 -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 \
--color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 outputfile.mov
+    -pix_fmt yuv420p \
+    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -c:v libx264 -t 5 -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 \
+    -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 outputfile.mov
 ```
 
 ## Summary

@@ -98,8 +98,8 @@ rm smptehdbars_16_yuv422p-a.png smptehdbars_16_yuv422p.yuv
 # Make a 10-bit image as a DPX file.
 oiiotool -i smptehdbars_16.png -d uint10 -o smptehdbars_10.dpx
 # 420 image
-ffmpeg -y -i smptehdbars_10.dpx -vframes 1 -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv420p10le  -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -strict -1 -y smptehdbars_10_yuv420p10le.y4m
-ffmpeg -i smptehdbars_10_yuv420p10le.y4m -sws_flags area+accurate_rnd -pix_fmt rgba64be \
+ffmpeg -y -i smptehdbars_10.dpx -vframes 1 -sws_flags spline+accurate_rnd+full_chroma_int -pix_fmt yuv420p10le  -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -strict -1 -y smptehdbars_10_yuv420p10le.y4m
+ffmpeg -i smptehdbars_10_yuv420p10le.y4m -sws_flags spline+accurate_rnd -pix_fmt rgba64be \
    -vframes 1 \
     -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 smptehdbars_10_yuv420p10le_a.png
 oiiotool -i smptehdbars_10_yuv420p10le_a.png --ch r,g,b -o smptehdbars_10_yuv420p10le.png
@@ -170,3 +170,6 @@ ffmpeg -y -f rawvideo -pixel_format yuv422p -video_size 1920x1080 -i smptehdbars
 oiiotool -i smptehdbars_8_yuv422p_a.png --ch r,g,b -o smptehdbars_8_yuv422p.png
 rm smptehdbars_8_yuv422p_a.png smptehdbars_8_yuv422p.yuv
 
+ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt rgb48be zoneplate_rgb16.png
+ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv420p10 -strict -1 zoneplate_yuv420p10.y4m
+ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv422p10 -strict -1 zoneplate_yuv422p10.y4m

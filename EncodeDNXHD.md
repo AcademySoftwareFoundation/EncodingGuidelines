@@ -40,7 +40,7 @@ comparisontest:
        less: 0.00195
 -->
 ```
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -sws_flags area+accurate_rnd+full_chroma_int -c:v dnxhd \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -pix_fmt yuv422p10le -profile:v dnxhr_hqx \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
@@ -79,7 +79,7 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-     -sws_flags area+accurate_rnd -c:v dnxhd -profile:v dnxhr_444 \
+     -c:v dnxhd -profile:v dnxhr_444 \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace rgb \
      -pix_fmt gbrp10le outputfile.mov
 ```
@@ -110,7 +110,7 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -vframes 100 \
-    -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv422p \
+    -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
@@ -140,7 +140,7 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 -pix_fmt yuv422p \
-    -sws_flags area+accurate_rnd+full_chroma_int -pix_fmt yuv422p \
+    -pix_fmt yuv422p \
     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
@@ -176,7 +176,6 @@ comparisontest:
 -->
 ```
 ffmpeg -y -r 24 -i inputfile.%04d.png -vframes 100 \
-     -sws_flags area+accurate_rnd+full_chroma_int \
     -vf "in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
     -pix_fmt yuv422p10 -c:v dnxhd -b:v 175M \
      -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
