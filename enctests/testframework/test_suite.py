@@ -189,3 +189,4 @@ class TestSuite(BaseYamlConfig):
     
     def set_destination(self, destination: pathlib.Path):
         self._destination = destination
+
