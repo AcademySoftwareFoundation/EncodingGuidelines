@@ -1,5 +1,5 @@
 images: true
-path: /Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks2_srgb/sparks2_srgb.%05d.png
+path: sparks2_srgb.%05d.png
 width: 1920
 height: 1080
 pix_fmt: rgb48be
