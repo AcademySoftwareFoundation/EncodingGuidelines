@@ -43,13 +43,13 @@ IDIFF_BIN = os.getenv(
 )
 
 
-VMAF_LIB_DIR = os.getenv(
-    'VMAF_LIB_DIR',
-    f'{os.path.dirname(__file__)}/../.venv/usr/local/lib/x86_64-linux-gnu'
+VMAF_MODEL_DIR = os.getenv(
+    'VMAF_MODEL_DIR',
+    '/usr/share/vmaf'
 )
 
-if not Path(VMAF_LIB_DIR, "model", "vmaf_v0.6.1.json").exists():
-    print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_LIB_DIR}")
+if not Path(VMAF_MODEL_DIR, "vmaf_v0.6.1.json").exists():
+    print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_MODEL_DIR}")
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -302,11 +302,11 @@ model=path={vmaf_model}\" \
     log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
 
     env = os.environ
-    if 'LD_LIBRARY_PATH' in env:
-        env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
+    # if 'LD_LIBRARY_PATH' in env:
+    #     env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
 
-    else:
-        env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+    # else:
+    #     env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
 
     compare_log = Path("compare_log.json")
     if compare_log.exists():
