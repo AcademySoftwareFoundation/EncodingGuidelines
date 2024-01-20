@@ -53,7 +53,8 @@ ENV         FFMPEG_VERSION=6.0 \
     LIBARIBB24_VERSION=1.0.3 \
     LIBPNG_VERSION=1.6.9 \
     LIBVMAF_VERSION=3.0.0 \
-    VMAF_MODEL_DIR=/usr/share/vmaf \
+    LIBZIMG_VERSION=3.0.5 \ 
+    VMAF_MODEL_DIR=/usr/share/vmaf/model \
     SRC=/usr/local
 
 ARG         FREETYPE_SHA256SUM="12991c4e55c506dd7f9b765933e62fd2be2e06d421505d7950a132e4f1bb484d freetype-2.13.2.tar.gz"
@@ -534,6 +535,19 @@ RUN \
         make install && \
         rm -rf ${DIR}
 
+## zimg https://github.com/sekrit-twc/zimg
+RUN  \
+        DIR=/tmp/zlib && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        curl -sLO https://github.com/sekrit-twc/zimg/archive/refs/tags/release-${LIBZIMG_VERSION}.tar.gz && \
+        # echo ${LIBASS_SHA256SUM} | sha256sum --check && \
+        tar -zx --strip-components=1 -f release-${LIBZIMG_VERSION}.tar.gz && \
+        ./autogen.sh && \
+        ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
+        make && \
+        make install && \
+        rm -rf ${DIR}
 
 RUN pip install pyseq awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
 
@@ -617,6 +631,7 @@ RUN  \
         --enable-shared \
         --enable-small \
         --enable-version3 \
+        --enable-libzimg \
         --extra-cflags="-I${PREFIX}/include" \
         --extra-ldflags="-L${PREFIX}/lib" \
         --extra-libs=-ldl \
