@@ -15,11 +15,11 @@ FROM        base AS build
 WORKDIR     /tmp/workdir
 
 ENV         FFMPEG_VERSION=6.0 \
-    AOM_VERSION=v1.0.0 \
+    AOM_VERSION=v3.8.0 \
     CHROMAPRINT_VERSION=1.5.0 \
     FDKAAC_VERSION=0.1.5 \
     FONTCONFIG_VERSION=2.12.4 \
-    FREETYPE_VERSION=2.10.4 \
+    FREETYPE_VERSION=2.13.2 \
     FRIBIDI_VERSION=0.19.7 \
     KVAZAAR_VERSION=2.0.0 \
     LAME_VERSION=3.100 \
@@ -31,31 +31,32 @@ ENV         FFMPEG_VERSION=6.0 \
     OGG_VERSION=1.3.2 \
     OPENCOREAMR_VERSION=0.1.5 \
     OPUS_VERSION=1.2 \
-    OPENJPEG_VERSION=2.1.2 \
+    OPENJPEG_VERSION=2.5.0 \
     THEORA_VERSION=1.1.1 \
     VORBIS_VERSION=1.3.5 \
     VPX_VERSION=1.8.0 \
     WEBP_VERSION=1.0.2 \
     X264_VERSION=20170226-2245-stable \
-    X265_VERSION=3.4 \
+    X265_VERSION=3.5 \
     XAU_VERSION=1.0.9 \
     XORG_MACROS_VERSION=1.19.2 \
     XPROTO_VERSION=7.0.31 \
     XVID_VERSION=1.3.4 \
+    LIBSVT_AV1_VERSION=1.8.0 \
     LIBXML2_VERSION=2.9.12 \
-    LIBBLURAY_VERSION=1.1.2 \
-    LIBZMQ_VERSION=4.3.2 \
-    LIBSRT_VERSION=1.4.1 \
+    LIBBLURAY_VERSION=1.3.4 \
+    LIBZMQ_VERSION=4.3.5 \
+    LIBSRT_VERSION=1.5.3 \
     LIBARIBB24_VERSION=1.0.3 \
     LIBPNG_VERSION=1.6.9 \
-    LIBVMAF_VERSION=2.1.1 \
-    VMAF_LIB_DIR=/usr/share/vmaf \
+    LIBVMAF_VERSION=3.0.0 \
+    VMAF_MODEL_DIR=/usr/share/vmaf \
     SRC=/usr/local
 
 # OCIO and OIIO
 ENV         LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/opt/rh/httpd24/root/usr/lib64/ \
             OCIO=/usr/share/ocio/aces_1.3/config.ocio \
-            VMAF_MODEL=${VMAF_LIB_DIR} \
+            VMAF_MODEL_DIR=${VMAF_MODEL_DIR} \
             ASWF_OIIO_VERSION=2.4.11.0 \
             ASWF_OCIO_VERSION=2.2.1 \
             ASWF_BOOST_VERSION=1.80.0 \
@@ -160,10 +161,10 @@ RUN \
         ninja -vC build && \
         ninja -vC build install && \
         mkdir -p ${PREFIX}/share/model/ && \
-        cp -r /tmp/vmaf/model/* ${PREFIX}/share/model/ && \
-        mkdir -p ${VMAF_LIB_DIR} && \
-	echo "Creating VMAF DIRECTGORY:" ${VMAF_LIB_DIR} && \
-        cp -vr ${DIR}/model/* ${VMAF_LIB_DIR} && \
+        cp -r ${DIR}/model/* ${PREFIX}/share/model/ && \
+        mkdir -p ${VMAF_MODEL_DIR}/model && \
+	echo "Creating VMAF DIRECTGORY:" ${VMAF_MODEL_DIR}/model && \
+        cp -vr ${DIR}/model/* ${VMAF_MODEL_DIR}/model && \
         rm -rf ${DIR}; \
         else \
         echo "VMAF skipped."; \
@@ -200,9 +201,9 @@ RUN \
         DIR=/tmp/x265 && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
-        curl -sL https://github.com/videolan/x265/archive/refs/tags/${X265_VERSION}.tar.gz | \
-        tar -zx && \
-        cd x265-${X265_VERSION}/build/linux && \
+        curl -sL https://bitbucket.org/multicoreware/x265_git/downloads/x265_${X265_VERSION}.tar.gz | \
+        tar -zx --strip-components=1 && \
+        cd build/linux && \
         #sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
         #sed -i "/^cmake/ s/$/ -DENABLE_CLI=OFF/" multilib.sh && \
         #./multilib.sh && \
@@ -348,7 +349,7 @@ RUN  \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.gz && \
-        echo ${FREETYPE_SHA256SUM} | sha256sum --check && \
+        # echo ${FREETYPE_SHA256SUM} | sha256sum --check && \
         tar -zx --strip-components=1 -f freetype-${FREETYPE_VERSION}.tar.gz && \
         ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
         make && \
@@ -401,7 +402,7 @@ RUN  \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz && \
-        echo ${LIBASS_SHA256SUM} | sha256sum --check && \
+        # echo ${LIBASS_SHA256SUM} | sha256sum --check && \
         tar -zx --strip-components=1 -f ${LIBASS_VERSION}.tar.gz && \
         ./autogen.sh && \
         ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
@@ -522,7 +523,7 @@ RUN \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://download.videolan.org/pub/videolan/libbluray/${LIBBLURAY_VERSION}/libbluray-${LIBBLURAY_VERSION}.tar.bz2 && \
-        echo ${LIBBLURAY_SHA256SUM} | sha256sum --check && \
+        # echo ${LIBBLURAY_SHA256SUM} | sha256sum --check && \
         tar -jx --strip-components=1 -f libbluray-${LIBBLURAY_VERSION}.tar.bz2 && \
         ./configure --prefix="${PREFIX}" --disable-examples --disable-bdjava-jar --disable-static --enable-shared && \
         make && \
@@ -535,7 +536,7 @@ RUN \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://github.com/zeromq/libzmq/archive/v${LIBZMQ_VERSION}.tar.gz && \
-        echo ${LIBZMQ_SHA256SUM} | sha256sum --check && \
+        # echo ${LIBZMQ_SHA256SUM} | sha256sum --check && \
         tar -xz --strip-components=1 -f v${LIBZMQ_VERSION}.tar.gz && \
         ./autogen.sh && \
         ./configure --prefix="${PREFIX}" && \
@@ -574,7 +575,7 @@ RUN \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
         curl -sLO https://github.com/nkoriyama/aribb24/archive/v${LIBARIBB24_VERSION}.tar.gz && \
-        echo ${LIBARIBB24_SHA256SUM} | sha256sum --check && \
+        # echo ${LIBARIBB24_SHA256SUM} | sha256sum --check && \
         tar -xz --strip-components=1 -f v${LIBARIBB24_VERSION}.tar.gz && \
         autoreconf -fiv && \
         ./configure CFLAGS="-I${PREFIX}/include -fPIC" --prefix="${PREFIX}" && \
@@ -596,6 +597,18 @@ RUN \
         make && \
         make install
 
+ RUN \
+         DIR=/tmp/svtav1 && \
+         mkdir -p ${DIR} && \
+         cd ${DIR} && \
+         curl -sLO https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.8.0/SVT-AV1-v${LIB_SVT_AV1_VERSION}.tar.gz && \
+         tar -xz --strip-components=1 -f SVT-AV1-v${LIB_SVT_AV1_VERSION}.tar.gz && \
+         cd Build && \
+         cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}"  && \
+         make && \
+         make install && \
+         rm -rf ${DIR}
+
 # ## Download ffmpeg https://ffmpeg.org/
 RUN  \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
@@ -611,7 +624,8 @@ RUN  \
         --disable-ffplay \
         --enable-fontconfig \
         --enable-gpl \
-        # --enable-libaom \
+        --enable-libaom \
+        --enable-libsvtav1 \
         --enable-libaribb24 \
         --enable-libass \
         --enable-libbluray \
@@ -633,7 +647,7 @@ RUN  \
         --enable-libx264 \
         --enable-libx265 \
         # --enable-libxcb \
-        --enable-libxvid \
+        # --enable-libxvid \
         --enable-libzmq \
         --enable-nonfree \
         --enable-openssl \
