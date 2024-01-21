@@ -163,9 +163,9 @@ RUN \
         ninja -vC build install && \
         mkdir -p ${PREFIX}/share/model/ && \
         cp -r ${DIR}/model/* ${PREFIX}/share/model/ && \
-        mkdir -p ${VMAF_MODEL_DIR}/model && \
-	echo "Creating VMAF DIRECTGORY:" ${VMAF_MODEL_DIR}/model && \
-        cp -vr ${DIR}/model/* ${VMAF_MODEL_DIR}/model && \
+        mkdir -p ${VMAF_MODEL_DIR} && \
+	echo "Creating VMAF DIRECTGORY:" ${VMAF_MODEL_DIR} && \
+        cp -vr ${DIR}/model/* ${VMAF_MODEL_DIR} && \
         rm -rf ${DIR}; \
         else \
         echo "VMAF skipped."; \
