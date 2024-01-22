@@ -49,7 +49,8 @@ VMAF_MODEL_DIR = os.getenv(
 )
 
 if not Path(VMAF_MODEL_DIR, "vmaf_v0.6.1.json").exists():
-    print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_MODEL_DIR}")
+    print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_MODEL_DIR}, this is defined by the environment variable VMAF_MODEL_DIR.")
+    exit(1)
 
 def parse_args():
     parser = argparse.ArgumentParser()
