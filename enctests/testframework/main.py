@@ -303,12 +303,6 @@ model=path={vmaf_model}\" \
     log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
 
     env = os.environ
-    # if 'LD_LIBRARY_PATH' in env:
-    #     env['LD_LIBRARY_PATH'] += f'{os.pathsep}{VMAF_LIB_DIR}'
-
-    # else:
-    #     env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
-
     compare_log = Path("compare_log.json")
     if compare_log.exists():
         # Make sure we remove the old one, so that we know one is generated.
