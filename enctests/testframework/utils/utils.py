@@ -7,16 +7,16 @@ from subprocess import run, CalledProcessError
 
 import opentimelineio as otio
 
-VMAF_LIB_DIR = os.getenv(
-    'VMAF_LIB_DIR',
-    f'{os.path.dirname(__file__)}/.venv/usr/local/lib/x86_64-linux-gnu'
+VMAF_MODEL_DIR = os.getenv(
+    'VMAF_MODEL_DIR',
+    '/usr/share/vmaf'
 )
 
 # Which vmaf model to use
-VMAF_HD_MODEL = Path(VMAF_LIB_DIR, "model", "vmaf_v0.6.1.json")
+VMAF_HD_MODEL = Path(VMAF_MODEL_DIR, "vmaf_v0.6.1.json")
 
 
-VMAF_4K_MODEL = Path(VMAF_LIB_DIR, "model", "vmaf_4k_v0.6.1.json")
+VMAF_4K_MODEL = Path(VMAF_MODEL_DIR, "vmaf_4k_v0.6.1.json")
 
 
 # Based on accepted answer here:
