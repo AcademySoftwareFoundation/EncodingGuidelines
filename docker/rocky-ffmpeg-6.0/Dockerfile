@@ -1,4 +1,4 @@
-FROM    rockylinux:9 AS base
+FROM    nvidia/cuda:12.3.1-devel-rockylinux9 AS base
 
 
 #RUN     dnf -y install s3cmd libgomp httpd24-libcurl icc-profiles-openicc imagemagick python-pip && \
@@ -624,6 +624,13 @@ RUN \
          make install && \
          rm -rf ${DIR}
 
+run \
+        DIR=/tmp/nvcodec && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
+        cd nv-codec-headers && make install
+
 # ## Download ffmpeg https://ffmpeg.org/
 RUN  \
         DIR=/tmp/ffmpeg && mkdir -p ${DIR} && cd ${DIR} && \
@@ -636,8 +643,11 @@ RUN  \
         ./configure \
         --disable-debug \
         --disable-doc \
+        --enable-cuda-nvcc \
+        --enable-libnpp \
         --disable-ffplay \
         --enable-fontconfig \
+        --enable-cuda-nvcc \
         --enable-gpl \
         --enable-libaom \
         --enable-libsvtav1 \
@@ -671,13 +681,13 @@ RUN  \
         --enable-small \
         --enable-version3 \
         --enable-libzimg \
-        --extra-cflags="-I${PREFIX}/include" \
-        --extra-ldflags="-L${PREFIX}/lib" \
+        --extra-cflags="-I${PREFIX}/include -I/usr/local/cuda/include" \
+        --extra-ldflags="-L${PREFIX}/lib -L/usr/local/cuda/lib64" \
         --extra-libs=-ldl \
         --extra-libs=-lpthread \
         --prefix="${PREFIX}" && \
         make clean && \
-        make && \
+        make -j 8 && \
         make install && \
         make tools/zmqsend && cp tools/zmqsend ${PREFIX}/bin/ && \
         make distclean && \
