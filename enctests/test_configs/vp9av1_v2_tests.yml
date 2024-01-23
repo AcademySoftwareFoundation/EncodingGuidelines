@@ -1,0 +1,141 @@
+test_mp4:
+    name: test_mp4
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+
+        av1-8bit: &base_args_av1
+            -pix_fmt: yuv420p
+            -c:v: libsvtav1
+            -crf: 18
+            -preset: slow
+            -svtav1-params: tune=0
+            -preset: 9
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_primaries: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1
+
+        av1-10bit:
+            << : *base_args_av1
+            -pix_fmt: yuv420p10le
+
+        vp9-10bit: &base_args_vp9
+            -pix_fmt: yuv420p10le
+            -c:v: libvpx-vp9
+            -quality: good
+            -speed: 2
+            -row-mt: 1
+            -b:v: 0
+            -crf: 22
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_primaries: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1
+
+        vp9-10bit-444:
+            << : *base_args_vp9
+            -pix_fmt: yuv444p10le
+
+        vp9-8bit:
+            << : *base_args_vp9
+            -pix_fmt: yuv420p
+
+        vp9-12bit-rgb:
+            -pix_fmt: gbrp12le
+            -c:v: libvpx-vp9
+            -quality: good
+            -speed: 2
+            -row-mt: 1
+            -b:v: 0
+            -crf: 22
+            -color_primaries: tv
+            -colorspace: rgb
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1
+
+        aom-422-10bit: &base_args_aom
+            -c:v: libaom-av1
+            -pix_fmt: yuv422p10le
+            -crf: 20
+            -row-mt: 1
+            -cpu-used: 2
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_primaries: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1
+
+        aom-10bit-444:
+            << : *base_args_aom
+            -pix_fmt: yuv444p10le
+
+        aom-12bit-rgb:
+            -pix_fmt: gbrp12le
+            -c:v: libaom-av1
+            -crf: 20
+            -row-mt: 1
+            -cpu-used: 2
+            -color_primaries: tv
+            -colorspace: rgb
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1
+
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: name
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: vp9av1-test
+    title: VP9 and AV1 vs HEVC
+    description: This is a comparison of vp9 and AV1 with HEVC and h264.
+    directory: vp9av1-encode
+    templatefile: basicmovie.html.jinja
+
