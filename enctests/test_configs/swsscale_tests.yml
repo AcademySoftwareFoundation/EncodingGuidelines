@@ -1,0 +1,104 @@
+
+
+test_sws:
+  app: ffmpeg
+  description: Scaler tests
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_sws
+  sources:
+#  - ../sourceimages/smptehdbars_10.dpx.yml
+  - ../sourceimages/zoneplate_rgb16.png.yml
+  - ../sourceimages/bellnuitHDTestchart.tif
+  - ../sourceimages/SonyF35.StillLife_srgb.png
+  - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
+  - ../sourceimages/animation_cc_orig.jpg
+  - ../sourceimages/animation_cc_jpg.jpg
+  - ../sourceimages/animation_cc.png
+  suffix: .png
+  wedges:
+    yuv444:  &base_args
+      -loglevel: verbose
+      -strict: -1
+      -sws_flags: print_info
+      -pix_fmt: yuv444p10le
+      -vf: '"scale=w=480:h=270:in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      << : *base_args
+    default:
+      << : *base_args
+    zscale:
+      << : *base_args
+      -vf: '"zscale=w=480:h=270:m=709:min=709:rangein=full:range=limited"'
+    zscale_lanczos:
+      << : *base_args
+      -vf: '"zscale=w=480:h=270:m=709:min=709:rangein=full:range=limited:filter=lanczos"'
+    zscale_spline16:
+      << : *base_args
+      -vf: '"zscale=w=480:h=270:m=709:min=709:rangein=full:range=limited:filter=spline16"'
+    zscale_spline36:
+      << : *base_args
+      -vf: '"zscale=w=480:h=270:m=709:min=709:rangein=full:range=limited:filter=spline36"'
+    neighbor:
+      << : *base_args
+      -sws_flags: accurate_rnd+neighbor+print_info
+    bicublin:
+      << : *base_args
+      -sws_flags: accurate_rnd+bicublin+print_info
+    area:
+      << : *base_args
+      -sws_flags: accurate_rnd+area+print_info
+    spline:
+      << : *base_args
+      -sws_flags: accurate_rnd+spline+print_info
+    lanczos:
+      << : *base_args
+      -sws_flags: accurate_rnd+lanczos+print_info
+    bilinear:
+      << : *base_args
+      -sws_flags: accurate_rnd+bilinear+print_info
+    bicubic:
+      << : *base_args
+      -sws_flags: accurate_rnd+bicubic+print_info
+
+test_oiio:
+  app: ffmpeg
+  description: Scaler tests with oiiotool
+  encoding_template: oiiotool -i "{source}"              {encoding_args}
+    -o "{outfile}"
+  name: test_oiio
+  sources:
+#  - ../sourceimages/smptehdbars_10.dpx.yml
+  - ../sourceimages/zoneplate_rgb16.png.yml
+  - ../sourceimages/bellnuitHDTestchart.tif
+  - ../sourceimages/SonyF35.StillLife_srgb.png
+  - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
+  - ../sourceimages/animation_cc_orig.jpg
+  suffix: .png
+  wedges:
+    default:
+      --resize: 480x270
+    default_withcs:
+      --iscolorspace: g24_rec709
+      --resize: 480x270
+      --tocolorspace: g24_rec709
+    nuke-lanczos6:
+      --resize: 480x270:filter=nuke-lanczos6
+    sharp-gaussian:
+      --resize: 480x270:filter=sharp-gaussian
+    radial-lanczos3:
+      --iscolorspace: g24_rec709
+      --resize: 480x270:filter=radial-lanczos3
+      --tocolorspace: g24_rec709
+
+
+---
+reports:
+  description: This is testing resizing with ffmpeg, comparing different filter options.
+  directory: sws-encode
+  name: sws-tests
+  templatefile: basicimagecompare.html.jinja
+  title: Ffmpeg RGB to YUV scale conversion options.
