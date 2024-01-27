@@ -48,7 +48,7 @@ class FFmpegEncoder(ABCTestEncoder):
         for wedge_name, wedge in self.test_config.get('wedges', {}).items():
             # Test name is based on main test name and wedge name
             test_name = f"{self.test_config.get('name')}-{wedge_name}"
-            out_file = self.get_output_filename(test_name)
+            (out_file, testbasename) = self.get_output_filename(test_name)
 
             # Remove it, so if the new run fails to create anything 
             # we are not accidently using the old one.
@@ -101,7 +101,8 @@ class FFmpegEncoder(ABCTestEncoder):
             test_meta['command'] = cmd
             test_meta['encode_arguments'] = wedge
             test_meta['description'] = self.test_config.get('description')
-
+            test_meta['outputfile'] = str(out_file)
+            test_meta['testbasename'] = testbasename
             result_meta = test_meta.setdefault('results', {})
             result_meta['completed_utc'] = \
                 datetime.now(timezone.utc).isoformat()
@@ -178,9 +179,11 @@ class FFmpegEncoder(ABCTestEncoder):
         if stem[-1] == ".":
             stem = stem[:-1]
     
+        testbasename = f"{stem}-{test_name}"
+
         out_file = self.destination.absolute().joinpath(
-            f"{stem}-{test_name}{self.test_config.get('suffix')}"
+            f"{testbasename}{self.test_config.get('suffix')}"
         )
 
-        return out_file
+        return (out_file, testbasename)
 
