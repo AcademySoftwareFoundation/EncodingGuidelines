@@ -48,7 +48,7 @@ class FFmpegEncoder(ABCTestEncoder):
         for wedge_name, wedge in self.test_config.get('wedges', {}).items():
             # Test name is based on main test name and wedge name
             test_name = f"{self.test_config.get('name')}-{wedge_name}"
-            (out_file, testbasename) = self.get_output_filename(test_name)
+            out_file, testbasename = self.get_output_filename(test_name)
 
             # Remove it, so if the new run fails to create anything 
             # we are not accidently using the old one.
