@@ -173,7 +173,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
         return path, symbol
 
-    def get_output_filename(self, test_name: str) -> (pathlib.Path, str):
+    def get_output_filename(self, test_name: str) -> Tuple[pathlib.Path, str]:
         source_path, symbol = self.get_source_path()
         stem = source_path.stem.replace(symbol, '')
         if stem[-1] == ".":
