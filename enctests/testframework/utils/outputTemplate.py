@@ -72,6 +72,7 @@ def processTemplate(config, timeline):
               continue
           merge_test_info = test_info.metadata['aswf_enctests']['results']
           merge_test_info['name'] = ref_name
+          merge_test_info['testbasename'] = test_info.metadata['aswf_enctests']['testbasename']
           merge_test_info['wedge'] = ref_name.replace(track.metadata.get('source_test_name', '')+"-", "")
           if 'description' in test_info.metadata['aswf_enctests']:
             merge_test_info['test_description'] = test_info.metadata['aswf_enctests']['description']
