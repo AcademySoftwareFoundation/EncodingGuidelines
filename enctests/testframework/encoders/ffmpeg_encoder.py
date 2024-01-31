@@ -173,7 +173,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
         return path, symbol
 
-    def get_output_filename(self, test_name: str) -> pathlib.Path:
+    def get_output_filename(self, test_name: str) -> (pathlib.Path, str):
         source_path, symbol = self.get_source_path()
         stem = source_path.stem.replace(symbol, '')
         if stem[-1] == ".":
@@ -185,5 +185,5 @@ class FFmpegEncoder(ABCTestEncoder):
             f"{testbasename}{self.test_config.get('suffix')}"
         )
 
-        return (out_file, testbasename)
+        return out_file, testbasename
 
