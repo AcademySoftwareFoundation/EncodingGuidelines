@@ -47,7 +47,7 @@
    </TR>
   {% for enc_info in test.results %}
     <TR>
-    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+    <TH><A  target="_blank" HREF="{{ enc_info.testbasename|e }}.log">{{ enc_info.name|e }}</A></TH>
         <td align=right>{{ enc_info.encode_time}} </TD>
         <td align=right>{{ "{:,}".format(enc_info.filesize) }} </TD>
         <TD align=right>{{enc_info.vmaf.harmonic_mean |e }}</TD>
