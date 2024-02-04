@@ -1,6 +1,6 @@
 GITROOT=`git rev-parse --show-toplevel`
 docker run \
   -it \
-  --name ci-ffmpeg-5.0 \
+  --name ci-ffmpeg6.0 \
   --mount type=bind,source=${GITROOT},target=/test \
-  ci-ffmpeg-5.0
+  ci-ffmpeg6.0

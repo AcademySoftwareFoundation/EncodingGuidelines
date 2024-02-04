@@ -24,17 +24,17 @@ Built on the ASWF vfxall image.
 
 ```
 cd ffmpeg-4.4
-docker build -t ffmpeg4.4 .
+docker build -t ci-ffmpeg-4.4 .
 ./runme.sh
 ```
 
 
 ### Building for ffmpeg-5.0
-Built on the ASWF vfxall image.
+Built on the ASWF vfxall image, however, this does not correctly build oiio with OCIO.
 
 ```
 cd ffmpeg-5.0
-docker build -t ffmpeg5.0 .
+docker build -t ci-ffmpeg-5.0 .
 ./runme.sh
 ```
 
@@ -45,7 +45,18 @@ This builds all the components directly not relying on any ASWF containers. We h
 
 ```
 cd rocky-ffmpeg-5.1
-docker build -t ffmpeg-5.1 .
+docker build -t rocky-ffmpeg-5.1 .
+./runme.sh
+```
+
+
+### Building for rocky-ffmpeg-6.0
+Built on top of Rocky linux i9 (identical to RHEL 9).
+This builds all the components directly not relying on any ASWF containers, including correctly building OCIO and OIIO.
+
+```
+cd rocky-ffmpeg-5.1
+docker build -t rocky-ffmpeg-6.0 .
 ./runme.sh
 ```
 

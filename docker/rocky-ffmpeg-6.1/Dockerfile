@@ -14,7 +14,7 @@ FROM        base AS build
 
 WORKDIR     /tmp/workdir
 
-ENV         FFMPEG_VERSION=6.0 \
+ENV         FFMPEG_VERSION=6.1 \
     AOM_VERSION=v3.8.0 \
     CHROMAPRINT_VERSION=1.5.0 \
     FDKAAC_VERSION=0.1.5 \
@@ -56,7 +56,7 @@ ENV         FFMPEG_VERSION=6.0 \
 
 # OCIO and OIIO
 ENV         LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/opt/rh/httpd24/root/usr/lib64/ \
-            OCIO=/usr/share/ocio/aces_1.3/config.ocio \
+            OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1 \
             VMAF_MODEL_DIR=${VMAF_MODEL_DIR} \
             ASWF_OIIO_VERSION=2.4.11.0 \
             ASWF_OCIO_VERSION=2.2.1 \
