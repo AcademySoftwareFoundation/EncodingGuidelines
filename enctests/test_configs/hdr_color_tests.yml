@@ -1,0 +1,56 @@
+
+test_mov:
+    name: test_mov
+    description: A comparison of different codecs with uncompressed settings, with VMAF > 98.
+    app: ffmpeg
+    comparisontest:
+    - extracttemplate: ffmpeg -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020 {newpngfile}
+      testtype: idiff
+    - testtype: assertresults
+      tests:
+      - assert: less
+        value: max_error
+        less: 0.00195
+    suffix: .mov
+    encoding_template: 'ffmpeg -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/smptehdbars_10.dpx.yml
+    wedges:
+        v410-10bit: 
+            -c:v: v410
+            -pix_fmt: yuv444p10le
+            -vf: '"scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020"'
+            -color_range: tv
+            -colorspace: bt2020nc
+            -color_primaries: bt2020
+            -color_trc: smpte2084
+
+        libx265-10bit: 
+            -c:v: libx265
+            -pix_fmt: yuv444p10le
+            -sws_flags: print_info+accurate_rnd+bitexact+full_chroma_int 
+            -x265-params: lossless=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=2000,400
+            -color_range: tv
+            -colorspace: bt2020nc
+            -color_primaries: bt2020
+            -color_trc: smpte2084
+
+        libx265-10bit-scale: 
+            -c:v: libx265
+            -pix_fmt: yuv444p10le
+            -sws_flags: print_info+accurate_rnd+bitexact+full_chroma_int 
+            -x265-params: lossless=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=2000,400
+            -vf: '"scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020"'
+            -color_range: tv
+            -colorspace: bt2020nc
+            -color_primaries: bt2020
+            -color_trc: smpte2084
+---
+
+reports:
+    name: hdr-color-test
+    title: Comparison of hdr processing.
+    description: This is comparing encoding mechanisms for HDR.
+    directory: hdr-color-encode
+    templatefile: colorweb.html.jinja
+

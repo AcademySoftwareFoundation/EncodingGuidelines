@@ -31,48 +31,59 @@ Is the HDR format which is the HDR10 without the metadata. It uses the [PQ EOTF]
 
 We take advantage of ACES to do the initial conversion to an intermediate format, which we are using png as the container.
 
+Converting to PQ-1000 Nits.
+
 ```console
-oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
-      --colorconvert acescg out_rec2020st20842000nits -d uint16 -o sparks2_pq2000/sparks2_pq2000.#.png
+# Assuming we are using OCIO 2.1 or higher
+export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
+oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --iscolorspace "ACEScg" --resize 1920x1014 \
+       --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" \
+       -d uint16 -o sparks2_pq2000/sparks2_pq2000.#.png
 ```
 
 | --- | --- |
-|--colorconvert acescg out_rec2020st20842000nits | This is the core colorspace conversion, out_rec2020st20842000nits is an output colorspace conversion for rec2020 PQ at 2000 nit display |
+|--iscolorspace "ACEScg" | Set the input colorspace to ACEScg (or whatever your source imagery is using) |
+|--ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" | This is the core colorspace conversion, This is using a 2100-PQ display, at 100 nits and rec2020 |
 | -d uint16 | Output as 16-bit file format |
 
+The other option built in for PQ is a config with 2000 nits -
+``--ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (2000 nits & Rec.2020 lim)" `|`
+| HLG |  |
 
 
 ### PQ 444 FFMPEG encoding
 
+<!---
+name: test_pq2000
+sources: 
+- sourceimages/smptehdbars_10.dpx.yml
+comparisontest:
+   - testtype: idiff
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```console
-ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
-    -color_range pc   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc   \
-    -pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_pq2000/sparks2_pq2000.%05d.png   \
+ffmpeg  \
+    -r 30 -start_number 6700 -i sparks2_pq2000/sparks2_pq2000.%05d.png   \
     -c:v libx265   \
+    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
 	-tag:v hvc1  \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
-    -pix_fmt yuv444p10le   -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int  \
+    -pix_fmt yuv444p10le 
     -x265-params 'colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=2000,400'   \
     sparks2_pq2000_444.mov
 ```
-
-NOTE, this is a little different to other conversions (is this better?). We are defining up front what the source media is defined (e.g. `-color_range pc   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc` ). 
-
-#### Source media definition.
-
-| --- | --- |
-| -color_range pc | Set the source range to be full-range |
-| -color_trc smpte2084 | smpte2084 is the PQ reference EOTF |
-| -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| -pix_fmt rgb48be | We are assuming 16-bit RGB imagery as input |
-
 
 #### Overall encode params
 
 | --- | --- |
 | -c:v libx265 | Use the h265 encoder |
 | -tag:v hvc1 | Tag the file for playback on mac | 
+| -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020"  | Make sure we treat the input and output color primaries to be bt2020. Without this, ffmpeg can assume the source is different, and apply a primary that shouldnt be there. |
 
 #### Encode media definition
 
@@ -109,41 +120,42 @@ It is also designed to adapt to the surrounding room light levels, unlike PQ whi
 We take advantage of ACES to do the initial conversion to an intermediate format, which we are using png as the container.
 
 ```console
+# Assuming we are using OCIO 2.1 or higher
+export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
-      --colorconvert acescg out_rec2020hlg1000nits -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
+      ---ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 ```
 
 | --- | --- |
-|--colorconvert acescg out_rec2020hlg1000nits | This is the core colorspace conversion, out_rec2020hlg1000nits is an output colorspace conversion for rec2020 HLG at 1000 nit display |
+|--ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" | This is the core colorspace conversion, out_rec2020hlg1000nits is an output colorspace conversion for rec2020 HLG at 1000 nit display |
 | -d uint16 | Output as 16-bit file format |
 
 
 
 ### HLG 444 FFMPEG encoding
 
+<!---
+name: test_hlg
+sources: 
+- sourceimages/smptehdbars_10.dpx.yml
+comparisontest:
+   - testtype: idiff
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```console
-ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
-    -color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
-    -pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
-    -c:v libx265   \
-	-tag:v hvc1  \
+ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
+    -c:v libx265  -tag:v hvc1  \
+    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
     -color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc  \
-    -pix_fmt yuv444p10le   -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int  \
+    -pix_fmt yuv444p10le   \
     -x265-params 'colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400'   \
     sparks2_hlg_444.mov
 ```
-
-NOTE, this is a little different to other conversions (is this better?). We are defining up front what the source media is defined (e.g. `-color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc` ). 
-
-#### Source media definition.
-
-| --- | --- |
-| -color_range pc | Set the source range to be full-range |
-| -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
-| -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| -pix_fmt rgb48be | We are assuming 16-bit RGB imagery as input |
-
 
 #### Overall encode params
 
@@ -177,15 +189,25 @@ TODO - We do need to understand if the max-cll and master-display parameters are
 
 ### HLG 420 FFMPEG encoding
 
+<!---
+name: test_hlg420
+sources: 
+- sourceimages/smptehdbars_10.dpx.yml
+comparisontest:
+   - testtype: idiff
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```console
-ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
-	-color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
-	-pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
-	-c:v libx265   \
-	-tag:v hvc1  \
+ffmpeg  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
+	-c:v libx265   -tag:v hvc1  \
+  -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
 	-color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
 	-pix_fmt yuv420p10le   \
-	-sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 	-x265-params 'colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400' \
 	   sparks2_hlg_420.mov
 
@@ -194,14 +216,24 @@ ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
 
 ### HLG 422 FFMPEG Encoding
 
+<!---
+name: test_hlg422
+sources: 
+- sourceimages/smptehdbars_10.dpx.yml
+comparisontest:
+   - testtype: idiff
+     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
 ```console
-ffmpeg  -sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
-	-color_range pc   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
-	-pix_fmt rgb48be  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
+ffmpeg  -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 	-c:v libx265   -color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc   \
-	-pix_fmt yuv420p10le  \
-	-tag:v hvc1  \
-	-sws_flags print_info+accurate_rnd+bitexact+full_chroma_int   \
+	-pix_fmt yuv420p10le  -tag:v hvc1  \
+    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
 	-x265-params 'colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400' \
 	   sparks2_hlg_420_v2.mov
 ```
