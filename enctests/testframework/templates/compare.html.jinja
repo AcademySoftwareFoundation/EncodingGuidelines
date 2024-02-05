@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{config.title}}</title>
+  <link rel="stylesheet" href="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/css/just-the-docs-default.css"> 
+  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/vendor/lunr.min.js"></script> 
+  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/just-the-docs.js"></script>
+<script>
+  document.write(
+    '<script src="' + location.protocol + '//' +
+    (location.host || 'localhost').split(':')[0] +
+    ':35729/livereload.js?snipver=1&amp;port=35729"' +
+    '></' +
+    'script>');
+</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <style>
+  a:link {
+        color:rgb(150, 150, 255);
+   }
+     a:visited {
+        color:rgb(120, 120, 255);
+   }
+  .grid tbody tr td { cursor: grab }
+  .ui-button {margin: 5px; border-radius: 8px}
+  </style>
+
+</head>
+
+<body>
+  <H1>{{config.title}}</H1>
+  <P>{{config.description}}</P>
+  <img src='{{ config.name }}-filesize.png' />
+  <img src='{{ config.name }}-encode_time.png' />
+
+  <img src='{{ config.name }}-max_error.png' /></BR>
+  
+  Testing with ffmpeg version: {{ testinfo.ffmpeg_version}}
+
+<TABLE>
+<TR>
+<TD>
+<div class="header-nav">
+  <nav class="nav-menu">
+    <ul>
+      {% for media_name, test in tests.items() %}
+        <li>{{test.source_info.path}}</li>
+      {% endfor %}
+    </ul>
+  </nav>
+</TD>
+<TD>
+</TD>
+</TR>
+<TR>
+<TD COLSPAN=2>
+{% for media_name, test in tests.items() %}
+  {% for enc_info in test.results %}
+
+<div id="greyramppng" class="videogroup"><h2>Source png file</h2><img   width=920  src='.././greyramp-fulltv/greyscale-raw.png'/><p></p><p></p></div>
+   {% endfor %}
+ {% endfor %}
+
+</TD>
+</TR>
+
+  {% for media_name, test in tests.items() %}
+
+  <h1>{{ media_name }} Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>{{test.source_info.path}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>{{test.source_info.in}} - {{test.source_info.in + test.source_info.duration}}</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+      <TH>Success</TH>
+   <TH>Mean Error</TH>
+   <TH>Max Error</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  {% for enc_info in test.results %}
+    <TR>
+    <TH><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A  target="_blank" HREF="{{ test.default_media.basename }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult }}</A> </TD>
+        <td align=right>{{ enc_info.mean_error}} </TD>
+        <td align=right>{{ enc_info.max_error}} </TD>
+        <td align=right>{{ enc_info.encode_time}} </TD>
+        <td align=right>{{ enc_info.filesize}} </TD>
+        <TD>{{enc_info.encode_arguments | e}}</TD>
+    </TR>
+  {% endfor %}
+</TABLE>
+  {% endfor %}
+
+<H2> Pictures </H2>
+  {% for media_name, test in tests.items() %}
+  <h1>{{ media_name }} Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>{{test.source_info.path}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>{{test.source_info.width}} x {{test.source_info.height}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>{{test.source_info.rate}}</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>{{test.source_info.in}} - {{test.source_info.in + test.source_info.duration}}</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Test Results</TH>
+   <TH>PNG</TH>
+   <TH>movie</TH>
+   <TH>Diff</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  {% for enc_info in test.results %}
+    <TR>
+    <TH><A  target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.log">{{ enc_info.name|e }}</A></TH>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}_tests.log">{{ enc_info.testresult}}</A> </TD>
+        <td align=right><A target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"><img max-width="400px" width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}.png"/></A></TD>
+        <td align=right><video width="400px" controls <source type='video/mp4' src="{{ enc_info.output_media | e }}"/> </video></TD>
+        <td align=right><a target="_blank" HREF="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"><img max-width="400px"  width="400px" src="{{ test.default_media.name.split(".") | first }}-{{ enc_info.name|e }}-x20diff.png"/></A></TD>
+        <TD>{{enc_info.encode_arguments | e}}</TD>
+    </TR>
+  {% endfor %}
+</TABLE>
+  {% endfor %}
+
+</body>
+</html>

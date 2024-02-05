@@ -23,7 +23,7 @@ then
 	aws s3 cp --no-sign-request s3://download.opencontent.netflix.com/sparks/aces_image_sequence_59_94_fps/ sparks2 --recursive --exclude "*" --include "SPARKS_ACES_068*.exr"
 fi
 
-if [ ! -d sparks_srgb ]
+if [ ! -f sparks_srgb/sparks_srgb.06100.png ]
 then
     mkdir sparks_srgb
 	echo Building sparks png
@@ -32,7 +32,7 @@ then
 
 fi
 
-if [ ! -d sparks2_srgb ]
+if [ ! -f sparks2_srgb/sparks2_srgb.06700.png ]
 then
     mkdir sparks2_srgb
 	echo Building sparks2_srgb
@@ -41,25 +41,25 @@ then
 
 fi
 
-if [ ! -d sparks2_hlg ]
+if [ ! -f sparks2_hlg/sparks2_hlg.06700.png ]
 then
     mkdir sparks2_hlg
 	echo Building sparks2_hlg
-    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 --colorconvert acescg out_rec2020hlg1000nits -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
+    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --iscolorspace "ACEScg"  --fit 1920x1080 --ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 fi
 
-if [ ! -d sparks2_pq1000 ]
+if [ ! -f sparks2_pq1000/sparks2_pq1000.06700.png ]
 then
     mkdir sparks2_pq1000
 	echo Building sparks2_pq1000
-    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 --colorconvert acescg out_rec2020st20841000nits -d uint16 -o sparks2_pq1000/sparks2_pq1000.#.png
+    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr  --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_pq1000/sparks2_pq1000.#.png
 fi
 
-if [ ! -d sparks2_pq2000 ]
+if [ ! -f sparks2_pq2000/sparks2_pq2000.06700.png ]
 then
     mkdir sparks2_pq2000
 	echo Building sparks2_pq2000
-    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --fit 1920x1080 --colorconvert acescg out_rec2020st20842000nits -d uint16 -o sparks2_pq2000/sparks2_pq2000.#.png
+    oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (2000 nits & Rec.2020 lim)" -d uint16 -o sparks2_pq2000/sparks2_pq2000.#.png
 fi
 
  # Encoding test

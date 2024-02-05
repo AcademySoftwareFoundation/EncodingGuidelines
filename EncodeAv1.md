@@ -94,16 +94,25 @@ This is the reference encoder
 Supported pixel formats:
 yuv420p yuv422p yuv444p gbrp yuv420p10le yuv422p10le yuv444p10le yuv420p12le yuv422p12le yuv444p12le gbrp10le gbrp12le gray gray10le gray12le
 
-it is however, unusably slow, and not really good for production work. 
+
+{: .warning }
+All our initial testing is showing libaom being more than 10x slower at encoding than svt-av1. It needs further exploration to determine if there are ways of getting better encoding times. Unfortunately for many pixel formats, libaom is the only option for av1 encoding (e.g. 422, or 444 encoding).
+
+Example encoding:
+
+```
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1  \
+        -pix_fmt yuv420p10le -cpu-used 2 -crf 20 -row-mt 1 -sws_flags lanczos \
+        -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
+        -y outputfile.mp4
+```
 
 
-### CRF Comparison for libaom-av1
+| --- | --- |
+| -cpu-used 2 | This sets how efficient the compression will be. The default is 0, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  |
+| -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 
-To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
-
-| ![](enctests/reference-results/aom-crf-test-encode_time.png)  This is showing CRF values against encoding time. |
-| ![](enctests/reference-results/aom-crf-test-filesize.png) This is showing CRF values against file size. |
-| ![](enctests/reference-results/aom-crf-test-vmaf_harmonic_mean.png) This is showing CRF values against VMAF harmonic mean |
 
 
 ## librav1e
