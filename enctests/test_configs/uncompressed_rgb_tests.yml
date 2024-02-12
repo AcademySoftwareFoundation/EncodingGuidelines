@@ -1,0 +1,159 @@
+test_mp4:
+    name: test_mp4
+    description: A comparison of different codecs with uncompressed settings, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        libvpx-vp9-10bit-yuv:
+            -c:v: libvpx-vp9
+            -pix_fmt: yuv444p10le
+            -speed: 7
+            -quality: realtime
+            -row-mt: 1
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -lossless: 1
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libvpx-vp9-10bit: &basevp9
+            -c:v: libvpx-vp9
+            -pix_fmt: gbrp10le
+            -lossless: 1
+            -quality: good
+            -speed: 7
+            -row-mt: 1
+            -color_range: pc
+            -colorspace: rgb
+            -color_primaries: 1
+            -color_trc: 2
+
+        speed-7-mt:
+          << : *basevp9
+          -speed: 7
+          -quality: realtime
+          -row-mt: 1
+
+        speed-7-mt-12bit:
+          << : *basevp9
+          -pix_fmt: gbrp12le
+          -speed: 7
+          -quality: realtime
+          -row-mt: 1
+    
+
+test_mov:
+    name: test_mov
+    description: A comparison of different codecs with uncompressed settings, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        v410-10bit: 
+            -c:v: v410
+            -pix_fmt: yuv444p10le
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libx264rgb-8bit-ultrafast: 
+            -c:v: libx264rgb
+            -pix_fmt: rgb24
+            -preset: ultrafast
+            -qp: 0
+            -color_range: 1
+            -colorspace: rgb
+            -color_primaries: 1
+            -color_trc: 2
+
+        libx265-10bit-ultrafast: 
+            -c:v: libx265
+            -pix_fmt: gbrp10le
+            -preset: ultrafast
+            -x265-params: lossless=1
+            -color_range: 1
+            -colorspace: rgb
+            -color_primaries: 1
+            -color_trc: 2
+
+        libx265-12bit-ultrafast: 
+            -c:v: libx265
+            -pix_fmt: gbrp12le
+            -preset: ultrafast
+            -x265-params: lossless=1
+            -color_range: 1
+            -colorspace: rgb
+            -color_primaries: 1
+            -color_trc: 2
+
+        dnxhd:
+            -c:v: dnxhd
+            -pix_fmt: yuv444p10le
+            -profile:v: dnxhr_444
+            -sws_flags: lanczos+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: name
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: uncompressed-rgb-test
+    title: Comparison of different lossless RGB codecs
+    description: This is comparing different codecs encoding direct to RGB with a lossless encoding.
+    directory: uncompressed-rgb-encode
+    templatefile: basicmovie.html.jinja
+

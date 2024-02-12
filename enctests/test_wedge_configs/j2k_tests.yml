@@ -1,0 +1,83 @@
+test_j2k:
+    name: test_j2k
+    description: variations of j2k_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        rgb48le: &base_args
+            -c:v: libopenjpeg
+            -compression_level: 10
+            -pix_fmt: gbrp12le
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        rgb24:
+            << : *base_args
+            -pix_fmt: rgb24
+
+        gbrp10le:
+            << : *base_args
+            -pix_fmt: gbrp10le
+
+        gbrp12le:
+            << : *base_args
+            -pix_fmt: gbrp12le
+
+        gbrp16le:
+            << : *base_args
+            -pix_fmt: gbrp16le
+
+---
+
+reports:
+  graphs:
+  - args:
+      color: wedge
+      height: 400
+      barmode: group
+      x: media
+      y: psnr_y_harmonic_mean
+      range_y:  
+          - 90
+          - 100
+    name: psnr_y_harmonic_mean.png
+    type: bar
+  - args:
+      color: wedge
+      height: 400
+      barmode: group
+      x: media
+      y: vmaf_harmonic_mean
+      range_y:  
+          - 90
+          - 100
+    name: vmaf_harmonic_mean.png
+    type: bar
+  - args:
+      color: wedge
+      height: 400
+      x: media
+      barmode: group
+      y: encode_time
+    name: encode_time.png
+    type: bar
+  - args:
+      color: wedge
+      height: 400
+      x: media
+      barmode: group
+      y: filesize
+    name: filesize.png
+    type: bar
+  name: j2k-tests
+  title: J2K  comparison.
+  description: This is a comparison of different quality settings for the mjpeg encoder.
+  directory: j2k-encode
+  templatefile: basicmovie.html.jinja

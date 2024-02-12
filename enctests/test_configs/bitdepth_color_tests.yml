@@ -1,0 +1,80 @@
+
+
+test_bitdepth:
+  app: ffmpeg
+  comparisontest:
+  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 {newpngfile}
+    testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: Bitdepth tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_rgb
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    h264:
+      -c:v: libx264
+      -preset: placebo
+      -qp: 0
+      -pix_fmt: yuv420p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    10bit_h264:
+      -c:v: libx264
+      -preset: placebo
+      -qp: 0
+      -pix_fmt: yuv420p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    vp9_8bit:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -pix_fmt: yuv420p
+      -colorspace: bt709
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_range: tv
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+    vp9_10bit:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -pix_fmt: yuv420p10le
+      -colorspace: bt709
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_range: tv
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+    vp9_12bit:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 0
+      -pix_fmt: yuv420p12le
+      -colorspace: bt709
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+
+---
+reports:
+  description: Testing colorbars at different bit-depths for h264 and vp9, showing the file size.
+  directory: bitdepth-color-encode
+  name: bitdepth-color-tests
+  templatefile: colorweb.html.jinja
+  title:  Bit-depth color comparisons. Browser support.
