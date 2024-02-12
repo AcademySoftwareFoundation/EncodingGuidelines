@@ -87,9 +87,14 @@ To help pick appropriate values with the CRF flag, we have run the [Test Framewo
 
 See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/CommonQuestions.md)
 
+
+See Also: 
+   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md
+   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md
+
 ## libaom-av1
 
-This is the reference encoder
+This is the reference encoder https://github.com/AOMediaCodec/community/wiki
 
 Supported pixel formats:
 yuv420p yuv422p yuv444p gbrp yuv420p10le yuv422p10le yuv444p10le yuv420p12le yuv422p12le yuv444p12le gbrp10le gbrp12le gray gray10le gray12le
@@ -102,7 +107,7 @@ Example encoding:
 
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1  \
-        -pix_fmt yuv420p10le -cpu-used 2 -crf 20 -row-mt 1 -sws_flags lanczos \
+        -pix_fmt yuv420p10le -cpu-used 6 -crf 20 -row-mt 1 -sws_flags lanczos \
         -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
         -y outputfile.mp4
@@ -110,21 +115,18 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 
 
 | --- | --- |
-| -cpu-used 2 | This sets how efficient the compression will be. The default is 0, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  |
+| -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 
-
+See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to ffmpeg:
+   * https://forum.doom9.org/showthread.php?t=183906
+   * https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/
+   * https://github.com/master-of-zen/Av1an/blob/master/docs/Encoders/aomenc.md
 
 ## librav1e
-librav1e is the Xiph encoder for AV1, 
+[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1. 
 
 Supported pixel formats:
 yuv420p yuvj420p yuv420p10le yuv420p12le yuv422p yuvj422p yuv422p10le yuv422p12le yuv444p yuvj444p yuv444p10le yuv444p12le
 
-There is no CRF flag, so we are ignoring this for now.
-
-TODO: Test.
-
-See Also: 
-   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md
-   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md
+There is no CRF flag, so we are ignoring this for now, but it could be promising down the road.

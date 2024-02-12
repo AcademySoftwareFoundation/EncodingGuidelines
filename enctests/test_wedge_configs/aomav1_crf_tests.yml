@@ -10,11 +10,10 @@ test_aom:
     #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        cpu7_crf_16: &base_args
+        cpu3_crf_16: &base_args
             -c:v: libaom-av1
             -crf: 16
-            -svtav1-params: tune=0
-            -cpu-used: 7
+            -cpu-used: 3
             -row-mt: 1
             -pix_fmt: yuv422p10le
             -sws_flags: spline+accurate_rnd+full_chroma_int
@@ -24,23 +23,23 @@ test_aom:
             -color_primaries: 1
             -color_trc: 2
 
-        # cpu4_crf_18:
+        # cpu3_crf_18:
         #     << : *base_args
         #     -crf: 18
 
-        cpu7_crf_20:
+        cpu3_crf_20:
             << : *base_args
             -crf: 20
 
-        # cpu4_crf_22:
+        # cpu3_crf_22:
         #     << : *base_args
         #     -crf: 22
 
-        cpu7_crf_25:
+        cpu3_crf_25:
             << : *base_args
             -crf: 25
 
-        cpu7_crf_30:
+        cpu3_crf_30:
             << : *base_args
             -crf: 30
 

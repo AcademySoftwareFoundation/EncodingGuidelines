@@ -45,6 +45,17 @@ test_aom:
             -colorspace: rgb
             -color_range: pc
 
+        crf27_444_allintra:
+            << : *base_args
+            -usage: allintra
+            -pix_fmt: yuv444p10le
+
+        crf27_444_g1_allintra:
+            << : *base_args
+            -g: 1
+            -usage: allintra
+            -pix_fmt: yuv444p10le
+
         crf27_444_g1:
             << : *base_args
             -g: 1
