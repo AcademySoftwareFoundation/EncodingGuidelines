@@ -1,0 +1,66 @@
+
+---
+test_av1_color:
+  app: ffmpeg
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  description: av1 color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_av1_color
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    av1-yuv422p10le: &baseav1
+      -c:v: libaom-av1
+      -crf: 25
+      -row-mt: 1
+      -cpu-used: 6
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv422p10le
+      -strict: experimental
+ 
+    av1-yuv422p10le-cpu5:
+      << : *baseav1
+      -cpu-used: 5
+ 
+    av1-yuv422p10le-cpu6-pass1:
+      << : *baseav1
+      -cpu-used: 5
+      -aom-params: passes=1
+      -pass: 1
+ 
+    av1-yuv422p10le-cpu5-g1:
+      << : *baseav1
+      -g: 1
+    
+  
+    svtav1-yuv422p10le:
+      -c:v: libsvtav1 
+      -crf: 18
+      -row-mt: 1 
+      -preset: 9
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv420p10le
+ 
+---
+reports:
+  description: This is testing aom av1 color encoding.
+  directory: aom-av1-color-encode
+  name: aom-av1-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg AV1 encoding color tests

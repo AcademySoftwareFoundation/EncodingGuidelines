@@ -1,0 +1,102 @@
+test_aom:
+    name: test_crf
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        crf27_422: &base_args
+            -c:v: libaom-av1
+            -crf: 27
+            -cpu-used: 6
+            -row-mt: 1
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        # cpu4_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+
+        crf27_420:
+            << : *base_args
+            -pix_fmt: yuv420p10le
+
+        crf27_444:
+            << : *base_args
+            -pix_fmt: yuv444p10le
+
+        crf27_444_12bit:
+            << : *base_args
+            -pix_fmt: yuv444p12le
+
+        crf27_rgb:
+            << : *base_args
+            -pix_fmt: gbrp10le
+            -colorspace: rgb
+            -color_range: pc
+
+        crf27_444_g1:
+            << : *base_args
+            -g: 1
+            -pix_fmt: yuv444p10le
+
+        crf27_444_g1_lag:
+            << : *base_args
+            -g: 1
+            -lag-in-frames: 0
+            -pix_fmt: yuv444p10le
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: av1-crf-test
+    title: AV1 Comparison
+    description: This is a comparison of different CRF values for av1 encoding.
+    directory: av1-encode
+    templatefile: basicmovie.html.jinja
+
