@@ -398,7 +398,7 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
                       'success': False
             }
         else:
-            result = {'success': True, 'result': lines[-1]}
+            result = {'success': True, 'testresult': lines[-1]}
             for line in lines[-2:]:
                 if "identity " not in line:
                     continue
@@ -470,7 +470,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
         cmdresult = process.returncode
         
     if cmdresult != 0:
-        result['result'] = "Unable to extract file for test"
+        result['testresult'] = "Unable to extract file for test"
     else:
         cmd = apptemplate.format(originalfile=sourcepng, 
                                  newfile=distortedpng.as_posix(),
@@ -489,10 +489,10 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
         lines = output.decode("utf-8").splitlines()
         print("\n".join(lines), file=log_file_object)
         if len(lines) < 2:
-            result['result'] = "Unable to run idiff"
+            result['testresult'] = "Unable to run idiff"
             result['success'] = False
         else:
-            result = {'success': True, 'result': lines[-1]}
+            result = {'success': True, 'testresult': lines[-1]}
             for line in lines[:-1]:
                 if " = " not in line:
                     continue
