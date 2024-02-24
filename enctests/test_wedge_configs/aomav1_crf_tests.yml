@@ -132,6 +132,66 @@ test_aom:
             << : *base_args
             -crf: 30
             -cpu-used: 4
+
+        cpu2_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 2
+
+        # cpu2_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 2
+
+        cpu2_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 2
+
+        # cpu2_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 2
+
+        cpu2_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 2
+
+        cpu2_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 2
+
+        cpu1_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 1
+
+        # cpu1_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 1
+
+        cpu1_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 1
+
+        # cpu1_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 1
+
+        cpu1_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 1
+
+        cpu1_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 1
 ---
 
 reports:
@@ -143,7 +203,7 @@ reports:
         y: psnr_y_harmonic_mean
         markers: True
       name: psnr_y_harmonic_mean.png
-      sortby: -cpu-used
+      sortby: -crf
     - args:
         color: -cpu-used
         height: 400
@@ -151,7 +211,16 @@ reports:
         y: vmaf_harmonic_mean
         markers: True
       name: vmaf_harmonic_mean.png
-      sortby: -cpu-used
+      sortby: -crf
+    - args:
+        color: -cpu-used
+        height: 400
+        x: -crf
+        y: encode_time
+        range_y: [0, 500]
+        markers: True
+      name: encode_time_zoom.png
+      sortby: -crf
     - args:
         color: -cpu-used
         height: 400
@@ -159,7 +228,7 @@ reports:
         y: encode_time
         markers: True
       name: encode_time.png
-      sortby: -cpu-used
+      sortby: -crf
     - args:
         color: -cpu-used
         height: 400
@@ -167,10 +236,10 @@ reports:
         y: filesize
         markers: True
       name: filesize.png
-      sortby: -cpu-used
-    name: av1-crf-test
+      sortby: -crf
+    name: aomav1-crf-test
     title: AV1 CRF Comparison
     description: This is a comparison of different CRF values for av1 encoding.
-    directory: av1-crf-encode
+    directory: aomav1-crf-encode
     templatefile: basicmovie.html.jinja
 
