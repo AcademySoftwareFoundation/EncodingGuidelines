@@ -125,7 +125,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
     def get_application_version(self) -> str:
         if not self._application_version:
-            cmd = f'ffmpeg -version -v quiet -hide_banner'
+            cmd = f'{FFMPEG_BIN} -version -v quiet -hide_banner'
             _raw = subprocess.check_output(shlex.split(cmd))
             version = b'_'.join(_raw.split(b' ')[:3])
 
