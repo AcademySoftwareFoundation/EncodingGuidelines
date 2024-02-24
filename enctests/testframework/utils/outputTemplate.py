@@ -28,10 +28,19 @@ def _exportGraph(config, reportconfig, graph, alltests):
   else:
     df = pd.DataFrame(alltests)
     # This sorts the filenames.
-    df = df.sort_values(by=graph.get("sortby", "name"))
   if graph.get("type", "line") == "bar":
+    df = df.sort_values(by=graph.get("sortby", "name"))
     fig = px.bar(df, **graphargs) 
   else:
+    # If we have a a line graph, we need to make sure the data values are sorted by x.
+    # but we still want to sort the categories, so we explicitly pull out the possible categories
+    # to make sure they are sorted.
+    df = df.sort_values(by=graphargs.get("x"))
+    labels = {}
+    for test in alltests:
+       labels[test[graphargs['color']]] = test[graphargs['color']]
+    category_orders = {graphargs['color']: labels.keys()}
+    graphargs['category_orders'] = category_orders
     fig = px.line(df, **graphargs) 
 
   filename = Path(reportconfig['name']+"-"+graph.get("name"))
