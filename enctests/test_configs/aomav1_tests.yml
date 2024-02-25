@@ -50,22 +50,11 @@ test_aom:
             -usage: allintra
             -pix_fmt: yuv444p10le
 
-        crf27_444_g1_allintra:
-            << : *base_args
-            -g: 1
-            -usage: allintra
-            -pix_fmt: yuv444p10le
-
         crf27_444_g1:
             << : *base_args
             -g: 1
             -pix_fmt: yuv444p10le
 
-        crf27_444_g1_lag:
-            << : *base_args
-            -g: 1
-            -lag-in-frames: 0
-            -pix_fmt: yuv444p10le
 ---
 
 reports:
