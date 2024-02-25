@@ -99,6 +99,8 @@ class FFmpegEncoder(ABCTestEncoder):
                 'test_config_path'
             ))
             test_meta['command'] = cmd
+            test_meta['wedge_name'] = wedge_name
+            test_meta['test_prefix'] = self.test_config.get('name')
             test_meta['encode_arguments'] = wedge
             test_meta['description'] = self.test_config.get('description')
             test_meta['outputfile'] = str(out_file)
@@ -125,7 +127,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
     def get_application_version(self) -> str:
         if not self._application_version:
-            cmd = f'ffmpeg -version -v quiet -hide_banner'
+            cmd = f'{FFMPEG_BIN} -version -v quiet -hide_banner'
             _raw = subprocess.check_output(shlex.split(cmd))
             version = b'_'.join(_raw.split(b' ')[:3])
 
