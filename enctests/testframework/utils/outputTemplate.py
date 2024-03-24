@@ -102,6 +102,10 @@ def processTemplate(config, timeline):
             merge_test_info['psnr_y_harmonic_mean'] = -1
 
           merge_test_info['filesize'] = merge_test_info['filesize']
+          if 'host_config' in test_info.metadata['aswf_enctests']:
+             #  We assume all the tests have the same values.
+             testinfo['host_config'] = test_info.metadata['aswf_enctests']['host_config']
+             print("Host Config:", testinfo)
 
           # We merge the arguments into the dictionary too, as well as merge it into a single string, to make the graphing simpler.
           args=[]
