@@ -238,8 +238,8 @@ reports:
       name: filesize.png
       sortby: -crf
     name: aomav1-crf-test
-    title: AV1 CRF vs. -cpu-used Comparison
-    description: This is a comparison of different CRF values against different -cpu-used values for av1 encoding.
+    title: Libaom AV1 CRF vs. cpu-used Comparison
+    description: This is a comparison of different CRF values against cpu-used for the libaom av1 encoder. The -cpu-used flag defaults to 1, which gives a very slow but efficient encode. We are finding values of at least 4 still give an excellent quality, but quite a bit faster (although still significantly slower than other encoders. Values of 5 may also be worth considering. In this case we are encoding to 422. If you are ok with 420, do use svt-av1, which is significantly faster.
     directory: aomav1-crf-encode
     templatefile: basicmovie.html.jinja
 
