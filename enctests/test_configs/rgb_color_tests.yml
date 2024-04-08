@@ -167,4 +167,4 @@ reports:
   directory: rgb-color-encode
   name: rgb-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg RGB encoding color tests.
+  title: RGB encoding color tests.

@@ -40,7 +40,7 @@ test_mjpeg:
 
         qscale_08:
             << : *base_args
-            -qscale:v: 08
+            -qscale:v: 8
 
         qscale_10:
             << : *base_args

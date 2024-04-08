@@ -59,8 +59,8 @@ test_av1_color:
  
 ---
 reports:
-  description: This is testing aom av1 color encoding.
+  description: This is testing av1 color encoding (both libaom-av1 and libsvtav1)
   directory: aom-av1-color-encode
   name: aom-av1-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg AV1 encoding color tests
+  title: AV1 encoding color tests

@@ -79,7 +79,7 @@ reports:
       name: filesize.png
       sortby: name
     name: j2k-qscale-tests
-    title: mjpeg quality comparison.
-    description: This is a comparison of different quality settings for the mjpeg encoder.
+    title: openjpeg quality comparison.
+    description: This is a comparison of different quality settings for the openjpeg encoder.
     directory: j2k-qscale-encode
     templatefile: basicmovie.html.jinja

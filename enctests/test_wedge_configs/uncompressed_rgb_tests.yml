@@ -117,7 +117,7 @@ test_mov:
 reports:
     graphs:
     - args:
-        color: name
+        color: wedge
         height: 400
         barmode: group
         x: media
@@ -125,7 +125,7 @@ reports:
       name: psnr_y_harmonic_mean.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         barmode: group
         x: media
@@ -136,7 +136,7 @@ reports:
       name: vmaf_harmonic_mean.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         x: media
         barmode: group
@@ -144,7 +144,7 @@ reports:
       name: encode_time.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         x: media
         barmode: group
@@ -153,7 +153,7 @@ reports:
       type: bar
     name: uncompressed-rgb-test
     title: Comparison of different lossless RGB codecs
-    description: This is comparing different codecs encoding direct to RGB with a lossless encoding.
+    description: This is comparing different codecs encoding direct to RGB with a lossless encoding, the original 16-bit files are roughly 2GB in size. So its particularly impressive that the 12-bit files have just over a 50% compression. NOTE, the DNxHD encoding is dnxhr_444 is lossy by comparisons to the others shown here.
     directory: uncompressed-rgb-encode
     templatefile: basicmovie.html.jinja
 

@@ -96,7 +96,7 @@ reports:
       type: bar
     name: av1-crf-test
     title: AV1 Comparison
-    description: This is a comparison of different CRF values for av1 encoding.
+    description: This is a comparison of different libaom-av1 pix_fmt's at the same CRM (27).
     directory: av1-encode
     templatefile: basicmovie.html.jinja
 

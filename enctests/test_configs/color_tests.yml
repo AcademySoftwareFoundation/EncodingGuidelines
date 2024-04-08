@@ -117,4 +117,4 @@ reports:
   directory: color-encode
   name: color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg RGB to YUV conversion options.
+  title:  RGB to YUV conversion options.

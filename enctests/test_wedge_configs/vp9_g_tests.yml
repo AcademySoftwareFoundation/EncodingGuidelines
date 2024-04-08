@@ -1,6 +1,6 @@
 test_g_yuv420p:
     name: test_g
-    description: variations of colorspace yuv420p
+    description: Comparing vp9 with different GOP values
     app: ffmpeg
     suffix: .mp4
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
@@ -95,7 +95,7 @@ reports:
       name: filesize.png
       sortby: name
     name: vp9-g-test
-    title: VP9 g Comparison
+    title: VP9 GOP Comparison
     description: This is a comparison of different GOP values for vp9 encoding.
     directory: vp9-g-encode
     templatefile: basicmovie.html.jinja

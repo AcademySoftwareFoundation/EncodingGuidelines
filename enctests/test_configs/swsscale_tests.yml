@@ -101,4 +101,4 @@ reports:
   directory: sws-encode
   name: sws-tests
   templatefile: basicimagecompare.html.jinja
-  title: Ffmpeg RGB to YUV scale conversion options.
+  title: RGB to YUV scale conversion options.

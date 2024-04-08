@@ -38,7 +38,7 @@ test_prores:
 
         qscale_08:
             << : *base_args
-            -qscale:v: 08
+            -qscale:v: 8
 
         qscale_10:
             << : *base_args
@@ -47,10 +47,6 @@ test_prores:
         qscale_12:
             << : *base_args
             -qscale:v: 12
-
-        qscale_14:
-            << : *base_args
-            -qscale:v: 14
 
         qscale_14:
             << : *base_args

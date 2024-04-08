@@ -138,7 +138,7 @@ test_dnxhd_422:
 reports:
   graphs:
   - args:
-      color: name
+      color: wedge
       height: 400
       barmode: group
       x: media
@@ -146,7 +146,7 @@ reports:
     name: max_error.png
     type: bar
   - args:
-      color: name
+      color: wedge
       height: 400
       x: media
       barmode: group
@@ -154,7 +154,7 @@ reports:
     name: encode_time.png
     type: bar
   - args:
-      color: name
+      color: wedge
       height: 400
       x: media
       barmode: group
@@ -165,4 +165,4 @@ reports:
   directory: dnxhd-color-encode
   name: dnxhd-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg DNxHR encoding guide tests
+  title: DNxHR encoding guide tests
