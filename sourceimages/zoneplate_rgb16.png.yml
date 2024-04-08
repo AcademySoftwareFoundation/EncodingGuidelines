@@ -1,0 +1,7 @@
+images: false
+path: zoneplate_rgb16.png
+width: 852
+height: 480
+in: 0
+duration: 1
+rate: 25.0
