@@ -18,3 +18,7 @@ python3 -m testframework.main --test-config test_wedge_configs --results-folder 
 
 #python3 -m testframework.main --test-config test_configs/documentation_tests.yml --output doc-results.otio --encoded-folder docs-encode
 #python3 -m testframework.otio2html --test-config test_configs/documentation_tests.yml --results doc-results.otio
+
+# Below will re-do all the tests in "test_wedge_configs" where the output data is in --results-folder
+# python3 -m testframework.otio2html --test-config-dir test_wedge_configs --results-folder wedge_results
+
