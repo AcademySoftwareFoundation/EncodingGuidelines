@@ -87,7 +87,7 @@ test_mjpeg_422:
 reports:
   graphs:
   - args:
-      color: name
+      color: wedge
       height: 400
       barmode: group
       x: media
@@ -95,7 +95,7 @@ reports:
     name: max_error.png
     type: bar
   - args:
-      color: name
+      color: wedge
       height: 400
       x: media
       barmode: group
@@ -103,7 +103,7 @@ reports:
     name: encode_time.png
     type: bar
   - args:
-      color: name
+      color: wedge
       height: 400
       x: media
       barmode: group
@@ -114,4 +114,4 @@ reports:
   directory: mjpeg-color-encode
   name: mjpeg-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg mjpeg encoding guide tests
+  title: Mjpeg encoding guide tests

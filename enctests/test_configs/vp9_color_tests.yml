@@ -97,4 +97,4 @@ reports:
   directory: vp9-color-encode
   name: vp9-color-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg vp9 encoding color tests
+  title: vp9 encoding color tests

@@ -5,6 +5,7 @@ test_bitdepth:
   comparisontest:
   - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 {newpngfile}
     testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
   - testtype: assertresults
     tests:
     - assert: less
@@ -13,7 +14,7 @@ test_bitdepth:
   description: Bitdepth tests.
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
-  name: test_rgb
+  name: test_bitdepth
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4

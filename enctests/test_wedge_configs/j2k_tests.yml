@@ -78,6 +78,6 @@ reports:
     type: bar
   name: j2k-tests
   title: J2K  comparison.
-  description: This is a comparison of different quality settings for the mjpeg encoder.
+  description: This is a comparison of different quality settings for the openjpeg encoder.
   directory: j2k-encode
   templatefile: basicmovie.html.jinja

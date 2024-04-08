@@ -2,7 +2,7 @@
 
 test_rgb:
   app: ffmpeg
-  description: Uncompressed tests.
+  description: RGB encoding tests.
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
   name: test_rgb
@@ -93,7 +93,7 @@ test_rgb:
 reports:
     graphs:
     - args:
-        color: name
+        color: wedge
         height: 400
         barmode: group
         x: media
@@ -101,7 +101,7 @@ reports:
       name: psnr_y_harmonic_mean.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         barmode: group
         x: media
@@ -112,7 +112,7 @@ reports:
       name: vmaf_harmonic_mean.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         x: media
         barmode: group
@@ -120,7 +120,7 @@ reports:
       name: encode_time.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         x: media
         barmode: group
@@ -129,7 +129,7 @@ reports:
       type: bar
     name: rgb-tests
     title: Comparison of different RGB codecs
-    description: This is comparing different codecs with source media encoding directly to RGB rather than YCrCb, with approximately the same tuning factors such that vmaf > 98..
+    description: This is comparing different codecs with source media encoding directly to RGB rather than YCrCb, with approximately the same tuning factors such that vmaf > 98.
     directory: rgb-encode
     templatefile: basicmovie.html.jinja
 

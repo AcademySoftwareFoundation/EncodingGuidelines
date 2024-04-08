@@ -49,8 +49,8 @@ test_mov:
 
 reports:
     name: hdr-color-test
-    title: Comparison of hdr processing.
-    description: This is comparing encoding mechanisms for HDR.
+    title: Comparison of HDR encoding.
+    description: This is comparing encoding for HDR, showing that HDR like everything else needs the sws filter flags.
     directory: hdr-color-encode
     templatefile: colorweb.html.jinja
 

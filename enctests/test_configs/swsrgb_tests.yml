@@ -190,4 +190,4 @@ reports:
   directory: swsrgb-encode
   name: swsrgb-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg YCrCb to RGB SWS-Flags filter comparisons.
+  title: YCrCb to RGB SWS-Flags filter comparisons.

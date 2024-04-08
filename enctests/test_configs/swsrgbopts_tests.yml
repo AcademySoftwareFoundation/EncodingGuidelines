@@ -53,4 +53,4 @@ reports:
   directory: swsrgbopts-encode
   name: swsrgbopts-tests
   templatefile: colorweb.html.jinja
-  title: Ffmpeg YCrCb to RGB SWS-Flags options.
+  title: YCrCb to RGB SWS-Flags options.
