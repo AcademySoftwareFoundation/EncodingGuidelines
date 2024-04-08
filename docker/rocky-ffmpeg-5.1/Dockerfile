@@ -7,8 +7,8 @@ RUN     dnf install epel-release -y && \
                 python3-devel clang git-clang-format libtiff libtiff-devel bzip2 bzip2-devel bzip2-libs tbb tbb-devel libwebp giflib patch vim && \
         dnf clean all;
 
-RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
-
+RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
+RUN pip install awscli
 
 FROM        base AS build
 
@@ -611,7 +611,7 @@ RUN  \
         --disable-ffplay \
         --enable-fontconfig \
         --enable-gpl \
-        # --enable-libaom \
+        --enable-libaom \
         --enable-libaribb24 \
         --enable-libass \
         --enable-libbluray \

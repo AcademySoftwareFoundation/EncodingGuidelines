@@ -5,51 +5,54 @@
 # https://hub.docker.com/r/jrottenberg/ffmpeg/
 #
 #
-FROM    aswf/ci-vfxall:2022-clang14.3 AS base
+FROM    aswf/ci-vfxall:2023-clang15.2 AS base
 
-RUN     yum -y install s3cmd libgomp httpd24-libcurl icc-profiles-openicc imagemagick && \
+RUN     yum -y install s3cmd libgomp ImageMagick && \
         yum clean all;
 
+RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
+RUN pip install awscli
 
 FROM        base AS build
 
 WORKDIR     /tmp/workdir
 
-ENV         FFMPEG_VERSION=5.1 \
-    AOM_VERSION=v1.0.0 \
+ENV         FFMPEG_VERSION=6.0 \
+    AOM_VERSION=v3.8.0 \
     CHROMAPRINT_VERSION=1.5.0 \
     FDKAAC_VERSION=0.1.5 \
-    FONTCONFIG_VERSION=2.12.4 \
-    FREETYPE_VERSION=2.10.4 \
+    FONTCONFIG_VERSION=2.15.0 \
+    FREETYPE_VERSION=2.13.2 \
     FRIBIDI_VERSION=0.19.7 \
     KVAZAAR_VERSION=2.0.0 \
     LAME_VERSION=3.100 \
-    LIBASS_VERSION=0.13.7 \
+    LIBASS_VERSION=0.17.1 \
     LIBPTHREAD_STUBS_VERSION=0.4 \
     LIBVIDSTAB_VERSION=1.1.0 \
     LIBXCB_VERSION=1.13.1 \
     XCBPROTO_VERSION=1.13 \
     OGG_VERSION=1.3.2 \
     OPENCOREAMR_VERSION=0.1.5 \
-    OPUS_VERSION=1.2 \
-    OPENJPEG_VERSION=2.1.2 \
+    OPUS_VERSION=1.4 \
+    OPENJPEG_VERSION=2.5.0 \
     THEORA_VERSION=1.1.1 \
     VORBIS_VERSION=1.3.5 \
     VPX_VERSION=1.8.0 \
     WEBP_VERSION=1.0.2 \
     X264_VERSION=20170226-2245-stable \
-    X265_VERSION=3.4 \
+    X265_VERSION=3.5 \
     XAU_VERSION=1.0.9 \
     XORG_MACROS_VERSION=1.19.2 \
     XPROTO_VERSION=7.0.31 \
-    XVID_VERSION=1.3.4 \
+    XVID_VERSION=1.3.7 \
+    LIBSVT_AV1_VERSION=1.8.0 \
     LIBXML2_VERSION=2.9.12 \
-    LIBBLURAY_VERSION=1.1.2 \
-    LIBZMQ_VERSION=4.3.2 \
-    LIBSRT_VERSION=1.4.1 \
-    LIBARIBB24_VERSION=1.0.3 \
+    LIBBLURAY_VERSION=1.3.4 \
+    LIBZMQ_VERSION=4.3.5 \
+    LIBSRT_VERSION=1.5.3 \
+    LIBARIBB24_VERSION=1.0.4 \
     LIBPNG_VERSION=1.6.9 \
-    LIBVMAF_VERSION=2.1.1 \
+    LIBVMAF_VERSION=3.0.0 \
     VMAF_LIB_DIR=/usr/share/vmaf \
     SRC=/usr/local
 
@@ -70,9 +73,9 @@ ARG         LIBVMAF_SHA256SUM="e7fc00ae1322a7eccfcf6d4f1cdf9c67eec8058709887c8c6
 
 ARG         LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG         MAKEFLAGS="-j2"
-ARG         PKG_CONFIG_PATH="/opt/ffmpeg/share/pkgconfig:/opt/ffmpeg/lib/pkgconfig:/opt/ffmpeg/lib64/pkgconfig"
+ARG         PKG_CONFIG_PATH="/opt/ffmpeg/share/pkgconfig:/opt/ffmpeg/lib/pkgconfig:/opt/ffmpeg/lib64/pkgconfig:/usr/local/lib/pkgconfig"
 ARG         PREFIX=/opt/ffmpeg
-ARG         LD_LIBRARY_PATH="/opt/ffmpeg/lib:/opt/ffmpeg/lib64"
+ARG         LD_LIBRARY_PATH="/opt/ffmpeg/lib:/opt/ffmpeg/lib64:/usr/local/lib"
 
 
 RUN     buildDeps="autoconf \
@@ -97,16 +100,20 @@ RUN     buildDeps="autoconf \
                    zlib-devel" && \
         echo "${SRC}/lib" > /etc/ld.so.conf.d/libc.conf && \
         yum --enablerepo=extras install -y epel-release && \
-        yum --enablerepo=epel install -y ${buildDeps} && \
-        alternatives --install /usr/bin/cmake cmake /usr/bin/cmake3 0 && \
+        yum --enablerepo=epel install -y ${buildDeps}
+
+
+RUN     #alternatives --install /usr/bin/cmake cmake /usr/bin/cmake3 0 && \
         # Install the tools required to build nasm 2.14.02 \
         nasmDeps="asciidoc \
                   perl-Font-TTF \
                   perl-Sort-Versions \
                   xmlto" && \
-        yum --enablerepo=epel install -y ${nasmDeps} && \
-        # Compile and install nasm 2.14.02 \
-        DIR=/tmp/nasm && \
+        yum --enablerepo=epel install -y ${nasmDeps}
+
+# Compile and install nasm 2.14.02  
+        
+ RUN    DIR=/tmp/nasm && \
         mkdir -p ${DIR} && \
         curl -LSs https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.gz | \
         tar xzC ${DIR} --strip-components=1 && \
@@ -127,11 +134,24 @@ RUN     buildDeps="autoconf \
         make install && \
         make install_rdf && \
         popd && rm -rf ${DIR} && \
-        alternatives --install /usr/bin/nasm nasm /usr/local/bin/nasm 0 && \
+        alternatives --install /usr/bin/nasm nasm /usr/local/bin/nasm 0
         # Now that we have a modern nasm build and available, we can undo the last \
         # yum transaction as none of those packages are required for the rest of the build \
-        yum history undo $(yum history info | grep 'Transaction ID' | awk -F: '{print$2}' | tr -d ' ') -y && \
-        yum autoremove -y
+        # yum history undo $(yum history info | grep 'Transaction ID' | awk -F: '{print$2}' | tr -d ' ') -y && \
+        # yum autoremove -y
+
+
+## libpng
+RUN \
+        DIR=/tmp/png && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        git clone https://git.code.sf.net/p/libpng/code ${DIR} -b v${LIBPNG_VERSION} --depth 1 && \
+        ./autogen.sh && \
+        ./configure --prefix="${PREFIX}" && \
+        make check && \
+        make install && \
+        rm -rf ${DIR}
 
 RUN \
         DIR=/tmp/aom && \
@@ -219,17 +239,17 @@ RUN \
         make install && \
         rm -rf ${DIR}
 ### libtheora http://www.theora.org/
-RUN \
-        DIR=/tmp/theora && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.gz && \
-        echo ${THEORA_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.gz && \
-        ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+# RUN \
+#         DIR=/tmp/theora && \
+#         mkdir -p ${DIR} && \
+#         cd ${DIR} && \
+#         curl -sLO http://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.gz && \
+#         echo ${THEORA_SHA256SUM} | sha256sum --check && \
+#         tar -zx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.gz && \
+#         ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
+#         make && \
+#         make install && \
+#         rm -rf ${DIR}
 ### libvpx https://www.webmproject.org/code/
 RUN \
         DIR=/tmp/vpx && \
@@ -548,6 +568,18 @@ RUN \
 
 #       rm -rf ${DIR}; \
 
+RUN \
+        DIR=/tmp/svtav1 && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        curl -sLO https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.8.0/SVT-AV1-v${LIB_SVT_AV1_VERSION}.tar.gz && \
+        tar -xz --strip-components=1 -f SVT-AV1-v${LIB_SVT_AV1_VERSION}.tar.gz && \
+        cd Build && \
+        cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}"  && \
+        make && \
+        make install && \
+        rm -rf ${DIR}
+
 
 ## Download ffmpeg https://ffmpeg.org/
 RUN  \
@@ -565,7 +597,7 @@ RUN  \
         --enable-fontconfig \
         --enable-gpl \
         #--enable-libaom \
-        --disable-libaom \
+        --enable-libaom \
         --enable-libaribb24 \
         --enable-libass \
         --enable-libbluray \
@@ -579,11 +611,12 @@ RUN  \
         --enable-libopus \
         --enable-libsrt \
         --enable-libvmaf \
-        --enable-libtheora \
+        --disable-libtheora \
         --enable-libvidstab \
         --enable-libvorbis \
         --enable-libvpx \
         --enable-libwebp \
+        --enable-libsvtav1 \
         --enable-libx264 \
         --enable-libx265 \
 #        --enable-libxcb \
