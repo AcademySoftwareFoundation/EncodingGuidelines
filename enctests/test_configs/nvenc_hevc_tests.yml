@@ -1,0 +1,121 @@
+test_nvenc:
+    name: test_nvenc_quality
+    description: Comparing different nvenc hevc options
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -colorspace bt709 -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        # libx265-10bit-loseless: 
+        #   -c:v: libx265
+        #   -pix_fmt: yuv444p10le
+        #   -x265-params: lossless=1
+        #   -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+        #   -color_primaries: bt709
+        #   -color_range: tv
+        #   -color_trc: bt709
+        #   -colorspace: bt709
+
+        libx265-10bit-crf25: 
+          -c:v: libx265
+          -pix_fmt: yuv444p
+          -crf: 25
+          -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+          -color_primaries: bt709
+          -color_range: tv
+          -color_trc: bt709
+          -colorspace: bt709
+
+        h265_nvenc_yuv444p16le: &base_args
+            -c:v: hevc_nvenc
+              #-profile:v: 3
+            #-cq: 0
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -pix_fmt: yuv444p16le
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: bt709 
+
+        h265_nvenc_yuv444p_cq25:
+             << : *base_args
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -cq: 25
+        
+        # h265_nvenc_yuv420p:
+        #      << : *base_args
+        #      -pix_fmt: yuv420p
+        #      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+        #      -cq: 25
+            
+        h265_nvenc_yuv444p16le_p6:
+             << : *base_args
+             -pix_fmt: yuv444p16le
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -cq: 25
+             -preset: p6
+            
+        h265_nvenc_yuv444p16le_p7:
+             << : *base_args
+             -pix_fmt: yuv444p16le
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -cq: 25
+             -preset: p7
+            
+        h265_nvenc_yuv444p16le_slow:
+             << : *base_args
+             -pix_fmt: yuv444p16le
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -cq: 25
+             -preset: slow
+
+        h265_nvenc_yuv444p16le_medium:
+             << : *base_args
+             -pix_fmt: yuv444p16le
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -cq: 25
+             -preset: medium
+
+
+
+        # h264_nvenc_cq20:
+        #     << : *base_args
+        #     -cq: 20
+---
+
+reports:
+    graphs:
+    - args:
+        color: name
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: name
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: nvenc-color
+    title: Linux nvenc Comparison
+    description: This is a comparison of different nvenc hevc encode options.
+    directory: nvenc-color-encode
+    templatefile: basicmovie.html.jinja
+
