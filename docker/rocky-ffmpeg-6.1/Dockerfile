@@ -1,4 +1,4 @@
-FROM    nvidia/cuda:12.3.1-devel-rockylinux9 AS base
+FROM    nvidia/cuda:12.2.0-devel-rockylinux9 AS base
 
 
 #RUN     dnf -y install s3cmd libgomp httpd24-libcurl icc-profiles-openicc imagemagick python-pip && \
@@ -190,7 +190,7 @@ RUN \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
         tar -jx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
+        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli  --bit-depth=10 && \
         make && \
         make install && \
         rm -rf ${DIR}
@@ -210,7 +210,7 @@ RUN \
         #./multilib.sh && \
         #make -C 8bit install && \
         #./make-Makefiles.bash && \
-        cmake -G "Unix Makefiles"  -DCMAKE_INSTALL_PREFIX="${PREFIX}" ../../source && \
+        cmake -G "Unix Makefiles"  -DHIGH_BIT_DEPTH=ON -DENABLE_CLI=OFF -DMAIN12=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" ../../source && \
         make  && \
          make install && \
         rm -rf ${DIR}
