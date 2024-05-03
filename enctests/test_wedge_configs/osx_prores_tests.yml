@@ -1,0 +1,112 @@
+test_osx-prores:
+    name: test_prores_quality
+    description: variations of prores_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        prores_ks: &base_args
+            -c:v: prores_ks
+            -profile:v: 3
+#            -qscale:v: 16
+            -pix_fmt: yuv422p10le
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+#            -color_trc: iec61966-2-1 
+
+        prores_videotoolbox:
+            << : *base_args
+            -c:v: prores_videotoolbox
+            -pix_fmt: p210le
+
+        h264_videotoolbox_q50:
+            << : *base_args
+            -c:v: h264_videotoolbox
+            -pix_fmt: yuv420p
+            -profile: high
+            -q:v: 50
+
+        h264_videotoolbox_q100:
+            << : *base_args
+            -c:v: h264_videotoolbox
+            -pix_fmt: yuv420p
+            -profile: high
+            -q:v: 100
+
+        h264_videotoolbox_q90:
+            << : *base_args
+            -c:v: h264_videotoolbox
+            -pix_fmt: yuv420p
+            -profile: high
+            -q:v: 90
+
+        hevc_videotoolbox_q90:
+            << : *base_args
+            -c:v: hevc_videotoolbox
+            -pix_fmt: yuv420p
+            -profile:v: main
+            -q:v: 90
+
+        hevc_videotoolbox_q80:
+            << : *base_args
+            -c:v: hevc_videotoolbox
+            -pix_fmt: yuv420p
+            -profile:v: main
+            -q:v: 80
+
+        hevc_videotoolbox_q70:
+            << : *base_args
+            -c:v: hevc_videotoolbox
+            -pix_fmt: yuv420p
+            -profile:v: main
+            -q:v: 70
+
+        hevc_videotoolbox_q60:
+            << : *base_args
+            -c:v: hevc_videotoolbox
+            -pix_fmt: yuv420p
+            -profile:v: main
+            -q:v: 60
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: osx-videotoolbox
+    title: OSX Videotoolbox Comparison
+    description: This is a comparison of different videotoolbox encodes.
+    directory: osx-prores-encode
+    templatefile: basic.html.jinja
+

@@ -9,7 +9,7 @@ test_av1_color:
     tests:
     - assert: less
       value: max_error
-      less: 0.004
+      less: 0.00195
   description: av1 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
   name: test_av1_color
@@ -17,38 +17,50 @@ test_av1_color:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   suffix: .mp4
   wedges:
-    av1-yuv420p10le-preset3: &baseav1
-      -c:v: libsvtav1
-      -crf: 20
-      -svtav1-params: tune=0
-      -preset: 3
+    av1-yuv422p10le: &baseav1
+      -c:v: libaom-av1
+      -crf: 25
+      -row-mt: 1
+      -cpu-used: 6
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv422p10le
+      -strict: experimental
+ 
+    av1-yuv422p10le-cpu5:
+      << : *baseav1
+      -cpu-used: 5
+ 
+    av1-yuv422p10le-cpu6-pass1:
+      << : *baseav1
+      -cpu-used: 5
+      -aom-params: passes=1
+      -pass: 1
+ 
+    av1-yuv422p10le-cpu5-g1:
+      << : *baseav1
+      -g: 1
+    
+  
+    svtav1-yuv422p10le:
+      -c:v: libsvtav1 
+      -crf: 18
+      -row-mt: 1 
+      -preset: 9
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
       -pix_fmt: yuv420p10le
-      -strict: experimental
-      -crf: 10
-
-    av1-yuv420p-preset5:
-      << : *baseav1
-      -pix_fmt: yuv420p10le
-      -preset: 5
  
-    av1-yuv420p-preset7:
-      << : *baseav1
-      -pix_fmt: yuv420p10le
-      -preset: 7
-
-    av1-yuv420p-preset9:
-      << : *baseav1
-      -pix_fmt: yuv420p10le
-      -preset: 9
 ---
 reports:
-  description: This is testing av1 color encoding.
-  directory: av1-color-encode
-  name: av1-color-tests
+  description: This is testing av1 color encoding (both libaom-av1 and libsvtav1)
+  directory: aom-av1-color-encode
+  name: aom-av1-color-tests
   templatefile: colorweb.html.jinja
   title: Ffmpeg AV1 encoding color tests

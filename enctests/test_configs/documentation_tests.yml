@@ -1,0 +1,708 @@
+test_dnxhd_mov:
+  name: test_dnxhd_mov
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -y {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../EncodeDNXHD.md line 41
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -frames:v: '200'
+      -c:v: dnxhd
+      -pix_fmt: yuv422p10le
+      -profile:v: dnxhr_hqx
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: bt709
+---
+test_dnxhd_rgb:
+  name: test_dnxhd_rgb
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mov
+  description: Test from ../EncodeDNXHD.md line 79
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -c:v: dnxhd
+      -profile:v: dnxhr_444
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: rgb
+      -pix_fmt: gbrp10le
+---
+test_dnxhd_op1a_mxf:
+  name: test_dnxhd_op1a_mxf
+  sources:
+  - ../sourceimages/smptehdbars_8.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_8_yuv422p.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mxf
+  description: Test from ../EncodeDNXHD.md line 110
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv422p
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -c:v: dnxhd
+      -profile:v: dnxhr_sq
+      -metadata: '"material_package_name=MY CLIP"'
+      -timecode: 01:00:20:00
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: bt709
+---
+test_dnxhd_opatom_mxf:
+  name: test_dnxhd_opatom_mxf
+  sources:
+  - ../sourceimages/smptehdbars_8.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_8_yuv422p.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mxf
+  description: Test from ../EncodeDNXHD.md line 140
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv422p
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -c:v: dnxhd
+      -profile:v: dnxhr_sq
+      -metadata: '"material_package_name=MY CLIP"'
+      -timecode: 01:00:20:00
+      -f: mxf_opatom
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: bt709
+---
+test_dnxhd_profile:
+  name: test_dnxhd_profile
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mov
+  description: Test from ../EncodeDNXHD.md line 176
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -pix_fmt: yuv422p10
+      -c:v: dnxhd
+      -b:v: 175M
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+---
+test_libsvtav1:
+  name: test_libsvtav1
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -y {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../EncodeAv1.md line 59
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -frames:v: '200'
+      -c:v: libsvtav1
+      -pix_fmt: yuv420p10le
+      -crf: '18'
+      -preset: '9'
+      -svtav1-params: tune=0
+      -sws_flags: lanczos
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+---
+test_mjpeg:
+  name: test_mjpeg
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../EncodeMJPEG.md line 35
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -frames:v: '200'
+      -c:v: mjpeg
+      -qscale:v: '4'
+---
+test_quickstart:
+  name: test_quickstart
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../Quickstart.md line 29
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv420p
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -frames:v: '100'
+      -c:v: libx264
+      -preset: slower
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+      -movflags: faststart
+---
+test_proresquickstart:
+  name: test_proresquickstart
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mov
+  description: Test from ../Quickstart.md line 84
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv422p10le
+      -c:v: prores_ks
+      -profile:v: '3'
+      -qscale:v: '9'
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+---
+test_prores444:
+  name: test_prores444
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mov
+  description: Test from ../Quickstart.md line 117
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv444p10le
+      -c:v: prores_ks
+      -profile:v: '4444'
+      -qscale:v: '9'
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+---
+test_fullrange:
+  name: test_fullrange
+  sources:
+  - ../sourceimages/radialgrad.png.yml
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../Quickstart.md line 160
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -loop: '1'
+      -pix_fmt: yuv420p
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709
+      -c:v: libx264
+      -t: '5'
+      -qscale:v: '1'
+      -color_range: pc
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+---
+test_vp9:
+  name: test_vp9
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -y {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../EncodeVP9.md line 49
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -frames:v: '200'
+      -c:v: libvpx-vp9
+      -pix_fmt: yuv420p10le
+      -crf: '22'
+      -speed: '2'
+      -row-mt: '1'
+      -quality: good
+      -b:v: '0'
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+---
+test_movgama:
+  name: test_movgama
+  sources:
+  - ../sourceimages/smptehdbars_8.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_8_yuv420p.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../WebColorPreservation.md line 108
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv420p
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -c:v: libx264
+      -t: '5'
+      -qscale:v: '1'
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: unknown
+      -movflags: write_colr+write_gama
+      -mov_gamma: '2.4'
+---
+test_h265:
+  name: test_h265
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -y {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../EncodeHevc.md line 50
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -frames:v: '200'
+      -c:v: libx265
+      -pix_fmt: yuv420p10le
+      -crf: '22'
+      -preset: slow
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -color_range: '1'
+      -colorspace: '1'
+      -color_primaries: '1'
+      -color_trc: '2'
+      -movflags: faststart
+---
+test_proresks:
+  name: test_proresks
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt
+      rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -sws_flags lanczos+accurate_rnd+full_chroma_int {newpngfile}
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -y {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../EncodeProres.md line 40
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv422p10le
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -frames:v: '100'
+      -c:v: prores_ks
+      -profile:v: '3'
+      -vendor: apl0
+      '-qscale:v:': '10'
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+---
+test_prores_videotoolbox:
+  name: test_prores_videotoolbox
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt
+      rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -vframes {duration} {encoding_args}
+    -y {outfile} '
+  suffix: .mov
+  description: Test from ../EncodeProres.md line 121
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv422p10le
+      -vf: scale=in_color_matrix=bt709:out_color_matrix=bt709
+      -c:v: prores_videotoolbox
+      -profile:v: '3'
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: bt709
+---
+test_h264:
+  name: test_h264
+  sources:
+  - ../sourceimages/chromatest_1080.png.yml
+  comparisontest:
+  - testtype: idiff
+    compare_image: ../sourceimages/chromatest_1080-yuv420p10le.png
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} -y {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../Encodeh264.md line 41
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -frames:v: '200'
+      -c:v: libx264
+      -pix_fmt: yuv420p10le
+      -crf: '18'
+      -preset: slow
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -color_range: '1'
+      -colorspace: '1'
+      -color_primaries: '1'
+      -color_trc: '2'
+      -movflags: faststart
+---
+test_colormatch_raw:
+  name: test_colormatch_raw
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  wedges:
+    rawcolor:
+      -c:v: libx264
+      -pix_fmt: yuv444p10le
+      -preset: placebo
+    wedge0:
+      -pix_fmt: yuv444p10le
+      -vf: colormatrix=bt470bg:bt709
+      -c:v: libx264
+      -preset: placebo
+      -qp: '0'
+      -x264-params: keyint=15:no-deblock=1
+      -qscale:v: '1'
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      between: 0.37125, 0.37126
+  encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../ColorPreservation.md line 50
+  app: ffmpeg
+---
+test_colormatch_colorspace:
+  name: test_colormatch_colorspace
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../ColorPreservation.md line 77
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv444p10le
+      -vf: colorspace=bt709:iall=bt601-6-625:fast=1
+      -c:v: libx264
+      -preset: placebo
+      -qp: '0'
+      -x264-params: keyint=15:no-deblock=1
+      -qscale:v: '1'
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+---
+test_colormatch_libswscale:
+  name: test_colormatch_libswscale
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  comparisontest:
+  - testtype: idiff
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mp4
+  description: Test from ../ColorPreservation.md line 107
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -pix_fmt: yuv444p10le
+      -vf: scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709
+      -c:v: libx264
+      -preset: placebo
+      -qp: '0'
+      -x264-params: keyint=15:no-deblock=1
+      -qscale:v: '1'
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+---
+test_pq2000:
+  name: test_pq2000
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int
+      -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v
+      1 {newpngfile}
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../enctests/HDR_Encoding.md line 68
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -c:v: libx265
+      -vf: scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020
+      -tag:v: hvc1
+      -color_range: tv
+      -color_trc: smpte2084
+      -color_primaries: bt2020
+      -colorspace: bt2020nc
+      -pix_fmt: yuv444p10le
+      -x265-params: colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=2000,400
+---
+test_hlg:
+  name: test_hlg
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int
+      -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v
+      1 {newpngfile}
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../enctests/HDR_Encoding.md line 149
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -c:v: libx265
+      -tag:v: hvc1
+      -vf: scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020
+      -color_range: tv
+      -color_trc: arib-std-b67
+      -color_primaries: bt2020
+      -colorspace: bt2020nc
+      -pix_fmt: yuv444p10le
+      -x265-params: colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400
+---
+test_hlg420:
+  name: test_hlg420
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int
+      -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v
+      1 {newpngfile}
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../enctests/HDR_Encoding.md line 204
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -c:v: libx265
+      -tag:v: hvc1
+      -vf: scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020
+      -color_range: tv
+      -color_trc: arib-std-b67
+      -color_primaries: bt2020
+      -colorspace: bt2020nc
+      -pix_fmt: yuv420p10le
+      -x265-params: colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400
+---
+test_hlg422:
+  name: test_hlg422
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  comparisontest:
+  - testtype: idiff
+    extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int
+      -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v
+      1 {newpngfile}
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error
+      less: 0.00195
+  encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
+  suffix: .mov
+  description: Test from ../enctests/HDR_Encoding.md line 231
+  app: ffmpeg
+  wedges:
+    wedge0:
+      -c:v: libx265
+      -color_range: tv
+      -color_trc: arib-std-b67
+      -color_primaries: bt2020
+      -colorspace: bt2020nc
+      -pix_fmt: yuv420p10le
+      -tag:v: hvc1
+      -vf: scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020
+      -x265-params: colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\):max-cll=1000,400
+---
+reports:
+  name: doc-tests
+  title: Ffmpeg encoding guide documentation tests
+  description: This is testing commands that are in the documentation as a way to
+    confirm that all the commands in the documentation produce the desired results.
+  directory: docs-encode
+  templatefile: doctests.html.jinja

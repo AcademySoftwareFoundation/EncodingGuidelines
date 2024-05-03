@@ -1,0 +1,85 @@
+test_j2k:
+    name: test_j2k_quality
+    description: variations of j2k_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    wedges:
+        qscale_04: &base_args
+            -c:v: libopenjpeg
+            -compression_level: 4
+            -threads: 8
+            -pix_fmt: rgb48le
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        qscale_06:
+            << : *base_args
+            -compression_level: 6
+
+        qscale_08:
+            << : *base_args
+            -compression_level: 8
+
+        qscale_10:
+            << : *base_args
+            -compression_level: 10
+
+        qscale_12:
+            << : *base_args
+            -compression_level: 12
+
+        qscale_16:
+            << : *base_args
+            -compression_level: 16
+
+        qscale_20:
+            << : *base_args
+            -compression_level: 20
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: media
+        height: 400
+        x: -compression_level
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -compression_level
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -compression_level
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -compression_level
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: name
+    name: j2k-qscale-tests
+    title: openjpeg quality comparison.
+    description: This is a comparison of different quality settings for the openjpeg encoder.
+    directory: j2k-qscale-encode
+    templatefile: basicmovie.html.jinja

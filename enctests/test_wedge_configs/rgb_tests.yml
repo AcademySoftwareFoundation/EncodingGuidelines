@@ -1,0 +1,135 @@
+
+
+test_rgb:
+  app: ffmpeg
+  description: RGB encoding tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_rgb
+  sources:
+  - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+  - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+  - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+  - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+  suffix: .mp4
+  wedges:
+    10bit_h264:
+      -c:v: libx264
+      -preset: slow
+      -crf: 18
+      -pix_fmt: yuv444p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_trc: bt709
+      -colorspace: bt709
+      -color_range: tv
+    vp9_10bit_rgb:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 22
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: gbrp10le
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_primaries: bt709
+      -color_trc: bt709
+      -color_range: pc
+    vp9_12bit_rgb:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 22
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: gbrp12le
+      -color_primaries: bt709
+      -color_trc: bt709
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+    8bit_h264:
+      -c:v: libx264
+      -pix_fmt: yuv444p
+      -preset: slow
+      -crf: 18
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    8bit_libx264rgb:
+      -c:v: libx264rgb
+      -pix_fmt: rgb24
+      -crf: 18
+      -preset: slow
+      -colorspace: rgb
+      -vf: '"scale=in_range=full:out_range=full"'
+      -x264-params: "keyint=15:no-deblock=1"
+      -color_primaries: bt709
+      -color_trc: bt709
+      -color_range: pc
+    8bit_mjpeg:
+      -c:v: mjpeg
+      -pix_fmt: rgb24
+      -colorspace: rgb
+      -q:v: 2 
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_primaries: bt709
+      -color_trc: bt709
+      -color_range: pc
+    vp9_8bit_rgb:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 22
+      -pix_fmt: gbrp
+      -colorspace: rgb
+      -color_primaries: bt709
+      -color_trc: bt709
+      -vf: '"scale=in_range=full:out_range=full"'
+      -color_range: pc
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: rgb-tests
+    title: Comparison of different RGB codecs
+    description: This is comparing different codecs with source media encoding directly to RGB rather than YCrCb, with approximately the same tuning factors such that vmaf > 98.
+    directory: rgb-encode
+    templatefile: basicmovie.html.jinja
+
