@@ -89,19 +89,16 @@ See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/m
 
 
 See Also: 
-   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md
-   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md
+   * [svt-av1 encoder user guide](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md)
+   * [ffmpeg svt-av1](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)
 
 ## libaom-av1
 
-This is the reference encoder https://github.com/AOMediaCodec/community/wiki
+This is the reference encoder [AOM Media Codec](https://github.com/AOMediaCodec/community/wiki)
 
 Supported pixel formats:
 yuv420p yuv422p yuv444p gbrp yuv420p10le yuv422p10le yuv444p10le yuv420p12le yuv422p12le yuv444p12le gbrp10le gbrp12le gray gray10le gray12le
 
-
-{: .warning }
-All our initial testing is showing libaom being more than 10x slower at encoding than svt-av1. It needs further exploration to determine if there are ways of getting better encoding times. Unfortunately for many pixel formats, libaom is the only option for av1 encoding (e.g. 422, or 444 encoding).
 
 Example encoding:
 
@@ -130,8 +127,8 @@ To help pick appropriate values with the cpu-speed flag, we have run the [Test F
 
 
 See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to ffmpeg:
-   * https://forum.doom9.org/showthread.php?t=183906
-   * https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/
+   * [A 2nd generation guide to aomenc-av1](https://forum.doom9.org/showthread.php?t=183906)
+   * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty]((https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)
    * https://github.com/master-of-zen/Av1an/blob/master/docs/Encoders/aomenc.md
 
 ## librav1e
