@@ -1,0 +1,164 @@
+test_bitdepth:
+  app: ffmpeg
+  description: Uncompressed tests.
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_bitdepth
+  sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+  suffix: .mp4
+  wedges:
+    h264_crf18:
+      -c:v: libx264
+      -preset: slow
+      -crf: 18
+      -pix_fmt: yuv420p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+      -colorspace: bt709
+    h264_qp18:
+      -c:v: libx264
+      -preset: slow
+      -qp: 18
+      -pix_fmt: yuv420p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+      -colorspace: bt709
+    10bit_h264:
+      -c:v: libx264
+      -preset: slow
+      -crf: 18
+      -pix_fmt: yuv420p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+      -colorspace: bt709
+    vp9_8bit_crf22:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 22
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: yuv420p
+      -colorspace: bt709
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_range: tv
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+    vp9_8bit_crf22_tune:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 22
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: yuv420p
+      -colorspace: bt709
+      -tune-content: film
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_range: tv
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+    vp9_8bit_uncompressed:
+        -c:v: libvpx-vp9
+        -pix_fmt: yuv444p10le
+        -speed: 7
+        -quality: realtime
+        -row-mt: 1
+        -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+        -lossless: 1
+        -color_range: 1
+        -colorspace: 1
+        -color_primaries: 1
+        -color_trc: 2
+    vp9_8bit_crf22_yuv444:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 22
+      -b:v: 0
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: yuv444p
+      -colorspace: bt709
+      -sws_flags: spline+accurate_rnd+full_chroma_int
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_range: tv
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+    vp9_10bit:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 20
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: yuv420p10le
+      -colorspace: bt709
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_range: tv
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+    vp9_12bit:
+      -c:v: libvpx-vp9
+      -quality: good
+      -crf: 20
+      -speed: 2
+      -row-mt: 1
+      -pix_fmt: yuv420p12le
+      -colorspace: bt709
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: iec61966-2-1
+
+---
+reports:
+  graphs:
+  - args:
+      color: name
+      height: 400
+      barmode: group
+      x: media
+      y: psnr_y_harmonic_mean
+    name: psnr_y_harmonic_mean.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      barmode: group
+      x: media
+      y: vmaf_harmonic_mean
+    name: vmaf_harmonic_mean.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      x: media
+      barmode: group
+      y: encode_time
+    name: encode_time.png
+    type: bar
+  - args:
+      color: name
+      height: 400
+      x: media
+      barmode: group
+      y: filesize
+    name: filesize.png
+    type: bar
+  description: Testing clips at different bit-depths for h264 and vp9, showing the file size.
+  directory: bitdepth-encode
+  name: bitdepth-tests
+  templatefile: basicmovie.html.jinja
+  title: Bit-depth comparisons. Browser support.

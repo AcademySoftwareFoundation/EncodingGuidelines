@@ -1,0 +1,177 @@
+test_aom:
+    name: test_crf
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        cpu7_crf_16: &base_args
+            -c:v: libaom-av1
+            -crf: 16
+            -svtav1-params: tune=0
+            -cpu-used: 7
+            -row-mt: 1
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        # cpu4_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+
+        cpu7_crf_20:
+            << : *base_args
+            -crf: 20
+
+        # cpu4_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+
+        cpu7_crf_25:
+            << : *base_args
+            -crf: 25
+
+        cpu7_crf_30:
+            << : *base_args
+            -crf: 30
+
+        cpu5_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 5
+
+        # cpu5_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 5
+
+        cpu5_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 5
+
+        # cpu5_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 5
+
+        cpu5_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 5
+
+        cpu5_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 5
+
+        cpu6_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 6
+
+        # cpu6_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 6
+
+        cpu6_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 6
+
+        # cpu6_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 6
+
+        cpu6_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 6
+
+        cpu6_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 6
+
+        cpu4_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 4
+
+        # cpu4_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 4
+
+        cpu4_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 4
+
+        # cpu4_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 4
+
+        cpu4_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 4
+
+        cpu4_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 4
+---
+
+reports:
+    graphs:
+    - args:
+        color: -cpu-used
+        height: 400
+        x: -crf
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: -cpu-used
+    - args:
+        color: -cpu-used
+        height: 400
+        x: -crf
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: -cpu-used
+    - args:
+        color: -cpu-used
+        height: 400
+        x: -crf
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: -cpu-used
+    - args:
+        color: -cpu-used
+        height: 400
+        x: -crf
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: -cpu-used
+    name: av1-crf-test
+    title: AV1 CRF Comparison
+    description: This is a comparison of different CRF values for av1 encoding.
+    directory: av1-crf-encode
+    templatefile: basicmovie.html.jinja
+

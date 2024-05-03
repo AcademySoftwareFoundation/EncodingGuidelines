@@ -1,0 +1,105 @@
+test_crf_yuv420p:
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_crf_02: &base_args
+            -c:v: libvpx-vp9
+            -quality: good
+            -crf: 2
+            -b:v: 0
+            -g: 1
+            -speed: 2
+            -row-mt: 1
+            -pix_fmt: yuv444p
+            -sws_flags: lanczos+accurate_rnd
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        medium_crf_05:
+            << : *base_args
+            -crf: 5
+
+        medium_crf_10:
+            << : *base_args
+            -crf: 10
+
+        medium_crf_14:
+            << : *base_args
+            -crf: 14
+
+        medium_crf_16:
+            << : *base_args
+            -crf: 16
+
+        medium_crf_18:
+            << : *base_args
+            -crf: 18
+
+        medium_crf_20:
+            << : *base_args
+            -crf: 20
+
+        medium_crf_22:
+            << : *base_args
+            -crf: 22
+
+        medium_crf_25:
+            << : *base_args
+            -crf: 25
+
+        medium_crf_28:
+            << : *base_args
+            -crf: 28
+---
+
+reports:
+    graphs:
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: name
+    - args:
+        color: media
+        height: 400
+        x: -crf
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: name
+    name: vp9-g1-crf-test
+    title: VP9 CRF Comparison
+    description: This is a comparison of different CRF values for vp9 encoding.
+    directory: vp9-g1-crf-encode
+    templatefile: basicmovie.html.jinja
+
