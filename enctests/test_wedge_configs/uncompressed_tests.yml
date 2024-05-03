@@ -105,7 +105,7 @@ test_mov:
 reports:
     graphs:
     - args:
-        color: name
+        color: wedge
         height: 400
         barmode: group
         x: media
@@ -113,7 +113,7 @@ reports:
       name: psnr_y_harmonic_mean.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         barmode: group
         x: media
@@ -124,7 +124,7 @@ reports:
       name: vmaf_harmonic_mean.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         x: media
         barmode: group
@@ -132,7 +132,7 @@ reports:
       name: encode_time.png
       type: bar
     - args:
-        color: name
+        color: wedge
         height: 400
         x: media
         barmode: group

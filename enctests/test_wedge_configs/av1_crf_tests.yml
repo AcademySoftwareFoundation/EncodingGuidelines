@@ -93,7 +93,7 @@ reports:
       sortby: name
     name: av1-crf-test
     title: AV1 CRF Comparison
-    description: This is a comparison of different CRF values for av1 encoding.
+    description: This is a comparison of different CRF values for libsvtav1 (av1) encoding.
     directory: av1-crf-encode
     templatefile: basicmovie.html.jinja
 

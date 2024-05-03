@@ -129,7 +129,7 @@ reports:
       name: filesize.png
       type: bar
     name: vp9av1-test
-    title: VP9 and AV1 vs HEVC
+    title: VP9 vs AV1 vs HEVC NextGen Tests
     description: This is a comparison of vp9 and AV1 with HEVC and h264.
     directory: vp9av1-nextgen-encode
     templatefile: basicmovie.html.jinja

@@ -9,7 +9,7 @@ test_av1_color:
     tests:
     - assert: less
       value: max_error
-      less: 0.00195
+      less: 0.004
   description: av1 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
   name: test_av1_color

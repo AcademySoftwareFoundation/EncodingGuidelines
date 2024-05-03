@@ -98,8 +98,8 @@ reports:
       name: filesize.png
       sortby: name
     name: vp9-g1-crf-test
-    title: VP9 CRF Comparison
-    description: This is a comparison of different CRF values for vp9 encoding.
+    title: VP9 CRF Comparison with GOP of 1.
+    description: This is a comparison of different CRF values for vp9 encoding with GOP of 1.
     directory: vp9-g1-crf-encode
     templatefile: basicmovie.html.jinja
 

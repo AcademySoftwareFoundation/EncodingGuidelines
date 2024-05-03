@@ -10,11 +10,10 @@ test_aom:
     #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        cpu7_crf_16: &base_args
+        cpu3_crf_16: &base_args
             -c:v: libaom-av1
             -crf: 16
-            -svtav1-params: tune=0
-            -cpu-used: 7
+            -cpu-used: 3
             -row-mt: 1
             -pix_fmt: yuv422p10le
             -sws_flags: spline+accurate_rnd+full_chroma_int
@@ -24,23 +23,23 @@ test_aom:
             -color_primaries: 1
             -color_trc: 2
 
-        # cpu4_crf_18:
+        # cpu3_crf_18:
         #     << : *base_args
         #     -crf: 18
 
-        cpu7_crf_20:
+        cpu3_crf_20:
             << : *base_args
             -crf: 20
 
-        # cpu4_crf_22:
+        # cpu3_crf_22:
         #     << : *base_args
         #     -crf: 22
 
-        cpu7_crf_25:
+        cpu3_crf_25:
             << : *base_args
             -crf: 25
 
-        cpu7_crf_30:
+        cpu3_crf_30:
             << : *base_args
             -crf: 30
 
@@ -133,6 +132,66 @@ test_aom:
             << : *base_args
             -crf: 30
             -cpu-used: 4
+
+        cpu2_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 2
+
+        # cpu2_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 2
+
+        cpu2_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 2
+
+        # cpu2_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 2
+
+        cpu2_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 2
+
+        cpu2_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 2
+
+        cpu1_crf_16:
+            << : *base_args
+            -crf: 16
+            -cpu-used: 1
+
+        # cpu1_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+        #     -cpu-used: 1
+
+        cpu1_crf_20:
+            << : *base_args
+            -crf: 20
+            -cpu-used: 1
+
+        # cpu1_crf_22:
+        #     << : *base_args
+        #     -crf: 22
+        #     -cpu-used: 1
+
+        cpu1_crf_25:
+             << : *base_args
+             -crf: 25
+             -cpu-used: 1
+
+        cpu1_crf_30:
+            << : *base_args
+            -crf: 30
+            -cpu-used: 1
 ---
 
 reports:
@@ -144,7 +203,7 @@ reports:
         y: psnr_y_harmonic_mean
         markers: True
       name: psnr_y_harmonic_mean.png
-      sortby: -cpu-used
+      sortby: -crf
     - args:
         color: -cpu-used
         height: 400
@@ -152,7 +211,16 @@ reports:
         y: vmaf_harmonic_mean
         markers: True
       name: vmaf_harmonic_mean.png
-      sortby: -cpu-used
+      sortby: -crf
+    - args:
+        color: -cpu-used
+        height: 400
+        x: -crf
+        y: encode_time
+        range_y: [0, 500]
+        markers: True
+      name: encode_time_zoom.png
+      sortby: -crf
     - args:
         color: -cpu-used
         height: 400
@@ -160,7 +228,7 @@ reports:
         y: encode_time
         markers: True
       name: encode_time.png
-      sortby: -cpu-used
+      sortby: -crf
     - args:
         color: -cpu-used
         height: 400
@@ -168,10 +236,10 @@ reports:
         y: filesize
         markers: True
       name: filesize.png
-      sortby: -cpu-used
-    name: av1-crf-test
-    title: AV1 CRF Comparison
-    description: This is a comparison of different CRF values for av1 encoding.
-    directory: av1-crf-encode
+      sortby: -crf
+    name: aomav1-crf-test
+    title: Libaom AV1 CRF vs. cpu-used Comparison
+    description: This is a comparison of different CRF values against cpu-used for the libaom av1 encoder. The -cpu-used flag defaults to 1, which gives a very slow but efficient encode. We are finding values of at least 4 still give an excellent quality, but quite a bit faster (although still significantly slower than other encoders. Values of 5 may also be worth considering. In this case we are encoding to 422. If you are ok with 420, do use svt-av1, which is significantly faster.
+    directory: aomav1-crf-encode
     templatefile: basicmovie.html.jinja
 
