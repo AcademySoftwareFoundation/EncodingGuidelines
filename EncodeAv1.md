@@ -89,19 +89,16 @@ See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/m
 
 
 See Also: 
-   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md
-   * https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md
+   * [svt-av1 encoder user guide](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md)
+   * [ffmpeg svt-av1](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)
 
 ## libaom-av1
 
-This is the reference encoder https://github.com/AOMediaCodec/community/wiki
+This is the reference encoder [AOM Media Codec](https://github.com/AOMediaCodec/community/wiki)
 
 Supported pixel formats:
 yuv420p yuv422p yuv444p gbrp yuv420p10le yuv422p10le yuv444p10le yuv420p12le yuv422p12le yuv444p12le gbrp10le gbrp12le gray gray10le gray12le
 
-
-{: .warning }
-All our initial testing is showing libaom being more than 10x slower at encoding than svt-av1. It needs further exploration to determine if there are ways of getting better encoding times. Unfortunately for many pixel formats, libaom is the only option for av1 encoding (e.g. 422, or 444 encoding).
 
 Example encoding:
 
@@ -117,21 +114,22 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 | --- | --- |
 | -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. See below for comparison. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
+| -usage allintra | Encodes for all intra-frames  |
 
 ### cpu-speed Comparison for libaom-av1
 
 To help pick appropriate values with the cpu-speed flag, we have run the [Test Framework](enctests/README.html) through one of the test media. You can see that values are 
 
 | ![](enctests/reference-results/aomav1-crf-test-encode_time.png)  | ![](enctests/reference-results/aomav1-crf-test-encode_time_zoom.png) |
-| This is showing cpu-speed values against encoding time. | Same graph of cpu-speed value against encoding time a 0-500 scale. |
+| This is showing cpu-speed values against encoding time. You can see that values of 1 and 2 are more than 15 minutes, where most other encoders are closer to the 30 second range. | Same graph of cpu-speed value against encoding time a 0-500 scale. This is showing cpu-used 5 is now just twice as slow. |
 
 | ![](enctests/reference-results/aomav1-crf-test-filesize.png) This is showing cpu-speed values against file size. |
 | ![](enctests/reference-results/aomav1-crf-test-vmaf_harmonic_mean.png) This is showing cpu-speed values against VMAF harmonic mean |
 
 
 See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to ffmpeg:
-   * https://forum.doom9.org/showthread.php?t=183906
-   * https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/
+   * [A 2nd generation guide to aomenc-av1](https://forum.doom9.org/showthread.php?t=183906)
+   * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty]((https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)
    * https://github.com/master-of-zen/Av1an/blob/master/docs/Encoders/aomenc.md
 
 ## librav1e

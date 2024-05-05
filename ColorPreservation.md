@@ -19,16 +19,14 @@ Even if you are sticking to 8-bits encodes, if your source media is able to have
 
 For more information, see: [https://trac.ffmpeg.org/wiki/colorspace](https://trac.ffmpeg.org/wiki/colorspace)
 
-TODO -- Review the SWS_Flags.
-
 For examples comparing these see: [here](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/chip-chart-yuvconvert/compare.html)
 
 ## colormatrix filter
 ```
 -vf "colormatrix=bt470bg:bt709"
 ```
-This is the most basic colorspace filtering. bt470bg is essentially part of the bt601 spec.  See: [https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix]()
-This is the most basic colorspace filtering. bt470bg is essentially part of the bt601 spec.  See: [https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix]()
+This is the most basic colorspace filtering. bt470bg is essentially part of the bt601 spec.  See: [https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix](https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix)
+
 e.g.
 
 <!---
@@ -56,6 +54,10 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
     ./chip-chart-yuvconvert/spline444colormatrix2.mp4
 ```
 
+There are a couple of issues with this filter:
+   * only supports 8bpc (8-bit per component) pixel formats
+   * Its slower than the alternatives.
+
 ## colorspace filter
 ```
  -vf "colorspace=bt709:iall=bt601-6-625:fast=1"
@@ -81,6 +83,38 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -qscale:v 1 \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444colorspace.mp4
+```
+
+
+## zscale filter
+
+```
+-vf "zscale=m=709:min=709:rangein=full:range=limited"
+```
+Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.  [https://www.ffmpeg.org/ffmpeg-filters.html#scale-1](https://www.ffmpeg.org/ffmpeg-filters.html#scale-1)
+
+This is an alternative to libswscale, which does produce pretty good results for image resizing, but purely for RGB to YCrCb conversion libswscale appears very slightly better.
+
+e.g.
+
+<!---
+name: test_colormatch_zscale
+sources: 
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
+comparisontest:
+   - testtype: idiff
+   - testtype: assertresults
+     tests:
+     - assert: less
+       value: max_error
+       less: 0.00195
+-->
+```
+ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
+   -pix_fmt yuv444p10le -vf "zscale=m=709:min=709:rangein=full:range=limited" \
+   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -qscale:v 1 \
+   -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
+   ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
 
 ## libswscale filter
@@ -112,3 +146,6 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
+
+
+Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to YCrCb conversion, if you are not resizing the image. For more details on this see [SWS Flags](/EncodeSwsScale.html) section.

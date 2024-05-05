@@ -1,0 +1,2033 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {},
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_6.0",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_dnxhd"
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_dnxhd-115M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "115M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:44:51.151936+00:00",
+                                            "encode_time": 2.8516,
+                                            "filesize": 121243299,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.712328,
+                                                "max": 49.952145,
+                                                "mean": 49.713183,
+                                                "min": 48.856109
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.217359,
+                                                "max": 49.384734,
+                                                "mean": 49.217488,
+                                                "min": 49.024051
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.735973,
+                                                "max": 49.119728,
+                                                "mean": 48.739462,
+                                                "min": 47.057493
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.981007,
+                                                "max": 100.0,
+                                                "mean": 99.981532,
+                                                "min": 96.798343
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhd-115M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhd-115M.mov"
+                            },
+                            "test_dnxhd-185M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "185M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:44:48.299398+00:00",
+                                            "encode_time": 2.9907,
+                                            "filesize": 183502499,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.864467,
+                                                "max": 50.103409,
+                                                "mean": 49.865361,
+                                                "min": 48.985632
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.624088,
+                                                "max": 49.751514,
+                                                "mean": 49.624192,
+                                                "min": 49.456786
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 49.483649,
+                                                "max": 49.911696,
+                                                "mean": 49.488304,
+                                                "min": 47.52039
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.97351,
+                                                "max": 100.0,
+                                                "mean": 99.974124,
+                                                "min": 96.59468
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhd-185M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhd-185M.mov"
+                            },
+                            "test_dnxhd-36M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "36M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:44:42.273017+00:00",
+                                            "encode_time": 3.2749,
+                                            "filesize": 37684259,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.105495,
+                                                "max": 48.534874,
+                                                "mean": 48.106414,
+                                                "min": 47.414338
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.762558,
+                                                "max": 47.156077,
+                                                "mean": 46.76308,
+                                                "min": 46.453498
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.030772,
+                                                "max": 44.634651,
+                                                "mean": 44.033041,
+                                                "min": 43.290927
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.928595,
+                                                "max": 100.0,
+                                                "mean": 99.929597,
+                                                "min": 96.271235
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhd-36M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhd-36M.mov"
+                            },
+                            "test_dnxhd-p10_185M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "185M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:44:45.307792+00:00",
+                                            "encode_time": 3.0339,
+                                            "filesize": 183502499,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.06695,
+                                                "max": 52.449216,
+                                                "mean": 52.069206,
+                                                "min": 50.699204
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 51.552525,
+                                                "max": 51.758648,
+                                                "mean": 51.552758,
+                                                "min": 51.293316
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 51.501518,
+                                                "max": 52.149133,
+                                                "mean": 51.511613,
+                                                "min": 48.685927
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986089,
+                                                "max": 100.0,
+                                                "mean": 99.98646,
+                                                "min": 97.291979
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhd-p10_185M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhd-p10_185M.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_dnxhd"
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_dnxhd-115M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "115M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:48:08.166797+00:00",
+                                            "encode_time": 2.8516,
+                                            "filesize": 121243283,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.663576,
+                                                "max": 49.069027,
+                                                "mean": 47.713937,
+                                                "min": 44.709245
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.086893,
+                                                "max": 49.105935,
+                                                "mean": 48.093074,
+                                                "min": 47.072897
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.3511,
+                                                "max": 47.745203,
+                                                "mean": 45.478149,
+                                                "min": 41.022667
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980055,
+                                                "max": 100.0,
+                                                "mean": 99.980809,
+                                                "min": 96.161831
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhd-115M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhd-115M.mov"
+                            },
+                            "test_dnxhd-185M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "185M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:48:05.314311+00:00",
+                                            "encode_time": 3.1693,
+                                            "filesize": 183502483,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.879303,
+                                                "max": 49.26352,
+                                                "mean": 47.933685,
+                                                "min": 44.803128
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.392703,
+                                                "max": 49.392014,
+                                                "mean": 48.39866,
+                                                "min": 47.325173
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.578962,
+                                                "max": 47.998023,
+                                                "mean": 45.715002,
+                                                "min": 41.078622
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.979175,
+                                                "max": 100.0,
+                                                "mean": 99.979996,
+                                                "min": 95.999158
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhd-185M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhd-185M.mov"
+                            },
+                            "test_dnxhd-36M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "36M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:47:59.227455+00:00",
+                                            "encode_time": 2.9021,
+                                            "filesize": 37684243,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 45.029142,
+                                                "max": 47.398197,
+                                                "mean": 45.060708,
+                                                "min": 42.923884
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.033779,
+                                                "max": 47.063131,
+                                                "mean": 45.057957,
+                                                "min": 43.114736
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 42.471568,
+                                                "max": 45.702407,
+                                                "mean": 42.543192,
+                                                "min": 39.633804
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.971172,
+                                                "max": 100.0,
+                                                "mean": 99.972042,
+                                                "min": 95.929352
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhd-36M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhd-36M.mov"
+                            },
+                            "test_dnxhd-p10_185M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "185M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:48:02.144081+00:00",
+                                            "encode_time": 2.9156,
+                                            "filesize": 183502483,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.192229,
+                                                "max": 51.002127,
+                                                "mean": 49.279309,
+                                                "min": 45.349394
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.856746,
+                                                "max": 51.217774,
+                                                "mean": 49.866866,
+                                                "min": 48.457576
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.3907,
+                                                "max": 49.256985,
+                                                "mean": 46.56515,
+                                                "min": 41.342377
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.983357,
+                                                "max": 100.0,
+                                                "mean": 99.983885,
+                                                "min": 96.777039
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhd-p10_185M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhd-p10_185M.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_dnxhd"
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_dnxhd-115M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "115M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:51:30.107039+00:00",
+                                            "encode_time": 3.2735,
+                                            "filesize": 121243299,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.550902,
+                                                "max": 49.852075,
+                                                "mean": 49.551387,
+                                                "min": 49.209315
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.372201,
+                                                "max": 48.990878,
+                                                "mean": 48.374269,
+                                                "min": 47.580026
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.100018,
+                                                "max": 47.001435,
+                                                "mean": 46.104982,
+                                                "min": 44.830131
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.978154,
+                                                "max": 100.0,
+                                                "mean": 99.979056,
+                                                "min": 95.811157
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhd-115M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhd-115M.mov"
+                            },
+                            "test_dnxhd-185M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "185M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:51:26.832572+00:00",
+                                            "encode_time": 3.4209,
+                                            "filesize": 183502499,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.370605,
+                                                "max": 50.611468,
+                                                "mean": 50.371167,
+                                                "min": 49.91904
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.027846,
+                                                "max": 50.492936,
+                                                "mean": 50.03131,
+                                                "min": 48.855851
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.625949,
+                                                "max": 49.106191,
+                                                "mean": 48.629017,
+                                                "min": 47.570938
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976954,
+                                                "max": 100.0,
+                                                "mean": 99.977955,
+                                                "min": 95.590928
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhd-185M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhd-185M.mov"
+                            },
+                            "test_dnxhd-36M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "36M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:51:20.342183+00:00",
+                                            "encode_time": 2.8776,
+                                            "filesize": 37684259,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.25313,
+                                                "max": 47.795806,
+                                                "mean": 47.254653,
+                                                "min": 46.767201
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 45.580304,
+                                                "max": 46.323424,
+                                                "mean": 45.582284,
+                                                "min": 44.986302
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 38.212201,
+                                                "max": 39.692739,
+                                                "mean": 38.226152,
+                                                "min": 36.549374
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.959975,
+                                                "max": 100.0,
+                                                "mean": 99.962901,
+                                                "min": 92.580139
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhd-36M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhd-36M.mov"
+                            },
+                            "test_dnxhd-p10_185M": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-b:v": "185M",
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:51:23.410737+00:00",
+                                            "encode_time": 3.0675,
+                                            "filesize": 183502499,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.739592,
+                                                "max": 53.152268,
+                                                "mean": 52.74097,
+                                                "min": 52.028482
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 52.045471,
+                                                "max": 52.726439,
+                                                "mean": 52.052385,
+                                                "min": 50.399442
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 50.376675,
+                                                "max": 51.032548,
+                                                "mean": 50.382642,
+                                                "min": 48.863675
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.981638,
+                                                "max": 100.0,
+                                                "mean": 99.982279,
+                                                "min": 96.455842
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhd-p10_185M.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhd-p10_185M.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_dnxhr"
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_dnxhr-dnxhqx": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "dnxhr_hqx",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:54:56.941539+00:00",
+                                            "encode_time": 3.6651,
+                                            "filesize": 183502387,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.724971,
+                                                "max": 53.183093,
+                                                "mean": 52.727963,
+                                                "min": 51.180445
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 53.42397,
+                                                "max": 53.679999,
+                                                "mean": 53.42436,
+                                                "min": 53.095753
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 52.774063,
+                                                "max": 53.728965,
+                                                "mean": 52.790823,
+                                                "min": 49.274661
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.985288,
+                                                "max": 100.0,
+                                                "mean": 99.985702,
+                                                "min": 97.140491
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhr-dnxhqx.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhr-dnxhqx.mov"
+                            },
+                            "test_dnxhr-dnxhr_444": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": "dnxhr_444",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:54:48.574644+00:00",
+                                            "encode_time": 5.0546,
+                                            "filesize": 367003187,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 53.256939,
+                                                "max": 53.729848,
+                                                "mean": 53.26055,
+                                                "min": 51.532461
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 54.485239,
+                                                "max": 54.650827,
+                                                "mean": 54.485597,
+                                                "min": 54.177011
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 53.626446,
+                                                "max": 54.694931,
+                                                "mean": 53.648959,
+                                                "min": 49.61537
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.984649,
+                                                "max": 100.0,
+                                                "mean": 99.985099,
+                                                "min": 97.01986
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhr-dnxhr_444.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhr-dnxhr_444.mov"
+                            },
+                            "test_dnxhr-dnxhr_444_gbrp10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": "rgb",
+                                            "-pix_fmt": "gbrp10le",
+                                            "-profile:v": "dnxhr_444",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:54:53.274670+00:00",
+                                            "encode_time": 4.6954,
+                                            "filesize": 367003187,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.999467,
+                                                "max": 53.454039,
+                                                "mean": 53.002744,
+                                                "min": 51.373461
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 54.044956,
+                                                "max": 54.217073,
+                                                "mean": 54.045257,
+                                                "min": 53.757641
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 52.961372,
+                                                "max": 53.957084,
+                                                "mean": 52.980749,
+                                                "min": 49.248969
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.98611,
+                                                "max": 100.0,
+                                                "mean": 99.98648,
+                                                "min": 97.295982
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhr-dnxhr_444_gbrp10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhr-dnxhr_444_gbrp10.mov"
+                            },
+                            "test_dnxhr-hq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-profile:v": "dnxhr_hq",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:54:43.516603+00:00",
+                                            "encode_time": 3.039,
+                                            "filesize": 183502387,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.864467,
+                                                "max": 50.103409,
+                                                "mean": 49.865361,
+                                                "min": 48.985632
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.624088,
+                                                "max": 49.751514,
+                                                "mean": 49.624192,
+                                                "min": 49.456786
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 49.483649,
+                                                "max": 49.911696,
+                                                "mean": 49.488304,
+                                                "min": 47.52039
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.97351,
+                                                "max": 100.0,
+                                                "mean": 99.974124,
+                                                "min": 96.59468
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb.-test_dnxhr-hq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_cars_srgb.-test_dnxhr-hq.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_dnxhr"
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_dnxhr-dnxhqx": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "dnxhr_hqx",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:58:23.048082+00:00",
+                                            "encode_time": 3.7584,
+                                            "filesize": 183502371,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.66394,
+                                                "max": 51.679317,
+                                                "mean": 49.765877,
+                                                "min": 45.53689
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.58558,
+                                                "max": 52.253174,
+                                                "mean": 50.599808,
+                                                "min": 48.944143
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.750312,
+                                                "max": 50.009958,
+                                                "mean": 46.948449,
+                                                "min": 41.451333
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.982576,
+                                                "max": 100.0,
+                                                "mean": 99.983155,
+                                                "min": 96.630939
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhr-dnxhqx.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhr-dnxhqx.mov"
+                            },
+                            "test_dnxhr-dnxhr_444": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": "dnxhr_444",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:58:13.787031+00:00",
+                                            "encode_time": 5.0416,
+                                            "filesize": 367003171,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.959338,
+                                                "max": 52.022945,
+                                                "mean": 50.070665,
+                                                "min": 45.611774
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 51.035553,
+                                                "max": 52.767792,
+                                                "mean": 51.052137,
+                                                "min": 49.31094
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.017772,
+                                                "max": 50.361248,
+                                                "mean": 47.231053,
+                                                "min": 41.497185
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.981899,
+                                                "max": 100.0,
+                                                "mean": 99.982523,
+                                                "min": 96.504501
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhr-dnxhr_444.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhr-dnxhr_444.mov"
+                            },
+                            "test_dnxhr-dnxhr_444_gbrp10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": "rgb",
+                                            "-pix_fmt": "gbrp10le",
+                                            "-profile:v": "dnxhr_444",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:58:19.287947+00:00",
+                                            "encode_time": 5.4984,
+                                            "filesize": 367003171,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.879422,
+                                                "max": 51.927271,
+                                                "mean": 49.987984,
+                                                "min": 45.588601
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.862454,
+                                                "max": 52.581454,
+                                                "mean": 50.877816,
+                                                "min": 49.194901
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.726596,
+                                                "max": 50.047286,
+                                                "mean": 46.934143,
+                                                "min": 41.30735
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.98269,
+                                                "max": 100.0,
+                                                "mean": 99.98326,
+                                                "min": 96.652088
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhr-dnxhr_444_gbrp10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhr-dnxhr_444_gbrp10.mov"
+                            },
+                            "test_dnxhr-hq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-profile:v": "dnxhr_hq",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T17:58:08.743367+00:00",
+                                            "encode_time": 3.3227,
+                                            "filesize": 183502371,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.879303,
+                                                "max": 49.26352,
+                                                "mean": 47.933685,
+                                                "min": 44.803128
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.392703,
+                                                "max": 49.392014,
+                                                "mean": 48.39866,
+                                                "min": 47.325173
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.578962,
+                                                "max": 47.998023,
+                                                "mean": 45.715002,
+                                                "min": 41.078622
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.979175,
+                                                "max": 100.0,
+                                                "mean": 99.979996,
+                                                "min": 95.999158
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb.-test_dnxhr-hq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_coaster_srgb.-test_dnxhr-hq.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "config_path": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml",
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            },
+                            "source_test_name": "test_dnxhr"
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_dnxhr-dnxhqx": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "dnxhr_hqx",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T18:01:51.873525+00:00",
+                                            "encode_time": 4.0189,
+                                            "filesize": 183502387,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.939273,
+                                                "max": 53.352505,
+                                                "mean": 52.940579,
+                                                "min": 52.258893
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 52.95007,
+                                                "max": 53.789509,
+                                                "mean": 52.955295,
+                                                "min": 51.504002
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 50.406007,
+                                                "max": 51.030927,
+                                                "mean": 50.40954,
+                                                "min": 49.289954
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.98123,
+                                                "max": 100.0,
+                                                "mean": 99.981899,
+                                                "min": 96.379815
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhr-dnxhqx.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhr-dnxhqx.mov"
+                            },
+                            "test_dnxhr-dnxhr_444": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": "dnxhr_444",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T18:01:42.165861+00:00",
+                                            "encode_time": 5.4092,
+                                            "filesize": 367003187,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 54.840389,
+                                                "max": 55.501796,
+                                                "mean": 54.841577,
+                                                "min": 54.442706
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 56.496033,
+                                                "max": 57.142971,
+                                                "mean": 56.498457,
+                                                "min": 55.468919
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 52.265278,
+                                                "max": 52.969208,
+                                                "mean": 52.267132,
+                                                "min": 51.662408
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980013,
+                                                "max": 100.0,
+                                                "mean": 99.98077,
+                                                "min": 96.154074
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhr-dnxhr_444.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhr-dnxhr_444.mov"
+                            },
+                            "test_dnxhr-dnxhr_444_gbrp10": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": "rgb",
+                                            "-pix_fmt": "gbrp10le",
+                                            "-profile:v": "dnxhr_444",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T18:01:47.853359+00:00",
+                                            "encode_time": 5.6856,
+                                            "filesize": 367003187,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.863996,
+                                                "max": 53.855474,
+                                                "mean": 52.871756,
+                                                "min": 50.498569
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 52.659647,
+                                                "max": 54.930192,
+                                                "mean": 52.696772,
+                                                "min": 49.129567
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 49.376924,
+                                                "max": 50.348345,
+                                                "mean": 49.38481,
+                                                "min": 47.32476
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.982013,
+                                                "max": 100.0,
+                                                "mean": 99.982629,
+                                                "min": 96.525817
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhr-dnxhr_444_gbrp10.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhr-dnxhr_444_gbrp10.mov"
+                            },
+                            "test_dnxhr-hq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "dnxhd",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-pix_fmt": "yuv422p",
+                                            "-profile:v": "dnxhr_hq",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "results": {
+                                            "completed_utc": "2023-08-16T18:01:36.754257+00:00",
+                                            "encode_time": 3.6617,
+                                            "filesize": 183502387,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.370605,
+                                                "max": 50.611468,
+                                                "mean": 50.371167,
+                                                "min": 49.91904
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 50.027846,
+                                                "max": 50.492936,
+                                                "mean": 50.03131,
+                                                "min": 48.855851
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.625949,
+                                                "max": 49.106191,
+                                                "mean": 48.629017,
+                                                "min": 47.570938
+                                            },
+                                            "result": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976954,
+                                                "max": 100.0,
+                                                "mean": 99.977955,
+                                                "min": 95.590928
+                                            }
+                                        },
+                                        "test_config_path": "/Users/sam/git/EncodingGuidelines/enctests/test_configs/dnxhd_tests.yml"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb.-test_dnxhr-hq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/dnxhd-encode/chimera_fountains_srgb.-test_dnxhr-hq.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}
