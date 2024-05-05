@@ -1,6 +1,6 @@
 
 
-test_uncompressed:
+test_rgb2yuv:
   app: ffmpeg
   comparisontest:
   - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
@@ -10,16 +10,16 @@ test_uncompressed:
     - assert: less
       value: max_error
       less: 0.00195
-  description: Uncompressed tests.
+  description: Testing options for converting RGB to YUV
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
-  name: test_uncompressed
+  name: test_rgb2yuv
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   - ../sourceimages/smptehdbars_10.dpx.yml
   suffix: .y4m
   wedges:
-    10bit_default:  &base_args
+    10bit_default:
       #-c:v: v410
       -loglevel: verbose
       -strict: -1
@@ -29,13 +29,21 @@ test_uncompressed:
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
-    10bit_colorspace:
-      << : *base_args
+    10bit_colormatrix: &base_args
+      -loglevel: verbose
+      -strict: -1
       -vf: '"colormatrix=bt470bg:bt709"'
-      << : *base_args
-    10bit_colorspace:
+      -pix_fmt: yuv444p10le
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+    10bit_colorspace_fast:
       << : *base_args
       -vf: '"colorspace=bt709:iall=bt601-6-625:fast=1"'
+    10bit_colorspace:
+      << : *base_args
+      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=0"'
     10bit_libswscale:
       << : *base_args
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
@@ -52,64 +60,19 @@ test_uncompressed:
       -vf: '"zscale=m=709:min=709:rangein=full:range=limited"'
     8bit_libswscale_full:
       << : *base_args
-      #-c:v: v408
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p   
       -color_range: pc
     10bit_libswscale_full:
       << : *base_args
-      #-c:v: v410
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p10le  
       -color_range: pc
     12bit_libswscale_full:
       << : *base_args
-      #-c:v: v410
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p12le  
       -color_range: pc
-    10bit_libswscale_full_chroma_int:
-      << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-      -sws_flags: full_chroma_int
-    10bit_libswscale_accurate_rnd+full_chroma_int:
-      << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-      -sws_flags: accurate_rnd+full_chroma_int
-    10bit_libswscale_spline+accurate_rnd+full_chroma_int:
-      << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-      -sws_flags: spline+accurate_rnd+full_chroma_int
-
-test_bt709:
-  app: ffmpeg
-  comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
-    testtype: idiff
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: Uncompressed tests.
-  encoding_template: ffmpeg -y -color_range pc   -color_trc iec61966-2-1   -color_primaries bt709   -colorspace bt709 {input_args} -i "{source}"              {encoding_args}
-    -y "{outfile}"
-  name: test_bt709
-  sources:
-  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  - ../sourceimages/smptehdbars_10.dpx.yml
-  suffix: .y4m
-  wedges:
-    10bit_bt709:  &base_args2
-      #-c:v: v410
-      -strict: -1
-      -loglevel: verbose
-      #-sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
-      -pix_fmt: yuv444p10le
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: bt709
-      -colorspace: bt709
 
 ---
 reports:
