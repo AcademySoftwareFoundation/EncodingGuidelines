@@ -114,13 +114,14 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 | --- | --- |
 | -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. See below for comparison. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
+| -usage allintra | Encodes for all intra-frames  |
 
 ### cpu-speed Comparison for libaom-av1
 
 To help pick appropriate values with the cpu-speed flag, we have run the [Test Framework](enctests/README.html) through one of the test media. You can see that values are 
 
 | ![](enctests/reference-results/aomav1-crf-test-encode_time.png)  | ![](enctests/reference-results/aomav1-crf-test-encode_time_zoom.png) |
-| This is showing cpu-speed values against encoding time. | Same graph of cpu-speed value against encoding time a 0-500 scale. |
+| This is showing cpu-speed values against encoding time. You can see that values of 1 and 2 are more than 15 minutes, where most other encoders are closer to the 30 second range. | Same graph of cpu-speed value against encoding time a 0-500 scale. This is showing cpu-used 5 is now just twice as slow. |
 
 | ![](enctests/reference-results/aomav1-crf-test-filesize.png) This is showing cpu-speed values against file size. |
 | ![](enctests/reference-results/aomav1-crf-test-vmaf_harmonic_mean.png) This is showing cpu-speed values against VMAF harmonic mean |
