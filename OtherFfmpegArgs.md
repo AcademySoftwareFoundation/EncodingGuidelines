@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Useful Ffmpeg Filters.
+title: Useful Ffmpeg Filters
 nav_order: 5.5
 parent: Encoding Overview
 ---
