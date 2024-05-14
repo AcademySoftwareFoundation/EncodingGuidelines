@@ -173,17 +173,6 @@ For more details see:
    * [Encoding Guide](Encoding.html#range)
 
 
-# Encoding as RGB. <a name="rgbencode"></a>
-You do not *have* to encode into YCrCb, h264 does support RGB encoding, which may be preferable in some situations.
-
-Using the encoder:
-```
--c:v libx264rgb
-```
-Will skip the conversion completely. Sadly this has no support in web browsers, but is supported by some players (e.g. RV). It is also limited to 8-bit.
-
-TODO Check about 10-bit encoding.
-
 For more details see:
    * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
    * [Encoding Guide](Encoding.html#range)
