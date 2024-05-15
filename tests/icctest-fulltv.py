@@ -88,6 +88,6 @@ listimages.append({'id': 'marciefull', 'label': 'Full Range', 'video': "marcie-f
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
-					introduction="<H1>Full range vs TV Range</H1><p> Comparing full range encoding vs. tv range, but also yuv420p vs. yuvj420p. We believe that this is well supported on web browsers, and dont see a downside to it. There may be cases where other applications do not read it. The code to generate these files is <a href='../%s'>here</a>. Full screen view is <a href='/tests/greyramp-fulltv/compare.html'>here</a></p>" % os.path.basename(__file__),
+					introduction="<H1>Full range vs TV Range</H1><p> Comparing full range encoding vs. tv range, but also yuv420p vs. yuvj420p. We believe that this is well supported on web browsers, and dont see a downside to it. There may be cases where other applications do not read it. The code to generate these files is <a href='../%s'>here</a>. Full screen view is <a href='/EncodingGuidelines/tests/greyramp-fulltv/compare.html'>here</a></p>" % os.path.basename(__file__),
 					videohtml = ' width=920 ')
 
