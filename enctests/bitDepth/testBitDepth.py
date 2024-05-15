@@ -8,7 +8,11 @@ import pyseq
 
 def seqToStr(array):
     if array:
-        return pyseq.Sequence(array).format("%R")
+        seq = pyseq.Sequence(array).format("%R")
+        if len(seq.split(",")) > 4:
+            s = seq.split(",")
+            seq = ",".join(s[:4]) + " ... " + ",".join(s[-4:])
+        return seq
     return ""
 
 tests = [
@@ -30,29 +34,29 @@ tests = [
           'otherargs': ' -profile:v hq', # hq
           'bits': 10
           }, 
-          {'testname': 'prores_vt_12_xq',
-          'pix_fmt': 'yuv444p12le',
-          'codec': 'prores_videotoolbox',
-          'otherargs': ' -profile:v xq', # 4444
-          'bits': 12
-          },
-          {'testname': 'prores_vt_10_xq',
+          {'testname': 'prores_videotoolbox_10_proxy',
           'pix_fmt': 'yuv444p10le',
           'codec': 'prores_videotoolbox',
-          'otherargs': ' -profile:v xq', # 4444
+          'otherargs': ' -profile:v proxy', # proxy
           'bits': 10
           },
-          {'testname': 'prores_vt_12_proxy',
-          'pix_fmt': 'yuv444p12le',
-          'codec': 'prores_videotoolbox',
-          'otherargs': ' -profile:v proxy', # 444
-          'bits': 12
-          },
-          {'testname': 'prores_vt_10_hq',
+          {'testname': 'prores_videotoolbox_10_hq',
           'pix_fmt': 'yuv444p10le',
           'codec': 'prores_videotoolbox',
           'otherargs': ' -profile:v hq', # 444
           'bits': 10
+          },
+          {'testname': 'prores_videotoolbox_10_4444',
+          'pix_fmt': 'yuv444p10le',
+          'codec': 'prores_videotoolbox',
+          'otherargs': ' -profile:v 4444', # 444
+          'bits': 10
+          },
+          {'testname': 'prores_videotoolbox_12_xq',
+          'pix_fmt': 'yuv444p12le',
+          'codec': 'prores_videotoolbox',
+          'otherargs': ' -profile:v xq', # 4444
+          'bits': 12
           },
            {'testname': 'dnxhd_10_dnxhr_444',
           'pix_fmt': 'yuv444p10le',
@@ -117,21 +121,42 @@ tests = [
           'otherargs': ' -quality good -crf 5  -b:v 0 ', # 444
           'bits': 12
           } ,
+           {'testname': 'libsvtav1-420-8',
+          'pix_fmt': 'yuv444p',
+          'codec': 'libsvtav1',
+          'ext': 'mp4',
+          'otherargs': '-preset 9 -crf 3 ', # 444
+          'bits': 8
+          },
            {'testname': 'libsvtav1-420-10',
           'pix_fmt': 'yuv444p10le',
           'codec': 'libsvtav1',
           'ext': 'mp4',
           'otherargs': '-preset 9 -crf 3 ', # 444
           'bits': 10
-          }  ,
-         {'testname': 'hevc_vt_8_main',
+          },
+           {'testname': 'libaom-444-10',
+          'pix_fmt': 'yuv444p10le',
+          'codec': 'libaom-av1',
+          'ext': 'mp4',
+          'otherargs': ' -cpu-used 4  -usage good -crf 20 -row-mt 1  ', # 444
+          'bits': 10
+          },
+           {'testname': 'libaom-444-12',
+          'pix_fmt': 'yuv444p12le',
+          'codec': 'libaom-av1',
+          'ext': 'mp4',
+          'otherargs': ' -cpu-used 4 -usage good -crf 20 -row-mt 1  ', # 444
+          'bits': 12
+          },
+         {'testname': 'hevc_videotoolbox_8_main',
           'pix_fmt': 'yuv420p',
           'out_pix_fmt': 'yuv444p',
           'codec': 'hevc_videotoolbox',
           'otherargs': ' -profile:v main -q:v 100 ', # 8-bit hevc
           'bits': 8
           },
-         {'testname': 'hevc_vt_10_main10',
+         {'testname': 'hevc_videotoolbox_10_main10',
           'pix_fmt': 'p010le',
           'out_pix_fmt': 'yuv444p10le',
           'codec': 'hevc_videotoolbox',
@@ -140,15 +165,16 @@ tests = [
          }
        ]
 
+
 resultfile = open("bitDepthResults.html", "w")
-print("<TABLE BORDER=1><TR><TH>Test Name</TH><th>Bit Depth</th><TH>Unique Values</TH><TH>Range of Valid Values</TH><TH>STDDEV < 0.1</TH><TH>Off by 1</TH><TH>Other Invalid</TH></TR>", file=resultfile)
+print("<TABLE BORDER=1><TR><TH>Test Name</TH><th>Bit Depth</th><TH>Unique Values</TH><TH>Range of Valid Values</TH><TH>a.std() > 0.0001</TH><TH>Off by 1</TH><TH>Other Invalid</TH><TH>Fffmpeg command</TH></TR>", file=resultfile)
 generatedfiles = {}
 
 for test in tests:
     test['frames'] = test.get('frames', int(pow(2, test['bits']))) # Make sure we have a frame for each possible value
     test['halfvalue'] = test.get('half', int(test['frames'] / 2)) # Half is used for the Croma values, to get mid-grey.
     test['ext'] = test.get("ext", "mov") # default to quicktime, but it could be other formats.
-    test['imagesize'] = test.get("imagesize", "720x480")
+    test['imagesize'] = test.get("imagesize", "256x120") # 256x120 is the minimum size for some of the prores profiles.
     test['basepath'] = "."
     if not "out_pix_fmt" in test:
         # Default to pix_fmt
@@ -238,5 +264,5 @@ for test in tests:
     #    print(test['testname'], count, " unique values, missing values:", missing[:8], "...", missing[-8:])
     #else:
     print(test['testname'], count, " unique values, valid values:", seqToStr(validvalues), " invalid values < 1:", seqToStr(nearlymissing), " missing by 1:", seqToStr(nearlymissing1), "other", seqToStr(missing))
-    print("<TR><TD>", test['testname'], "</TD><TD>", test['bits'],"</TD><TD>", count, "/", test['frames'], "</TD><TD>", seqToStr(validvalues), "</TD><TD>", seqToStr(nearlymissing), "</TD><TD>", seqToStr(nearlymissing1), "</TD><TD>", seqToStr(missing), "</TD><TD>",cmd,"</TD><TR>", file=resultfile)
+    print("<TR><TD>", test['testname'], "</TD><TD>", test['bits'],"</TD><TD>", count, "/", test['frames'], "</TD><TD>", seqToStr(validvalues), "</TD><TD>", seqToStr(nearlymissing), "</TD><TD>", seqToStr(nearlymissing1), "</TD><TD>", seqToStr(missing), "</TD><TD>",cmd,"</TD></TR>", file=resultfile)
 print("</TABLE>", file=resultfile)
