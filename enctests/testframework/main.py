@@ -737,7 +737,12 @@ def main():
     # Load test config file(s)
     test_configs = []
     if args.test_config_file:
-        test_configs.append(TestSuite(Path(args.test_config_file)))
+        if os.path.isdir(args.test_config_file):
+            files = [f for f in os.listdir(args.test_config_file) if f.endswith(".yml")]
+            for file in files:
+                test_configs.append(TestSuite(Path(os.path.join(args.test_config_file, file))))
+        else:
+            test_configs.append(TestSuite(Path(args.test_config_file)))
 
     else:
         test_configs.extend(
