@@ -143,3 +143,4 @@ enctests/sources/enc_sources/chimera_cars_srgb_jpg
 enctests/sources/enc_sources/chimera_wind
 enctests/results.old
 tmp
+enctests/wedge_results
