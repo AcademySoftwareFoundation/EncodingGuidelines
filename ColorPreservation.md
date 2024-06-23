@@ -152,4 +152,4 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
 ```
 
 
-Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to YCrCb conversion, if you are not resizing the image. For more details on this see [SWS Flags](/EncodeSwsScale.html) section.
+Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to YCrCb conversion, if you are not resizing the image. For more details on this see [SWS Flags](EncodeSwsScale.html) section.

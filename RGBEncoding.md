@@ -17,7 +17,7 @@ It does lower the compression efficiency a little, but eliminates any concern th
 | [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | rgb rgb-10 rgb-12 | All browsers | 
 | [VP9](EncodeVP9.html) | libvpx-vp9 | 8 10 12 | rgb rgb-10 rgb-12 | All Browsers | 
 | [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 | no | 
-| [DNxHD](EncodeDNxHD.html) | dnxhd | 8 10 | rgb | no | 
+| [DNxHD](EncodeDNXHD.html) | dnxhd | 8 10 | rgb | no | 
 
 
 ## H264 RGB Encoding
