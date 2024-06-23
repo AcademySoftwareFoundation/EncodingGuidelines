@@ -36,7 +36,7 @@ We are going to focus on codecs that match one of the following conditions:
 | [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All browsers | Yes |
 | [AV1](EncodeAv1.html) | libsvtav1 | 8 10 | yuv-4:2:0 | Chrome Firefox Edge | Yes |
 | [Prores](EncodeProres.html) | prores_ks | 10 | yuv-4:4:4 yuv-4:2:2 | Safari | ? |
-| [DNxHD](EncodeDNxHD.html) | dnxhd | 8 10 | yuv-4:2:2 yuv-4:4:4 rgb | no | ? |
+| [DNxHD](EncodeDNXHD.html) | dnxhd | 8 10 | yuv-4:2:2 yuv-4:4:4 rgb | no | ? |
 | [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 | no | no |
 
 

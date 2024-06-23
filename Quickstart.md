@@ -91,7 +91,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 
 | --- | --- |
 | **-profile:v 3** | Prores profile |
-| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](/EncodeProres.html#prores_ks--qscalev-comparison) |
+| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
 | **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the Quicktime |
 
@@ -124,12 +124,12 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  \
 
 | ---------           | ----------- |
 | **-profile:v 4444** | Prores profile for 4444 |
-| **-qscale:v 9**     | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](/EncodeProres.html#prores_ks--qscalev-comparison) |
+| **-qscale:v 9**     | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4444 |
 
 For more details see:
-   * [Prores](Encoding.md#prores)
-   * [YUV Conversion](ColorPreservation.md#yuv)
+   * [Prores](Encoding.html#prores)
+   * [YUV Conversion](ColorPreservation.html#yuv)
 
 # TV vs. Full range. <a name="tvfull"></a>
 All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantisation artifacts for 8-bit encoding (the standard for web playback).
