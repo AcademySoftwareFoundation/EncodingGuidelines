@@ -7,7 +7,7 @@ parent: Encoding Overview
 
 # SWS_Flags
 
-As mentioned previously, **we recommend doing any image resizing outside of ffmpeg**, especially if your sources are OpenEXR and you are going to do a colorspace conversion, prior to encoding, this will ensure that the filtering is done in linear space, which will produce less artifacts. However the scaling algorithms can still get called when remapping chroma from 4:4:4 to 4:2:2 (or 4:2:0). For more information on chroma subsampling, see [frame.io: chroma -subsampling guide]([https://workflow.frame.io/guide/chroma-subsampling](https://workflow.frame.io/guide/chroma-subsampling)). 
+As mentioned previously, **we recommend doing any image resizing outside of ffmpeg**, especially if your sources are OpenEXR and you are going to do a colorspace conversion, prior to encoding, this will ensure that the filtering is done in linear space, which will produce less artifacts. However the scaling algorithms can still get called when remapping chroma from 4:4:4 to 4:2:2 (or 4:2:0). For more information on chroma subsampling, see [frame.io: chroma -subsampling guide](https://workflow.frame.io/guide/chroma-subsampling). 
 
 There are two scaling libraries that can be used in ffmpeg, libswscale, and zscale. This guide is mainly focusing on the additional options of the libswscale library.
 

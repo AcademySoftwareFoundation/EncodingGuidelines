@@ -66,7 +66,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 
 ```
 
 | --- | --- |
-| **-crf 18** | This is the constant rate factor, controlling the default quality in the range 0-63. By default this is set to 50, which is a little on the low side, using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](CRF Comparison) below. |
+| **-crf 18** | This is the constant rate factor, controlling the default quality in the range 0-63. By default this is set to 50, which is a little on the low side, using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison-for-libsvtav1) below. |
 | **-preset 9** | Help with a trade-off between encoding speed and compression efficiency. Supported preset range in the 0-13. See below for comparisons |
 
 See also: 
@@ -121,7 +121,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 To help pick appropriate values with the cpu-speed flag, we have run the [Test Framework](enctests/README.html) through one of the test media. You can see that values are 
 
 | ![](enctests/reference-results/aomav1-crf-test-encode_time.png)  | ![](enctests/reference-results/aomav1-crf-test-encode_time_zoom.png) |
-| This is showing cpu-speed values against encoding time. You can see that values of 1 and 2 are more than 15 minutes, where most other encoders are closer to the 30 second range. | Same graph of cpu-speed value against encoding time a 0-500 scale. This is showing cpu-used 5 is now just twice as slow. |
+| This is showing cpu-speed values against encoding time. You can see that values of 1 and 2 are more than 15 minutes, where most other encoders are closer to the 30 second range. | Same graph of cpu-speed value against encoding time a 0-500 scale. This is showing cpu-used 5 is now just twice as slow, as Libsvtav1, but at 422 vs. 420 |
 
 | ![](enctests/reference-results/aomav1-crf-test-filesize.png) This is showing cpu-speed values against file size. |
 | ![](enctests/reference-results/aomav1-crf-test-vmaf_harmonic_mean.png) This is showing cpu-speed values against VMAF harmonic mean |
