@@ -60,7 +60,7 @@ The combination of this and in_color_matrix will mean the color encoding will ma
 Separately, if you are converting from exr's in other colorspaces, **please use [OCIO](https://opencolorio.org/) to do the color space conversions.** [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
 
 For more details see:
-   * [H264 Encoding](EncodeH264.html)
+   * [H264 Encoding](Encodeh264.html)
    * [YUV Conversion](ColorPreservation.html#yuv)
    * [Browser color issues](WebColorPreservation.html)
 
