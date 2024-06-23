@@ -9,14 +9,14 @@ parent: Codec Comparisons
 
 *This is under development*
 
-H.265 (High Efficiency Video Compression - HEVC) is one of the replacements for H.264. It allows for a reduction of file size compared to H.264 of 25-50% and supports frame formats up to 8K (UHDTV). It also has support for HDR, which we go into more [here](enctests/HDR_Encoding.md).
+H.265 (High Efficiency Video Compression - HEVC) is one of the replacements for H.264. It allows for a reduction of file size compared to H.264 of 25-50% and supports frame formats up to 8K (UHDTV). It also has support for HDR, which we go into more [here](enctests/HDR_Encoding.html).
 
 There is Browser support for H265 on Microsoft Edge, Google Chrome and Safari, but not Firefox.
 
 See [ffmpeg h265 docs](https://trac.ffmpeg.org/wiki/Encode/H.265)
 
 There are four HEVC encoders available to ffmpeg:
-   * [libx265](libx265)
+   * [libx265](#libx265)
    * [hevc_videotoolbox](#hevc_videotoolbox) - Available on OSX via the videotoolbox library.
    * [hevc_nvenc](#hevc_nvenc) - NVIDIA GPU encoder.
    * hevc_qsv - Intel Quick Sync Video Acceleration.

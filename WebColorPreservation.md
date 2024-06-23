@@ -47,7 +47,7 @@ For a detailed breakdown of what browsers support what flags see: [here](https:/
 # Transfer function tests (color_trc flag)
 This is setting the transfer function, which is typically going to be related to the gamma of the display. There are a number of existing gamma profiles, e.g. bt709 or sRGB, as well as gamma 2.2, and 2.8. Having said that, bt709 is frankly rather useless, consequently we recommend using sRGB as a default.
 
-For more details see: [here](tests/greramp-osx/ycrcbcompare.md)
+For more details see: [here](tests/greyramp-osx/compare.html)
 
 ## sRGB
 Using the `-color_trc iec61966-2-1` flag (the sRGB spec is defined as [iec61966-2-1](https://en.wikipedia.org/wiki/SRGB) ). This appears to be the most reliable one, working across all machines and browsers that support it. It's a shame that the flag has to be so cryptic. 
