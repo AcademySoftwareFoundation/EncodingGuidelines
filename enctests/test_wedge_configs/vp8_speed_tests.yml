@@ -1,0 +1,122 @@
+test_crf_yuv420p:
+    name: test_colorspace_yuv420p
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .webm
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        crf22: &base_args
+            -c:v: libvpx
+            -quality: good
+            -crf: 10
+            -b:v: 0
+            -pix_fmt: yuv420p
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        crf22_speed0:
+            << : *base_args
+            -speed: 0
+
+        crf22_speed1:
+            << : *base_args
+            -speed: 1
+
+        crf22_speed2:
+            << : *base_args
+            -speed: 2
+
+        crf22_speed3:
+            << : *base_args
+            -speed: 3
+
+        crf22_speed4:
+            << : *base_args
+            -speed: 4
+
+        crf22_speed0_best:
+            << : *base_args
+            -speed: 0
+            -quality: best
+
+        crf22_speed1_best:
+            << : *base_args
+            -speed: 1
+            -quality: best
+
+        crf22_speed2_best:
+            << : *base_args
+            -speed: 2
+            -quality: best
+
+        crf22_speed3_best:
+            << : *base_args
+            -speed: 3
+            -quality: best
+
+        crf22_speed4_best:
+            << : *base_args
+            -speed: 4
+            -quality: best
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+        range_y:  
+            - 40
+            - 55
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: vp9-speed-tests
+    title: VP9 Speed Comparison
+    description: This is a comparison of different Speed values for vp9 encoding.
+    directory: vp9-speed-encode
+    templatefile: basicmovie.html.jinja
+
