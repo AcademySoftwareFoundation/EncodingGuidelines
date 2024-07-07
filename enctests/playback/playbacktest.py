@@ -9,6 +9,8 @@ testdirs = ["../wedge_results/ffmpeg_version_7.0.1/darwin-arm64/intraframe_tests
 
 testdirs = ["../wedge_results/ffmpeg_version_7.0.1/darwin-arm64/intraframe_tests-encode", 
             "../wedge_results/ffmpeg_version_7.0/darwin-arm64/codec_tests-encode"]
+testdirs = ["../wedge_results/ffmpeg_version_7.0/linux-x86_64/intraframe_tests-encode", 
+            "../wedge_results/ffmpeg_version_7.0/linux-x86_64/codec_tests-encode"]
 
 
 def get_video_codec(filename):
