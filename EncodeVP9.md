@@ -20,7 +20,7 @@ VP9 has browser support in:
 
 VP9 is supported by mp4 and webm containers, no support exists for mov.
 
-Outside of the web browser, VP9 support is pretty much limited to Davinci Resolve, Houdini, Blender, ffmpeg and VLC.
+Outside of the web browser, VP9 support is pretty much limited to Davinci Resolve (Mac R/W, windows Read-only), Houdini, Blender, ffmpeg and VLC.
 
 The two codecs we will cover are:
 * [libvpx-vp9](#libvpx-vp9)
