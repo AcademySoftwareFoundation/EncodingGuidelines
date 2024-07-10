@@ -123,8 +123,9 @@ To help pick appropriate values with the cpu-speed flag, we have run the [Test F
 
 See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to ffmpeg:
    * [A 2nd generation guide to aomenc-av1](https://forum.doom9.org/showthread.php?t=183906)
-   * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty]((https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)
-   * https://github.com/master-of-zen/Av1an/blob/master/docs/Encoders/aomenc.md
+   * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty](https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)
+   * [Av1an](https://master-of-zen.github.io/Av1an/Encoders/aomenc.html)
+   * [AV1 Codec Wiki](https://wiki.x266.mov/docs/encoders/aomenc)
 
 ## librav1e
 [librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1. 
