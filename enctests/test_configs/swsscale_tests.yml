@@ -8,7 +8,7 @@ test_sws:
   name: test_sws
   sources:
 #  - ../sourceimages/smptehdbars_10.dpx.yml
-  - ../sourceimages/zoneplate_rgb16.png.yml
+  - ../sourceimages/zoneplate_rgb16.png
   - ../sourceimages/bellnuitHDTestchart.tif
   - ../sourceimages/SonyF35.StillLife_srgb.png
   - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
@@ -72,7 +72,7 @@ test_oiio:
   name: test_oiio
   sources:
 #  - ../sourceimages/smptehdbars_10.dpx.yml
-  - ../sourceimages/zoneplate_rgb16.png.yml
+  - ../sourceimages/zoneplate_rgb16.png
   - ../sourceimages/bellnuitHDTestchart.tif
   - ../sourceimages/SonyF35.StillLife_srgb.png
   - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
