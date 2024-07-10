@@ -36,12 +36,6 @@ It has a more limited support for pix-formats currently only supporting: yuv420p
 
 Supported pixel formats: yuv420p yuv420p10le
 
-Color modes - 
-
-| main | 8 or 10 bit | 4:2:0 |
-| high | 8 or 10 bit | 4:2:0 or 4:4:4 |
-| professional | 8 or 10 or 12 bit | 4:2:0 4:2:2 or 4:4:4 |
-
 Example encoding:
 
 <!---
