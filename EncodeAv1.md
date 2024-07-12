@@ -109,6 +109,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 | -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. See below for comparison. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 | -usage allintra | Encodes for all intra-frames  |
+| -arnr-strength | This decreases the amount of noise reduction you get, setting it to 1 helps preserve grain, and some noisy pictures |
+| -aom-params: tune-content=film | There is a tune parameter, but it just seems to make the picture grainy, and is not recommended | 
+
+Libaom has an aggressive denoiser, which can be pretty good for animated media, but can be a problem for live-action, particularly if there is noisy content, such as water or particles. CRF needs to be lowered to counter this, which does affect encoding speed.
 
 ### cpu-speed Comparison for libaom-av1
 
