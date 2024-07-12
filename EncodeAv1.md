@@ -109,6 +109,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 | -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. See below for comparison. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 | -usage allintra | Encodes for all intra-frames  |
+| -arnr-strength | This decreases the amount of noise reduction you get, setting it to 1 helps preserve grain, and some noisy pictures |
+| -aom-params: tune-content=film | There is a tune parameter, but it just seems to make the picture grainy, and is not recommended | 
+
+Libaom has an aggressive denoiser, which can be pretty good for animated media, but can be a problem for live-action, particularly if there is noisy content, such as water or particles. CRF needs to be lowered to counter this, which does affect encoding speed.
 
 ### cpu-speed Comparison for libaom-av1
 
@@ -128,9 +132,9 @@ See Also - note these are all guides for AOMENC (the AOM encoder that is part of
    * [AV1 Codec Wiki](https://wiki.x266.mov/docs/encoders/aomenc)
 
 ## librav1e
-[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1. 
+[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1, written in rust.
 
 Supported pixel formats:
 yuv420p yuvj420p yuv420p10le yuv420p12le yuv422p yuvj422p yuv422p10le yuv422p12le yuv444p yuvj444p yuv444p10le yuv444p12le
 
-There is no CRF flag, so we are ignoring this for now, but it could be promising down the road.
+There is no CRF flag, so you use the -gp flag, the recommended starting point is about 100. However, we have been unable to get an substantial speed improvement over AOM.
