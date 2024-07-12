@@ -12,15 +12,16 @@ test_vp8_color_420:
   description: vp9 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
-  name: test_vp9_color_444
+  name: test_vp8_color_420
   sources:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  suffix: .mp4
+  suffix: .mkv
   wedges:
     vp8-yuv420p10le-good: &basevp8
       -c:v: libvpx
       -quality: good
-      -crf: 0
+      -crf: 4
+      -b:v: 200M
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
       -color_range: tv
@@ -28,51 +29,21 @@ test_vp8_color_420:
       -colorspace: bt709
       -pix_fmt: yuv444p10le
       -strict: experimental
-
-    vp8-yuva420p:
-      << : *basevp8
-      -pix_fmt: yuva420p
   
     vp8-yuv420p-best:
       << : *basevp8
       -pix_fmt: yuv420p
 
----
-test_vp8_color_420:
-  app: ffmpeg
-  comparisontest:
-  - testtype: idiff
-    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
-  - testtype: assertresults
-    tests:
-    - assert: less
-      value: max_error
-      less: 0.00195
-  description: vp9 color tests of different pix-fmts
-  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
-    -y "{outfile}"
-  name: test_vp9_color_420
-  sources:
-  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
-  suffix: .mp4
-  wedges:
-    vp9-yuv420p10le-good: &basevp9
-      -c:v: libvpx-vp9
-      -quality: good
-      -crf: 0
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: bt709
-      -colorspace: bt709
-      -pix_fmt: yuv420p10le
-      -strict: experimental
+    vp8-yuv420p-bv0:
+      << : *basevp8
+      -pix_fmt: yuv420p
+      -b:v: 0
 
-    vp9-yuv420p-best:
-      << : *basevp9
-      -pix_fmt: yuv420p10le
-      -quality: best
-
+    vp8-yuv420p-qminmax:
+      << : *basevp8
+      -pix_fmt: yuv420p
+      -qmin: 0
+      -qmax: 50
 ---
 reports:
   description: This is testing vp9 color encoding.

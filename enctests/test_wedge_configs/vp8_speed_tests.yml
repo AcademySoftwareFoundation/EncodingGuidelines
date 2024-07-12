@@ -14,7 +14,7 @@ test_crf_yuv420p:
             -c:v: libvpx
             -quality: good
             -crf: 10
-            -b:v: 0
+            -b:v: 200M
             -pix_fmt: yuv420p
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
@@ -75,7 +75,7 @@ reports:
     - args:
         color: wedge
         #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
-        height: 400
+        height: 500
         barmode: group
         x: media
         y: psnr_y_harmonic_mean
@@ -87,7 +87,7 @@ reports:
     - args:
         color: wedge
         #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
-        height: 400
+        height: 500
         barmode: group
         x: media
         y: vmaf_harmonic_mean
@@ -99,7 +99,7 @@ reports:
     - args:
         color: wedge
         #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
-        height: 400
+        height: 500
         x: media
         barmode: group
         y: encode_time
@@ -108,7 +108,7 @@ reports:
     - args:
         color: wedge
         #colororder: ['veryfast', 'fast', 'medium', 'slow', 'slower', 'veryslow', 'placebo']
-        height: 400
+        height: 500
         x: media
         barmode: group
         y: filesize
