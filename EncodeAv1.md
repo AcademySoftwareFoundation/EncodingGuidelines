@@ -128,9 +128,9 @@ See Also - note these are all guides for AOMENC (the AOM encoder that is part of
    * [AV1 Codec Wiki](https://wiki.x266.mov/docs/encoders/aomenc)
 
 ## librav1e
-[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1. 
+[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1, written in rust.
 
 Supported pixel formats:
 yuv420p yuvj420p yuv420p10le yuv420p12le yuv422p yuvj422p yuv422p10le yuv422p12le yuv444p yuvj444p yuv444p10le yuv444p12le
 
-There is no CRF flag, so we are ignoring this for now, but it could be promising down the road.
+There is no CRF flag, so you use the -gp flag, the recommended starting point is about 100. However, we have been unable to get an substantial speed improvement over AOM.
