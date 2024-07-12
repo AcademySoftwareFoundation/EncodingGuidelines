@@ -102,6 +102,13 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
                                           av_inv_q(video_stream->avg_frame_rate), 
                                           video_stream->time_base);
 
+
+
+    int frames_decoded = 0;
+    double total_decoding_time = 0.0;
+    double first_frame_time = 0.0;
+    clock_t start_time = clock();
+
     if (av_seek_frame(format_ctx, video_stream_index, seek_timestamp, AVSEEK_FLAG_BACKWARD) < 0) {
         fprintf(stderr, "Error while seeking\n");
         av_frame_free(&frame);
@@ -113,37 +120,52 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
 
     avcodec_flush_buffers(codec_ctx);
 
-    int frames_decoded = 0;
-    double total_decoding_time = 0.0;
-    double first_frame_time = 0.0;
-
+    clock_t end_time = clock();
+    double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+    fprintf(stderr, "Decoder seek: %s\nFirstFrame: %.6f\n", decoder_library, frame_time);
+    start_time = clock();
     while (av_read_frame(format_ctx, packet) >= 0 && frames_decoded <= ADDITIONAL_FRAMES) {
+            clock_t end_time = clock();
+        double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+        fprintf(stderr, "avread_frame: %.6f\n", frame_time);
         if (packet->stream_index == video_stream_index) {
-            double start_time = get_time();
-
+            
+            clock_t send_start_time = clock();
             ret = avcodec_send_packet(codec_ctx, packet);
             if (ret < 0) {
                 fprintf(stderr, "Error sending packet for decoding\n");
                 break;
             }
 
+            clock_t end_time = clock();
+            double frame_time = ((double) (end_time - send_start_time)) / CLOCKS_PER_SEC;
+            fprintf(stderr, "send_packet: %.6f\n", frame_time);
+
             while (ret >= 0) {
+                clock_t receive_time_start = clock();
                 ret = avcodec_receive_frame(codec_ctx, frame);
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+                    fprintf(stderr, "ERROR: %d\n", ret);
                     break;
                 } else if (ret < 0) {
                     fprintf(stderr, "Error during decoding\n");
                     goto end;
                 }
 
-                double end_time = get_time();
-                double frame_time = end_time - start_time;
+                clock_t end_time = clock();
+                double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+                double receive_frame_time = ((double) (end_time - receive_time_start)) / CLOCKS_PER_SEC;
+
+                fprintf(stderr, "Decoder: %s  Frame: %02d  Duration:%.6f ReceiveDuration:%.6f\n", 
+                           decoder_library, frames_decoded, frame_time, receive_frame_time);
                 total_decoding_time += frame_time;
 
                 if (frames_decoded == 0) {
                     first_frame_time = frame_time;
                     printf("Decoder: %s\nFirstFrame: %.6f\n", 
                            decoder_library, frame_time);
+                    total_decoding_time = 0;
+                    start_time = clock(); // We reset, since we dont want the following times to include the first time.
                 }
 
                 frames_decoded++;
