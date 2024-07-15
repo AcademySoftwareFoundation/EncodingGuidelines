@@ -79,6 +79,14 @@ To help pick appropriate values with the CRF flag, we have run the [Test Framewo
 
 ### Preset values for libsvtav1
 
+| ![](enctests/reference-results/av1-preset-test-encode_time.png)  This is showing preset values against encoding time. |
+| ![](enctests/reference-results/av1-preset-test-filesize.png) This is showing preset values against file size. |
+| ![](enctests/reference-results/av1-preset-test-vmaf_harmonic_mean.png) This is showing preset values against VMAF harmonic mean |
+| ![](enctests/reference-results/av1-preset-test-psnr_y_harmonic_mean.png) This is showing preset values against PSNR harmonic mean |
+
+These graphs are with a CRF of 15 for four different media clips, its showing that the preset values are affecting the amount of compression, but not affecting the quality of the result, at the expense of the encoding time (at least up to preset 9).
+
+
 See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/CommonQuestions.md)
 
 
