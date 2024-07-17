@@ -1,5 +1,5 @@
-test_crf_yuv420p:
-    name: test_colorspace_yuv420p
+test_vp8_speed:
+    name: test_vp8_speed
     description: variations of colorspace yuv420p
     app: ffmpeg
     suffix: .webm
@@ -114,9 +114,9 @@ reports:
         y: filesize
       name: filesize.png
       type: bar
-    name: vp9-speed-tests
-    title: VP9 Speed Comparison
-    description: This is a comparison of different Speed values for vp9 encoding.
-    directory: vp9-speed-encode
+    name: vp8-speed-tests
+    title: VP8 Speed Comparison
+    description: This is a comparison of different Speed values for vp8 encoding.
+    directory: vp8-speed-encode
     templatefile: basicmovie.html.jinja
 
