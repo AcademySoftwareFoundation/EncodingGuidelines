@@ -71,12 +71,20 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
         return -1;
     }
 
+
+    
+
     if (avcodec_parameters_to_context(codec_ctx, codecpar) < 0) {
         fprintf(stderr, "Could not copy codec parameters to context\n");
         avcodec_free_context(&codec_ctx);
         avformat_close_input(&format_ctx);
         return -1;
     }
+    // Set threading options
+    codec_ctx->thread_count = 0; // Let FFmpeg decide the number of threads
+    codec_ctx->thread_type = FF_THREAD_FRAME | FF_THREAD_SLICE; // Use both frame and slice threading
+    codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
+    codec_ctx->flags |= AV_CODEC_FLAG_LOW_DELAY;
 
     if (avcodec_open2(codec_ctx, codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
@@ -124,8 +132,12 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
     double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
     fprintf(stderr, "Decoder seek: %s\nFirstFrame: %.6f\n", decoder_library, frame_time);
     start_time = clock();
+    struct timespec start_time2;
+   clock_gettime(CLOCK_MONOTONIC, &start_time2);
+
+
     while (av_read_frame(format_ctx, packet) >= 0 && frames_decoded <= ADDITIONAL_FRAMES) {
-            clock_t end_time = clock();
+        clock_t end_time = clock();
         double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
         fprintf(stderr, "avread_frame: %.6f\n", frame_time);
         if (packet->stream_index == video_stream_index) {
@@ -145,7 +157,7 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
                 clock_t receive_time_start = clock();
                 ret = avcodec_receive_frame(codec_ctx, frame);
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
-                    fprintf(stderr, "ERROR: %d\n", ret);
+                    //fprintf(stderr, "ERROR: %d\n", ret);
                     break;
                 } else if (ret < 0) {
                     fprintf(stderr, "Error during decoding\n");
@@ -155,9 +167,12 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
                 clock_t end_time = clock();
                 double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
                 double receive_frame_time = ((double) (end_time - receive_time_start)) / CLOCKS_PER_SEC;
-
-                fprintf(stderr, "Decoder: %s  Frame: %02d  Duration:%.6f ReceiveDuration:%.6f\n", 
-                           decoder_library, frames_decoded, frame_time, receive_frame_time);
+                struct timespec end_time2;
+                clock_gettime(CLOCK_MONOTONIC, &end_time2);
+                double elapsed_seconds = (end_time2.tv_sec - start_time2.tv_sec) +
+                         (end_time2.tv_nsec - start_time2.tv_nsec) / 1e9;
+                fprintf(stderr, "Decoder: %s  Frame: %02d  Duration:%.6f ReceiveDuration:%.6f Duration2:%.6f\n", 
+                           decoder_library, frames_decoded, frame_time, receive_frame_time, elapsed_seconds);
                 total_decoding_time += frame_time;
 
                 if (frames_decoded == 0) {
