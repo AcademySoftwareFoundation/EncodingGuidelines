@@ -19,6 +19,7 @@ VP9 has browser support in:
    * Safari - works for 8-bit and 10-bit but fails on 10-bit 444 and 12-bit RGB.
 
 VP9 is supported by mp4 and webm containers, no support exists for mov.
+VP9 does support an alpha channel (via the yuva420p pixfmt).
 
 Outside of the web browser, VP9 support is pretty much limited to Davinci Resolve (Mac R/W, windows Read-only), Houdini, Blender, ffmpeg and VLC.
 
@@ -58,7 +59,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 
 
 
-## Recomended Flags
+## Recommended Flags
 
 ```
 -crf 22 -quality good -b:v 0  -speed 2 -row-mt 1 
