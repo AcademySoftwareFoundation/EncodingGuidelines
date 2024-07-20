@@ -27,6 +27,7 @@ The main wiki page for this for now is [here](https://wiki.aswf.io/pages/viewpag
 	3. [AV1](EncodeAv1.html)
 	4. [HEVC/H.265](EncodeHevc.html)
 	5. [MJPEG](EncodeMJPEG.html)
+	6. [VP8](EncodeVP8.html)
 	6. [VP9](EncodeVP9.html)
 	7. [DNxHD](EncodeDNXHD.html)
 7. [Metadata NCLC/NCLX](ColorPreservation.html#nclc)
