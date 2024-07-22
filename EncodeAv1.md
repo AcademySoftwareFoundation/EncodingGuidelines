@@ -53,7 +53,7 @@ comparisontest:
 -->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 \
-        -pix_fmt yuv420p10le -crf 18 -preset 9  -svtav1-params tune=0 -sws_flags lanczos \
+        -pix_fmt yuv420p10le -crf 18 -preset 5  -svtav1-params tune=0 -sws_flags lanczos \
         -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
         -y outputfile.mp4
@@ -61,7 +61,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 
 
 | --- | --- |
 | **-crf 18** | This is the constant rate factor, controlling the default quality in the range 0-63. By default this is set to 50, which is a little on the low side, using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison-for-libsvtav1) below. |
-| **-preset 9** | Help with a trade-off between encoding speed and compression efficiency. Supported preset range in the 0-13. See below for comparisons |
+| **-preset 5** | Help with a trade-off between encoding speed and compression efficiency. Supported preset range in the 0-13. See below for comparisons |
 
 See also: 
    * [SVT-AV1 ffmpeg](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)

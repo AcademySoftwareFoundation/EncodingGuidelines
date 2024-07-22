@@ -1,5 +1,5 @@
-test_10bit:
-    name: test_10bit
+test_10bit_gop1:
+    name: test_10bit_gop1
     description: A comparison of different codecs, all 10-bit 420, with VMAF > 98.
     app: ffmpeg
     suffix: .mkv
@@ -15,6 +15,7 @@ test_10bit:
             -c:v: libx264
             -pix_fmt: yuv420p10le
             -crf: 16
+            -g: 1
             -preset: slow
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
@@ -43,9 +44,8 @@ test_10bit:
             << : *base_args
             -crf: 20
             -c:v: libsvtav1
-            -preset: slow
             -svtav1-params: tune=0
-            -preset: 9
+            -preset: 5
             -speed: 2
 
 ---

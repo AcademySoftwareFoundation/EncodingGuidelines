@@ -50,7 +50,7 @@ test_8_420:
             -c:v: libsvtav1
             -preset: slow
             -svtav1-params: tune=0
-            -preset: 9
+            -preset: 5
 
 test_8_422:
     name: test_8_422

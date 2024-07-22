@@ -29,7 +29,7 @@ test_8bit:
             -crf: 20
             -c:v: libsvtav1
             -svtav1-params: tune=0
-            -preset: 9
+            -preset: 5
             -speed: 2
 
         vp8:
