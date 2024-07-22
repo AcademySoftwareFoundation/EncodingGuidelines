@@ -14,7 +14,7 @@ FROM        base AS build
 
 WORKDIR     /tmp/workdir
 
-ENV         FFMPEG_VERSION=6.1 \
+ENV         FFMPEG_VERSION=7.0 \
     AOM_VERSION=v3.8.0 \
     CHROMAPRINT_VERSION=1.5.0 \
     FDKAAC_VERSION=0.1.5 \
@@ -190,7 +190,7 @@ RUN \
         cd ${DIR} && \
         curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
         tar -jx --strip-components=1 && \
-        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli  --bit-depth=10 && \
+        ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli --bit-depth=10 && \
         make && \
         make install && \
         rm -rf ${DIR}
@@ -210,7 +210,7 @@ RUN \
         #./multilib.sh && \
         #make -C 8bit install && \
         #./make-Makefiles.bash && \
-        cmake -G "Unix Makefiles"  -DHIGH_BIT_DEPTH=ON -DENABLE_CLI=OFF -DMAIN12=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" ../../source && \
+        cmake -G "Unix Makefiles" -DHIGH_BIT_DEPTH=ON -DENABLE_CLI=OFF -DMAIN12=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" ../../source && \
         make  && \
          make install && \
         rm -rf ${DIR}
@@ -643,7 +643,7 @@ RUN  \
         ./configure \
         --disable-debug \
         --disable-doc \
-        --enable-cuda-nvcc \
+        # --enable-cuda-nvcc \
         --enable-libnpp \
         --disable-ffplay \
         --enable-fontconfig \
