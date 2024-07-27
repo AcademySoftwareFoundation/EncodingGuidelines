@@ -30,7 +30,7 @@ comparisontest:
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p \
         -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
-        -frames:v 100 -c:v libx264 -preset slower \
+        -frames:v 100 -c:v libx264 -preset slower -crf 18 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
        -movflags faststart outputfile.mp4
 ```

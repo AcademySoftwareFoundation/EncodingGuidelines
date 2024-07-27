@@ -2,7 +2,7 @@ test_crf_yuv420p:
     name: test_colorspace_yuv420p
     description: variations of colorspace yuv420p
     app: ffmpeg
-    suffix: .mp4
+    suffix: .webm
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
@@ -10,12 +10,15 @@ test_crf_yuv420p:
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        p5_crf_10: &base_args
-            -c:v: libsvtav1
-            -crf: 10
-            -svtav1-params: tune=0
-            -preset: 5
-            -pix_fmt: yuv420p10le
+        crf_04: &base_args
+            -c:v: libvpx
+            -quality: good
+            -crf: 4
+            -qmin: 0
+            -qmax: 50
+            -b:v: 200M
+            -speed: 2
+            -pix_fmt: yuv420p
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
             -color_range: 1
@@ -23,33 +26,46 @@ test_crf_yuv420p:
             -color_primaries: 1
             -color_trc: 2
 
-        p5_crf_14:
+        crf_05:
+            << : *base_args
+            -crf: 5
+
+        crf_10:
+            << : *base_args
+            -crf: 10
+
+        crf_14:
             << : *base_args
             -crf: 14
 
-        p5_crf_16:
+        crf_16:
             << : *base_args
             -crf: 16
 
-        p5_crf_18:
+        crf_18:
             << : *base_args
             -crf: 18
 
-        p5_crf_20:
+        crf_20:
             << : *base_args
             -crf: 20
 
-        p5_crf_22:
+        crf_22:
             << : *base_args
             -crf: 22
 
-        p5_crf_25:
-            << : *base_args
-            -crf: 25
 
-        p5_crf_28:
+        crf_28:
             << : *base_args
             -crf: 28
+
+        crf_35:
+            << : *base_args
+            -crf: 35
+
+        crf_40:
+            << : *base_args
+            -crf: 40
 ---
 
 reports:
@@ -86,9 +102,9 @@ reports:
         markers: True
       name: filesize.png
       sortby: name
-    name: av1-crf-test
-    title: AV1 CRF Comparison
-    description: This is a comparison of different CRF values for libsvtav1 (av1) encoding.
-    directory: av1-crf-encode
+    name: vp8-crf-test
+    title: VP8 CRF Comparison
+    description: This is a comparison of different CRF values for vp8 encoding.
+    directory: vp8-crf-encode
     templatefile: basicmovie.html.jinja
 

@@ -144,3 +144,5 @@ enctests/sources/enc_sources/chimera_wind
 enctests/results.old
 tmp
 enctests/wedge_results
+framerate/circle_grad/jpg
+framerate/circle_grad/png

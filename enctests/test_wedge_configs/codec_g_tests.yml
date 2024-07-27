@@ -1,0 +1,275 @@
+test_vp9:
+    name: test_vp9
+    description: Comparing codecs with different GOP values
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_01: &base_args
+            -c:v: libvpx-vp9
+            -quality: good
+            -crf: 22
+            -b:v: 0
+            -g: 1
+            -speed: 2
+            -row-mt: 1
+            -pix_fmt: yuv420p10le
+            -sws_flags: area+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        medium_02:
+            << : *base_args
+            -g: 2
+
+        medium_03:
+            << : *base_args
+            -g: 3
+
+        medium_04:
+            << : *base_args
+            -g: 4
+
+        medium_05:
+            << : *base_args
+            -g: 5
+
+        medium_10:
+            << : *base_args
+            -g: 10
+
+        medium_20:
+            << : *base_args
+            -g: 20
+
+        medium_30:
+            << : *base_args
+            -g: 30
+
+        medium_50:
+            << : *base_args
+            -g: 50
+
+test_h264:
+    name: test_h264
+    description: Comparing codecs with different GOP values
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_01: &base_args2
+            -c:v: libx264
+            -crf: 16
+            -preset: slow
+            -g: 1
+            -pix_fmt: yuv420p10le
+            -sws_flags: area+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        medium_02:
+            << : *base_args2
+            -g: 2
+
+        medium_03:
+            << : *base_args2
+            -g: 3
+
+        medium_04:
+            << : *base_args2
+            -g: 4
+
+        medium_05:
+            << : *base_args2
+            -g: 5
+
+        medium_10:
+            << : *base_args2
+            -g: 10
+
+        medium_20:
+            << : *base_args2
+            -g: 20
+
+        medium_30:
+            << : *base_args2
+            -g: 30
+
+        medium_50:
+            << : *base_args2
+            -g: 50
+
+test_libsvtav1:
+    name: test_svtav1
+    description: Comparing codecs with different GOP values
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_01: &base_args3
+            -crf: 20
+            -c:v: libsvtav1
+            -svtav1-params: tune=0
+            -preset: 9
+            -speed: 2
+            -pix_fmt: yuv420p10le
+            -sws_flags: area+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        medium_02:
+            << : *base_args3
+            -g: 2
+
+        medium_03:
+            << : *base_args3
+            -g: 3
+
+        medium_04:
+            << : *base_args3
+            -g: 4
+
+        medium_05:
+            << : *base_args3
+            -g: 5
+
+        medium_10:
+            << : *base_args3
+            -g: 10
+
+        medium_20:
+            << : *base_args3
+            -g: 20
+
+        medium_30:
+            << : *base_args3
+            -g: 30
+
+        medium_50:
+            << : *base_args3
+            -g: 50
+
+
+test_h265:
+    name: test_h265
+    description: Comparing codecs with different GOP values
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_01: &base_args4
+            -c:v: libx265
+            -crf: 18
+            -preset: medium
+            -g: 1
+            -pix_fmt: yuv420p10le
+            -sws_flags: area+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        medium_02:
+            << : *base_args4
+            -g: 2
+
+        medium_03:
+            << : *base_args4
+            -g: 3
+
+        medium_04:
+            << : *base_args4
+            -g: 4
+
+        medium_05:
+            << : *base_args4
+            -g: 5
+
+        medium_10:
+            << : *base_args4
+            -g: 10
+
+        medium_20:
+            << : *base_args4
+            -g: 20
+
+        medium_30:
+            << : *base_args4
+            -g: 30
+
+        medium_50:
+            << : *base_args4
+            -g: 50
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: -c:v
+        height: 400
+        x: -g
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: name
+    - args:
+        color: -c:v
+        height: 400
+        x: -g
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: name
+    - args:
+        color: -c:v
+        height: 400
+        x: -g
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: name
+    - args:
+        color: -c:v
+        height: 400
+        x: -g
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: name
+    name: codec-g-test
+    title: Codec GOP Comparison
+    description: This is a comparison of different GOP values for different codecs.
+    directory: codec-g-encode
+    templatefile: basicmovie.html.jinja
+
