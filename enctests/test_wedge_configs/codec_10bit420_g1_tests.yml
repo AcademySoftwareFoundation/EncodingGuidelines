@@ -1,0 +1,99 @@
+test_10bit_gop1:
+    name: test_10bit_gop1
+    description: A comparison of different codecs, all 10-bit 420, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mkv
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        libx264-10bit: &base_args
+            -c:v: libx264
+            -pix_fmt: yuv420p10le
+            -crf: 16
+            -g: 1
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libx265-10bit:
+            << : *base_args
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 18
+
+        vp9-10bit:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 24
+            -row-mt: 1
+            -speed: 2
+
+        libsvtav1-10bit:
+            << : *base_args
+            -crf: 20
+            -c:v: libsvtav1
+            -svtav1-params: tune=0
+            -preset: 5
+            -speed: 2
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: codec-test
+    title: Comparison of different codecs for 10-bit yuv420 with gop-1
+    description: This is comparing different codecs, with approximately the same tuning factors such that vmaf > 98..
+    directory: codec-encode
+    templatefile: basicmovie.html.jinja
+

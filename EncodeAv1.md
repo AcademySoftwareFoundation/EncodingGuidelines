@@ -36,12 +36,6 @@ It has a more limited support for pix-formats currently only supporting: yuv420p
 
 Supported pixel formats: yuv420p yuv420p10le
 
-Color modes - 
-
-| main | 8 or 10 bit | 4:2:0 |
-| high | 8 or 10 bit | 4:2:0 or 4:4:4 |
-| professional | 8 or 10 or 12 bit | 4:2:0 4:2:2 or 4:4:4 |
-
 Example encoding:
 
 <!---
@@ -59,7 +53,7 @@ comparisontest:
 -->
 ```
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 \
-        -pix_fmt yuv420p10le -crf 18 -preset 9  -svtav1-params tune=0 -sws_flags lanczos \
+        -pix_fmt yuv420p10le -crf 18 -preset 5  -svtav1-params tune=0 -sws_flags lanczos \
         -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
         -y outputfile.mp4
@@ -67,7 +61,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 
 
 | --- | --- |
 | **-crf 18** | This is the constant rate factor, controlling the default quality in the range 0-63. By default this is set to 50, which is a little on the low side, using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison-for-libsvtav1) below. |
-| **-preset 9** | Help with a trade-off between encoding speed and compression efficiency. Supported preset range in the 0-13. See below for comparisons |
+| **-preset 5** | Help with a trade-off between encoding speed and compression efficiency. Supported preset range in the 0-13. See below for comparisons |
 
 See also: 
    * [SVT-AV1 ffmpeg](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)
@@ -84,6 +78,14 @@ To help pick appropriate values with the CRF flag, we have run the [Test Framewo
 
 
 ### Preset values for libsvtav1
+
+| ![](enctests/reference-results/av1-preset-test-encode_time.png)  This is showing preset values against encoding time. |
+| ![](enctests/reference-results/av1-preset-test-filesize.png) This is showing preset values against file size. |
+| ![](enctests/reference-results/av1-preset-test-vmaf_harmonic_mean.png) This is showing preset values against VMAF harmonic mean |
+| ![](enctests/reference-results/av1-preset-test-psnr_y_harmonic_mean.png) This is showing preset values against PSNR harmonic mean |
+
+These graphs are with a CRF of 15 for four different media clips, its showing that the preset values are affecting the amount of compression, but not affecting the quality of the result, at the expense of the encoding time (at least up to preset 9).
+
 
 See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/CommonQuestions.md)
 
@@ -115,6 +117,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
 | -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. See below for comparison. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 | -usage allintra | Encodes for all intra-frames  |
+| -arnr-strength | This decreases the amount of noise reduction you get, setting it to 1 helps preserve grain, and some noisy pictures |
+| -aom-params: tune-content=film | There is a tune parameter, but it just seems to make the picture grainy, and is not recommended | 
+
+Libaom has an aggressive denoiser, which can be pretty good for animated media, but can be a problem for live-action, particularly if there is noisy content, such as water or particles. CRF needs to be lowered to counter this, which does affect encoding speed.
 
 ### cpu-speed Comparison for libaom-av1
 
@@ -129,13 +135,14 @@ To help pick appropriate values with the cpu-speed flag, we have run the [Test F
 
 See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to ffmpeg:
    * [A 2nd generation guide to aomenc-av1](https://forum.doom9.org/showthread.php?t=183906)
-   * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty]((https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)
-   * https://github.com/master-of-zen/Av1an/blob/master/docs/Encoders/aomenc.md
+   * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty](https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)
+   * [Av1an](https://master-of-zen.github.io/Av1an/Encoders/aomenc.html)
+   * [AV1 Codec Wiki](https://wiki.x266.mov/docs/encoders/aomenc)
 
 ## librav1e
-[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1. 
+[librav1e](https://github.com/xiph/rav1e) is the Xiph encoder for AV1, written in rust.
 
 Supported pixel formats:
 yuv420p yuvj420p yuv420p10le yuv420p12le yuv422p yuvj422p yuv422p10le yuv422p12le yuv444p yuvj444p yuv444p10le yuv444p12le
 
-There is no CRF flag, so we are ignoring this for now, but it could be promising down the road.
+There is no CRF flag, so you use the -gp flag, the recommended starting point is about 100. However, we have been unable to get an substantial speed improvement over AOM.
