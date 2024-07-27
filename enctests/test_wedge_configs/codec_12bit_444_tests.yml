@@ -62,6 +62,7 @@ reports:
     graphs:
     - args:
         color: wedge
+        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         barmode: group
         x: media
@@ -70,6 +71,7 @@ reports:
       type: bar
     - args:
         color: wedge
+        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         barmode: group
         x: media
@@ -81,6 +83,7 @@ reports:
       type: bar
     - args:
         color: wedge
+        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         x: media
         barmode: group
@@ -89,6 +92,7 @@ reports:
       type: bar
     - args:
         color: wedge
+        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         x: media
         barmode: group

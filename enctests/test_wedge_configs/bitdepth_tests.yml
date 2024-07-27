@@ -45,21 +45,6 @@ test_bitdepth:
       -color_primaries: bt709
       -color_range: tv
       -color_trc: iec61966-2-1
-    vp9_8bit_crf22_yuv444:
-      -c:v: libvpx-vp9
-      -quality: good
-      -crf: 22
-      -b:v: 0
-      -speed: 2
-      -row-mt: 1
-      -pix_fmt: yuv444p
-      -colorspace: bt709
-      -sws_flags: spline+accurate_rnd+full_chroma_int
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-      -color_range: tv
-      -color_primaries: bt709
-      -color_range: tv
-      -color_trc: iec61966-2-1
     vp9_10bit:
       -c:v: libvpx-vp9
       -quality: good
@@ -85,14 +70,27 @@ test_bitdepth:
       -color_primaries: bt709
       -color_range: tv
       -color_trc: iec61966-2-1
+    libsvtav1_8bit_yuv420:
+        -crf: 18
+        -c:v: libsvtav1
+        -preset: slow
+        -svtav1-params: tune=0
+        -preset: 5
+        -speed: 2
+        -pix_fmt: yuv420p
+        -colorspace: bt709
+        -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+        -color_primaries: bt709
+        -color_range: tv
+        -color_trc: iec61966-2-1
     libsvtav1_10bit_yuv420:
         -crf: 18
         -c:v: libsvtav1
         -preset: slow
         -svtav1-params: tune=0
-        -preset: 9
+        -preset: 5
         -speed: 2
-        -pix_fmt: yuv420p12le
+        -pix_fmt: yuv420p10le
         -colorspace: bt709
         -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
         -color_primaries: bt709
@@ -115,6 +113,7 @@ reports:
   graphs:
   - args:
       color: wedge
+      colororder: ['libx264_8bit', 'libx264_10bit', 'vp9_8bit_crf22', 'vp9_8bit_crf22_yuv444', 'vp9_10bit', 'vp9_12bit', 'libsvtav1_8bit_yuv420', 'libsvtav1_10bit_yuv420', 'libaom-av1_10bit_yuv444']
       height: 400
       barmode: group
       x: media
@@ -123,6 +122,7 @@ reports:
     type: bar
   - args:
       color: wedge
+      colororder: ['libx264_8bit', 'libx264_10bit', 'vp9_8bit_crf22', 'vp9_8bit_crf22_yuv444', 'vp9_10bit', 'vp9_12bit', 'libsvtav1_8bit_yuv420', 'libsvtav1_10bit_yuv420', 'libaom-av1_10bit_yuv444']
       height: 400
       barmode: group
       x: media
@@ -134,6 +134,7 @@ reports:
     type: bar
   - args:
       color: wedge
+      colororder: ['libx264_8bit', 'libx264_10bit', 'vp9_8bit_crf22', 'vp9_8bit_crf22_yuv444', 'vp9_10bit', 'vp9_12bit', 'libsvtav1_8bit_yuv420', 'libsvtav1_10bit_yuv420', 'libaom-av1_10bit_yuv444']
       height: 400
       x: media
       barmode: group
@@ -142,6 +143,7 @@ reports:
     type: bar
   - args:
       color: wedge
+      colororder: ['libx264_8bit', 'libx264_10bit', 'vp9_8bit_crf22', 'vp9_8bit_crf22_yuv444', 'vp9_10bit', 'vp9_12bit', 'libsvtav1_8bit_yuv420', 'libsvtav1_10bit_yuv420', 'libaom-av1_10bit_yuv444']
       height: 400
       x: media
       barmode: group

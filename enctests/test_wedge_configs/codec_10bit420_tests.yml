@@ -53,6 +53,7 @@ reports:
     graphs:
     - args:
         color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
         height: 400
         barmode: group
         x: media
@@ -61,6 +62,7 @@ reports:
       type: bar
     - args:
         color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
         height: 400
         barmode: group
         x: media
@@ -72,6 +74,7 @@ reports:
       type: bar
     - args:
         color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
         height: 400
         x: media
         barmode: group
@@ -80,15 +83,16 @@ reports:
       type: bar
     - args:
         color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'vp9-10bit', 'libsvtav1-10bit']
         height: 400
         x: media
         barmode: group
         y: filesize
       name: filesize.png
       type: bar
-    name: codec-gop1-test
-    title: Comparison of different codecs
+    name: codec-10bit420-test
+    title: Comparison of different codecs at 10-bit yuv420
     description: This is comparing different codecs, with approximately the same tuning factors such that vmaf > 98..
-    directory: codec-gop1-encode
+    directory: codec-10bit420-encode
     templatefile: basicmovie.html.jinja
 
