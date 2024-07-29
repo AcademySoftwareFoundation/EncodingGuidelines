@@ -71,7 +71,7 @@ All the values are as expected.
 
 ### x265 HEVC
 
-x265 HEVC is struggling with flat color with quite a few values not generating a uniform value.
+x265 HEVC is struggling with flat color with quite a few values not generating a uniform value, unless lossless is used.
 
 ### VP9 
 
@@ -79,11 +79,11 @@ All the values are as expected.
 
 ### libsvtav1
 
-Something rather odd going on here, the 10-bit encode is generating only 475 unique values rather than 1024. Looking at the values, it seems like there is some sort of rounding going on here.
+All the values are as expected.
 
 ### libaom-av1
 
-Is slightly better, with 866 unique values, but many of them are off by one or more. At 12-bit the results are similar.
+Is slightly better, with 866 unique values, but many of them are off by one or more. At 12-bit the results are similar. Using lossless will maintain all values (as expected). 
 
 
 Click [here](bitDepthResults.html) to see the full page table.
