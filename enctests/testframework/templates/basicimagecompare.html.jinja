@@ -16,7 +16,7 @@
 
   <img src='{{ config.name }}-vmaf_harmonic_mean.png' /></BR>
   
-  Testing with ffmpeg version: {{ testinfo.ffmpeg_version}}
+  Testing with ffmpeg version: {{ testinfo.ffmpeg_version }} on OS:{{testinfo.host_config.os}} {{testinfo.host_config.os_version}} Architecture: {{testinfo.host_config.processor}}.
 
   {% for media_name, test in tests.items() %}
 
