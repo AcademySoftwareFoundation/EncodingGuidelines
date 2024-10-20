@@ -13,6 +13,10 @@ We welcome suggestions and improvements.
 
 The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
 
+{: .highlight }
+We would like to encourage the usage of [VP9](EncodeVP9.html) and [AV1](EncodeAv1.html) to encourage the usage of patent-free codecs, for more information on this see the white-paper [Next-gen codecs for VFX Community](https://docs.google.com/document/d/1EJ7Q_HhjL0ELNdjz5AgnPrraUvy7XCo52LL08WxgjtA/edit#heading=h.9rkn78tjmq48).  
+
+
 ## Why is this needed.
 
 There are a lot of excellent guides out there. But few addressing the needs of the VFX community. 
@@ -45,6 +49,7 @@ You can see the default ffmpeg conversion introduces a dramatic color shift that
 	3. [AV1](EncodeAv1.html)
 	4. [HEVC/H.265](EncodeHevc.html)
 	5. [MJPEG](EncodeMJPEG.html)
+	6. [VP8](EncodeVP8.html)
 	6. [VP9](EncodeVP9.html)
 	7. [DNxHD](EncodeDNXHD.html)
 7. [Metadata NCLC/NCLX](ColorPreservation.html#nclc)

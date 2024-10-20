@@ -107,6 +107,12 @@ tests = [
           'otherargs': ' -profile:v main444-12 -preset slower -crf 2 ', # 444
           'bits': 12
           } ,
+           {'testname': 'hevc-slower-444-12-lossless',
+          'pix_fmt': 'yuv444p12le',
+          'codec': 'hevc',
+          'otherargs': ' -profile:v main444-12 -preset ultrafast -x265-params lossless=1 ', # 444
+          'bits': 12
+          } ,
            {'testname': 'vp9-slower-444-10',
           'pix_fmt': 'yuv444p10le',
           'codec': 'libvpx-vp9',
@@ -125,28 +131,42 @@ tests = [
           'pix_fmt': 'yuv444p',
           'codec': 'libsvtav1',
           'ext': 'mp4',
-          'otherargs': '-preset 9 -crf 3 ', # 444
+          'otherargs': '-preset 5 -crf 3 ', # 444
           'bits': 8
           },
            {'testname': 'libsvtav1-420-10',
           'pix_fmt': 'yuv444p10le',
           'codec': 'libsvtav1',
           'ext': 'mp4',
-          'otherargs': '-preset 9 -crf 3 ', # 444
+          'otherargs': '-preset 3 -crf 2 ', # 444
           'bits': 10
           },
-           {'testname': 'libaom-444-10',
+         {'testname': 'libaom-444-10',
           'pix_fmt': 'yuv444p10le',
           'codec': 'libaom-av1',
           'ext': 'mp4',
-          'otherargs': ' -cpu-used 4  -usage good -crf 20 -row-mt 1  ', # 444
+          'otherargs': ' -cpu-used 4  -usage good -crf 15 -row-mt 1  ', # 444
           'bits': 10
           },
            {'testname': 'libaom-444-12',
           'pix_fmt': 'yuv444p12le',
           'codec': 'libaom-av1',
           'ext': 'mp4',
-          'otherargs': ' -cpu-used 4 -usage good -crf 20 -row-mt 1  ', # 444
+          'otherargs': ' -cpu-used 4 -usage good -crf 15 -row-mt 1  ', # 444
+          'bits': 12
+          },
+           {'testname': 'libaom-444-10-lossless',
+          'pix_fmt': 'yuv444p10le',
+          'codec': 'libaom-av1',
+          'ext': 'mp4',
+          'otherargs': ' -aom-params: lossless=1 -cpu-used 4  -usage good -crf 20 -row-mt 1  ', # 444
+          'bits': 10
+          },
+           {'testname': 'libaom-444-12-lossless',
+          'pix_fmt': 'yuv444p12le',
+          'codec': 'libaom-av1',
+          'ext': 'mp4',
+          'otherargs': '-aom-params: lossless=1  -cpu-used 4 -usage good -crf 20 -row-mt 1  ', # 444
           'bits': 12
           },
          {'testname': 'hevc_videotoolbox_8_main',

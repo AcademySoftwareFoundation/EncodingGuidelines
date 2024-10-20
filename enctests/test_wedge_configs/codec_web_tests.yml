@@ -1,0 +1,401 @@
+test_8_420:
+    name: test_8_420
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test420.png
+    wedges:
+        libx264: &base_args
+            -c:v: libx264
+            -pix_fmt: yuv420p
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp8:
+            << : *base_args
+            -c:v: libvpx
+            -quality: good
+            -b:v: 200M
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        vp9:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libsvtav1:
+            << : *base_args
+            -crf: 18
+            -c:v: libsvtav1
+            -preset: slow
+            -svtav1-params: tune=0
+            -preset: 5
+
+test_8_422:
+    name: test_8_422
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test422.png
+    wedges:
+        libx264: &base_args_test_8_422
+            -c:v: libx264
+            -pix_fmt: yuv422p
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_8_422
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_8_422
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+
+        libaom-av1:
+            << : *base_args_test_8_422
+            -crf: 18
+            -c:v: libaom-av1
+            -cpu-used: 3
+            -row-mt: 1
+
+test_8_444:
+    name: test_8_444
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test444.png
+    wedges:
+        libx264: &base_args_test_8_444
+            -c:v: libx264
+            -pix_fmt: yuv444p
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_8_444
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_8_444
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+
+        libaom-av1:
+            << : *base_args_test_8_444
+            -crf: 18
+            -c:v: libaom-av1
+            -cpu-used: 3
+            -row-mt: 1
+
+test_10_420:
+    name: test_10_420
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test420.png
+    wedges:
+        libx264: &base_args_test_10_420
+            -c:v: libx264
+            -pix_fmt: yuv420p10le
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_10_420
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_10_420
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libsvtav1:
+            << : *base_args_test_10_420
+            -crf: 18
+            -c:v: libsvtav1
+            -svtav1-params: tune=0
+            -preset: 9
+
+test_10_422:
+    name: test_10_422
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test422.png
+    wedges:
+        libx264: &base_args_test_10_422
+            -c:v: libx264
+            -pix_fmt: yuv422p10le
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_10_422
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_10_422
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libaom-av1:
+            << : *base_args_test_10_422
+            -crf: 18
+            -c:v: libaom-av1
+            -cpu-used: 3
+            -row-mt: 1
+
+test_10_444:
+    name: test_10_444
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test444.png
+    wedges:
+        libx264: &base_args_test_10_444
+            -c:v: libx264
+            -pix_fmt: yuv444p10le
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_10_444
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_10_444
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libaom-av1:
+            << : *base_args_test_10_444
+            -crf: 18
+            -c:v: libaom-av1
+            -cpu-used: 3
+            -row-mt: 1
+
+
+test_12_420:
+    name: test_12_420
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test420.png
+    wedges:
+        libx264: &base_args_test_12_420
+            -c:v: libx264
+            -pix_fmt: yuv420p12le
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_12_420
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_12_420
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libsvtav1:
+            << : *base_args_test_12_420
+            -crf: 18
+            -c:v: libsvtav1
+            -svtav1-params: tune=0
+            -preset: 9
+
+test_12_422:
+    name: test_12_422
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test422.png
+    wedges:
+        libx264: &base_args_test_12_422
+            -c:v: libx264
+            -pix_fmt: yuv422p12le
+            -crf: 18
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        vp9:
+            << : *base_args_test_12_422
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+
+        libx265:
+            << : *base_args_test_12_422
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libaom-av1:
+            << : *base_args_test_12_422
+            -crf: 18
+            -c:v: libaom-av1
+            -cpu-used: 3
+            -row-mt: 1
+
+test_12_444:
+    name: test_12_444
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - ../sourceimages/test444.png
+    wedges:
+        vp9: &base_args_test_12_444
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 22
+            -row-mt: 1
+            -speed: 2
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        libx265:
+            << : *base_args_test_12_444
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 20
+
+        libaom-av1:
+            << : *base_args_test_12_444
+            -crf: 18
+            -c:v: libaom-av1
+            -cpu-used: 3
+            -row-mt: 1

@@ -19,23 +19,27 @@ def _exportGraph(config, reportconfig, graph, alltests):
   """
   graphargs = graph.get("args")
 
+  sortvalues = True
   if "colororder" in graphargs:
     colororder = graphargs.pop("colororder")
     for test in alltests:
       test['colororder'] = colororder.index(test[graphargs['color']])
     df = pd.DataFrame(alltests)
     df = df.sort_values(by='colororder')
+    sortvalues = False
   else:
     df = pd.DataFrame(alltests)
     # This sorts the filenames.
   if graph.get("type", "line") == "bar":
-    df = df.sort_values(by=graph.get("sortby", "name"))
+    if sortvalues:
+      df = df.sort_values(by=graph.get("sortby", "name"))
     fig = px.bar(df, **graphargs) 
   else:
     # If we have a a line graph, we need to make sure the data values are sorted by x.
     # but we still want to sort the categories, so we explicitly pull out the possible categories
     # to make sure they are sorted.
-    df = df.sort_values(by=graphargs.get("x"))
+    if sortvalues:
+      df = df.sort_values(by=graphargs.get("x"))
     labels = {}
     for test in alltests:
        labels[test[graphargs['color']]] = test[graphargs['color']]

@@ -32,7 +32,7 @@ test_mp4:
             -crf: 22
             -preset: slow
             -svtav1-params: tune=0
-            -preset: 9
+            -preset: 5
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
             -color_primaries: tv

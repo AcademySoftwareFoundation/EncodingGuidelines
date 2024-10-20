@@ -1,0 +1,122 @@
+test_mp4:
+    name: test_mkv
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mkv
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
+    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        libx264-10bit: &base_args
+            -c:v: libx264
+            -pix_fmt: yuv444p10le
+            -crf: 10
+            -g: 1
+            -preset: slow
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libaom-av1-10bit:
+            -c:v: libaom-av1
+            -crf: 14
+            -cpu-used: 6
+            -row-mt: 1
+            -arnr-strength: 1
+            -arnr-max-frames: 4
+            -usage: allintra
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        libvpx-vp9-10bit:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -quality: good
+            -b:v: 0
+            -crf: 26
+            -g: 1
+            -row-mt: 1
+            -speed: 2
+
+        libx265-10bit:
+            << : *base_args
+            -c:v: libx265
+            -tag:v: hvc1
+            -preset: medium
+            -crf: 12
+
+        dnxhd: &base_args2
+            -c:v: dnxhd
+            -pix_fmt: yuv444p10le
+            -profile:v: dnxhr_444
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 2
+
+        prores_ks:
+            << : *base_args2
+            -c:v: prores_ks
+            -qscale:v: 10
+            -profile:v: 4
+            -vendor: apl0
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: codec-test
+    title: Intraframe codecs 10-bit yuv444
+    description: This is comparing different codecs, with approximately the same tuning factors such that vmaf > 98..
+    directory: codec-encode
+    templatefile: basicmovie.html.jinja
+
