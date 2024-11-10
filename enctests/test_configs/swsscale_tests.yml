@@ -7,7 +7,8 @@ test_sws:
     -y "{outfile}"
   name: test_sws
   sources:
-#  - ../sourceimages/smptehdbars_10.dpx.yml
+
+#  - ../sourceimages/smptehdbars_10.dpx
   - ../sourceimages/zoneplate_rgb16.png
   - ../sourceimages/bellnuitHDTestchart.tif
   - ../sourceimages/SonyF35.StillLife_srgb.png
@@ -71,7 +72,7 @@ test_oiio:
     -o "{outfile}"
   name: test_oiio
   sources:
-#  - ../sourceimages/smptehdbars_10.dpx.yml
+#  - ../sourceimages/smptehdbars_10.dpx
   - ../sourceimages/zoneplate_rgb16.png
   - ../sourceimages/bellnuitHDTestchart.tif
   - ../sourceimages/SonyF35.StillLife_srgb.png
