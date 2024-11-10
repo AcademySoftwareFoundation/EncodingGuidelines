@@ -654,18 +654,6 @@ RUN  \
 
 
 RUN \
-        echo "Downloading ACES." && \
-        DIR=/opt/aces && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://github.com/colour-science/OpenColorIO-Configs/archive/refs/tags/v1.2.tar.gz && \
-        tar zxvf v1.2.tar.gz OpenColorIO-Configs-1.2/aces_1.2 && \
-        rm v1.2.tar.gz && \
-        mkdir -p /usr/share/ocio/aces_1.2 && \
-        cp -vr ${DIR}/OpenColorIO-Configs-1.2/aces_1.2 /usr/share/ocio && \
-        rm -rf ${DIR}
-
-RUN \
         ldd ${PREFIX}/bin/ffmpeg | grep opt/ffmpeg | cut -d ' ' -f 3 | xargs -i cp {} /usr/local/lib64/ && \
         for lib in /usr/local/lib64/*.so.*; do ln -s "${lib##*/}" "${lib%%.so.*}".so; done && \
         cp ${PREFIX}/bin/* /usr/local/bin/ && \
@@ -690,7 +678,7 @@ RUN \
 # Need to add /opt/rh/httpd24/root/usr/lib64/ to get git clone to work.
 
 ENV         LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/opt/rh/httpd24/root/usr/lib64/ \
-            OCIO=/usr/share/ocio/aces_1.2/config.ocio \
+            OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1 \
             VMAF_MODEL=${VMAF_LIB_DIR}
 
 RUN pip install OpenTimelineIO
