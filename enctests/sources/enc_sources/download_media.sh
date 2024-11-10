@@ -47,7 +47,7 @@ if [ ! -f chimera_wind_srgb/chimera_wind_srgb.66600.png ]
 then
     mkdir chimera_wind_srgb
 	echo Building chimera_wind png
-	oiiotool -v --framepadding 6 --parallel-frames --frames 66600-667199 -i chimera_wind/Chimera_DCI4k5994p_HDR_P3PQ_@@@@@@.tif --resize 1920x1080  --powc 2 -d uint16 -o chimera_wind_srgb/chimera_wind_srgb.#.png
+	oiiotool -v --framepadding 6 --parallel-frames --frames 66600-66799 -i chimera_wind/Chimera_DCI4k5994p_HDR_P3PQ_@@@@@@.tif --resize 1920x1080  --powc 2 -d uint16 -o chimera_wind_srgb/chimera_wind_srgb.#.png
 	# rm -rf chimera_wind
 fi
 
