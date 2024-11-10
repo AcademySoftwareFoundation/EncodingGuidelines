@@ -81,6 +81,7 @@ reports:
     graphs:
     - args:
         color: wedge
+        colororder: ['libx264-10bit', 'libx265-10bit', 'libvpx-vp9-10bit', 'libaom-av1-10bit', 'prores_ks', 'dnxhd']
         height: 400
         barmode: group
         x: media
