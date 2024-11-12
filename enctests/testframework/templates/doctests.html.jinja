@@ -11,7 +11,7 @@
 <body>
   <H1>{{config.title}}</H1>
   <P>{{config.description}}</P>
-  Testing with ffmpeg version: {{ testinfo.ffmpeg_version}}
+  Testing with ffmpeg version: {{ testinfo.ffmpeg_version }} on OS:{{testinfo.host_config.os}} {{testinfo.host_config.os_version}} Architecture: {{testinfo.host_config.processor}}.
 
   {% for media_name, test in tests.items() %}
 
