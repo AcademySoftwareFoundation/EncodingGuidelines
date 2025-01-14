@@ -104,7 +104,7 @@ We explicitly define the X265 parameters (see [x265](https://x265.readthedocs.io
 | colormatrix=bt2020nc | UTagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
 | range=limited | Set the source range to be tv range. |
 | master-display=G\(13250,34500\)B\(7500,3000\)R\(34000,16000\)WP\(15635,16450\)L\(10000000,1\) | SMPTE ST 2086 mastering display color volume SEI info, specified as a string which is parsed when the stream header Essentially setting the X,Y display primaries for rec2020 along with the Whitepoint, and the Max,min luminance values in units of 0.00001 NITs. See the above docs for more info. |
-| max-cll=2000,400 | Set the Maximum content light level (in this case 2000 nits = max content light level and 400 = the MaxFall - the maxiumum frame-average light level) |
+| max-cll=2000,400 | Set the Maximum content light level (in this case 2000 nits = max content light level and 400 = the MaxFall - the maximum frame-average light level) |
 
 ## HLG
 
