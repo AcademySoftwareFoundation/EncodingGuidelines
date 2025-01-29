@@ -1,6 +1,6 @@
 # Now we build the web page.
 
-# This is a super basic html template file, trying to keep the number of dependancies down for now.
+# This is a super basic html template file, trying to keep the number of dependencies down for now.
 
 header = """
 <html>
