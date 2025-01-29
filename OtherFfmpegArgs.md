@@ -49,7 +49,7 @@ TODO - this needs testing, to confirm filter quality.
 See: [https://trac.ffmpeg.org/wiki/Scaling](https://trac.ffmpeg.org/wiki/Scaling) for more info.
 
 
-## Concatination of video files.
+## Concatenation of video files.
 
 See: [https://trac.ffmpeg.org/wiki/Concatenate](https://trac.ffmpeg.org/wiki/Concatenate)
 
@@ -202,4 +202,3 @@ Convert 360 videos between various formats.
 ### vectorscope
 
 [vectorscope](https://www.ffmpeg.org/ffmpeg-filters.html#toc-vectorscope)
-
