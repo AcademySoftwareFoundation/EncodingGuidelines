@@ -2,12 +2,16 @@ test_htj2k:
     name: test_htj2k
     description: variations of HTJ2k qstep
     app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
     suffix: .mov
     encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb_ppm_12/chimera_cars_srgb.%05d.ppm.yml
-    - sources/enc_sources/chimera_coaster_srgb_ppm_12/chimera_coaster_srgb.%06d.ppm.yml
-    - sources/enc_sources/chimera_fountains_srgb_ppm_12/chimera_fountains_srgb.%05d.ppm.yml
+    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         htj2k-uncompressed: &base_args
@@ -23,12 +27,16 @@ test_mov:
     name: test_htj2k
     description: variations of HTJ2k qstep
     app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
     suffix: .mov
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb_ppm_12/chimera_cars_srgb.%05d.ppm.yml
-    - sources/enc_sources/chimera_coaster_srgb_ppm_12/chimera_coaster_srgb.%06d.ppm.yml
-    - sources/enc_sources/chimera_fountains_srgb_ppm_12/chimera_fountains_srgb.%05d.ppm.yml
+    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         libx265-12bit-ultrafast: 
@@ -95,5 +103,5 @@ reports:
     title: Comparing qstep values for ojph
     description: Comparing different qstep values.
     directory: htj2k-qstep-encode
-    templatefile: basicmovie.html.jinja
+    templatefile: basicmovie2.html.jinja
 

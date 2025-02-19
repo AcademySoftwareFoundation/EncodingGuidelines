@@ -1,13 +1,14 @@
-test_options:
-    name: test_options
+test_options4k:
+    name: test_options4k
     description: variations of HTJ2k options
     app: ffmpeg
     suffix: .mp4
     encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
-    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
-    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster/chimera_coaster.%06d.tif.yml
+    #- sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
+    #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         block64: &base_args
@@ -37,8 +38,8 @@ test_options:
 
         num_decomps3b32:
             << : *base_args
-            -num_decomps: 3
-            -block_size: '{32,32}'
+            -jph:num_decomps: 3
+            -jph:block_size: '32,32'
 
         prog_orderLRCP:
             << : *base_args
@@ -94,6 +95,6 @@ reports:
     name: htj2k-options-test
     title: Comparing htj2k compression options
     description: Comparing different htj2k compression options
-    directory: htj2k-options-encode
+    directory: htj2k4k-options-encode
     templatefile: basicmovie.html.jinja
 
