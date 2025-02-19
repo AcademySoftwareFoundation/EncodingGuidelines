@@ -8,6 +8,8 @@ from pathlib import Path
 from functools import partial
 import subprocess
 
+# This allows you to do the encoding of a j2h file in a different app, and then wrap the result into a movie file with ffmpeg.
+
 def process_file(args, tmpoutputdir, file_path):
     input_path = Path(file_path)
     output_path = Path(os.path.join(tmpoutputdir, os.path.basename(str(input_path)))).with_suffix('.j2c')
@@ -57,7 +59,7 @@ def main():
     max_workers = 4
 
     outputdir = os.path.dirname(outputfile)
-    tmpoutputdir = os.path.join(outputdir, "tmpj2kfiles")
+    tmpoutputdir = os.path.join(outputdir, "tmpj2kfiles", os.path.basename(outputfile))
     if not os.path.exists(tmpoutputdir):
         os.makedirs(tmpoutputdir)
     
@@ -96,6 +98,7 @@ def main():
                 '-start_number', args.start_frame, '-i', intputfilej2k, '-vcodec', 'copy', 
                 '-color_range',  '1', '-colorspace', '1', '-color_primaries', '1', 
                 '-color_trc', '2', '-y', outputfile]
+        print("Running:", " ".join(cmd))
         subprocess.run(cmd)
         # Now we remove the intermediate files.
 
