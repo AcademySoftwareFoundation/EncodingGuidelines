@@ -95,6 +95,14 @@ def parse_args():
              'in encoding tests'
     )
 
+
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        default=False,
+        help='Be verbose in the progress.'
+    )
+
     parser.add_argument(
         '--force',
         action='store_true',
@@ -268,8 +276,8 @@ def vmaf_compare(source_clip, test_ref, testname, comparisontestinfo, source_pat
 [distorted][reference]\
 libvmaf=log_fmt=json:\
 log_path=compare_log.json:\
-feature="name=psnr":\
-model=path={vmaf_model}\" \
+feature="name=psnr":feature="name=cambi":feature="name=vif":\
+model=path={vmaf_model}:n_threads=4\" \
 -f null -\
 '
 
@@ -328,6 +336,137 @@ model=path={vmaf_model}\" \
 
     results = {
         'vmaf': raw_results['pooled_metrics'].get('vmaf'),
+        'psnr': raw_results['pooled_metrics'].get('psnr'),   # FFmpeg < 5.1
+        'testresult': "Completed"
+    }
+
+    # TODO Do this as a pretty print.
+    print(f"--- VMAF output\n {raw_results['pooled_metrics']}", file=log_file_object)
+
+    # FFmpeg >= 5.1 have split psnr results
+    if not results['psnr']:
+        for key in ['psnr_y', 'psnr_cb', 'psnr_cr']:
+            results[key] = raw_results['pooled_metrics'].get(key)
+
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(results)
+
+def vmaf3_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the sourceclip to the test_ref using vmaf. This is slightly different to the vmaf_compare
+    since we convert the source clip into a y4m format. 
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    vmaf - the vmaf comparison metric.
+    psnr - the PSNR dictionary.
+    psnr_y - The PSNR lumanance value.
+    psnr_cb, psnr_cr - the PNSR chrominance.
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+
+    vmaf_cmd = '\
+{ffmpeg_bin} \
+{reference} \
+-i "{distorted}" \
+-vframes {duration} \
+-lavfi \
+\"[0:v]setpts=PTS-STARTPTS[reference]; \
+[1:v]setpts=PTS-STARTPTS[distorted]; \
+[distorted][reference]\
+libvmaf=log_fmt=json:\
+log_path={compare_log}:\
+feature="name=psnr|name=cambi|name=vif|name=float_ms_ssim":\
+model=path={vmaf_model}:n_threads=6\" \
+-f null -\
+'
+
+    if not distorted.exists():
+        results = {'success': False,
+            'testresult': "No movie generated."
+        }
+    
+        enc_meta = get_test_metadata_dict(test_ref)
+        enc_meta['results'].update(results)
+        return
+
+    # Get settings from metadata used as basis for encoded media
+    source_meta = get_source_metadata_dict(source_clip)
+    input_args = ''
+    framerange=''
+    if source_meta.get('images'):
+        input_args = f"-start_number {source_meta.get('in')}"
+        endframe = int(source_meta.get('in'))+int(source_meta.get('duration')) - 1
+        framerange = f".[{source_meta.get('in')}-{endframe}]"
+
+    reference = f'{input_args} -i "{source_path}" '
+
+    env = os.environ
+
+    y4m_source = f"{source_path}{framerange}{comparisontestinfo.get('ext', '.y4m')}"
+    y4m_convert_cmd = '{ffmpeg_bin} {reference} {ffmpegflags} -y {y4m_source}'
+    y4mcmd = y4m_convert_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN, 
+        reference=reference.replace("\\", "/"),
+        ffmpegflags=comparisontestinfo.get("ffmpegflags", "-strict -1 -pix_fmt yuv444p16 "),
+        y4m_source=y4m_source.replace("\\", "/"))
+    if not os.path.exists(y4m_source) or os.path.getsize(y4m_source) == 0:
+        print(f'Creating y4m file command: {y4mcmd}', file=log_file_object)
+        log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
+        process = subprocess.Popen(
+                shlex.split(y4mcmd),
+                stdout=log_file_object,
+                stderr=log_file_object,
+                universal_newlines=True,
+                env=env
+            )
+        process.wait()
+
+    # Assuming all encoded files are video files for now
+    reference = f"-i {y4m_source}"
+    compare_log = Path(f"{distorted.as_posix()}-compare_log.json")
+
+    cmd = vmaf_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN,
+        reference=reference.replace("\\", "/"),
+        compare_log=str(compare_log),
+        distorted=distorted.as_posix(),
+        duration=source_meta.get('duration'),
+        vmaf_model=get_nearest_model(int(source_meta.get('width', 1920)))
+    )
+    print(f'VMAF command: {cmd}', file=log_file_object)
+    log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
+
+    if compare_log.exists():
+        # Make sure we remove the old one, so that we know one is generated.
+        compare_log.unlink()
+    process = subprocess.Popen(
+            shlex.split(cmd),
+            stdout=log_file_object,
+            stderr=log_file_object,
+            universal_newlines=True,
+            env=env
+        )
+    process.wait()
+    if not compare_log.exists():
+        results = {'result': 'Failed to run'}
+        enc_meta = get_test_metadata_dict(test_ref)
+        enc_meta['results'].update(results)
+        print(f"\tFailed to generate {compare_log.name}")
+        print(f"Failed to generate {compare_log.name}", file=log_file_object)
+        return
+    
+    with compare_log.open(mode='rb') as f:
+        raw_results = json.load(f)
+
+    results = {
+        'vmaf': raw_results['pooled_metrics'].get('vmaf'),
+        'cambi': raw_results['pooled_metrics'].get('cambi'),
+        'float_ms_ssim': raw_results['pooled_metrics'].get('float_ms_ssim'),
         'psnr': raw_results['pooled_metrics'].get('psnr'),   # FFmpeg < 5.1
         'testresult': "Completed"
     }
@@ -654,7 +793,7 @@ def run_tests(args, config_data, timeline):
             )
 
             # Run tests and get a dict of resulting media references
-            results = encoder.run_wedges()
+            results = encoder.run_wedges(args.verbose)
 
             comparisontests = test_config.get("comparisontest", [{'testtype': 'vmaf'}])
 
@@ -688,6 +827,8 @@ def run_tests(args, config_data, timeline):
                             identity_compare(identity_distort_clips, source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "vmaf":
                             vmaf_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        elif testtype == "vmaf3":
+                            vmaf3_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "idiff":
                             idiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "assertresults":

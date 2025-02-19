@@ -41,7 +41,7 @@ class FFmpegEncoder(ABCTestEncoder):
             destination
         )
 
-    def run_wedges(self) -> dict:
+    def run_wedges(self, verbose: bool) -> dict:
         # The results dictionary is passed to source clip's list of available
         # media references. Key is test name and value is media reference
         results = {}
@@ -72,6 +72,8 @@ class FFmpegEncoder(ABCTestEncoder):
             # Do the encoding
             log_file = Path(out_file.parent, out_file.stem + ".log")
             with open(log_file, "w") as log_file_object:
+                if verbose:
+                    print(f'ffmpeg command: {cmd}')
                 print(f'ffmpeg command: {cmd}', file=log_file_object)
                 log_file_object.flush()
                 process = subprocess.Popen(
