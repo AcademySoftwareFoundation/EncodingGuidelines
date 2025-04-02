@@ -54,6 +54,18 @@ def main():
     args, otherargs = parser.parse_known_args()
     outputfile = otherargs[-1]
     otherargs = otherargs[:-1] #Strip of the last argument.
+    
+    # Need to look for arguments ending in "=" so we know to merge with next arg.
+    # so ["Qfactor=", "40", "Clevels=", "5"] would become ['Qfactor=40', 'Clevels=5']
+    newotherargs = []
+    while otherargs:
+        print("OTHERARGS:", otherargs)
+        arg = otherargs.pop(0)
+        if arg.endswith("="):
+            nextarg = otherargs.pop(0)
+            arg = arg[:-1] + "=" + nextarg
+        newotherargs.append(arg)
+    otherargs = newotherargs
 
     # Configure number of workers
     max_workers = 4
