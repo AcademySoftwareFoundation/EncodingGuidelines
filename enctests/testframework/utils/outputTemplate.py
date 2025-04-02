@@ -107,6 +107,8 @@ def processTemplate(config, timeline):
             merge_test_info['psnr_cb'] = {}
             merge_test_info['vmaf_harmonic_mean'] = -1
             merge_test_info['psnr_y_harmonic_mean'] = -1
+            merge_test_info['cambi_harmonic_mean'] = -1
+            merge_test_info['float_ms_ssim_harmonic_mean'] = -1
 
           merge_test_info['filesize'] = merge_test_info['filesize']
 

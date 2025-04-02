@@ -56,9 +56,9 @@
         <td align=right>{{ "{:,}".format(enc_info.filesize) }}</TD>
         <TD align=right>{{enc_info.vmaf_harmonic_mean |e }}</TD>
         <TD align=right>{{enc_info.vmaf_min |e }}</TD>
-         <TD align=right>{{enc_info.psnr_y.harmonic_mean |e }}</TD>
-         <TD align=right>{{enc_info.cambi.harmonic_mean |e }}</TD>
-         <TD align=right>{{enc_info.float_ms_ssim.harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.psnr_y_harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.cambi_harmonic_mean |e }}</TD>
+         <TD align=right>{{enc_info.float_ms_ssim_harmonic_mean |e }}</TD>
         <TD>{{enc_info.encode_arguments | e}}</TD>
     </TR>
   {% endfor %}
