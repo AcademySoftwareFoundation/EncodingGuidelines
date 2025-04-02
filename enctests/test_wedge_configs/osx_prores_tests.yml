@@ -50,19 +50,6 @@ test_osx-prores:
             -profile:v: xq
             -pix_fmt: yuv444p10le
 
-        prores_videotoolbox_p416le:
-            << : *base_args
-            -c:v: prores_videotoolbox
-            -profile:v: 4444
-            -pix_fmt: p416le
-
-
-        prores_videotoolbox_p416le:
-            << : *base_args
-            -c:v: prores_videotoolbox
-            -profile:v: xq
-            -pix_fmt: p416le
-
         prores_videotoolbox_yuv444p12le:
             << : *base_args
             -c:v: prores_videotoolbox
@@ -112,6 +99,14 @@ reports:
         barmode: group
         y: filesize
       name: filesize.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
       type: bar
     name: osx-videotoolbox
     title: OSX Videotoolbox Comparison
