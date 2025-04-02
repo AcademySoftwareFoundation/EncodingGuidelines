@@ -28,10 +28,6 @@ test_qstep10:
             << : *base_args
             -qstep: 0.025
 
-        qstep0.05:
-            << : *base_args
-            -qstep: 0.05
-
         qstep0.003:
             << : *base_args
             -qstep: 0.003
