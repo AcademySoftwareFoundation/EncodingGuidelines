@@ -645,7 +645,7 @@ RUN  \
         --disable-doc \
         # --enable-cuda-nvcc \
         --enable-libnpp \
-        --disable-ffplay \
+        # --disable-ffplay \
         --enable-fontconfig \
         --enable-cuda-nvcc \
         --enable-gpl \
