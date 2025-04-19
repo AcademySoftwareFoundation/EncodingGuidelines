@@ -224,7 +224,7 @@ rm v1.2.tar.gz
 export OCIO=$PWD/OpenColorIO-Configs-1.2/aces_1.2/config.ocio
         
 # Set VMAF_Models NOTE, should probably change this.
-export VMAF_MODEL=/opt/homebrew/Cellar/libvmaf/2.3.1/share/libvmaf/model/
+export VMAF_MODEL_DIR=/opt/homebrew/Cellar/libvmaf/3.0.0/share/libvmaf/model/
 
 # Run tests (for now)
 .venv/bin/python main.py

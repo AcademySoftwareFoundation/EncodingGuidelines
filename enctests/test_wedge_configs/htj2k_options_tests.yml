@@ -1,0 +1,99 @@
+test_options:
+    name: test_options
+    description: variations of HTJ2k options
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        block64: &base_args
+            -qstep: 0.025
+            -num_decomps: 5
+            -block_size: '{64,64}'
+            -precincts: '{128,128},{256,256}'
+            -prog_order: CPRL
+            -colour_trans: 'true'
+            # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
+
+        block32:
+            << : *base_args
+            -block_size: '{32,32}'
+
+        precincts128:
+            << : *base_args
+            -precincts: '{128,128}'
+
+        precincts256:
+            << : *base_args
+            -precincts: '{256,256}'
+
+        num_decomps3:
+            << : *base_args
+            -num_decomps: 3
+
+        num_decomps3b32:
+            << : *base_args
+            -num_decomps: 3
+            -block_size: '{32,32}'
+
+        prog_orderLRCP:
+            << : *base_args
+            -prog_order: LRCP
+
+        bit_depth10:
+            << : *base_args
+            -bit_depth: 10
+
+        bit_depth12:
+            << : *base_args
+            -bit_depth: 12
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: htj2k-options-test
+    title: Comparing htj2k compression options
+    description: Comparing different htj2k compression options
+    directory: htj2k-options-encode
+    templatefile: basicmovie.html.jinja
+

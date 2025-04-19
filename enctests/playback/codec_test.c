@@ -8,9 +8,9 @@
 #include <libavutil/timestamp.h>
 #include <libswscale/swscale.h>
 
-#define ADDITIONAL_FRAMES 30
+#define ADDITIONAL_FRAMES 100
 
-double get_time() {
+double get_time(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return ts.tv_sec + ts.tv_nsec / 1e9;
@@ -36,7 +36,7 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
         return -1;
     }
 
-    for (int i = 0; i < format_ctx->nb_streams; i++) {
+    for (unsigned int i = 0; i < format_ctx->nb_streams; i++) {
         if (format_ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
             video_stream_index = i;
             break;
@@ -82,9 +82,9 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
     }
     // Set threading options
     codec_ctx->thread_count = 0; // Let FFmpeg decide the number of threads
-    codec_ctx->thread_type = FF_THREAD_FRAME | FF_THREAD_SLICE; // Use both frame and slice threading
-    codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
-    codec_ctx->flags |= AV_CODEC_FLAG_LOW_DELAY;
+    // codec_ctx->thread_type = FF_THREAD_FRAME; // | FF_THREAD_SLICE; // Use both frame and slice threading
+    // codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
+    // codec_ctx->flags |= AV_CODEC_FLAG_LOW_DELAY;
 
     if (avcodec_open2(codec_ctx, codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
@@ -116,6 +116,8 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
     double total_decoding_time = 0.0;
     double first_frame_time = 0.0;
     clock_t start_time = clock();
+    double seek_start = get_time();
+
 
     if (av_seek_frame(format_ctx, video_stream_index, seek_timestamp, AVSEEK_FLAG_BACKWARD) < 0) {
         fprintf(stderr, "Error while seeking\n");
@@ -128,12 +130,16 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
 
     avcodec_flush_buffers(codec_ctx);
 
+    double seek_end = get_time();
+    printf("SeekTime: %.3f\n", seek_end - seek_start);
+
     clock_t end_time = clock();
     double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
     fprintf(stderr, "Decoder seek: %s\nFirstFrame: %.6f\n", decoder_library, frame_time);
     start_time = clock();
     struct timespec start_time2;
-   clock_gettime(CLOCK_MONOTONIC, &start_time2);
+    clock_gettime(CLOCK_MONOTONIC, &start_time2);
+    double start_decode = get_time();
 
 
     while (av_read_frame(format_ctx, packet) >= 0 && frames_decoded <= ADDITIONAL_FRAMES) {
@@ -171,13 +177,15 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
                 clock_gettime(CLOCK_MONOTONIC, &end_time2);
                 double elapsed_seconds = (end_time2.tv_sec - start_time2.tv_sec) +
                          (end_time2.tv_nsec - start_time2.tv_nsec) / 1e9;
-                fprintf(stderr, "Decoder: %s  Frame: %02d  Duration:%.6f ReceiveDuration:%.6f Duration2:%.6f\n", 
+                fprintf(stderr, "Decoder: %s  Frame: %02d  Duration:%.6f ReceiveDuration:%.6f Elapsed:%.6f\n", 
                            decoder_library, frames_decoded, frame_time, receive_frame_time, elapsed_seconds);
                 total_decoding_time += frame_time;
 
                 if (frames_decoded == 0) {
+                    double first_frame_end = get_time();
+                    printf("FirstFrame: %.6f\n", first_frame_end - seek_start);
                     first_frame_time = frame_time;
-                    printf("Decoder: %s\nFirstFrame: %.6f\n", 
+                    printf("Decoder: %s\nFirstFrameClock: %.6f\n", 
                            decoder_library, frame_time);
                     total_decoding_time = 0;
                     start_time = clock(); // We reset, since we dont want the following times to include the first time.
@@ -196,9 +204,17 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
     }
 
 end:
+
+
     if (frames_decoded > 1) {
+        double end_decode = get_time();
+        double decode_duration = end_decode - start_decode;
+        printf("totalDecodeTime: %.6f\n", decode_duration);
+        printf("Average: %.6f\n", decode_duration/frames_decoded);
+        printf("FPS: %.6f\n", frames_decoded/decode_duration);
+
         double avg_subsequent_frame_time = (total_decoding_time - first_frame_time) / (frames_decoded - 1);
-        printf("Average: %.6f\n", 
+        printf("AverageClock: %.6f\n", 
                avg_subsequent_frame_time);
     }
 

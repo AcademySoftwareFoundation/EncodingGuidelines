@@ -82,6 +82,7 @@ def otio2htmlmain():
             continue
         
         print("Outputfile:", output_file)
+        print("destination_folder:", destination_folder)
 
         timeline = otio.adapters.read_from_file(str(output_file))
         # Create an encoder instance, since this will configure the destination folder.

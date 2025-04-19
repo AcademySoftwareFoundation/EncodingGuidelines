@@ -1,0 +1,8 @@
+images: true
+path: SPARKS_ACES_%05d.exr
+width: 3840
+height: 2160
+pix_fmt: rgb48be
+in: 6700
+duration: 200
+rate: 25.0
