@@ -94,7 +94,8 @@ def benchmark(allfileinfo):
                            "raw": str(_raw)})
     return results
             #print(f"{fileinfo['file']} {fileinfo['codec']} {decode['flags']} utime:{utime} stime:{stime} rtime:{rtime} maxess:{maxrss}")
-allfiles = scanFiles('../codec-encode')
+#allfiles = scanFiles('../codec-encode')
+allfiles = scanFiles("../wedge_results/ffmpeg_version_7.1/darwin-arm64/htj2k4koiio_options_tests-encode/")
 results = benchmark(allfiles)
 
 resultsbyname = {}

@@ -5,11 +5,14 @@ import os
 import re
 from datetime import datetime
 
-testdirs = ["../wedge_results/ffmpeg_version_7.1/linux-x86_64/intraframe_tests-encode", 
-            "../wedge_results/ffmpeg_version_7.1/linux-x86_64/codec_tests-encode", 
-            "../wedge_results/ffmpeg_version_7.1/linux-x86_64/htj2k_options_tests-encode"]
+testdirs = [#"../wedge_results/ffmpeg_version_7.1/linux-x86_64/intraframe_tests-encode", 
+            #"../wedge_results/ffmpeg_version_7.1/linux-x86_64/codec_tests-encode", 
+            #"../wedge_results/ffmpeg_version_7.1/linux-x86_64/htj2k_options_tests-encode", 
+            "../wedge_results/ffmpeg_version_7.1/darwin-arm64/htj2k_options_tests-encode",
+            "../wedge_results/ffmpeg_version_7.1/darwin-arm64/htj2k4koiio_options_tests-encode/",
+]
 
-def run_decode_test(input_file, iterations=3):
+def run_decode_test(input_file, iterations=10):
     """
     Run decode performance test on a video file
     """
@@ -23,6 +26,7 @@ def run_decode_test(input_file, iterations=3):
             'ffmpeg',
             '-hide_banner',
             '-benchmark',
+            '-stream_loop', '4',
             '-i', input_file,
             '-f', 'null',
             '-'
@@ -128,22 +132,28 @@ def generate_report(results):
     """
     report = ["Codec Decode Performance Report", "=" * 30, ""]
     
+    report.append("File\torigfile\twedge\tIteration\tDuration (s)\tSpeed\tFPS")
+
     for file_name, data in results.items():
-        report.append(f"\nFile: {file_name}")
-        report.append("-" * 50)
+        #report.append(f"\nFile: {file_name}")
+        #report.append("-" * 50)
+
+        basename = os.path.basename(file_name).split(".")[0]
+        tokens = basename.split("-")
+        wedge = tokens[-1]
+        origfile = tokens[0]
         
         # Add codec info
-        if 'codec_info' in data and 'streams' in data['codec_info']:
-            for stream in data['codec_info']['streams']:
-                if stream.get('codec_type') == 'video':
-                    report.append(f"Codec: {stream.get('codec_name', 'Unknown')}")
-                    report.append(f"Resolution: {stream.get('width', '?')}x{stream.get('height', '?')}")
-                    report.append(f"Framerate: {stream.get('r_frame_rate', 'Unknown')}")
+        # if 'codec_info' in data and 'streams' in data['codec_info']:
+        #     for stream in data['codec_info']['streams']:
+        #         if stream.get('codec_type') == 'video':
+        #             report.append(f"Codec: {stream.get('codec_name', 'Unknown')}")
+        #             report.append(f"Resolution: {stream.get('width', '?')}x{stream.get('height', '?')}")
+        #             report.append(f"Framerate: {stream.get('r_frame_rate', 'Unknown')}")
         
         # Add decode test results
-        report.append("\nDecode Test Results:")
-        report.append("Iteration | Duration (s) | Speed | FPS")
-        report.append("-" * 40)
+        #report.append("\nDecode Test Results:")
+        #report.append("-" * 40)
         
         avg_duration = 0
         avg_speed = 0
@@ -151,7 +161,8 @@ def generate_report(results):
         tests = data['decode_tests']
         
         for test in tests:
-            report.append(f"{test['iteration']:^9} | {test['duration']:^11.3f} | {test['speed']:^5.2f}x | {test['fps']:^5.2f}")
+            # report.append(f"{test['iteration']:^9} | {test['duration']:^11.3f} | {test['speed']:^5.2f}x | {test['fps']:^5.2f}")
+            report.append(f"{file_name}\t{origfile}\t{wedge}\t{test['iteration']}\t{test['duration']}\t{test['speed']}\t{test['fps']}")
             avg_duration += test['duration']
             avg_fps += test['fps']
             if test['speed']:
@@ -161,9 +172,9 @@ def generate_report(results):
         avg_speed /= len(tests)
         avg_fps /= len(tests)
         
-        report.append("-" * 40)
-        report.append(f"Average   | {avg_duration:^11.3f} | {avg_speed:^5.2f}x | {avg_fps:^5.2f}")
-        report.append("")
+        #report.append("-" * 40)
+        #report.append(f"{file_name}\t{avg_duration:^11.3f}\t{avg_speed:^5.2f}\t{avg_fps:^5.2f}")
+        #report.append("")
     
     return "\n".join(report)
 

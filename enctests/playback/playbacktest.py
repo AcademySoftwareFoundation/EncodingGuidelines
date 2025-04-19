@@ -9,9 +9,12 @@ testdirs = ["../wedge_results/ffmpeg_version_7.0.1/darwin-arm64/intraframe_tests
 
 testdirs = ["../wedge_results/ffmpeg_version_7.0.1/darwin-arm64/intraframe_tests-encode", 
             "../wedge_results/ffmpeg_version_7.0/darwin-arm64/codec_tests-encode"]
-testdirs = ["../wedge_results/ffmpeg_version_7.1/linux-x86_64/intraframe_tests-encode", 
-            "../wedge_results/ffmpeg_version_7.1/linux-x86_64/codec_tests-encode", 
-            "../wedge_results/ffmpeg_version_7.1/linux-x86_64/htj2k_options_tests-encode"]
+testdirs = [#"../wedge_results/ffmpeg_version_7.1/linux-x86_64/intraframe_tests-encode", 
+            #"../wedge_results/ffmpeg_version_7.1/linux-x86_64/codec_tests-encode", 
+            #"../wedge_results/ffmpeg_version_7.1/linux-x86_64/htj2k_options_tests-encode", 
+            #"../wedge_results/ffmpeg_version_7.1/darwin-arm64/htj2k_options_tests-encode"]
+            "../wedge_results/ffmpeg_version_7.1/darwin-arm64/htj2k4koiio_options_tests-encode/",
+]
 
 
 def get_video_codec(filename):
@@ -107,7 +110,7 @@ codecmap = {
   'jpeg2000': ['jpeg2000'],
 }
 
-fields=['basename', 'Decoder', 'filesize', 'gopsize', 'FirstFrame', 'FirstFrame%30', 'FirstFrame%60', 'Average','Average%30', 'Average%60']
+fields=['basename', 'Decoder', 'filesize', 'gopsize', 'FirstFrame', 'FirstFrame%30', 'FirstFrame%60', 'Average','Max FPS', 'Average%30', 'Average%60']
 
 files = sorted(files, key=lambda f:os.path.basename(f).split("-")[0])
 print(files)
@@ -139,6 +142,7 @@ for file in files:
     
     for codeclib in codecmap[codec]:
           command = ['./codec_test', file, codeclib, '80']
+          print("Running:", " ".join(command))
           output = subprocess.run(command, capture_output=True, text=True, check=True).stdout
           # Parse the JSON output
           print("Got output:", output, " from ", codeclib)
@@ -150,6 +154,7 @@ for file in files:
           print(output, data)
           info['FirstFrame'] = data['FirstFrame']
           info['Average'] = data['Average']
+          info['Max FPS'] = data['FPS']
           info['Decoder'] = codeclib
           print("info:", info['Decoder'])
           info['FirstFrame%30'] = 100.0 * data['FirstFrame'] / (1/30.0)
