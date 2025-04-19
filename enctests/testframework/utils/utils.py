@@ -1,7 +1,7 @@
 import os
 import json
 import shlex
-import pyseq
+import fileseq
 from pathlib import Path
 from subprocess import run, CalledProcessError
 
@@ -114,6 +114,7 @@ def create_media_reference(path, source_clip, is_sequence=False):
             pyseq.get_sequences(parentdir),
             key=lambda s: s.frames()
         )
+        seq2 = fileseq.FindFileSequencesOnDisk(parentdir)
         available_range = otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(
                 seq.start(), rate

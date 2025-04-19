@@ -4,7 +4,7 @@ from copy import deepcopy
 import time
 import yaml
 import json
-import pyseq
+import fileseq
 import shlex
 import argparse
 import subprocess
@@ -178,10 +178,10 @@ def scantree(args, path, suffix=None):
     """Recursively yield DirEntry objects for given directory."""
     for entry in os.scandir(path):
         if entry.is_dir(follow_symlinks=False):
-            sequences = pyseq.get_sequences(entry.path)
+            sequences = fileseq.findSequencesOnDisk(entry.path)
             if args.prep_sources and sequences:
                 for sequence in sequences:
-                    if sequence.name.endswith(SOURCE_SUFFIX):
+                    if sequence.extension().endswith(SOURCE_SUFFIX):
                         # Can ignore any .source files.
                         continue
                     if sequence.length() < 2:
@@ -204,13 +204,17 @@ def create_source_config_files(args):
     # for item in os.scandir(root):
     for item in scantree(args, args.source_folder):
         startframe = None
-        if isinstance(item, pyseq.Sequence):
+        if isinstance(item, fileseq.FileSequence):
             startframe = item.start()
-            pad = f'%0{len(max(item.digits, key=len))}d'
-            path = Path(item.format('%D%h') + pad + item.format('%t'))
+            pad = f'%0{item.zfill()}d'
+            item.setFramePadding(pad)
+            path = Path(item.format("{basename}{padding}{extension}"))
+            print("Got path:", path)
+            #path = Path(item.format('%D%h') + pad + item.format('%t'))
 
         else:
-            path = Path(str(item.path))
+            #path = Path(str(item.path))
+            path = Path(str(item))
 
         if path.suffix == SOURCE_SUFFIX:
             # We only register new media
@@ -239,7 +243,7 @@ def get_source_configs(args, root_path, config_type):
 def get_test_configs(args, root_path, config_type):
     configs = []
     for item in scantree(args, root_path, suffix=config_type):
-        path = Path(item.path)
+        path = Path(item)
         if path.suffix == config_type:
             try:
                 configs.append(TestSuite(path))
