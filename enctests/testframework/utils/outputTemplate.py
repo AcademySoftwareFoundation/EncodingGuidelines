@@ -98,12 +98,17 @@ def processTemplate(config, timeline):
             merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
             merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
             merge_test_info['psnr_y_harmonic_mean'] = float(merge_test_info['psnr_y']['harmonic_mean'])
+            if "cambi" in merge_test_info:
+              merge_test_info['cambi_harmonic_mean'] = float(merge_test_info['cambi']['harmonic_mean'])
+              merge_test_info['float_ms_ssim_harmonic_mean'] = float(merge_test_info['float_ms_ssim']['harmonic_mean'])
           else:
             merge_test_info['psnr_y'] = {}
             merge_test_info['psnr_cr'] = {}
             merge_test_info['psnr_cb'] = {}
             merge_test_info['vmaf_harmonic_mean'] = -1
             merge_test_info['psnr_y_harmonic_mean'] = -1
+            merge_test_info['cambi_harmonic_mean'] = -1
+            merge_test_info['float_ms_ssim_harmonic_mean'] = -1
 
           merge_test_info['filesize'] = merge_test_info['filesize']
           if 'host_config' in test_info.metadata['aswf_enctests']:

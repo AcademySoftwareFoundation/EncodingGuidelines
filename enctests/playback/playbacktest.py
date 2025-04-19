@@ -9,8 +9,9 @@ testdirs = ["../wedge_results/ffmpeg_version_7.0.1/darwin-arm64/intraframe_tests
 
 testdirs = ["../wedge_results/ffmpeg_version_7.0.1/darwin-arm64/intraframe_tests-encode", 
             "../wedge_results/ffmpeg_version_7.0/darwin-arm64/codec_tests-encode"]
-testdirs = ["../wedge_results/ffmpeg_version_7.0/linux-x86_64/intraframe_tests-encode", 
-            "../wedge_results/ffmpeg_version_7.0/linux-x86_64/codec_tests-encode"]
+testdirs = ["../wedge_results/ffmpeg_version_7.1/linux-x86_64/intraframe_tests-encode", 
+            "../wedge_results/ffmpeg_version_7.1/linux-x86_64/codec_tests-encode", 
+            "../wedge_results/ffmpeg_version_7.1/linux-x86_64/htj2k_options_tests-encode"]
 
 
 def get_video_codec(filename):
@@ -79,7 +80,7 @@ for testdir in testdirs:
     files.extend([os.path.join(testdir, f) for f in os.listdir(testdir) if f.endswith(".mp4") or f.endswith(".mov")])
 
 
-f = open("playback_results2.html", "w")
+f = open("playback_results3.html", "w")
 
 print("""<!DOCTYPE html>
 <html lang="en">
@@ -103,6 +104,7 @@ codecmap = {
   'cfhd': ['cfhd'],
   'prores': ['prores'],
   'mjpeg': ['mjpeg'],
+  'jpeg2000': ['jpeg2000'],
 }
 
 fields=['basename', 'Decoder', 'filesize', 'gopsize', 'FirstFrame', 'FirstFrame%30', 'FirstFrame%60', 'Average','Average%30', 'Average%60']

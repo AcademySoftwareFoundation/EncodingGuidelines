@@ -16,6 +16,10 @@ def destination_from_config(
         destination: pathlib.Path,
         results_folder: pathlib.Path
         ):
+    """
+    :param destination: The OTIO file
+    :param results_folder: The top level results folder (e.g. results or wedge_results)
+    """
     encoder_cls = encoder_map.get(test_config.get('app'))
     
     encoder = encoder_cls(None, test_config, destination)
