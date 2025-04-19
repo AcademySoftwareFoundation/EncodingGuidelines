@@ -144,7 +144,7 @@ def parse_args():
         '--output',
         action='store',
         default='',
-        help='Path to results file including ".otio" extenstion '
+        help='Path to results file including ".otio" extension '
              '(default: ./encoding-test-results.otio)'
     )
 
@@ -878,7 +878,12 @@ def main():
     # Load test config file(s)
     test_configs = []
     if args.test_config_file:
-        test_configs.append(TestSuite(Path(args.test_config_file)))
+        test_file = Path(args.test_config_file)
+        if test_file.is_dir():
+            for file in test_file.glob('*.yml'):
+                test_configs.append(TestSuite(file))
+        else:
+            test_configs.append(TestSuite(test_file))
 
     else:
         test_configs.extend(

@@ -566,7 +566,7 @@ RUN \
         mkdir -p ${PREFIX}/share/model/ && \
         cp -r ${DIR}/model/* ${PREFIX}/share/model/ && \
         mkdir -p ${VMAF_MODEL_DIR} && \
-	echo "Creating VMAF DIRECTGORY:" ${VMAF_MODEL_DIR} && \
+	echo "Creating VMAF DIRECTORY:" ${VMAF_MODEL_DIR} && \
         cp -vr ${DIR}/model/* ${VMAF_MODEL_DIR}
 
 #       rm -rf ${DIR}; \

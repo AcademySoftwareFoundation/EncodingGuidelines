@@ -9,12 +9,12 @@ has_children: true
 -*WORK IN PROGRESS*-
 
 ## Goals
-Create a framework for testing and comparing encoded media through various encoders 
+Create a framework for testing and comparing encoded media through various encoders
 making sure color and quality is preserved.
 
 ## Requirements
 * FFmpeg with VMAF enabled
-* OpenTimelineIO (>=0.15) 
+* OpenTimelineIO (>=0.15)
 
 ## Description
 
@@ -40,11 +40,11 @@ optional arguments:
   --prep-sources        Create *.yml files from media in --source-folder used as sources in encoding tests
   --encoded-folder ENCODED_FOLDER
                         Where to store the encoded files
-  --output OUTPUT       Path to results file including ".otio" extenstion (default: ./encoding-test-results.otio)
+  --output OUTPUT       Path to results file including ".otio" extension (default: ./encoding-test-results.otio)
 ```
 
 ### Prepare your sources
-Start by prepping your source files. This is done with the `--prep-sources` flag. 
+Start by prepping your source files. This is done with the `--prep-sources` flag.
 A set of "sourcefile.ext.yml" files get created alongside the source media.
 This is done, so you can adjust the desired in point and duration of the media
 before running your tests. In-point and duration are set in frames.
@@ -68,10 +68,10 @@ rate: 25.0
 
 ### Prepare your test files
 A set of default tests are provided for you in the "test_configs" folder.
-The test files are yaml based and require a couple of keys and values to work. 
-By default, the tests are geared towards encoding with FFmpeg, but you may write 
+The test files are yaml based and require a couple of keys and values to work.
+By default, the tests are geared towards encoding with FFmpeg, but you may write
 your own encoder classes and test files geared towards that encoder.
-You may provide several tests in the same file separated by "---" so yaml reads 
+You may provide several tests in the same file separated by "---" so yaml reads
 them as separate documents.
 
 #### Example test configuration
@@ -119,8 +119,8 @@ test_colorspace_yuv420p:
 ```
 
 #### Additional options in the test config
-You may provide a list of sources in a test config. Please note that this will 
-override the behavior of the `--source-folder` argument. Only the sources 
+You may provide a list of sources in a test config. Please note that this will
+override the behavior of the `--source-folder` argument. Only the sources
 provided in the test config will be used in the tests.
 
 Example:
@@ -149,9 +149,9 @@ python -m testframework.main --source-folder /path/to/sources/ --encoded-folder 
 ```
 
 ### Results
-The results are stored in an "*.otio" file. Each source clip contains a media reference 
-for its source plus all additional encoded test files. 
-Each test is compared against the source with VMAF and the score is stored in 
+The results are stored in an "*.otio" file. Each source clip contains a media reference
+for its source plus all additional encoded test files.
+Each test is compared against the source with VMAF and the score is stored in
 the media reference's metadata.
 
 ## Setup Test Environment
@@ -159,7 +159,7 @@ the media reference's metadata.
 
 In addition to OpenTimelineIO the tests rely on FFmpeg with VMAF support and most
 likely OpenImageIO.
-The commands below are what's needed to build OTIO for python development. 
+The commands below are what's needed to build OTIO for python development.
 As of the time writing this the multi media-reference feature of OTIO is still in
 the main branch of the project.
 Also, we're relying on FFmpeg and OIIO being installed on the system. (Guides to come)
@@ -197,7 +197,7 @@ which you can do in the .venv/Scripts/activate.bat file.
 
 This does not get you the vmaf model though which can be downloaded 
 https://raw.githubusercontent.com/Netflix/vmaf/master/model/vmaf_v0.6.1.json
-Also you need to install an eariler version of kaleido since the current one will hang when generating an image.
+Also you need to install an earlier version of kaleido since the current one will hang when generating an image.
 ```
 pip install kaleido==0.1.0post1 
 ```
@@ -233,7 +233,7 @@ export VMAF_MODEL_DIR=/opt/homebrew/Cellar/libvmaf/3.0.0/share/libvmaf/model/
 ## How to add an encoder
 This is still **work in progress** so for now you'll have to add an encoder class
 to a file in the "encoders" folder.
-Since every encoder has its own set of arguments, a new encoder also requires 
+Since every encoder has its own set of arguments, a new encoder also requires
 its own test configs.
 
 * Create a subclass of the `ABCTestEncoder` found in "encoders/base.py".
@@ -245,7 +245,7 @@ its own test configs.
 * Register your new class in the `encoder_factory` function found in "encoders/\_\_init\_\_.py" (for now)
   * The key in the `encoder_map` dictionary needs to match the "app" value in the test configuration file
 * Create a test configuration file
-  * Required keys: 
+  * Required keys:
     * "name" - name of test
     * "app" - name of application used in mapping mentioned above
     * "wedges" - containing list of wedges (which are named freely)
@@ -295,7 +295,7 @@ reports:
     templatefile: basic.html.jinja
 ```
 
-The configuration uses html [jinja](https://palletsprojects.com/p/jinja/) templates defined in the templates folder. The template combines the parameters from each wedge test with the results of the test, grouped by image name. 
+The configuration uses html [jinja](https://palletsprojects.com/p/jinja/) templates defined in the templates folder. The template combines the parameters from each wedge test with the results of the test, grouped by image name.
 
 The graphs are generated using the [plotly.express](https://plotly.com/python-api-reference/generated/plotly.express.html#module-plotly.express) library. The parameters in the yaml file are fed directly into the constructor for the graph creation. Currently we are only supporting line graphs and bar graphs, but other graph types should be easy to add.
 
@@ -343,4 +343,3 @@ reports:
 ```
 
 This example creates bar-graphs based on the `-preset` flag.
-

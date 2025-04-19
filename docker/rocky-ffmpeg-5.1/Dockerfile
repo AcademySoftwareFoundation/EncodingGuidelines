@@ -162,7 +162,7 @@ RUN \
         mkdir -p ${PREFIX}/share/model/ && \
         cp -r /tmp/vmaf/model/* ${PREFIX}/share/model/ && \
         mkdir -p ${VMAF_LIB_DIR} && \
-	echo "Creating VMAF DIRECTGORY:" ${VMAF_LIB_DIR} && \
+	echo "Creating VMAF DIRECTGRY:" ${VMAF_LIB_DIR} && \
         cp -vr ${DIR}/model/* ${VMAF_LIB_DIR} && \
         rm -rf ${DIR}; \
         else \

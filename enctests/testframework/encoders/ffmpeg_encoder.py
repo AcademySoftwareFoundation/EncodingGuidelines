@@ -51,7 +51,7 @@ class FFmpegEncoder(ABCTestEncoder):
             out_file, testbasename = self.get_output_filename(test_name)
 
             # Remove it, so if the new run fails to create anything 
-            # we are not accidently using the old one.
+            # we are not accidentally using the old one.
             if out_file.exists():
                 out_file.unlink()
 

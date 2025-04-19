@@ -28,7 +28,7 @@ def parse_args():
         '--results',
         action='store',
         default='',
-        help='Path to results file including ".otio" extenstion '
+        help='Path to results file including ".otio" extension '
              '(default: ./encoding-test-results.otio)'
     )
 

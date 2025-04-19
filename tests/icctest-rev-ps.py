@@ -76,6 +76,6 @@ for trc in trc_types:
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
-					introduction="<H1>Color_trc comparison</H1><p> This is trying to reverse out what we think is the gamma for each TRC file, with the hope that if the browser is correctly obaying the flag, that all the ramps would approximately match. The code to generate these files is <a href='../%s'>here</a>. However, the source images were generated in photoshop, by taking the raw.png file, assigning a sRGB profile to it, and then converting to a custom profile, adjusting the gamma but sticking with D65 and HDTV primaries..</p>" % os.path.basename(__file__),
+					introduction="<H1>Color_trc comparison</H1><p> This is trying to reverse out what we think is the gamma for each TRC file, with the hope that if the browser is correctly obeying the flag, that all the ramps would approximately match. The code to generate these files is <a href='../%s'>here</a>. However, the source images were generated in photoshop, by taking the raw.png file, assigning a sRGB profile to it, and then converting to a custom profile, adjusting the gamma but sticking with D65 and HDTV primaries..</p>" % os.path.basename(__file__),
 					videohtml = '  ')
 
