@@ -4,12 +4,15 @@ test_osx-oapv_qp:
     app: ffmpeg
     comparisontest:
     - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
     - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
     - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         qp0: &base_args
@@ -29,9 +32,13 @@ test_osx-oapv_qp:
             << : *base_args
             -qp: 10
 
-        qp15:
+        qp14:
             << : *base_args
-            -qp: 15
+            -qp: 14
+
+        qp16:
+            << : *base_args
+            -qp: 16
 
         qp18:
             << : *base_args
@@ -106,5 +113,7 @@ reports:
     title: OpenAPV QP Comparisons
     description: This is a comparison of different APV qp.
     directory: osx-oapv_qp-encode
-    templatefile: basicmovie2.html.jinja
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
 

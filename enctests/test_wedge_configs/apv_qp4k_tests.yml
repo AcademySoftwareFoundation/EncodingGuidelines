@@ -1,16 +1,17 @@
 test_oapv_qp4k:
     name: test_oapv_qp4k
-    description: variations of oapv_qp
+    description: variations of oapv_qp at 4k resolution
     app: ffmpeg
     comparisontest:
     - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
-    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_coaster/chimera_coaster.%06d.tif.yml
-    - sources/enc_sources/chimera_fountains/chimera_fountains.%05d.tif.yml
-    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_cars_raw/chimera_cars.%05d.tif.yml
+    - sources/enc_sources/chimera_coaster_raw/chimera_coaster.%05d.tif.yml
+    - sources/enc_sources/chimera_fountains_raw/chimera_fountains.%05d.tif.yml
     wedges:
         qp0: &base_args
             -c:v: liboapv
@@ -32,7 +33,6 @@ test_oapv_qp4k:
         qp14:
             << : *base_args
             -qp: 14
-
 
         qp16:
             << : *base_args
@@ -111,5 +111,7 @@ reports:
     title: OpenAPV QP Comparisons @ 4k
     description: This is a comparison of different APV qp at 4k.
     directory: osx-oapv_qp-encode
-    templatefile: basicmovie2.html.jinja
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
 

@@ -4,6 +4,10 @@ test_osx-oapv:
     app: ffmpeg
     comparisontest:
     - testtype: vmaf3
+<<<<<<< Updated upstream
+=======
+    - testtype: ffmpeg_psnr
+>>>>>>> Stashed changes
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
@@ -16,6 +20,7 @@ test_osx-oapv:
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         oapv_422p10le: &base_args
+<<<<<<< Updated upstream
             -c:v: liboapv
 #            -profile:v: 4444
 #            -qscale:v: 16
@@ -24,6 +29,18 @@ test_osx-oapv:
             -colorspace: bt709
             -color_primaries: bt709
 #            -color_trc: iec61966-2-1 
+=======
+            -c:v: oapv
+#            -profile:v: 4444
+#            -qscale:v: 16
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+>>>>>>> Stashed changes
 
 
         oapv_422p10le_qp15:
@@ -63,10 +80,19 @@ test_osx-oapv:
             -profile:v: 3
 #            -qscale:v: 16
             -pix_fmt: yuv422p10le
+<<<<<<< Updated upstream
             -color_range: tv
             -colorspace: bt709
             -color_primaries: bt709
 #            -color_trc: iec61966-2-1 
+=======
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+>>>>>>> Stashed changes
 
 
         prores_videotoolbox_yuv422p10le_hq:
@@ -78,6 +104,15 @@ test_osx-oapv:
         prores_videotoolbox_yuv444p12le_xq:
             << : *base_args2
             -c:v: prores_videotoolbox
+<<<<<<< Updated upstream
+=======
+            -profile:v: 4444
+            -pix_fmt: yuv444p12le
+
+        prores_videotoolbox_yuv444p12le_xq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+>>>>>>> Stashed changes
             -profile:v: xq
             -pix_fmt: yuv444p12le
 
@@ -87,7 +122,11 @@ reports:
     graphs:
     - args:
         color: wedge
+<<<<<<< Updated upstream
         height: 400
+=======
+        height: 500
+>>>>>>> Stashed changes
         barmode: group
         x: media
         y: psnr_y_harmonic_mean
@@ -95,7 +134,11 @@ reports:
       type: bar
     - args:
         color: wedge
+<<<<<<< Updated upstream
         height: 400
+=======
+        height: 500
+>>>>>>> Stashed changes
         barmode: group
         x: media
         y: vmaf_harmonic_mean
@@ -106,7 +149,11 @@ reports:
       type: bar
     - args:
         color: wedge
+<<<<<<< Updated upstream
         height: 400
+=======
+        height: 500
+>>>>>>> Stashed changes
         x: media
         barmode: group
         y: encode_time
@@ -114,7 +161,11 @@ reports:
       type: bar
     - args:
         color: wedge
+<<<<<<< Updated upstream
         height: 400
+=======
+        height: 500
+>>>>>>> Stashed changes
         x: media
         barmode: group
         y: filesize
@@ -122,15 +173,25 @@ reports:
       type: bar
     - args:
         color: wedge
+<<<<<<< Updated upstream
         height: 400
+=======
+        height: 500
+>>>>>>> Stashed changes
         x: media
         barmode: group
         y: psnr_y_harmonic_mean
       name: psnr_y_harmonic_mean.png
       type: bar
+<<<<<<< Updated upstream
     name: osx-videotoolbox
     title: OSX Videotoolbox Comparison
     description: This is a comparison of different videotoolbox encodes.
+=======
+    name: osx-videotoolbox-oapv
+    title: OSX Videotoolbox vs. oapv Comparison
+    description: This is a comparison of different videotoolbox and oapv encodes.
+>>>>>>> Stashed changes
     directory: osx-oapv-encode
     templatefile: basic2.html.jinja
 
