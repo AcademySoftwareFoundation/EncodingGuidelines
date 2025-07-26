@@ -1,19 +1,25 @@
 test_prores:
-    name: test_prores_quality
+    name: test_prores_quality 422p10
     description: variations of prores_quality
     app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
-    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
     wedges:
-        qscale_16: &base_args
+        default_hq: &base_args
             -c:v: prores_ks
-            -profile:v: 3
-            -qscale:v: 16
+            -profile:v: hq
             -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
             -color_range: tv
             -colorspace: bt709
             -color_primaries: bt709
@@ -24,9 +30,17 @@ test_prores:
             << : *base_args
             -qscale:v: 0
 
+        qscale_01:
+            << : *base_args
+            -qscale:v: 1
+
         qscale_02:
             << : *base_args
             -qscale:v: 2
+
+        qscale_03:
+            << : *base_args
+            -qscale:v: 3
             
         qscale_04:
             << : *base_args
@@ -52,36 +66,53 @@ test_prores:
             << : *base_args
             -qscale:v: 14
 
+        qscale_16:
+            << : *base_args
+            -qscale:v: 16
+
 ---
 
 reports:
     graphs:
     - args:
-        color: media
-        height: 400
-        x: -qscale:v
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
         y: vmaf_harmonic_mean
-        markers: True
+        range_y:  
+            - 90
+            - 100
       name: vmaf_harmonic_mean.png
-      sortby: name
+      type: bar
     - args:
-        color: media
-        height: 400
-        x: -qscale:v
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
         y: encode_time
-        markers: True
       name: encode_time.png
-      sortby: name
+      type: bar
     - args:
-        color: media
-        height: 400
-        x: -qscale:v
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
         y: filesize
-        markers: True
       name: filesize.png
-      sortby: name
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
     name: prores-qscale-tests
-    title: Prores quality comparison.
-    description: This is a comparison of different quality settings for the prores_ks encoder.
+    title: Prores quality comparison for 422p10
+    description: This is a comparison of different quality settings for the prores_ks encoder for 10-bit 422p.
     directory: prores-qscale-encode
-    templatefile: basic.html.jinja
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja

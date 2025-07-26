@@ -1,5 +1,5 @@
-test_qstep10:
-    name: test_qstep10
+test_qstep12:
+    name: test_qstep12
     description: variations of HTJ2k qstep
     app: ffmpeg
     comparisontest:
@@ -7,46 +7,49 @@ test_qstep10:
       description: Slightly different conversion to keep it as 16-bit RGB.
       ext: -png.mp4
       ffmpegflags: ' -c:v png'
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mp4
-    encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    #encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    encoding_template: 'bin/htj2k_encodewrap_oiio.csh /usr/local/bin/oiiotool {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
-    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
-    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_cars_srgb_dpx_12/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_12/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_12/chimera_wind_srgb.%06d.dpx.yml
     # - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         qstep0.001: &base_args
-            -qstep: 0.001
-            -num_decomps: 5
-            -block_size: '{64,64}'
-            -precincts: '{128,128},{256,256}'
-            -prog_order: CPRL
-            -colour_trans: 'true'
+            -jph:qstep: 0.001
             # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
 
         qstep0.025:
             << : *base_args
-            -qstep: 0.025
+            -jph:qstep: 0.025
+
+        qstep0.002:
+            << : *base_args
+            -jph:qstep: 0.002
 
         qstep0.003:
             << : *base_args
-            -qstep: 0.003
+            -jph:qstep: 0.003
 
         qstep0.005:
             << : *base_args
-            -qstep: 0.005
+            -jph:qstep: 0.005
 
         qstep0.01:
             << : *base_args
-            -qstep: 0.01
+            -jph:qstep: 0.01
 
         qstep0.015:
             << : *base_args
-            -qstep: 0.015
+            -jph:qstep: 0.015
 
         qstep0.035:
             << : *base_args
-            -qstep: 0.035
+            -jph:qstep: 0.035
 
 
 ---
@@ -56,47 +59,49 @@ reports:
     - args:
         color: media
         height: 400
-        x: -qstep
+        x: -jph:qstep
         y: psnr_y_harmonic_mean
         markers: True
       name: psnr_y_harmonic_mean.png
-      sortby: -qstep
+      sortby: -jph:qstep
     - args:
         color: media
         height: 400
-        x: -qstep
+        x: -jph:qstep
         y: vmaf_harmonic_mean
         markers: True
       name: vmaf_harmonic_mean.png
-      sortby: -qstep
+      sortby: -jph:qstep
     - args:
         color: media
         height: 400
-        x: -qstep
+        x: -jph:qstep
         y: encode_time
         range_y: [0, 500]
         markers: True
       name: encode_time_zoom.png
-      sortby: -qstep
+      sortby: -jph:qstep
     - args:
         color: media
         height: 400
-        x: -qstep
+        x: -jph:qstep
         y: encode_time
         markers: True
       name: encode_time.png
-      sortby: -qstep
+      sortby: -jph:qstep
     - args:
         color: media
         height: 400
-        x: -qstep
+        x: -jph:qstep
         y: filesize
         markers: True
       name: filesize.png
-      sortby: -qstep
+      sortby: -jph:qstep
     name: htj2k-qstep-test
-    title: Comparing qstep values for ojph for 10-bit input files.
-    description: Comparing different qstep values.
-    directory: htj2k-qstep-10bit-encode
-    templatefile: basicmovie2.html.jinja
+    title: HTJ2K Comparing qstep values for ojph for 12-bit input files.
+    description: Comparing different qstep values encoded with OIIO using the OpenJPH HTJ2K encoder.
+    directory: htj2k-qstep-12bit-encode
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
 
