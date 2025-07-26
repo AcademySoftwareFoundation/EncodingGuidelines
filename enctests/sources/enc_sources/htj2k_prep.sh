@@ -1,6 +1,6 @@
 #!/bin/bash
 ext=dpx
-bitdepth=16
+bitdepth=10
 ops="-d uint${bitdepth}"
 #ops=-pix_fmt rgb30 -compression_level 0
 mkdir  chimera_coaster_srgb_${ext}_${bitdepth}
@@ -14,7 +14,7 @@ oiiotool -v -framepadding 6 --parallel-frames --frames 44200-44399 -i chimera_co
 mkdir  chimera_fountains_srgb_${ext}_${bitdepth}
 sed "s/.png/.$ext/" < chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml > chimera_fountains_srgb_${ext}_${bitdepth}/chimera_fountains_srgb.%05d.$ext.yml
 #mogrify -path chimera_fountains_srgb_${ext}_${bitdepth} -format $ext -depth $bitdepth chimera_fountains_srgb/*.png
-oiiotool -v --framepadding 5 --parallel-frames --frames 5400-5599 -i chimera_fountains_srgb/chimera_fountains_srgb.#.png ${ops} -o chimera_fountains_srgb_${ext}_${bitdepth}/chimera_fountains.#.$ext
+oiiotool -v --framepadding 5 --parallel-frames --frames 5400-5599 -i chimera_fountains_srgb/chimera_fountains_srgb.#.png ${ops} -o chimera_fountains_srgb_${ext}_${bitdepth}/chimera_fountains_srgb.#.$ext
 
 mkdir  chimera_wind_srgb_${ext}_${bitdepth}
 sed "s/.png/.$ext/" < chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml > chimera_wind_srgb_${ext}_${bitdepth}/chimera_wind_srgb.%06d.$ext.yml
