@@ -42,7 +42,6 @@ def main():
 
     outputdir = os.path.dirname(outputfile)
     tmpoutputdir = os.path.join(outputdir, "tmpj2kfiles", os.path.basename(outputfile))
-)
     output_path = Path(os.path.join(tmpoutputdir, os.path.basename(str(input_path)))).with_suffix('.j2c')
 
     if not os.path.exists(tmpoutputdir):
