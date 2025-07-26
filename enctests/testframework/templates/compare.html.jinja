@@ -1,4 +1,5 @@
 
+
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
 
 
@@ -7,162 +8,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{config.title}}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            //background: linear-gradient(135deg, #575757 0%,rgb(148, 148, 148) 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-            background: #121212;
-            color: #e0e0e0;
-        }
-
-        .container {
-            margin: 0 auto;
-            background: rgba(30, 30, 30, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid #333;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #666666 0%, #767676 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            // text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .controls {
-            padding: 30px;
-            background: #5d5d5d;
-            border-bottom: 1px solid #eee;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .image-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .selector-group {
-            background: #717171ff;
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .selector-group:hover {
-            border-color: #e8e8e8ff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
-        }
-
-        .selector-group h3 {
-            margin-bottom: 15px;
-            color: #eeeeeeff;
-            font-size: 1.1em;
-        }
-
-        select, input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            background-color: #9a9a9a;
-        }
-
-        select:focus, input[type="file"]:focus {
-            outline: none;
-            border-color: #eaeaeaff;
-        }
-
-        .zoom-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: #7d7d7dff;
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .zoom-controls label {
-            margin: 0;
-            font-weight: 600;
-            color: #e8e8e8;
-        }
-
-        .zoom-slider {
-            flex: 1;
-            height: 6px;
-            background: #ddd;
-            border-radius: 3px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .zoom-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #dcdcdcff;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .zoom-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .zoom-value {
-            font-weight: 600;
-            color: #e9e9e9ff;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .comparison-area {
-            position: relative;
-            height: 70vh;
-            background: #000;
-            overflow: hidden;
-            margin: 0;
-        }
-
-        .image-container {
+/* Proper Dark Theme styling */
+    :root {
+    --dark-bg: #121212;
+    --dark-surface: #1e1e1e;
+    --dark-surface-raised: #252525;
+    --dark-border: #333333;
+    --dark-text-primary: #e0e0e0;
+    --dark-text-secondary: #aaaaaa;
+    --dark-accent: #bbbabcff;
+    --dark-accent-alt: #6f6f6fff;
+    }
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--dark-bg);
+    color: var(--dark-text-primary);
+    min-height: 100vh;
+    padding: 20px;
+    margin: 0;
+    }
+    a:-webkit-any-link {
+    color: #9292c0ff;
+}
+    .container {
+    margin: 0 auto;
+    background: var(--dark-surface);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--dark-border);
+    overflow: hidden;
+    }
+    .header {
+    background: var(--dark-surface-raised);
+    color: var(--dark-text-primary);
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--dark-border);
+    }
+    .header h1 {
+    color: var(--dark-text-primary);
+    margin-bottom: 10px;
+    }
+    .header p {
+    color: var(--dark-text-secondary);
+    opacity: 0.9;
+    }
+    .controls {
+    padding: 25px;
+    background: var(--dark-surface);
+    border-bottom: 1px solid var(--dark-border);
+    }
+    .control-group {
+    margin-bottom: 25px;
+    }
+    .selector-group {
+    background: var(--dark-surface-raised);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--dark-border);
+    transition: all 0.3s ease;
+    }
+    .selector-group:hover {
+    border-color: var(--dark-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(187, 134, 252, 0.15);
+    }
+    .selector-group h3 {
+    color: var(--dark-text-primary);
+    margin-bottom: 15px;
+    }
+    select, input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--dark-border);
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #333;
+    color: var(--dark-text-primary);
+    transition: border-color 0.3s ease;
+    }
+    select:focus, input[type="file"]:focus {
+    outline: none;
+    border-color: var(--dark-accent);
+    }
+    .zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--dark-surface-raised);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--dark-border);
+    }
+    .zoom-controls label {
+    margin: 0;
+    color: var(--dark-text-primary);
+    font-weight: 500;
+    }
+    .zoom-slider {
+    flex: 1;
+    height: 6px;
+    background: var(--dark-border);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+    }
+    .zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--dark-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+    .zoom-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--dark-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+    .zoom-value {
+    font-weight: 600;
+    color: var(--dark-text-primary);
+    min-width: 60px;
+    text-align: center;
+    }
+    .comparison-area {
+    position: relative;
+    height: 70vh;
+    background: #000000;
+    overflow: hidden;
+    margin: 0;
+    }
+    .image-container {
             position: absolute;
             top: 0;
             left: 0;
@@ -170,46 +150,45 @@
             height: 100%;
             overflow: hidden;
             cursor: move;
-        }
+    }
 
-        .image-container img, .image-container video {
+    .image-container img, .image-container video {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            image-rendering: pixelated;
             max-width: none;
             max-height: none;
             transition: transform 0.1s ease;
             user-select: none;
             -webkit-user-drag: none;
-        }
+    }
 
-        .divider {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 4px;
-            height: 100%;
-            background: #fff;
-            cursor: ew-resize;
-            z-index: 10;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: -8px;
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border-radius: 50%;
-            transform: translateY(-50%);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .divider::after {
+    .divider {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: var(--dark-accent);
+    cursor: ew-resize;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 20px;
+    height: 20px;
+    background: var(--dark-accent);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .divider::after {
             content: '⟷';
             position: absolute;
             top: 50%;
@@ -217,8 +196,7 @@
             transform: translateY(-50%);
             font-size: 12px;
             color: #333;
-        }
-
+    }
         .image-left {
             clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
         }
@@ -227,40 +205,33 @@
             clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
         }
 
-        .instructions {
-            background: #323232ff;
-            color: #e5e5e5ff;
-            padding: 20px;
-            margin: 20px 30px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-
-        .instructions h3 {
-            color: #e5e5e5ff;
-            margin-bottom: 10px;
-        }
-
-        .instructions ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .instructions li {
-            margin-bottom: 8px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .instructions li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #dededeff;
-            font-weight: bold;
-        }
-
-        .placeholder {
+    .instructions {
+        background: var(--dark-surface-raised);
+        color: var(--dark-text-primary);
+        padding: 20px;
+        margin: 20px 30px;
+        border-radius: 8px;
+        border-left: 4px solid var(--dark-accent);
+    }
+    .instructions h3 {
+        color: var(--dark-text-primary);
+        margin-bottom: 10px;
+    }
+    button {
+        background: var(--dark-accent);
+        color: #000;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    button:hover {
+        background: var(--dark-accent-alt);
+        color: white;
+    }
+    .placeholder {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -268,9 +239,9 @@
             text-align: center;
             color: #666;
             font-size: 1.2em;
-        }
+    }
 
-        @media (max-width: 768px) {
+    @media (max-width: 768px) {
             .image-selector {
                 grid-template-columns: 1fr;
             }
@@ -283,7 +254,8 @@
             .comparison-area {
                 height: 50vh;
             }
-        }
+    }
+
     </style>
 
 
@@ -291,10 +263,28 @@
         <div class="header">
             <h1>{{config.title}}</h1>
             <p>{{config.description}}</p>
+            <a href="{{ config.name }}.html">Test Data</A></BR>
+            <p>This allows you pick which media was encoded, and then compare the results of the encode. What you are looking at is a YCrCb diff x20 which allows you to see significant differences. See <a href="#instructions">Instructions</a> for usage.
         </div>
 
         <div class="controls">
             <div class="image-selector">
+                <table width='100%'>
+                <TR><TD colspan=2>
+                <div class="selector-group">
+                    <h3>Media Selection</h3>
+                    <select id="mediaSelect">
+                    {% for media_name, test in tests.items() %}
+                           <option value="{{ media_name|e }} Source">{{ media_name|e }}</option>
+                           <option value="{{ media_name|e }}">{{ media_name|e }} YCrCb Diff</option>
+
+                    {% endfor %}
+                    </select>
+                    <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
+                    <input type="file" id="leftFile" accept="image/*,video/*">-->
+                </div>
+                </TD></TR>
+                <TR><TD>
                 <div class="selector-group">
                     <h3>Left Image</h3>
                     <select id="leftSelect"><option value="">Select preset media...</option>
@@ -307,7 +297,7 @@
                     <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
                     <input type="file" id="leftFile" accept="image/*,video/*">-->
                 </div>
-
+                </TD><TD>
                 <div class="selector-group">
                     <h3>Right Image</h3>
                     <select id="rightSelect"><option value="">Select preset media...</option>
@@ -320,12 +310,14 @@
                     <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
                     <!-- <input type="file" id="rightFile" accept="image/*,video/*"> -->
                 </div>
+                </TD></TR>
+                </TABLE>
             </div>
 
             <div class="control-group">
                 <div class="zoom-controls">
                     <label>Zoom:</label>
-                    <input type="range" id="zoomSlider" class="zoom-slider" min="0.1" max="5" step="0.1" value="1">
+                    <input type="range" id="zoomSlider" class="zoom-slider" min="0.1" max="20" step="0.1" value="1">
                     <div class="zoom-value" id="zoomValue">80%</div>
                 </div>
             </div>
@@ -355,7 +347,7 @@
             <div class="divider" id="divider" style="display: block; left: 49.5714%;"></div>
         </div>
 
-        <div class="instructions">
+        <div class="instructions" id="instructions">
             <h3>How to Use:</h3>
             <ul>
                 <li>Select two images/videos from the dropdowns or upload your own files</li>
@@ -366,7 +358,7 @@
                 <li>For videos: use the time slider to scrub through footage and play/pause button</li>
                 <li>Media is automatically centered and scaled to fit the comparison area</li>
             </ul>
-            
+            <!--
             <h3>Custom Image Lists:</h3>
             <p>You can customize the dropdown images by adding URL parameters:</p>
             <code style="background: #e9ecef; padding: 5px; border-radius: 4px; display: block; margin: 10px 0;">
@@ -376,7 +368,7 @@
                 <li>Use <strong>img1</strong>, <strong>img2</strong>, etc. for image URLs</li>
                 <li>Use <strong>name1</strong>, <strong>name2</strong>, etc. for display names (optional)</li>
                 <li>Add as many images as needed by incrementing the numbers</li>
-            </ul>
+            </ul> -->
         </div>
     </div>
 
@@ -404,6 +396,14 @@
             {% for media_name, test in tests.items() %}
                 {% for enc_info in test.results %}
                     '{{ enc_info.testbasename|e }}': {url: '{{ enc_info.testbasename|e }}-x20diff.png', name: '{{ enc_info.testbasename|e }}' },
+                {% endfor %}
+            {% endfor %}
+
+            {% for media_name, test in tests.items() %}
+                {%- set mystring = "this_is_a_string" -%}
+                '{{ media_name|e }} Source':  {url: '../../../source_images/{{ media_name|e | regex_replace('\\.%05d|\\.%06d', '')}}.png', name: '{{ media_name|e }} Source' },
+                {% for enc_info in test.results %}
+                    '{{ enc_info.testbasename|e }} Encoded': {url: '{{ enc_info.testbasename|e }}-encoded.png', name: '{{ enc_info.testbasename|e }} Encoded' },
                 {% endfor %}
             {% endfor %}
                 };
@@ -439,8 +439,26 @@
         let imageOffset = { left: { x: 0, y: 0 }, right: { x: 0, y: 0 } };
         let hasVideo = false;
         let isPlaying = false;
-
+        let mediaselections = {
+                    {% for media_name, test in tests.items() %}
+                    "{{media_name}}": [
+                        {% for enc_info in test.results %}
+                           "{{ enc_info.testbasename|e }}",
+                        {% endfor %}
+                    ],
+                    {% endfor %}
+                    // Do Source/Encoded Versions
+                    {% for media_name, test in tests.items() %}
+                    "{{media_name}} Source": [
+                        "{{ media_name|e }} Source",
+                        {% for enc_info in test.results %}
+                           "{{ enc_info.testbasename|e }} Encoded",
+                        {% endfor %}
+                    ],
+                    {% endfor %}
+        }
         // DOM elements
+        const mediaSelect = document.getElementById('mediaSelect');
         const leftSelect = document.getElementById('leftSelect');
         const rightSelect = document.getElementById('rightSelect');
         const leftImage = document.getElementById('leftImage');
@@ -463,6 +481,7 @@
         populateDropdowns();
 
         // Event listeners
+        mediaSelect.addEventListener('change', () => pickImage());
         leftSelect.addEventListener('change', () => loadImage('left', 'select'));
         rightSelect.addEventListener('change', () => loadImage('right', 'select'));
         zoomSlider.addEventListener('input', updateZoom);
@@ -482,6 +501,30 @@
 
         // Mouse wheel zoom functionality
         comparisonArea.addEventListener('wheel', handleMouseWheel, { passive: false });
+
+
+        function pickImage(){
+            const media = mediaSelect.value;
+            const values = mediaselections[media];
+            console.log("Picking media:", media);
+            leftSelect.innerHTML = '';
+            rightSelect.innerHTML = '';
+            values.forEach(test => {
+                const optionLeft = document.createElement("option");
+                optionLeft.value = test;
+                optionLeft.textContent = test;
+                leftSelect.appendChild(optionLeft);
+                const optionRight = document.createElement("option");
+                optionRight.value = test;
+                optionRight.textContent = test;
+                rightSelect.appendChild(optionRight);
+            });
+            // Make sure the right side is different to left to start with.
+            rightSelect.selectedIndex = 1;
+            // Load the media.
+            loadImage('left', 'select');
+            loadImage('right', 'select');
+        }
 
         function loadImage(side, source) {
             const select = side === 'left' ? leftSelect : rightSelect;
@@ -772,7 +815,7 @@
             if (!leftHasMedia || !rightHasMedia) return;
             
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            const newZoom = Math.max(0.1, Math.min(5, currentZoom + delta));
+            const newZoom = Math.max(0.1, Math.min(20, currentZoom + delta));
             
             // Update zoom slider and zoom level
             zoomSlider.value = newZoom;
@@ -787,6 +830,8 @@
 
         // Initialize
         updateZoom();
+        pickImage();
     </script>
 
 </body></html>
+

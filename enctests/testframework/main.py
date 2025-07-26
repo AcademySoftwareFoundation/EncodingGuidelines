@@ -223,8 +223,8 @@ def create_source_config_files(args):
         create_config_from_source(path, startframe=startframe)
 
     print(
-        f'Done creating source files. '
-        f'Make sure to do adjustments of in point, duration and so on.'
+        'Done creating source files. '
+        'Make sure to do adjustments of in point, duration and so on.'
     )
 
 def get_source_configs(args, root_path, config_type):
@@ -377,12 +377,8 @@ def vmaf3_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
 {ffmpeg_bin} \
 {reference} \
 -i "{distorted}" \
--vframes {duration} \
 -lavfi \
-\"[0:v]setpts=PTS-STARTPTS[reference]; \
-[1:v]setpts=PTS-STARTPTS[distorted]; \
-[distorted][reference]\
-libvmaf=log_fmt=json:\
+\"libvmaf=log_fmt=json:\
 log_path={compare_log}:\
 feature="name=psnr|name=cambi|name=vif|name=float_ms_ssim":\
 model=path={vmaf_model}:n_threads=6\" \
@@ -393,45 +389,21 @@ model=path={vmaf_model}:n_threads=6\" \
         results = {'success': False,
             'testresult': "No movie generated."
         }
-    
+
         enc_meta = get_test_metadata_dict(test_ref)
         enc_meta['results'].update(results)
         return
-
-    # Get settings from metadata used as basis for encoded media
+    
     source_meta = get_source_metadata_dict(source_clip)
     input_args = ''
-    framerange=''
     if source_meta.get('images'):
         input_args = f"-start_number {source_meta.get('in')}"
-        endframe = int(source_meta.get('in'))+int(source_meta.get('duration')) - 1
-        framerange = f".[{source_meta.get('in')}-{endframe}]"
 
     reference = f'{input_args} -i "{source_path}" '
 
     env = os.environ
 
-    y4m_source = f"{source_path}{framerange}{comparisontestinfo.get('ext', '.y4m')}"
-    y4m_convert_cmd = '{ffmpeg_bin} {reference} {ffmpegflags} -y {y4m_source}'
-    y4mcmd = y4m_convert_cmd.format(
-        ffmpeg_bin=FFMPEG_BIN, 
-        reference=reference.replace("\\", "/"),
-        ffmpegflags=comparisontestinfo.get("ffmpegflags", "-strict -1 -pix_fmt yuv444p16 "),
-        y4m_source=y4m_source.replace("\\", "/"))
-    if not os.path.exists(y4m_source) or os.path.getsize(y4m_source) == 0:
-        print(f'Creating y4m file command: {y4mcmd}', file=log_file_object)
-        log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
-        process = subprocess.Popen(
-                shlex.split(y4mcmd),
-                stdout=log_file_object,
-                stderr=log_file_object,
-                universal_newlines=True,
-                env=env
-            )
-        process.wait()
 
-    # Assuming all encoded files are video files for now
-    reference = f"-i {y4m_source}"
     compare_log = Path(f"{distorted.as_posix()}-compare_log.json")
 
     cmd = vmaf_cmd.format(
@@ -513,8 +485,9 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
         return
     compare_movie = source_dict[source_clip]
 
-
-    default_app_template = "{ffmpeg_bin} -nostats -hide_banner -i {originalfile} -i {newfile} -lavfi identity -f null -"
+    filter = "identity"
+    filterquery = "identity"
+    default_app_template = "{ffmpeg_bin} -nostats -hide_banner -i \"{originalfile}\" -i \"{newfile}\" -lavfi {filter} -f null -"
     apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
     if "compare_image" in comparisontestinfo:
@@ -526,8 +499,10 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
         }
     else:
         cmd = apptemplate.format(originalfile=compare_movie, 
-                                 newfile=distorted.as_posix(), ffmpeg_bin=FFMPEG_BIN)
-        print(f"\n\identity command: {cmd}", file=log_file_object)
+                                 newfile=distorted.as_posix(), 
+                                 filter=filter,
+                                 ffmpeg_bin=FFMPEG_BIN)
+        print(f"\n\{filter} command: {cmd}", file=log_file_object)
         
         cmdresult = subprocess.run(shlex.split(cmd), 
                                 check=False, 
@@ -543,9 +518,9 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
         else:
             result = {'success': True, 'testresult': lines[-1]}
             for line in lines[-2:]:
-                if "identity " not in line:
+                if filterquery+" " not in line:
                     continue
-                line = line.split(" identity ")[1]
+                line = line.split(f" {filterquery} ")[1]
                 kv_pairs = line.split(" ")
     
                 # Create a dictionary from the list
@@ -555,7 +530,219 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
 
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
+    print(f"--- {filter} output\n {result}", file=log_file_object)
 
+
+
+
+def build_y4m(source_clip: dict, source_path: str, comparisontestinfo: dict, log_file_object) -> str:
+    """
+    Make sure the y4m equivalent of the source_clip exists.
+    """
+        # Get settings from metadata used as basis for encoded media
+    source_meta = get_source_metadata_dict(source_clip)
+    input_args = ''
+    framerange=''
+    if source_meta.get('images'):
+        input_args = f"-start_number {source_meta.get('in')}"
+        endframe = int(source_meta.get('in'))+int(source_meta.get('duration')) - 1
+        framerange = f".[{source_meta.get('in')}-{endframe}]"
+
+    reference = f'{input_args} -i "{source_path}" '
+
+    env = os.environ
+
+    y4m_pix_fmt = comparisontestinfo.get('pix_fmt', 'yuv444p16')
+    y4m_source = f"{source_path}-{y4m_pix_fmt}{framerange}{comparisontestinfo.get('ext', '.y4m')}"
+    y4m_convert_cmd = '{ffmpeg_bin} {reference} {ffmpegflags} -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -y {y4m_source}'
+    y4mcmd = y4m_convert_cmd.format(
+        ffmpeg_bin=FFMPEG_BIN, 
+        reference=reference.replace("\\", "/"),
+        ffmpegflags=f"-strict -1 -pix_fmt {y4m_pix_fmt} ",
+        y4m_source=y4m_source.replace("\\", "/"))
+    
+    if not os.path.exists(y4m_source) or os.path.getsize(y4m_source) == 0:
+        print(f'Creating y4m file command: {y4mcmd}', file=log_file_object)
+        log_file_object.flush() # Need to flush it to make sure its before the subprocess logging.
+        process = subprocess.Popen(
+                shlex.split(y4mcmd),
+                stdout=log_file_object,
+                stderr=log_file_object,
+                universal_newlines=True,
+                env=env
+            )
+        process.wait()
+
+    return y4m_source
+
+def psnr_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the sourceclip to the test_ref using ffmpeg identity.
+    We allow it to compare one wedge to another.
+
+    compare_movie -- The image we are comparing to, which by default we assume is the output of the first test.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    This creates a results dictionary with the following parameters:
+    mean_error 
+    rms_error
+    peak_snr
+    max_error
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+
+
+    y4m_source = build_y4m(source_clip, source_path, comparisontestinfo, log_file_object)
+    compare_movie = y4m_source
+
+    filter = "psnr"
+    filterquery = "PSNR"
+    default_app_template = "{ffmpeg_bin} -nostats -hide_banner -i \"{originalfile}\" -i \"{newfile}\" -lavfi {filter} -f null -"
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
+
+    if "compare_image" in comparisontestinfo:
+        compare_movie = comparisontestinfo.get("compare_image")
+
+    if not distorted.exists():
+        result = {'success': False,
+            'testresult': "No movie generated."
+        }
+    else:
+        cmd = apptemplate.format(originalfile=compare_movie, 
+                                 newfile=distorted.as_posix(), 
+                                 filter=filter,
+                                 ffmpeg_bin=FFMPEG_BIN)
+        print(f"\n\{filter} command: {cmd}", file=log_file_object)
+
+        cmdresult = subprocess.run(shlex.split(cmd), 
+                                check=False, 
+                                capture_output=True, text=True
+                                )
+        lines = cmdresult.stderr.splitlines()
+        print("\n".join(lines), file=log_file_object)
+        if len(lines) < 2 or cmdresult.returncode != 0:
+            result = {'testresult': f"Unable to run ffmpeg, error code {cmdresult.returncode}",
+                      'returncode': cmdresult.returncode,
+                      'success': False
+            }
+        else:
+            result = {'success': True, 'testresult': lines[-1]}
+            for line in lines[-4:]:
+                if filterquery+" " not in line:
+                    continue
+                line = line.split(f" {filterquery} ")[1]
+                kv_pairs = line.split(" ")
+
+                # Create a dictionary from the list
+                for pair in kv_pairs:
+                    key, value = pair.split(":")
+                    result[key] = float(value)
+
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update({'ffmpeg_psnr': result})
+    print(f"--- {filter} output\n {result}", file=log_file_object)
+
+def frame_extract(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the sourceclip to the test_ref using ffmpeg identity.
+    We allow it to compare one wedge to another.
+
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    success - Boolean, was the test a success. 
+    """
+    
+    default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
+
+    default_extract_template = "ffmpeg -y -i {newfile}  -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1  {newpngfile}"
+    extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
+
+    distorted_name = distorted.name
+
+    distortedpng = Path(distorted.parent, distorted.stem+"-encoded.png")
+    if not distorted.exists():
+            result = {'success': False,
+              'testresult': "No movie generated."
+            }
+            cmdresult = 1
+    else:
+        extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, 
+                                             newfile=distorted.as_posix(), 
+                                             newpngfile=distortedpng.as_posix()
+                                             )
+        print(f"\n------------\nAbout to extract with cmd:{extractcmd}", file=log_file_object)
+        log_file_object.flush()
+        result = {'success': False,
+                'testresult': "undefined"
+        }
+        process = subprocess.Popen(
+                    shlex.split(extractcmd),
+                    stdout=log_file_object,
+                    stderr=log_file_object,
+                    universal_newlines=True
+                )
+
+        process.wait()
+
+        cmdresult = process.returncode
+
+
+    # Lets copy over the original file to the results folder, and convert it to PNG so it can be used in the report.
+    source_meta = get_source_metadata_dict(source_clip)
+    input_args = ''
+    if source_meta.get('images'):
+        input_args = f"-start_number {source_meta.get('in')}"
+
+    reference = f'{input_args} -i "{source_path}" '
+
+    default_convert_template = "ffmpeg -y {reference} -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {newpngfile}"
+    extract_template = comparisontestinfo.get("default_convert_template", default_convert_template)
+
+    sourcefolder = distorted.parent.parent.parent.parent / "source_images"
+    if not sourcefolder.exists():
+        sourcefolder.mkdir(parents=True, exist_ok=True)
+    source_path_name = source_path.name
+    if ".%0" in source_path_name:
+        source_path_name = source_path_name.split(".%0")[0]
+    sourcepng = Path(sourcefolder, source_path_name).with_suffix(".png")
+    print("Source PNG path:", sourcepng.as_posix())
+    if not sourcepng.exists():
+        convertcmd = default_convert_template.format(ffmpeg_bin=FFMPEG_BIN, 
+                                             reference=reference.replace("\\", "/"),
+                                             newpngfile=sourcepng.as_posix()
+                                             )
+        print(f"\n------------\nAbout to convert with cmd:{convertcmd}", file=log_file_object)
+        log_file_object.flush()
+        process = subprocess.Popen(
+                    shlex.split(convertcmd),
+                    stdout=log_file_object,
+                    stderr=log_file_object,
+                    universal_newlines=True
+                )
+
+        process.wait()
+
+        cmdresult = process.returncode
+    
+    if cmdresult != 0:
+        result['testresult'] = "Unable to extract file for test"
+    else:
+        result = {'success': True, 'testresult': "ok"}
+    
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update({'sourcepng': sourcepng.as_posix(),
+                                'relsourcepng': "../../../../source_images/"+ sourcepng.name,
+                                'distortedpng': distortedpng.as_posix(),})
+    return result
+
+    
 def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Compare the sourceclip to the test_ref using OIIO idiff.
@@ -624,7 +811,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
         try:
             output = subprocess.run(shlex.split(cmd), check=False, stdout=subprocess.PIPE).stdout
         except FileNotFoundError as e:
-            print(f"ERROR: File not found, when executing {cmd}, check that the executable exists.")
+            print(f"ERROR: File not found, when executing {cmd}, check that the executable exists, (Exception {e})")
             # We are in pretty bad shape if we cannot extract a frame.
             # If it cannot find it for this test, its likely to fail for other
             # tests, so we are going to exit.
@@ -641,6 +828,84 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
                     continue
                 key, value = line.split(" = ")
                 key = key.strip().replace(" ", "_").lower()
+                if key == "max_error":
+                    value, location = value.split(" @ ")
+                    result['max_location'] = location
+                else:
+                    value = value.strip()
+                result[key] = float(value)
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(result)
+
+
+def yuvdiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the sourceclip to the test_ref using ffmpeg
+    We typically will generate a single frame using the first frame.
+
+    source_clip -- The original clip that the new media is based on.
+    test_ref    -- The generated movie we are testing.
+    testname    -- The testname we are running.
+    comparisontestinfo -- other parameters that can be used to configure the test.
+
+    result - Was the test able to run (Completed = Yes)
+    success - Boolean, was the test a success. 
+    """
+
+    y4m_source = build_y4m(source_clip, source_path, comparisontestinfo, log_file_object)
+    compare_movie = Path(y4m_source)
+
+        
+    source_meta = get_source_metadata_dict(source_clip)
+    input_args = ''
+    if source_meta.get('images'):
+        input_args = f"-start_number {source_meta.get('in')}"
+
+    reference = f'{input_args} -i "{source_path}" '
+
+
+    default_app_template = "ffmpeg {reference} -i \"{newfile}\" -q:v 2 -filter_complex \"[0:v]select='eq(n\,0)',format=yuv444p12[ref];[1:v]select='eq(n\,0)',format=yuv444p12[test];[ref][test]blend=all_mode=subtract[diff];[diff]extractplanes=y+u+v[y][u][v];[y]format=gray12le,lut='val*20+2048'[y6];[u]format=gray12le,lut='val*20+2048'[u6];[v]format=gray12le,lut='val*20+2048'[v6];[y6][u6][v6]mergeplanes=0x001020:format=yuv444p12[out]\"  -map \"[out]\" -frames:v 1 -y {newfilediff}"
+    apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
+
+    diffpng = Path(distorted.parent, distorted.stem + "-x20diff.png")
+
+    if not compare_movie.exists():
+            result = {'success': False,
+              'testresult': "No movie generated."
+            }
+            cmdresult = 1
+    else:
+        cmd = apptemplate.format(reference=reference, 
+                                 newfile=distorted.as_posix(),
+                                newfilediff=diffpng.as_posix())
+        print(f"\n\nyuvdiff command: {cmd}", file=log_file_object)
+        
+        try:
+            output = subprocess.run(shlex.split(cmd), 
+                                    check=False, 
+                                    stderr=subprocess.STDOUT,
+                                    stdout=subprocess.PIPE).stdout
+        except FileNotFoundError as e:
+            print(f"ERROR: File not found, when executing {cmd}, check that the executable exists, (Exception {e})")
+            # We are in pretty bad shape if we cannot extract a frame.
+            # If it cannot find it for this test, its likely to fail for other
+            # tests, so we are going to exit.
+            exit(1)
+        lines = output.decode("utf-8").splitlines()
+        print("\n".join(lines), file=log_file_object)
+        if len(lines) < 2:
+            result = {'success': False, 'testresult': "Unable to run ffmpeg"}
+        else:
+            result = {'success': True, 'testresult': lines[-1]}
+            for line in lines[:-1]:
+                if " = " not in line:
+                    continue
+                try:
+                    key, value = line.split(" = ")
+                    key = key.strip().replace(" ", "_").lower()
+                except ValueError as e:
+                    print(f"ERROR: Failed to parse line {line} with error {e}")
+                    continue
                 if key == "max_error":
                     value, location = value.split(" @ ")
                     result['max_location'] = location
@@ -824,17 +1089,23 @@ def run_tests(args, config_data, timeline):
 
                         testtype = test.get("testtype", "vmaf")
                         print(f"\t {testtype}")
-                        print("######################", file=log_file_object)
+                        print("\n######################", file=log_file_object)
                         print(f"Test: {testtype}", file=log_file_object)
 
                         if testtype == 'identity':
                             identity_compare(identity_distort_clips, source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "vmaf":
                             vmaf_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        elif testtype == "ffmpeg_psnr":
+                            psnr_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "vmaf3":
                             vmaf3_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "idiff":
                             idiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        elif testtype == "yuvdiff":
+                            yuvdiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        elif testtype == "frame_extract":
+                            frame_extract(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "assertresults":
                             assertresults_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         else:
