@@ -147,9 +147,13 @@ class FFmpegEncoder(ABCTestEncoder):
         if source_meta.get('images'):
             input_args = f"-start_number {source_meta.get('in')}"
 
-        encoding_args = ' '.join(
-            [f'{key} {value}' for key, value in wedge.items()]
-        )
+        encoding_args_v = []
+        for key, value in wedge.items():
+            if value == '':
+                encoding_args_v.append(key)
+            else:
+                encoding_args_v.append(f'{key} {value}')
+        encoding_args = ' '.join(encoding_args_v)
 
         duration = self.source_clip.source_range.duration.to_frames()
 
