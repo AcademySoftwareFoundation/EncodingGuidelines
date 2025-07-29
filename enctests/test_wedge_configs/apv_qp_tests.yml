@@ -110,8 +110,8 @@ reports:
       name: filesize.png
       sortby: -qp
     name: apv_qp
-    title: OpenAPV QP Comparisons
-    description: This is a comparison of different APV qp.
+    title: OpenAPV 422p10 QP Comparisons
+    description: This is a comparison of different APV qp for 422p10.
     directory: osx-oapv_qp-encode
     templatefile:
     - basicvmafimagecompare.html.jinja

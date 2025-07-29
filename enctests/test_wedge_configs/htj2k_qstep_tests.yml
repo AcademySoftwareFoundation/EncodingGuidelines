@@ -19,13 +19,26 @@ test_qstep12:
     - sources/enc_sources/chimera_wind_srgb_dpx_12/chimera_wind_srgb.%06d.dpx.yml
     # - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
-        qstep0.001: &base_args
-            -jph:qstep: 0.001
+        qstep0.0001: &base_args
+            -jph:qstep: 0.0001
             # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
-
-        qstep0.025:
+        
+        qstep0.00025:
             << : *base_args
-            -jph:qstep: 0.025
+            -jph:qstep: 0.00025
+
+        qstep0.0005:
+            << : *base_args
+            -jph:qstep: 0.0005
+
+        qstep0.00075:
+            << : *base_args
+            -jph:qstep: 0.00075
+
+        qstep0.001:
+            << : *base_args
+            -jph:qstep: 0.001
+
 
         qstep0.002:
             << : *base_args
@@ -47,9 +60,10 @@ test_qstep12:
             << : *base_args
             -jph:qstep: 0.015
 
-        qstep0.035:
+        qstep0.020:
             << : *base_args
-            -jph:qstep: 0.035
+            -jph:qstep: 0.020
+
 
 
 ---

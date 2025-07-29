@@ -1,5 +1,5 @@
 test_prores:
-    name: test_prores_quality 422p10
+    name: test_prores_quality422
     description: variations of prores_quality
     app: ffmpeg
     comparisontest:

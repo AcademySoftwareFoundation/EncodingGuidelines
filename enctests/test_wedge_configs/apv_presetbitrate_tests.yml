@@ -4,11 +4,14 @@ test_osx-oapv_bitratepreset:
     app: ffmpeg
     comparisontest:
     - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
     #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    #- sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
     #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
@@ -63,6 +66,31 @@ test_osx-oapv_bitratepreset:
             -b:v: 50M
             -preset: slow
 
+        fast_b400:
+            << : *base_args
+            -b:v: 400M
+            -preset: fast
+
+        fast_b300:
+            << : *base_args
+            -b:v: 300M
+            -preset: fast
+
+        fast_b200:
+            << : *base_args
+            -b:v: 200M
+            -preset: fast
+
+        fast_b100:
+            << : *base_args
+            -b:v: 100M
+            -preset: fast
+
+        fast_b050:
+            << : *base_args
+            -b:v: 50M
+            -preset: fast
+
 
 
 ---
@@ -114,5 +142,7 @@ reports:
     title: OpenAPV Bitrate Comparisons vs. preset
     description: This is a comparison of different APV bitrates for different presets.
     directory: osx-oapv_bitrate-encode
-    templatefile: basicmovie2.html.jinja
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
 

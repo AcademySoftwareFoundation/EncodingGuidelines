@@ -108,7 +108,7 @@ reports:
       name: filesize.png
       sortby: -qp
     name: apv_qp4k
-    title: OpenAPV QP Comparisons @ 4k
+    title: OpenAPV 422p10 QP Comparisons @ 4k
     description: This is a comparison of different APV qp at 4k.
     directory: osx-oapv_qp-encode
     templatefile:
