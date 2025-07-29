@@ -114,7 +114,6 @@ def create_media_reference(path, source_clip, is_sequence=False):
             fileseq.findSequencesOnDisk(parentdir),
            key=lambda s: len(s)
         )
-        seq2 = fileseq.FindFileSequencesOnDisk(parentdir)
         available_range = otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(
                 seq.start(), rate
