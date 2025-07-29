@@ -1,0 +1,7 @@
+#!/bin/bash
+echo rsync -zvtrR --chmod=ugo=rx --exclude="*.y4m" --exclude="*.mp4" --exclude="*.mov" $* tauricho@162.241.252.176:encode.taurich.org
+rsync -zvtrR --chmod=ugo=rx --exclude="._*" --exclude "*-encoded.png" --exclude "*-x20diff.png" --exclude="*.y4m" --exclude="*.mp4" --exclude="*.mov" $* tauricho@162.241.252.176:encode.taurich.org
+rsync -zvtrR --chmod=ugo=rx --exclude="._*" --exclude="*.y4m" --exclude="*.mp4" --exclude="*.mov" test_wedge_configs tauricho@162.241.252.176:encode.taurich.org
+rsync -zvtrR --chmod=ugo=rx --exclude="._*" --exclude="*.y4m" --exclude="*.mp4" --exclude="*.mov" wedge_results/source_images tauricho@162.241.252.176:encode.taurich.org
+ssh tauricho@162.241.252.176 "cd encode.taurich.org; chmod -R go+rx $*"
+ssh tauricho@162.241.252.176 "cd encode.taurich.org; bin/.venv/bin/python3 bin/makeindex.py"
