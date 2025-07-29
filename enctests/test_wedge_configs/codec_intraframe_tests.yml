@@ -1,0 +1,198 @@
+test_aom:
+    name: test_crf
+    description: variations of colorspace yuv420p
+    app: ffmpeg
+    suffix: .mp4
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb_short.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        aom_crf14_g1: &base_args
+            -c:v: libaom-av1
+            -crf: 10
+            -cpu-used: 6
+            -row-mt: 1
+            -g: 1
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        # cpu4_crf_18:
+        #     << : *base_args
+        #     -crf: 18
+
+        # crf27_420:
+        #     << : *base_args
+        #     -pix_fmt: yuv420p10le
+
+
+        aom_crf6_gop1:
+            << : *base_args
+            -crf: 6
+            -g: 1
+
+        aom_crf6_gop2:
+            << : *base_args
+            -crf: 6
+            -g: 2
+
+        aom_crf6_gop3:
+            << : *base_args
+            -crf: 6
+            -g: 3
+
+        aom_intraframe_crf10: &base_args3
+            -usage: allintra
+            -c:v: libaom-av1
+            -crf: 10
+            -cpu-used: 6
+            -row-mt: 1
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        aom_intraframe_crf6:
+            << : *base_args3
+            -crf: 6
+
+        mjpeg:
+            -c:v: mjpeg
+            -qscale:v: 3
+            -pix_fmt: yuvj444p
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        libsvtav1_crf10_420:
+            << : *base_args
+            -c:v: libsvtav1
+            -preset: 9
+            -svtav1-params: tune=0
+            -crf: 10
+            -pix_fmt: yuv420p10le
+
+        vp9_444_crf10:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -crf: 18
+            -quality: good
+            -pix_fmt: yuv444p10le
+
+        vp9_444_crf10:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -crf: 10
+            -quality: good
+            -pix_fmt: yuv444p10le
+
+        vp9_444_crf10_lag0:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -crf: 10
+            -auto-alt-ref: 0
+            -lag-in-frames: 0
+            -quality: good
+            -pix_fmt: yuv444p10le
+
+        vp9_444_crf10_gop2:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -crf: 10
+            -g: 2
+            -quality: good
+            -pix_fmt: yuv444p10le
+
+        aom_gvp9_444_crf10_gop3:
+            << : *base_args
+            -c:v: libvpx-vp9
+            -crf: 10
+            -g: 3
+            -quality: good
+            -pix_fmt: yuv444p10le
+test_mov:
+    name: test_mov
+    description: A comparison of different codecs, with VMAF > 98.
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb_short.%05d.png.yml
+    #- sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        dnxhd: &base_args2
+            -c:v: dnxhd
+            -pix_fmt: yuv444p10le
+            -profile:v: dnxhr_444
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: 1
+            -colorspace: 1
+            -color_primaries: 1
+            -color_trc: 1
+
+        prores_4444_ks:
+            << : *base_args2
+            -c:v: prores_ks
+            -profile:v: 4
+            -vendor: apl0
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 95
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: codec-grain-test
+    title: Intraframe Comparison
+    description: This is a comparison of different codecs for GOP=1
+    directory: codec-intraframe-encode
+    templatefile: basicmovie.html.jinja
+
