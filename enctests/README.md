@@ -171,7 +171,8 @@ source .venv/bin/activate
 
 # Upgrade pip and install dependencies
 pip install --upgrade pip
-pip install cmake pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2 yuvio
+# Note pyseq now needs rust (so for msys2 you need pacman -S )
+pip install pyseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2 yuvio
 
 # Run tests (for now)
 .venv/bin/python main.py
