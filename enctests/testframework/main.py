@@ -48,6 +48,9 @@ VMAF_MODEL_DIR = os.getenv(
     '/usr/share/vmaf'
 )
 
+OUTPUT_STILL_IMAGE_FORMAT = "avif"
+OUTPUT_FFMPEG_COMPRESSION_FLAGS = " -crf 23 -still-picture 1 -cpu-used 4 "
+
 if not Path(VMAF_MODEL_DIR, "vmaf_v0.6.1.json").exists():
     print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_MODEL_DIR}, this is defined by the environment variable VMAF_MODEL_DIR.")
     exit(1)
@@ -661,12 +664,12 @@ def frame_extract(source_clip, test_ref, testname, comparisontestinfo, source_pa
     default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
-    default_extract_template = "ffmpeg -y -i {newfile}  -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1  {newpngfile}"
+    default_extract_template = "ffmpeg -y -i {newfile}  -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {OUTPUT_FFMPEG_COMPRESSION_FLAGS} {newpngfile}"
     extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
 
     distorted_name = distorted.name
 
-    distortedpng = Path(distorted.parent, distorted.stem+"-encoded.png")
+    distortedpng = Path(distorted.parent, distorted.stem+f"-encoded.{OUTPUT_STILL_IMAGE_FORMAT}")
     if not distorted.exists():
             result = {'success': False,
               'testresult': "No movie generated."
@@ -675,6 +678,7 @@ def frame_extract(source_clip, test_ref, testname, comparisontestinfo, source_pa
     else:
         extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, 
                                              newfile=distorted.as_posix(), 
+                                             OUTPUT_FFMPEG_COMPRESSION_FLAGS=OUTPUT_FFMPEG_COMPRESSION_FLAGS,
                                              newpngfile=distortedpng.as_posix()
                                              )
         print(f"\n------------\nAbout to extract with cmd:{extractcmd}", file=log_file_object)
@@ -702,7 +706,7 @@ def frame_extract(source_clip, test_ref, testname, comparisontestinfo, source_pa
 
     reference = f'{input_args} -i "{source_path}" '
 
-    default_convert_template = "ffmpeg -y {reference} -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {newpngfile}"
+    default_convert_template = "ffmpeg -y {reference} -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {OUTPUT_FFMPEG_COMPRESSION_FLAGS} {newpngfile}"
     extract_template = comparisontestinfo.get("default_convert_template", default_convert_template)
 
     sourcefolder = distorted.parent.parent.parent.parent / "source_images"
@@ -711,11 +715,11 @@ def frame_extract(source_clip, test_ref, testname, comparisontestinfo, source_pa
     source_path_name = source_path.name
     if ".%0" in source_path_name:
         source_path_name = source_path_name.split(".%0")[0]
-    sourcepng = Path(sourcefolder, source_path_name).with_suffix(".png")
-    print("Source PNG path:", sourcepng.as_posix())
+    sourcepng = Path(sourcefolder, source_path_name).with_suffix(f".{OUTPUT_STILL_IMAGE_FORMAT}")
     if not sourcepng.exists():
         convertcmd = default_convert_template.format(ffmpeg_bin=FFMPEG_BIN, 
                                              reference=reference.replace("\\", "/"),
+                                             OUTPUT_FFMPEG_COMPRESSION_FLAGS=OUTPUT_FFMPEG_COMPRESSION_FLAGS,
                                              newpngfile=sourcepng.as_posix()
                                              )
         print(f"\n------------\nAbout to convert with cmd:{convertcmd}", file=log_file_object)
@@ -764,14 +768,14 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     default_app_template = "{idiff_bin} {originalfile} {newfile} -abs -scale 20 -o {newfilediff}"
     apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
-    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {newpngfile}"
+    default_extract_template = "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt709:out_color_matrix=bt709  -frames:v 1 {OUTPUT_FFMPEG_COMPRESSION_FLAGS} {newpngfile}"
     extract_template = comparisontestinfo.get("extracttemplate", default_extract_template)
 
     # Allow a different image to be compared with, useful for 422 or 420 encoding.
     sourcepng = comparisontestinfo.get("compare_image", source_path.as_posix())
 
-    distortedpng = Path(distorted.parent, distorted.stem).with_suffix(".png")
-    diffpng = Path(distorted.parent, distorted.stem + "-x20diff").with_suffix(".png")
+    distortedpng = Path(distorted.parent, distorted.stem).with_suffix(f".{OUTPUT_STILL_IMAGE_FORMAT}")
+    diffpng = Path(distorted.parent, distorted.stem + "-x20diff").with_suffix(f".{OUTPUT_STILL_IMAGE_FORMAT}")
 
     if not distorted.exists():
             result = {'success': False,
@@ -781,6 +785,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     else:
         extractcmd = extract_template.format(ffmpeg_bin=FFMPEG_BIN, 
                                              newfile=distorted.as_posix(), 
+                                             OUTPUT_FFMPEG_COMPRESSION_FLAGS=OUTPUT_FFMPEG_COMPRESSION_FLAGS,
                                              newpngfile=distortedpng.as_posix()
                                              )
         print(f"\n------------\nAbout to extract with cmd:{extractcmd}", file=log_file_object)
@@ -804,6 +809,7 @@ def idiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_pa
     else:
         cmd = apptemplate.format(originalfile=sourcepng, 
                                  newfile=distortedpng.as_posix(),
+                                OUTPUT_FFMPEG_COMPRESSION_FLAGS=OUTPUT_FFMPEG_COMPRESSION_FLAGS,
                                 idiff_bin=IDIFF_BIN, 
                                 newfilediff=diffpng.as_posix())
         print(f"\n\nIdiff command: {cmd}", file=log_file_object)
@@ -864,10 +870,10 @@ def yuvdiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_
     reference = f'{input_args} -i "{source_path}" '
 
 
-    default_app_template = "ffmpeg {reference} -i \"{newfile}\" -q:v 2 -filter_complex \"[0:v]select='eq(n\,0)',format=yuv444p12[ref];[1:v]select='eq(n\,0)',format=yuv444p12[test];[ref][test]blend=all_mode=subtract[diff];[diff]extractplanes=y+u+v[y][u][v];[y]format=gray12le,lut='val*20+2048'[y6];[u]format=gray12le,lut='val*20+2048'[u6];[v]format=gray12le,lut='val*20+2048'[v6];[y6][u6][v6]mergeplanes=0x001020:format=yuv444p12[out]\"  -map \"[out]\" -frames:v 1 -y {newfilediff}"
+    default_app_template = "ffmpeg {reference} -i \"{newfile}\" -q:v 2 -filter_complex \"[0:v]select='eq(n\,0)',format=yuv444p12[ref];[1:v]select='eq(n\,0)',format=yuv444p12[test];[ref][test]blend=all_mode=subtract[diff];[diff]extractplanes=y+u+v[y][u][v];[y]format=gray12le,lut='val*20+2048'[y6];[u]format=gray12le,lut='val*20+2048'[u6];[v]format=gray12le,lut='val*20+2048'[v6];[y6][u6][v6]mergeplanes=0x001020:format=yuv444p12[out]\"  -map \"[out]\" -frames:v 1 -y {OUTPUT_FFMPEG_COMPRESSION_FLAGS} {newfilediff}"
     apptemplate = comparisontestinfo.get("testtemplate", default_app_template)
 
-    diffpng = Path(distorted.parent, distorted.stem + "-x20diff.png")
+    diffpng = Path(distorted.parent, distorted.stem + f"-x20diff.{OUTPUT_STILL_IMAGE_FORMAT}")
 
     if not compare_movie.exists():
             result = {'success': False,
@@ -877,6 +883,7 @@ def yuvdiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_
     else:
         cmd = apptemplate.format(reference=reference, 
                                  newfile=distorted.as_posix(),
+                                    OUTPUT_FFMPEG_COMPRESSION_FLAGS=OUTPUT_FFMPEG_COMPRESSION_FLAGS,
                                 newfilediff=diffpng.as_posix())
         print(f"\n\nyuvdiff command: {cmd}", file=log_file_object)
         

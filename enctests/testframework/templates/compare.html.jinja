@@ -29,6 +29,7 @@
     }
     a:-webkit-any-link {
     color: #9292c0ff;
+    text-decoration: none;
 }
     .container {
     margin: 0 auto;
@@ -53,7 +54,7 @@
     opacity: 0.9;
     }
     .controls {
-    padding: 25px;
+    padding: 5px;
     background: var(--dark-surface);
     border-bottom: 1px solid var(--dark-border);
     }
@@ -62,7 +63,7 @@
     }
     .selector-group {
     background: var(--dark-surface-raised);
-    padding: 20px;
+    padding: 5px;
     border-radius: 8px;
     border: 1px solid var(--dark-border);
     transition: all 0.3s ease;
@@ -258,9 +259,14 @@
 
     </style>
 
+    
 
     <div class="container">
         <div class="header">
+        <TABLE width="800">
+    <TR><TD><A HREF="http://openreviewinitiative.org/">Open Review Initiative</A></TD>
+    <TD><A HREF="https://academysoftwarefoundation.github.io/EncodingGuidelines/">ORI Encoding Guidelines</A></TD>
+        <TD><A HREF="../../../index.html">Test Indexes</A></TD></TR></TABLE>
             <h1>{{config.title}}</h1>
             <p>{{config.description}}</p>
             <a href="{{ config.name }}.html">Test Data</A></BR>
@@ -272,7 +278,7 @@
                 <table width='100%'>
                 <TR><TD colspan=2>
                 <div class="selector-group">
-                    <h3>Media Selection</h3>
+                    <B>Media Selection</B>
                     <select id="mediaSelect">
                     {% for media_name, test in tests.items() %}
                            <option value="{{ media_name|e }} Source">{{ media_name|e }}</option>
@@ -284,9 +290,9 @@
                     <input type="file" id="leftFile" accept="image/*,video/*">-->
                 </div>
                 </TD></TR>
-                <TR><TD>
+                <TR><TD width="50%">
                 <div class="selector-group">
-                    <h3>Left Image</h3>
+                    <B>Left Image</B>
                     <select id="leftSelect"><option value="">Select preset media...</option>
                     {% for media_name, test in tests.items() %}
                         {% for enc_info in test.results %}
@@ -297,9 +303,9 @@
                     <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
                     <input type="file" id="leftFile" accept="image/*,video/*">-->
                 </div>
-                </TD><TD>
+                </TD><TD width="50%">
                 <div class="selector-group">
-                    <h3>Right Image</h3>
+                    <B>Right Image</B>
                     <select id="rightSelect"><option value="">Select preset media...</option>
                     {% for media_name, test in tests.items() %}
                         {% for enc_info in test.results %}
@@ -310,6 +316,9 @@
                     <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
                     <!-- <input type="file" id="rightFile" accept="image/*,video/*"> -->
                 </div>
+                </TD></TR>
+                <TR><TD id="leftEncode"><div id="replace"></div>
+                </TD><TD id="rightEncode"><div id="replace"></div>
                 </TD></TR>
                 </TABLE>
             </div>
@@ -395,15 +404,28 @@
                 return {
             {% for media_name, test in tests.items() %}
                 {% for enc_info in test.results %}
-                    '{{ enc_info.testbasename|e }}': {url: '{{ enc_info.testbasename|e }}-x20diff.png', name: '{{ enc_info.testbasename|e }}' },
+                    '{{ enc_info.testbasename|e }}': {
+                        url: '{{ enc_info.testbasename|e }}-x20diff.avif', 
+                        name: '{{ enc_info.testbasename|e }}', 
+                        encoder_args: '{{enc_info.encode_arguments | e}}',
+                        wedge_name: '{ enc_info.name|e }}',
+                        name: '{{ enc_info.testbasename|e }} Encoded', 
+                        },
                 {% endfor %}
             {% endfor %}
 
             {% for media_name, test in tests.items() %}
-                {%- set mystring = "this_is_a_string" -%}
-                '{{ media_name|e }} Source':  {url: '../../../source_images/{{ media_name|e | regex_replace('\\.%05d|\\.%06d', '')}}.png', name: '{{ media_name|e }} Source' },
+                '{{ media_name|e }} Source':  {
+                    url: '../../../source_images/{{ media_name|e | regex_replace('\\.%05d|\\.%06d', '')}}.avif', 
+                    name: '{{ media_name|e }} Source' 
+                    },
                 {% for enc_info in test.results %}
-                    '{{ enc_info.testbasename|e }} Encoded': {url: '{{ enc_info.testbasename|e }}-encoded.png', name: '{{ enc_info.testbasename|e }} Encoded' },
+                    '{{ enc_info.testbasename|e }} Encoded': {
+                        url: '{{ enc_info.testbasename|e }}-encoded.avif', 
+                        encoder_args: '{{enc_info.encode_arguments | e}}',
+                        wedge_name: '{ enc_info.name|e }}',
+                        name: '{{ enc_info.testbasename|e }} Encoded', 
+                        },
                 {% endfor %}
             {% endfor %}
                 };
@@ -476,6 +498,7 @@
         const playPauseBtn = document.getElementById('playPauseBtn');
         const comparisonArea = document.getElementById('comparisonArea');
         const placeholder = document.querySelector('.placeholder');
+        let inStartup = true;
 
         // Initialize dropdowns with available images
         populateDropdowns();
@@ -502,6 +525,39 @@
         // Mouse wheel zoom functionality
         comparisonArea.addEventListener('wheel', handleMouseWheel, { passive: false });
 
+        function updateURLParams() {
+            if (inStartup){
+                console.log("In startup");
+                return;
+            }
+            const params = new URLSearchParams(window.location.search);
+            params.set('media', mediaSelect.value);
+            params.set('left', leftSelect.value);
+            params.set('right', rightSelect.value);
+            const newUrl = window.location.pathname + '?' + params.toString();
+            window.history.replaceState({}, '', newUrl);
+        }
+
+        function setSelectionsFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('media')) {
+                mediaSelect.value = params.get('media');
+                pickImage();
+            }
+            // Wait for pickImage to populate left/right selects
+            setTimeout(() => {
+                if (params.has('left')) leftSelect.value = params.get('left');
+                if (params.has('right')) rightSelect.value = params.get('right');
+                loadImage('left', 'select');
+                loadImage('right', 'select');
+            }, 0);
+            inStartup = false;
+        }
+
+        // Call this after DOM and dropdowns are ready
+        window.addEventListener('DOMContentLoaded', () => {
+            setSelectionsFromURL();
+        });
 
         function pickImage(){
             const media = mediaSelect.value;
@@ -530,7 +586,7 @@
             const select = side === 'left' ? leftSelect : rightSelect;
             const img = side === 'left' ? leftImage : rightImage;
             const video = side === 'left' ? leftVideo : rightVideo;
-
+            const encodeText = side === 'left' ? leftEncode : rightEncode;
             // Hide both img and video initially
             img.style.display = 'none';
             video.style.display = 'none';
@@ -546,6 +602,11 @@
                     img.src = url;
                     img.style.display = 'block';
                 }
+                //d = document.createElement("textarea");
+                //d.innerHTML = imageList[select.value].encoder_args;
+
+                //encodeText.replaceChild(d);
+                encodeText.innerHTML = decodeURIComponent(imageList[select.value].encoder_args);
             } else if (source === 'file' && file.files[0]) {
                 const fileObj = file.files[0];
                 const reader = new FileReader();
@@ -576,11 +637,12 @@
                 setupVideoSync();
             };
             updateImageSizes();
+            updateURLParams();
         }
 
         function isVideoFile(url) {
             const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
-            return videoExtensions.some(ext => url.toLowerCase().includes(ext));
+            return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
         }
 
         function checkForVideo() {
