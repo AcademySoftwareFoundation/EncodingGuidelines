@@ -58,20 +58,16 @@ Note, the y4m format only works with 422, but it does give you access to some of
 ## Ffmpeg
 
 Currently you need to grab the main branch, there is no official release yet that includes apv.  
-There is a decoder which is impressively fast, and does support 422, 444 at 10 and 12 bits.   
-The encoder uses the OpenAPV format, but currently only supports YUV422p10le.
+There is a decoder which is impressively fast, and does support 422, 444 and 4444 at 10 and 12 bits.   
+The encoder uses the OpenAPV library, and currently supports 422, 444 and 4444 at 10 and 12 bits.
 
-## Ffapv
-
-Is a branch of ffmpeg that is likely to eventually be depreciated at some point it however for now it does have some additional functionality for encoding, namely:  
-422 and 444 encoding at both 10 and 12-bits.
 
 ## Example Encoding
 
 
 ```
 ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v oapv -qp 20 \
-     -preset fast -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int \
+     -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" -sws_flags spline+accurate_rnd+full_chroma_int \
      -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
 ```
@@ -80,9 +76,53 @@ Flags include:
 
 | -qp 20 | Quantization parameter, for visually lossless you probably want 20 or lower in the range 0-63 for 10-bit 0-75 for 12-bit. |
 | :---- | :---- |
-| -preset fast | Preset fast curirously appears to generate faster results at a better quality. Little reason to use medium or slower presets. |
+| -preset fast | Preset fast curiously appears to generate faster results at a better quality. Little reason to use medium or slower presets. |
 | -b:v 250Mb | The bitrate can be set, you can choose between -qp and bitrate. |
+| -oapv-params "profile=444-12" | This passes an additional parameter to the encoder, it is not needed for yuv422p10le but is needed for the others. See below |
 
+
+For the current version of ffmpeg, an additional parameter is required to be passed through the -oapv-params flag, this tells the encoder what media it expects to be passed from ffmpeg. Hopefully in the future by default this will be automatic. Values can be:
+
+| *pix_fmt* | *oapv-params* | *notes* |
+| -pix_fmt yuv422p10le |  | None required |
+| -pix_fmt yuv422p12le | -oapv-params profile=422-12 | YCbCr422 12-bit |
+| -pix_fmt yuv444p10le | -oapv-params profile=444-10 | YCbCr444 10-bit |
+| -pix_fmt yuv444p12le | -oapv-params profile=444-12 | YCbCr444 12-bit |
+| -pix_fmt yuv444p10le | -oapv-params profile=444-10 | YCbCr444 10-bit |
+| -pix_fmt yuv444p12le | -oapv-params profile=444-12 | YCbCr444 12-bit |
+| -pix_fmt yuva444p10le | -oapv-params profile=4444-10 | YCbCr444 10-bit |
+| -pix_fmt yuva444p12le | -oapv-params profile=4444-12 | YCbCr444 12-bit |
+
+Ffmpeg does default to 422-10, so if you are using that pix_fmt, the encode can be as simple as:
+```
+ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v oapv -qp 20 \
+     -preset fast -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int \
+     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
+```
+
+<!---
+HIDING Familys for now, they dont work.
+
+## APV Familys
+
+Instead of the bitrate and QP parameter, you can optionally specify a family, which can be one of:
+| *Family Name* | *Color Sampling* | *Notes* | * FFMPEG Parameter *|
+| 422-LQ |  YCbCr422 | Editing-friendly low-data-rate workflows | -oapv-params: profile=422-10:family=422-HQ |
+| 422-SQ |  YCbCr422 | Standard quality mezzanine || -oapv-params: profile=422-10:family=422-HQ |
+| 422-HQ | YCbCr422 | High quality mezzanine || -oapv-params: profile=422-10:family=422-HQ |
+| 444-HQ | YCbCr444 | high quality - Finishing || -oapv-params: profile=444-12:family=444-HQ |
+
+This will then pick an appropriate bitrate based on your resolution and frame-rate, so saving the need to need to do any significant testing.
+You will also need to match the pix_fmt setting with the oapv-params.
+
+```
+ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v oapv -qp 20 \
+     -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" -sws_flags spline+accurate_rnd+full_chroma_int \
+     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
+```
+-->
 ## Benchmarking
 
 These benchmarks were for HD versions of the netflix chimera media (200 frame clips). This is running on a M2 Macbook Pro, so we can compare directly with the videotoolbox apple prores encode (NOTE, which has hardware assist). We have picked a couple of QP values, and mostly consider a QP value of 20 to be the most desirable rate.
