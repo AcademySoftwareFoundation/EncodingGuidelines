@@ -1,12 +1,12 @@
 ---
 layout: default
 nav_order: 4.2
-title: Prores Encoding
+title: ProRes Encoding
 parent: Codec Comparisons
 ---
 
 # ProRes <a name="prores"></a>
-There are four Prores encoders, Prores, Prores_ks, Prores_aw and prores_videotoolbox, which is a hardware based OSX M1 encoder/decoder (ffmpeg version 5 or higher).
+There are four ProRes encoders, Prores, Prores_ks, Prores_aw and prores_videotoolbox, which is a hardware based OSX M1 encoder/decoder (ffmpeg version 5 or higher).
 
 From [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) the recommendation is to use Prores_ks with -profile:v 3 and the qscale of 11 unless you are on OSX where we would recommend using prores_videotoolbox. 
 
@@ -16,7 +16,7 @@ The two encoders we are reviewing are:
 
 ## Prores_ks
 
-While prores does support up to 12 bits of resolution, prores_ks can only encode to 10-bits. It is able to decode to > 10 bits (see [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) )
+While ProRes does support up to 12 bits of resolution, prores_ks can only encode to 10-bits. It is able to decode to > 10 bits (see [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) )
 
 Supported pixel formats: yuv422p10le yuv444p10le yuva444p10le
 
@@ -49,14 +49,14 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
 Options that can be used include:
 
 | --- | --- |
-| -profile:v 4444xq | Which prores encoding profile to use, see below |
-| -qscale:v 10 | between values of 9 - 13 give a good result, 0 being best, see below for some wedge tests. |
+| -profile:v 4444xq | Which ProRes encoding profile to use, see below |
+| -qscale:v 3 | between values of 1-6 give a good result, 0 being default, see below for some wedge tests. |
 | -vendor apl0 | tricks the codec into believing its from an Apple codec. |
 | -alpha_bits 16 | Allows you to specify how many bits to use for the alpha channel (default 16) |
 
 
 
-Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a prores file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognized, e.g.:
+Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a ProRes file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognized, e.g.:
 
 
 ```console
@@ -103,7 +103,7 @@ To help pick appropriate values with the -qscale:v , we have run the [Test Frame
 
 ## videotoolbox_prores
 
-If you are on a OSX M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to prores using:
+If you are on a OSX M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to ProRes using:
 
 <!---
 name: test_prores_videotoolbox
