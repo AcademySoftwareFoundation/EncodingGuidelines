@@ -87,7 +87,10 @@ ffmpeg -i input.mp4 -movflags use_metadata_tags \
     -metadata my_custom_key="my value" -c copy output.mp4
 ```
 
-TODO Determine how to transcode media and keep metadata tags.
+You can also use this flag to transcode media and keep the metadata:
+```
+ffmpeg -i input.mp4 -movflags use_metadata_tags -crf 22 output.mp4
+```
 
 ## Common metadata values for VFX
 
