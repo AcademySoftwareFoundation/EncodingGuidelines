@@ -67,11 +67,16 @@ def main():
         arg = otherargs.pop(0)
     
     endframe = int(args.start_frame)
-    file = str(input_path) % endframe
+    if "%" in str(input_path):
+        file = str(input_path) % endframe
+        while(os.path.exists(str(input_path) % endframe)):
+            endframe += 1
+        endframe -= 1
+    else:
+        file = str(input_path)
+        endframe = int(args.start_frame)
     print("FILE:", file, " from :", input_path)
-    while(os.path.exists(str(input_path) % endframe)):
-        endframe += 1
-    endframe -= 1
+
 
     oiio_args = [launch_arg, '-v', '-i', str(input_path), "--parallel-frames", "--frames", "%s-%d" % (args.start_frame, endframe)]+oiio_args+['-o', str(output_path)]
     print(" ".join(oiio_args))
