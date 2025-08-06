@@ -1,0 +1,148 @@
+test_intra_mov:
+    name: test_intra_mov
+    description: Different encoders with intraframe encoding only.
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_12/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_12/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_12/chimera_wind_srgb.%06d.dpx.yml
+    wedges:
+        prores_ks_4444: &base_args2
+            -c:v: prores_ks
+            -profile:v: 4444
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        prores_videotoolbox_yuv444p12le_4444:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: 4444
+            -pix_fmt: yuv444p12le
+
+        prores_videotoolbox_yuv444p12le_xq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: xq
+            -pix_fmt: yuv444p12le
+
+        oapv_444p12le_qp20:
+            -c:v: liboapv
+            -preset: fast
+            -qp: 20
+            -pix_fmt: yuv444p12le
+            -oapv-params: "profile=444-12"
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        oapv_444p12le_qp28:
+            -c:v: liboapv
+            -preset: fast
+            -qp: 28
+            -pix_fmt: yuv444p12le
+            -oapv-params: "profile=444-12"
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        dnxhr_444:
+            -c:v: dnxhd
+            -profile:v: dnxhr_444
+            -pix_fmt: yuv444p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+test_intra_htj2k:
+    name: test_intra_htj2k
+    description: Different encoders with intraframe encoding only.
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+      ffmpegflags: ' -c:v png'
+    - testtype: yuvdiff
+    suffix: .mp4
+    encoding_template: 'bin/htj2k_encodewrap_oiio.csh /usr/local/bin/oiiotool {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_12/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_12/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_12/chimera_wind_srgb.%06d.dpx.yml
+    wedges:
+        htj2k_qs0.003:
+            -jph:qstep: 0.003
+
+        htj2k_qs0.0015:
+            -jph:qstep: 0.0015
+
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    name: intra-test444
+    title: Comparing different codecs for intra frame encoding only.
+    description: Comparing different codecs for intra frame encoding only, so no compression from frame to frame, ideal if you need to quickly seek to a frame for fast playback.
+    directory: intra-encode
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja

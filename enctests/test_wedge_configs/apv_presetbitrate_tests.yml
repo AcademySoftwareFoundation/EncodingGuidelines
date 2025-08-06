@@ -1,0 +1,148 @@
+test_osx-oapv_bitratepreset:
+    name: test_oapv_bitpreset
+    description: variations of oapv bitrate
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_b400: &base_args
+            -c:v: liboapv
+            -pix_fmt: yuv422p10le
+            -b:v: 400M
+            -preset: medium
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+#            -color_trc: iec61966-2-1 
+
+        medium_b300:
+            << : *base_args
+            -b:v: 300M
+
+        medium_b200:
+            << : *base_args
+            -b:v: 200M
+
+        medium_b100:
+            << : *base_args
+            -b:v: 100M
+
+        medium_b050:
+            << : *base_args
+            -b:v: 50M
+
+        slow_b400:
+            << : *base_args
+            -b:v: 400M
+            -preset: slow
+
+        slow_b300:
+            << : *base_args
+            -b:v: 300M
+            -preset: slow
+
+        slow_b200:
+            << : *base_args
+            -b:v: 200M
+            -preset: slow
+
+        slow_b100:
+            << : *base_args
+            -b:v: 100M
+            -preset: slow
+
+        slow_b050:
+            << : *base_args
+            -b:v: 50M
+            -preset: slow
+
+        fast_b400:
+            << : *base_args
+            -b:v: 400M
+            -preset: fast
+
+        fast_b300:
+            << : *base_args
+            -b:v: 300M
+            -preset: fast
+
+        fast_b200:
+            << : *base_args
+            -b:v: 200M
+            -preset: fast
+
+        fast_b100:
+            << : *base_args
+            -b:v: 100M
+            -preset: fast
+
+        fast_b050:
+            << : *base_args
+            -b:v: 50M
+            -preset: fast
+
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: -preset
+        height: 400
+        x: -b:v
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: -b:v
+    - args:
+        color: -preset
+        height: 400
+        x: -b:v
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: -b:v
+    - args:
+        color: -preset
+        height: 400
+        x: -b:v
+        y: encode_time
+        range_y: [0, 500]
+        markers: True
+      name: encode_time_zoom.png
+      sortby: -b:v
+    - args:
+        color: -preset
+        height: 400
+        x: -b:v
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: -b:v
+    - args:
+        color: -preset
+        height: 400
+        x: -b:v
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: -b:v
+    name: apv_bitrate
+    title: OpenAPV Bitrate Comparisons vs. preset
+    description: This is a comparison of different APV bitrates for different presets.
+    directory: osx-oapv_bitrate-encode
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
+

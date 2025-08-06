@@ -2,6 +2,10 @@ test_mp4:
     name: test_mp4
     description: A comparison of different codecs, with VMAF > 98.
     app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mp4
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
@@ -132,5 +136,9 @@ reports:
     title: VP9 vs AV1 vs HEVC NextGen Tests
     description: This is a comparison of vp9 and AV1 with HEVC and h264.
     directory: vp9av1-nextgen-encode
-    templatefile: basicmovie.html.jinja
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
+
 

@@ -4,6 +4,8 @@ test_osx-prores:
     app: ffmpeg
     comparisontest:
     - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mov
     encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
@@ -112,5 +114,7 @@ reports:
     title: OSX Videotoolbox Comparison
     description: This is a comparison of different videotoolbox encodes.
     directory: osx-prores-encode
-    templatefile: basic2.html.jinja
-
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract

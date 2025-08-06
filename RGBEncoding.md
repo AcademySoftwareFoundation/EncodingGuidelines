@@ -1,7 +1,7 @@
 ---
 layout: default
 nav_order: 6
-title: RGB Encoding.
+title: RGB Encoding
 parent: Encoding Overview
 ---
 
@@ -18,6 +18,7 @@ It does lower the compression efficiency a little, but eliminates any concern th
 | [VP9](EncodeVP9.html) | libvpx-vp9 | 8 10 12 | rgb rgb-10 rgb-12 | All Browsers | 
 | [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 | no | 
 | [DNxHD](EncodeDNXHD.html) | dnxhd | 8 10 | rgb | no | 
+| [HTJ2K](EncodeHTJ2K.html) |  | 8 -> 16 | rgb | no | 
 
 
 ## H264 RGB Encoding
@@ -29,7 +30,7 @@ Using the encoder:
 -c:v libx264rgb
 ```
 
-Has no support in web browsers, but there is limited support in players such as RV.
+Has no support in web browsers, but there is limited support in players such as RV. This is pretty obsolete, you can do something now similarly with libx264.
 
 ## mjpeg RGB Encoding
 

@@ -1,0 +1,138 @@
+test_intra4k_mov:
+    name: test_intra4k_mov
+    description: Different encoders with intraframe encoding 422 encoding @ 4k
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_raw/chimera_cars.%05d.tif.yml
+    - sources/enc_sources/chimera_coaster_raw/chimera_coaster.%05d.tif.yml
+    - sources/enc_sources/chimera_fountains_raw/chimera_fountains.%05d.tif.yml
+    wedges:
+        prores_hq: &base_args2
+            -c:v: prores_ks
+            -profile:v: hq
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        prores_videotoolbox_yuv422p10le_hq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: hq
+            -pix_fmt: yuv422p10le
+
+        oapv_422p10le_qp15:
+            -c:v: liboapv
+            -preset: fast
+            -qp: 15
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        oapv_422p10le_422HQ:
+            -c:v: liboapv
+            -preset: fast
+            -pix_fmt: yuv422p10le
+            -oapv-params: "profile=422-10:family=422-HQ"
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        dnxhd_hqx:
+            -c:v: dnxhd
+            -profile:v: dnxhr_hqx
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+test_intra_htj2k:
+    name: test_intra_htj2k
+    description: Different encoders with intraframe encoding only.
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+      ffmpegflags: ' -c:v png'
+    - testtype: yuvdiff
+    suffix: .mov
+    encoding_template: 'bin/htj2k_encodewrap_oiio.csh /usr/local/bin/oiiotool {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_raw/chimera_cars.%05d.tif.yml
+    - sources/enc_sources/chimera_coaster_raw/chimera_coaster.%05d.tif.yml
+    - sources/enc_sources/chimera_fountains_raw/chimera_fountains.%05d.tif.yml
+    wedges:
+        htj2k_qs0.003:
+            -jph:qstep: 0.003
+
+        htj2k_qs0.0015:
+            -jph:qstep: 0.0015
+
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    name: intra-4k-test
+    title: Intraframe 422p10 encoding @ 4k
+    description: Comparing different codecs for intraframe 422p10 encoding only @4k, so no compression from frame to frame, ideal if you need to quickly seek to a frame for fast playback.
+    directory: intra-encode
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja

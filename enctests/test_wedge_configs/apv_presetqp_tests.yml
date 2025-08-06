@@ -1,0 +1,205 @@
+test_osx-oapv_qppreset:
+    name: test_oapv_qppreset
+    description: variations of oapv_qp
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        medium_qp05: &base_args
+            -c:v: liboapv
+            -pix_fmt: yuv422p10le
+            -qp: 5
+            -preset: medium
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+#            -color_trc: iec61966-2-1 
+
+        medium_qp10:
+            << : *base_args
+            -qp: 10
+
+        medium_qp15:
+            << : *base_args
+            -qp: 15
+
+        medium_qp18:
+            << : *base_args
+            -qp: 18
+
+        medium_qp20:
+            << : *base_args
+            -qp: 20
+
+        medium_qp25:
+            << : *base_args
+            -qp: 25
+
+        medium_qp30:
+            << : *base_args
+            -qp: 30
+
+        slow_qp05:
+            << : *base_args
+            -preset: slow
+            -qp: 5
+
+        slow_qp10:
+            << : *base_args
+            -preset: slow
+            -qp: 10
+
+        slow_qp15:
+            << : *base_args
+            -preset: slow
+            -qp: 15
+
+        slow_qp18:
+            << : *base_args
+            -preset: slow
+            -qp: 18
+
+        slow_qp20:
+            << : *base_args
+            -preset: slow
+            -qp: 20
+
+        slow_qp25:
+            << : *base_args
+            -preset: slow
+            -qp: 25
+
+        slow_qp30:
+            << : *base_args
+            -preset: slow
+            -qp: 30
+
+        placebo_qp05:
+            << : *base_args
+            -preset: placebo
+            -qp: 5
+
+        placebo_qp10:
+            << : *base_args
+            -preset: placebo
+            -qp: 10
+
+        placebo_qp15:
+            << : *base_args
+            -preset: placebo
+            -qp: 15
+
+        placebo_qp18:
+            << : *base_args
+            -preset: placebo
+            -qp: 18
+
+        placebo_qp20:
+            << : *base_args
+            -preset: placebo
+            -qp: 20
+
+        placebo_qp25:
+            << : *base_args
+            -preset: placebo
+            -qp: 25
+
+        placebo_qp30:
+            << : *base_args
+            -preset: placebo
+            -qp: 30
+
+        fast_qp05:
+            << : *base_args
+            -preset: fast
+            -qp: 5
+
+        fast_qp10:
+            << : *base_args
+            -preset: fast
+            -qp: 10
+
+        fast_qp15:
+            << : *base_args
+            -preset: fast
+            -qp: 15
+
+        fast_qp18:
+            << : *base_args
+            -preset: fast
+            -qp: 18
+
+        fast_qp20:
+            << : *base_args
+            -preset: fast
+            -qp: 20
+
+        fast_qp25:
+            << : *base_args
+            -preset: fast
+            -qp: 25
+
+        fast_qp30:
+            << : *base_args
+            -preset: fast
+            -qp: 30
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: -preset
+        height: 400
+        x: -qp
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: -qp
+    - args:
+        color: -preset
+        height: 400
+        x: -qp
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: -qp
+    - args:
+        color: -preset
+        height: 400
+        x: -qp
+        y: encode_time
+        range_y: [0, 500]
+        markers: True
+      name: encode_time_zoom.png
+      sortby: -qp
+    - args:
+        color: -preset
+        height: 400
+        x: -qp
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: -qp
+    - args:
+        color: -preset
+        height: 400
+        x: -qp
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: -qp
+    name: apv_qp
+    title: OpenAPV QP Comparisons vs. preset
+    description: This is a comparison of different APV qp for different presets.
+    directory: osx-oapv_qp-encode
+    templatefile: basicmovie2.html.jinja
+

@@ -10,6 +10,7 @@ test_float1:
     encoding_template: 'bin/generic_encodewrap.csh tofloatj2k.csh --extension png {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars/Chimera_DCI4k2398p_HDR_P3PQ_02500.tif
+    - sources/enc_sources/chimera_cars_ACEScg_exr/chimera_cars_ACEScg_exr.02500.exr
     - sources/enc_sources/chimera_coaster_ACEScg_exr/chimera_coaster_ACEScg_exr.044200.exr
     #- sources/enc_sources/chimera_coaster_ACEScg_exr/chimera_coaster_ACEScg_exr.%06d.exr.yml
     #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml

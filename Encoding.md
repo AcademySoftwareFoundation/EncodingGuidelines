@@ -35,9 +35,10 @@ We are going to focus on codecs that match one of the following conditions:
 | [HEVC/H265](EncodeHevc.html) | libx265 | 8 10 12 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All browsers | Yes |
 | [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All browsers | Yes |
 | [AV1](EncodeAv1.html) | libsvtav1 | 8 10 | yuv-4:2:0 | Chrome Firefox Edge | Yes |
-| [Prores](EncodeProres.html) | prores_ks | 10 | yuv-4:4:4 yuv-4:2:2 | Safari | ? |
+| [Prores](EncodeProres.html) | prores_ks | 10 | yuv-4:4:4:4 yuv-4:4:4 yuv-4:2:2 | Safari | ? |
 | [DNxHD](EncodeDNXHD.html) | dnxhd | 8 10 | yuv-4:2:2 yuv-4:4:4 rgb | no | ? |
 | [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 | no | no |
+| [OpenAPV](EncodeOpenAPV.html) | liboapv | 10 12 | yuv-4:4:4:4 yuv-4:4:4 yuv-4:2:2  | no | yes |
 
 
 For a high level comparison we have encoded 4 sets of media using our recommended settings, all with the aim of getting the VMAF score > 98.  libx264 libstvav1 and vp9 were all encoded 4:2:0 and DNxHD and Prores were at 10-bit 4:2:2.
@@ -72,8 +73,6 @@ Below are other codecs that may be worth considering at some point.
 
 | Codec | Profile description | Pix Fmt | Notes |
 |:----------|:-----------|:-----------|:-----------|:-----------|:-----------|
-| jpeg2000 | jpeg2000 codec | 
-| libopenjpeg | jpeg2000 codec using the libopenjpeg library | 
 | hap | HAP and HAPQ codec | rgba |  [HAP](https://hap.video/using-hap.html) - Fast GPU decompression, at the expense of file-size |
 | LCEVC | | | [Low Complexity Enhancement Video Coding](https://docs.v-nova.com/v-nova/lcevc/reference-applications/ffmpeg) |
 
@@ -81,20 +80,6 @@ Below are other codecs that may be worth considering at some point.
 See:
    * https://blog.frame.io/2017/02/13/compare-50-intermediate-codecs/
    
-### HTJ2K
-
-HTJ2K is a modification of the JPEG2000 codecs, where it has been modified to be more scalable, and significantly faster than the original jpeg2000 codec at the expense of a slight increase in file-size. The modification is now part of the JPEG2000 spec, and the decoder is now built into ffmpeg.
-
-The codec is royalty free, and there are several open source implementations with non-GPL licenses.
-
-
-TODO Investigate.
-
-See: 
-* https://htj2k.com/
-   * https://www.frontiersin.org/articles/10.3389/frsip.2022.885644/full
-   * https://github.com/osamu620/OpenHTJ2K
- 
 
 ### See Also
    * Another good reference for encoding options is here: [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) although the page is a little out of date.

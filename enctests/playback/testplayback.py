@@ -12,6 +12,8 @@ import platform
 from pathlib import Path
 import jinja2
 
+base_ffmpeg_path = "/Users/sam/roots/ffapv/bin"
+
 extensions = ['mxf', 'mp4', 'mov']
 
 decompress = {'h264': [{'name': 'h264_software',
@@ -44,7 +46,7 @@ decompress = {'h264': [{'name': 'h264_software',
 def scanFiles(location):
     allfiles = []
     for root, dirs, files in os.walk(location):
-        allfiles.extend([os.path.join(root, file) for file in files if file[-3:] in extensions])
+        allfiles.extend([os.path.join(root, file) for file in files if file[-3:] in extensions and file[0] != "."])
     data = []
     for file in allfiles:
         filep = Path(file)
@@ -53,7 +55,7 @@ def scanFiles(location):
         if filep.stat().st_size == 0:
             print(f"Skipping {file}, since its empty.")
             continue
-        cmd = f"ffprobe -v quiet -print_format json -show_format -show_streams {file}"
+        cmd = f"{base_ffmpeg_path}/ffprobe -v quiet -print_format json -show_format -show_streams {file}"
         _raw = subprocess.check_output(shlex.split(cmd))
         jsondata = json.loads(_raw)
         print(f"{file} {jsondata['streams'][0]['codec_name']}")
@@ -68,7 +70,7 @@ def benchmark(allfileinfo):
             decompress[fileinfo['codec']] = [{'name': f"{fileinfo['codec']}_default", 'flags': ''}]
             print(f"Adding codec: {fileinfo['codec']}")
         for decode in decompress[fileinfo['codec']]:
-            cmd = f"ffmpeg {decode['flags']} -i {fileinfo['file']}  -benchmark -f null -"
+            cmd = f"{base_ffmpeg_path}/ffmpeg {decode['flags']} -i {fileinfo['file']}  -benchmark -f null -"
             print(cmd)
             try:
                 t1 = time.perf_counter()
@@ -94,7 +96,10 @@ def benchmark(allfileinfo):
                            "raw": str(_raw)})
     return results
             #print(f"{fileinfo['file']} {fileinfo['codec']} {decode['flags']} utime:{utime} stime:{stime} rtime:{rtime} maxess:{maxrss}")
-allfiles = scanFiles('../codec-encode')
+#allfiles = scanFiles('../codec-encode')
+
+#allfiles = scanFiles("../wedge_results/ffmpeg_version_7.1/darwin-arm64/htj2k4koiio_options_tests-encode/")
+allfiles = scanFiles("../wedge_results/ffmpeg_version_git-2025-05-09-0a1b790f29/darwin-arm64/osx_apv444_tests-encode/")
 results = benchmark(allfiles)
 
 resultsbyname = {}

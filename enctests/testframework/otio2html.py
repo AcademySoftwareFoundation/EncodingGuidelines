@@ -91,7 +91,8 @@ def otio2htmlmain():
         
         result = processTemplate(test_config, timeline)
         if result is not None:
-            result["relativeurl"] = Path(result['reporturl']).relative_to(args.results_folder)
+            # We only add the first report if we have one, we done need all the reports in the index.
+            result["relativeurl"] = Path(result['reporturl'][0]).relative_to(args.results_folder)
             results.append(result)
         
     outputSummaryIndex(args.results_folder)

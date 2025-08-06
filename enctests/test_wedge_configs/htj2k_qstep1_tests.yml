@@ -11,13 +11,74 @@ test_qstep1:
     encoding_template: 'bin/htj2k_encodewrap.csh /Users/sam/git/OpenJphExr/build/src/apps/ojph_compress/ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars/Chimera_DCI4k2398p_HDR_P3PQ_02500.tif
-    #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
-    #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
-    - sources/hdr_sources/sparks_cct_tif/SPARKS_ACES_CCT.06100.tif
-    - sources/hdr_sources/sparks2_cct_tif/SPARKS_ACES_CCT.06700.tif
-    - sources/hdr_sources/dry_orchard_meadow_4k_cct.tif
+    #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.044200.dpx
+    #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains.05400.dpx
+    #- sources/hdr_sources/sparks_cct_tif/SPARKS_ACES_CCT.06100.tif
+    #- sources/hdr_sources/sparks2_cct_tif/SPARKS_ACES_CCT.06700.tif
+    #- sources/hdr_sources/dry_orchard_meadow_4k_cct.tif
     wedges:
         qstep0.001: &base_args
+            -qstep: 0.001
+            -num_decomps: 5
+            -block_size: '{64,64}'
+            -precincts: '{128,128},{256,256}'
+            -prog_order: CPRL
+            -colour_trans: 'false'
+            # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
+
+        qstep0.0250:
+            << : *base_args
+            -qstep: 0.025
+
+        qstep0.0001:
+            << : *base_args
+            -qstep: 0.0001
+
+        qstep0.0005:
+            << : *base_args
+            -qstep: 0.0005
+
+        qstep0.0020:
+            << : *base_args
+            -qstep: 0.002
+
+        qstep0.0030:
+            << : *base_args
+            -qstep: 0.003
+
+
+        qstep0.0050:
+            << : *base_args
+            -qstep: 0.005
+
+        qstep0.0100:
+            << : *base_args
+            -qstep: 0.01
+
+        qstep0.0150:
+            << : *base_args
+            -qstep: 0.015
+
+test_color1:
+    name: test_qstep1
+    description: variations of HTJ2k qstep
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+      ffmpegflags: ' -c:v png'
+    suffix: .mp4
+    encoding_template: 'bin/htj2k_encodewrap.csh /Users/sam/git/OpenJphExr/build/src/apps/ojph_compress/ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars/Chimera_DCI4k2398p_HDR_P3PQ_02501.tif
+    #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.044200.dpx
+    #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains.05400.dpx
+    #- sources/hdr_sources/sparks_cct_tif/SPARKS_ACES_CCT.06100.tif
+    #- sources/hdr_sources/sparks2_cct_tif/SPARKS_ACES_CCT.06700.tif
+    #- sources/hdr_sources/dry_orchard_meadow_4k_cct.tif
+    wedges:
+        colqstep0.001: &base_args2
             -qstep: 0.001
             -num_decomps: 5
             -block_size: '{64,64}'
@@ -26,30 +87,38 @@ test_qstep1:
             -colour_trans: 'true'
             # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
 
-        qstep0.025:
-            << : *base_args
+        colqstep0.0250:
+            << : *base_args2
             -qstep: 0.025
 
-        qstep0.050:
-            << : *base_args
-            -qstep: 0.05
+        colqstep0.0001:
+            << : *base_args2
+            -qstep: 0.0001
 
-        qstep0.005:
-            << : *base_args
+        colqstep0.0005:
+            << : *base_args2
+            -qstep: 0.0005
+
+        colqstep0.0020:
+            << : *base_args2
+            -qstep: 0.002
+
+        colstep0.0030:
+            << : *base_args2
+            -qstep: 0.003
+
+
+        colqstep0.0050:
+            << : *base_args2
             -qstep: 0.005
 
-        qstep0.010:
-            << : *base_args
+        colqstep0.0100:
+            << : *base_args2
             -qstep: 0.01
 
-        qstep0.015:
-            << : *base_args
+        colqstep0.0150:
+            << : *base_args2
             -qstep: 0.015
-
-        qstep0.035:
-            << : *base_args
-            -qstep: 0.035
-
 
 ---
 
