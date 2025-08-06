@@ -14,7 +14,7 @@ test_intra_mov:
     - sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.%05d.dpx.yml
     - sources/enc_sources/chimera_wind_srgb_dpx_12/chimera_wind_srgb.%06d.dpx.yml
     wedges:
-        prores_4444: &base_args2
+        prores_ks_4444: &base_args2
             -c:v: prores_ks
             -profile:v: 4444
             -pix_fmt: yuv444p10le
@@ -63,7 +63,7 @@ test_intra_mov:
             -color_primaries: bt709
             -color_trc: iec61966-2-1 
 
-        dnxhr_444p10:
+        dnxhr_444:
             -c:v: dnxhd
             -profile:v: dnxhr_444
             -pix_fmt: yuv444p10le
@@ -84,7 +84,6 @@ test_intra_htj2k:
       ext: -png.mp4
       ffmpegflags: ' -c:v png'
     - testtype: yuvdiff
-    - testtype: frame_extract
     suffix: .mp4
     encoding_template: 'bin/htj2k_encodewrap_oiio.csh /usr/local/bin/oiiotool {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
@@ -140,9 +139,9 @@ reports:
         y: psnr_y_harmonic_mean
       name: psnr_y_harmonic_mean.png
       type: bar
-    name: intra-test
-    title: Intraframe codec comparison 444p12
-    description: Comparing different codecs for intraframe encoding only 444p12, so no compression from frame to frame, ideal if you need to quickly seek to a frame for fast playback.
+    name: intra-test444
+    title: Comparing different codecs for intra frame encoding only.
+    description: Comparing different codecs for intra frame encoding only, so no compression from frame to frame, ideal if you need to quickly seek to a frame for fast playback.
     directory: intra-encode
     templatefile:
     - basicvmafimagecompare.html.jinja

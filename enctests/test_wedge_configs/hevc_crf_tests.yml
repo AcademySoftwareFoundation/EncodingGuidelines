@@ -2,6 +2,10 @@ test_crf_yuv420p:
     name: test_hevc_crf
     description: variations of hevc crf values.
     app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mov
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
@@ -99,5 +103,8 @@ reports:
     title: HEVC CRF  Comparison
     description: This is a comparison of different CRF values for h265 encoding.
     directory: hevc-crf-encode
-    templatefile: basicmovie.html.jinja
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
 

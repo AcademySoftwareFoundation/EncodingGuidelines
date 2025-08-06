@@ -4,7 +4,7 @@ test_qstep12:
     app: ffmpeg
     comparisontest:
     - testtype: vmaf3
-      description: Slightly different conversion to keep it as 16-bit RGB.
+      description: Slightly different conversion to keep it as 12-bit RGB.
       ext: -png.mp4
       ffmpegflags: ' -c:v png'
     - testtype: yuvdiff

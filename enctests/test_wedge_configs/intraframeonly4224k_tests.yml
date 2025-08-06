@@ -42,11 +42,11 @@ test_intra4k_mov:
             -color_primaries: bt709
             -color_trc: iec61966-2-1 
 
-        oapv_422p10le_bitrate220:
+        oapv_422p10le_422HQ:
             -c:v: liboapv
             -preset: fast
-            -b:v: 220M
             -pix_fmt: yuv422p10le
+            -oapv-params: "profile=422-10:family=422-HQ"
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
             -color_range: tv

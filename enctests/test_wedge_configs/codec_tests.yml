@@ -82,11 +82,10 @@ test_mov:
     - testtype: frame_extract
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
-    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
-    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
     wedges:
         dnxhd: &base_args2
             -c:v: dnxhd
@@ -102,7 +101,6 @@ test_mov:
         prores_ks:
             << : *base_args2
             -c:v: prores_ks
-            -qscale:v: 10
             -profile:v: 3
             -vendor: apl0
 
