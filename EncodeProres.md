@@ -8,7 +8,7 @@ parent: Codec Comparisons
 # ProRes <a name="prores"></a>
 There are four ProRes encoders, Prores, Prores_ks, Prores_aw and prores_videotoolbox, which is a hardware based OSX M1 encoder/decoder (ffmpeg version 5 or higher).
 
-From [https://trac.ffmpeg.org/wiki/Encode/VFX](https://trac.ffmpeg.org/wiki/Encode/VFX) the recommendation is to use Prores_ks with -profile:v 3 and the qscale of 11 unless you are on OSX where we would recommend using prores_videotoolbox. 
+If you are doing lighting or compositing reviews the recommendation is to use Prores_ks with -profile:v 3. If you are able we would recommend using [OpenAPV](https://academysoftwarefoundation.github.io/EncodingGuidelines/EncodeOpenAPV.html) or prores_videotoolbox over prores_ks, and look at a 444 10-bit or 12-bit encode, since they both give a superior result. 
 
 The two encoders we are reviewing are:
 * [Prores_ks](#Prores_ks)
@@ -19,8 +19,6 @@ The two encoders we are reviewing are:
 While ProRes does support up to 12 bits of resolution, prores_ks can only encode to 10-bits. It is able to decode to > 10 bits (see [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) )
 
 Supported pixel formats: yuv422p10le yuv444p10le yuva444p10le
-
-
 
 Example encode would look like:
 
@@ -49,8 +47,8 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
 Options that can be used include:
 
 | --- | --- |
-| -profile:v 4444xq | Which ProRes encoding profile to use, see below |
-| -qscale:v 3 | between values of 1-6 give a good result, 0 being default, see below for some wedge tests. |
+| -profile:v 4444xq | Which prores encoding profile to use, see below |
+| -qscale:v 3 | between values of 1-4, 0 being the same as specifying no qscale |
 | -vendor apl0 | tricks the codec into believing its from an Apple codec. |
 | -alpha_bits 16 | Allows you to specify how many bits to use for the alpha channel (default 16) |
 
