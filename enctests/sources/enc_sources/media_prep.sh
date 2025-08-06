@@ -1,6 +1,6 @@
 #!/bin/bash
-ext=dpx
-bitdepth=10
+ext=tif
+bitdepth=16
 ops="-d uint${bitdepth}"
 #ops=-pix_fmt rgb30 -compression_level 0
 mkdir  chimera_coaster_srgb_${ext}_${bitdepth}
