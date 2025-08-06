@@ -9,7 +9,7 @@ We welcome suggestions and improvements.
 
 This work is being done as part of the [ASWF Open Review Initiative](https://openreviewinitiative.org/). We are grateful for the ASWF for creating the collaborative cross company environment that allows such projects to exist.
 
-The main wiki page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068).
+The main wiki page for this for now is [here](https://lf-aswf.atlassian.net/wiki/spaces/PRWG/pages/11274685/Movie+Compression+with+ffmpeg+for+media+review.).
 
 
 ### Acknowledgements  <a name="Acknowledgements"></a>

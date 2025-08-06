@@ -1,0 +1,107 @@
+test_htj2k:
+    name: test_htj2k
+    description: variations of HTJ2k qstep
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+    suffix: .mov
+    encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        htj2k-uncompressed: &base_args
+            --reversible: 'true'
+            -num_decomps: 5
+            -block_size: '{64,64}'
+            -precincts: '{128,128},{256,256}'
+            -prog_order: CPRL
+            -colour_trans: 'true'
+            # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
+
+test_mov:
+    name: test_htj2k
+    description: variations of HTJ2k qstep
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+    suffix: .mov
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        libx265-12bit-ultrafast: 
+            -c:v: libx265
+            -pix_fmt: gbrp12le
+            -preset: ultrafast
+            -x265-params: lossless=1
+            -color_range: 1
+            -colorspace: rgb
+            -color_primaries: 1
+            -color_trc: 2
+
+        libx265-12bit-ultrafast: 
+            -c:v: libx265
+            -pix_fmt: gbrp12le
+            -preset: ultrafast
+            -x265-params: lossless=1
+            -color_range: 1
+            -colorspace: rgb
+            -color_primaries: 1
+            -color_trc: 2
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    name: htj2k-qstep-test
+    title: Comparing qstep values for ojph
+    description: Comparing different qstep values.
+    directory: htj2k-qstep-encode
+    templatefile: basicmovie2.html.jinja
+

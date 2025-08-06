@@ -5,11 +5,10 @@ test_mp4:
     suffix: .mkv
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
-    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
-    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
     wedges:
         libx264-10bit: &base_args
             -c:v: libx264
@@ -17,22 +16,6 @@ test_mp4:
             -crf: 10
             -g: 1
             -preset: slow
-            -sws_flags: spline+accurate_rnd+full_chroma_int
-            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-            -color_range: 1
-            -colorspace: 1
-            -color_primaries: 1
-            -color_trc: 2
-
-        libaom-av1-10bit:
-            -c:v: libaom-av1
-            -crf: 14
-            -cpu-used: 6
-            -row-mt: 1
-            -arnr-strength: 1
-            -arnr-max-frames: 4
-            -usage: allintra
-            -pix_fmt: yuv444p10le
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
             -color_range: 1

@@ -114,6 +114,7 @@ reports:
     title: OSX Videotoolbox Comparison
     description: This is a comparison of different videotoolbox encodes.
     directory: osx-prores-encode
-    templatefile:
-    - basicvmafimagecompare.html.jinja
-    - compare.html.jinja
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract

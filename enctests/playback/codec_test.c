@@ -143,8 +143,6 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
         clock_t end_time = clock();
         double frame_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
         fprintf(stderr, "avread_frame: %.6f\n", frame_time);
-        fprintf(stderr, " PACKET INFO: pos=%lld duration=%lld stream_index=%d\n", packet->pos, packet->duration, packet->stream_index);
-        fprintf(stderr, " PACKET INFO: pts=%lld dts=%lld flags=%d\n", packet->pts, packet->dts, packet->flags);
         if (packet->stream_index == video_stream_index) {
             
             clock_t send_start_time = clock();
@@ -161,12 +159,6 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
             while (ret >= 0) {
                 clock_t receive_time_start = clock();
                 ret = avcodec_receive_frame(codec_ctx, frame);
-                if (frame->pts != AV_NOPTS_VALUE) {
-                    fprintf(stderr, " FRAME INFO: pts=%lld pkt_dts=%lld flags=%d\n", frame->pts, frame->pkt_dts, frame->flags);
-                } else {
-                    fprintf(stderr, " FRAME INFO: pts=AV_NOPTS_VALUE pkt_dts=%lld flags=%d\n", frame->pkt_dts, frame->flags);
-                }
-
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
                     //fprintf(stderr, "ERROR: %d\n", ret);
                     break;

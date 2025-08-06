@@ -406,7 +406,6 @@ model=path={vmaf_model}:n_threads=6\" \
 
     env = os.environ
 
-
     compare_log = Path(f"{distorted.as_posix()}-compare_log.json")
 
     cmd = vmaf_cmd.format(
