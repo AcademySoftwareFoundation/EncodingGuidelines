@@ -34,8 +34,10 @@ target_include_directories(codec_test PRIVATE ${FFMPEG_INCLUDE_DIRS})
 
 # If you're on macOS and using Homebrew, you might need to add this:
 if(APPLE)
-    include_directories(/opt/homebrew/include)
-    link_directories(/opt/homebrew/lib)
+    #include_directories(/opt/homebrew/include)
+    #link_directories(/opt/homebrew/lib)
+    include_directories(/usr/local/include)
+    link_directories(/usr/local/lib)
 endif()
 
 # Add compiler flags

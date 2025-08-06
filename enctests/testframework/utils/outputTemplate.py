@@ -87,7 +87,6 @@ def processTemplate(config, timeline):
           merge_test_info['name'] = ref_name
           merge_test_info['testbasename'] = test_info.metadata['aswf_enctests']['testbasename']
           merge_test_info['wedge'] = test_info.metadata['aswf_enctests']['wedge_name']
-          print("Wedge:", merge_test_info['wedge'], ref_name)
           if 'description' in test_info.metadata['aswf_enctests']:
             merge_test_info['test_description'] = test_info.metadata['aswf_enctests']['description']
           results.append(merge_test_info)
@@ -97,7 +96,8 @@ def processTemplate(config, timeline):
             merge_test_info['vmaf_min'] = float(merge_test_info['vmaf']['min'])
             merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
             merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
-            merge_test_info['psnr_y_harmonic_mean'] = float(merge_test_info['psnr_y']['harmonic_mean'])
+            if 'psnr_y' in merge_test_info:
+              merge_test_info['psnr_y_harmonic_mean'] = float(merge_test_info['psnr_y'].get('harmonic_mean', -1))
             if "cambi" in merge_test_info:
               merge_test_info['cambi_harmonic_mean'] = float(merge_test_info['cambi']['harmonic_mean'])
               merge_test_info['float_ms_ssim_harmonic_mean'] = float(merge_test_info['float_ms_ssim']['harmonic_mean'])
@@ -133,17 +133,37 @@ def processTemplate(config, timeline):
 
   environment = jinja2.Environment(loader=jinja2.FileSystemLoader("testframework/templates/"))
 
-  template = environment.get_template(reportconfig['templatefile'])
-  htmlreport = reportconfig['name']+".html"
-  #if "directory" in reportconfig:
-  htmlreport = config.get('destination') / htmlreport
-  if htmlreport.exists():
-    # Running inside docker sometimes doesnt let you write over files.
-    htmlreport.unlink()
-  with htmlreport.open("w") as f:
-      f.write(template.render(tests=tests, testinfo=testinfo, config=reportconfig))
-  print("Written out:", htmlreport)
-  return {'reporturl': htmlreport, 'tests': tests, 'testinfo': testinfo, 'config': reportconfig}
+
+
+  def regex_replace_filter(s, pattern, replacement):
+      import re
+      return re.sub(pattern, replacement, s)
+
+
+  environment.filters['regex_replace'] = regex_replace_filter
+  templates = reportconfig['templatefile']
+  if isinstance(templates, str):
+      templates = [templates]  # Convert single string to list
+  htmlreports = []
+  firstTime = True
+  for templatefile in templates:
+    template = environment.get_template(templatefile)
+    htmlreport = reportconfig['name']+".html"
+    if not firstTime:
+       htmlreport = f"{reportconfig['name']}-{templatefile.replace('.html.jinja', '')}.html"
+    else:
+       firstTime = False
+    #if "directory" in reportconfig:
+    htmlreport = config.get('destination') / htmlreport
+    if htmlreport.exists():
+      # Running inside docker sometimes doesnt let you write over files.
+      htmlreport.unlink()
+
+    with htmlreport.open("w") as f:
+        f.write(template.render(tests=tests, testinfo=testinfo, config=reportconfig))
+    print("Written out:", htmlreport)
+    htmlreports.append(htmlreport)
+  return {'reporturl': htmlreports, 'tests': tests, 'testinfo': testinfo, 'config': reportconfig}
 
 def outputSummaryIndex(output_dir):
     """
@@ -154,9 +174,13 @@ def outputSummaryIndex(output_dir):
     test_results = []
     for root, dirs, files in os.walk(output_dir):
         for filename in files:
-            if filename.endswith(".otio"):
+            if filename.endswith(".otio") and not filename.startswith("."):
                 path = Path(root) / filename
-                timeline = otio.adapters.read_from_file(path.as_posix())
+                try:
+                  timeline = otio.adapters.read_from_file(path.as_posix())
+                except ValueError as e:
+                  print(f"Error reading {path}: {e}")
+                  continue
                 # Now we need to figure out the config file.
                 track = timeline.tracks[0]
 

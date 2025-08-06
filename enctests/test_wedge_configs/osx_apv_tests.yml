@@ -1,0 +1,147 @@
+test_osx-oapv:
+    name: test_oapv
+    description: variations of oapv_quality
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: ffmpeg_psnr
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_12/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_12/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.%05d.dpx.yml
+    #- sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
+    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    wedges:
+        oapv_422p10le: &base_args
+            -c:v: oapv
+#            -profile:v: 4444
+#            -qscale:v: 16
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+
+        oapv_422p10le_qp15:
+            << : *base_args
+            -pix_fmt: yuv422p10le
+            -qp: 15
+
+        oapv_422p10le_qp20:
+            << : *base_args
+            -pix_fmt: yuv422p10le
+            -qp: 20
+
+        oapv_422p12le:
+            << : *base_args
+            -pix_fmt: yuv422p12le
+
+        oapv_444p10le_qp15:
+            << : *base_args
+            -pix_fmt: yuv444p10le
+            -qp: 15
+
+        oapv_444p10le_qp20:
+            << : *base_args
+            -pix_fmt: yuv444p10le
+            -qp: 20
+
+        oapv_444p10le:
+            << : *base_args
+            -pix_fmt: yuv444p10le
+
+        oapv_444p12le:
+            << : *base_args
+            -pix_fmt: yuv444p12le
+
+        prores_ks: &base_args2
+            -c:v: prores_ks
+            -profile:v: 3
+#            -qscale:v: 16
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+
+        prores_videotoolbox_yuv422p10le_hq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: hq
+            -pix_fmt: yuv422p10le
+
+        prores_videotoolbox_yuv444p12le_xq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: 4444
+            -pix_fmt: yuv444p12le
+
+        prores_videotoolbox_yuv444p12le_xq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: xq
+            -pix_fmt: yuv444p12le
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 96
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    name: osx-videotoolbox-oapv
+    title: OSX Videotoolbox vs. oapv Comparison
+    description: This is a comparison of different videotoolbox and oapv encodes.
+    directory: osx-oapv-encode
+    templatefile: basic2.html.jinja
+

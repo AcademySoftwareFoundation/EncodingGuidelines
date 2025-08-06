@@ -7,6 +7,7 @@ import subprocess
 from typing import Tuple
 from datetime import datetime, timezone
 from pathlib import Path
+import fileseq
 
 import opentimelineio as otio
 
@@ -58,6 +59,11 @@ class FFmpegEncoder(ABCTestEncoder):
             cmd = self.prep_encoding_command(wedge, out_file)
 
             print(f"Creating Wedge: {test_name} from {self.get_source_path()[0].name}")
+
+            fs = fileseq.findSequencesOnDisk(str(self.get_source_path()[0]))[0]
+            for f in fs:
+                with open(f, 'rb') as file:
+                    file.read()
 
             # Ensure proper environment
             env = os.environ
@@ -147,9 +153,13 @@ class FFmpegEncoder(ABCTestEncoder):
         if source_meta.get('images'):
             input_args = f"-start_number {source_meta.get('in')}"
 
-        encoding_args = ' '.join(
-            [f'{key} {value}' for key, value in wedge.items()]
-        )
+        encoding_args_v = []
+        for key, value in wedge.items():
+            if value == '':
+                encoding_args_v.append(key)
+            else:
+                encoding_args_v.append(f'{key} {value}')
+        encoding_args = ' '.join(encoding_args_v)
 
         duration = self.source_clip.source_range.duration.to_frames()
 

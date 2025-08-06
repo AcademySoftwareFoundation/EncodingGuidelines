@@ -5,9 +5,9 @@ test_options:
     suffix: .mp4
     encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
-    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
-    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_cars_raw/chimera_cars.%05d.tif.yml
+    - sources/enc_sources/chimera_coaster_raw/chimera_coaster.%05d.tif.yml
+    - sources/enc_sources/chimera_fountains_raw/chimera_fountains.%05d.tif.yml
     #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
     wedges:
         block64: &base_args
@@ -35,14 +35,13 @@ test_options:
             << : *base_args
             -num_decomps: 3
 
-        num_decomps3b32:
+        prog_orderLRCP:
             << : *base_args
-            -num_decomps: 3
-            -block_size: '{32,32}'
+            -ProgressionOrder: LRCP
 
         prog_orderLRCP:
             << : *base_args
-            -prog_order: LRCP
+            -ProgressionOrder: LRCP
 
         bit_depth10:
             << : *base_args
@@ -92,8 +91,8 @@ reports:
       name: filesize.png
       type: bar
     name: htj2k-options-test
-    title: Comparing htj2k compression options
-    description: Comparing different htj2k compression options
+    title: HTJ2K Comparing htj2k compression options
+    description: Comparing different htj2k compression options for openjph.
     directory: htj2k-options-encode
     templatefile: basicmovie.html.jinja
 

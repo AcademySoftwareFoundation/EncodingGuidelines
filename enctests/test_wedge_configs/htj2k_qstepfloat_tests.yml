@@ -6,9 +6,10 @@ test_float:
     encoding_template: 'bin/generic_encodewrap.csh tofloatj2k.csh --extension png {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
-    #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
-    #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
-    #- sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
+    #- sources/hdr_sources/sparks/SPARKS_ACES_%05d.exr.yml
+    #- sources/hdr_sources/sparks2/SPARKS_ACES_%05d.exr.yml
     wedges:
         qstep0.00001: &base_args
             -qstep: 0.00001

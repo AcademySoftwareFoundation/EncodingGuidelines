@@ -3,7 +3,7 @@ test_options4k:
     description: variations of HTJ2k options
     app: ffmpeg
     suffix: .mp4
-    encoding_template: 'bin/htj2k_encodewrap.csh ojph_compress {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    encoding_template: 'bin/htj2k_encodewrap_oiio.csh /usr/local/bin/oiiotool {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
     - sources/enc_sources/chimera_coaster/chimera_coaster.%06d.tif.yml
     #- sources/enc_sources/chimera_cars_srgb_dpx_16/chimera_cars_srgb.%05d.dpx.yml
@@ -13,11 +13,11 @@ test_options4k:
     wedges:
         block64: &base_args
             -qstep: 0.025
-            -num_decomps: 5
-            -block_size: '{64,64}'
-            -precincts: '{128,128},{256,256}'
-            -prog_order: CPRL
-            -colour_trans: 'true'
+            #-num_decomps: 5
+            #-block_size: '{64,64}'
+            #-precincts: '{128,128},{256,256}'
+            #-prog_order: CPRL
+            #-colour_trans: 'true'
             # Note we are assuming -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2
 
         block32:

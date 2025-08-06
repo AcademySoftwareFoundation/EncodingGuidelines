@@ -1,0 +1,95 @@
+test_osx-oapv_presets:
+    name: test_oapv_presets
+    description: variations of oapv_presets
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
+    
+    wedges:
+        fastest: &base_args
+            -c:v: liboapv
+            -pix_fmt: yuv422p10le
+            -preset: fastest
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+#            -color_trc: iec61966-2-1 
+
+        fast:
+            << : *base_args
+            -preset: fast
+
+        medium:
+            << : *base_args
+            -preset: medium
+
+        slow:
+            << : *base_args
+            -preset: slow
+
+        placebo:
+            << : *base_args
+            -preset: placebo
+
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    - args:
+        color: wedge
+        height: 400
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    name: apv_presets
+    title: OpenAPV Preset Comparisons
+    description: This is a comparison of different APV presets.
+    directory: osx-oapv_presets-encode
+    templatefile: basicmovie2.html.jinja
+

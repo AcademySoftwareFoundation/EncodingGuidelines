@@ -6,6 +6,7 @@ test_dwab1:
     encoding_template: 'bin/generic_encodewrap.csh todwab.csh --extension png {input_args} -i "{source}" {encoding_args} "{outfile}"'
     sources:
     - sources/enc_sources/chimera_cars/Chimera_DCI4k2398p_HDR_P3PQ_02500.tif
+    - sources/enc_sources/chimera_coaster/Chimera_DCI4k2398p_HDR_P3PQ_02500.tif
     #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.%06d.dpx.yml
     #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains_srgb.%05d.dpx.yml
     - sources/hdr_sources/sparks/SPARKS_ACES_06100.exr
@@ -34,8 +35,8 @@ test_dwab1:
 
         dwab075:
             << : *base_args
-            --compression: dwab:080
-            --caption: 80
+            --compression: dwab:075
+            --caption: 75
 
         dwab100:
             << : *base_args

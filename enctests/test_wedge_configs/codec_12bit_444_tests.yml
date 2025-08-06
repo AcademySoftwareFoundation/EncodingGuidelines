@@ -2,24 +2,28 @@ test_12bit:
     name: test_mkv
     description: A comparison of different codecs at 12bit, with VMAF > 98.
     app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
     suffix: .mkv
     encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
     sources:
-    - sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png.yml
-    - sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png.yml
-    - sources/enc_sources/chimera_wind_srgb/chimera_wind_srgb.%06d.png.yml
-    - sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png.yml
+    #- sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.05400.dpx
+    - sources/enc_sources/chimera_cars_srgb_dpx_12/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_12/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_12/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_12/chimera_wind_srgb.%06d.dpx.yml
     wedges:
-
-        libaom-av1-12bit:
+        libaom-av1-gop10-12bit:
             -c:v: libaom-av1
-            -crf: 14
-            -cpu-used: 6
+            -crf: 10
+            -g: 10
+            -cpu-used: 3
             -row-mt: 1
             -arnr-strength: 1
             -arnr-max-frames: 4
-            -usage: allintra
+            -usage: realtime
             -pix_fmt: yuv444p12le
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
@@ -28,14 +32,14 @@ test_12bit:
             -color_primaries: 1
             -color_trc: 2
 
-        libvpx-vp9-12bit: 
+        libvpx-vp9-gop10-12bit: 
             -c:v: libvpx-vp9
-            -quality: good
+            -quality: realtime
             -b:v: 0
-            -crf: 26
-            -g: 1
+            -crf: 10
+            -g: 10
             -row-mt: 1
-            -speed: 2            
+            -cpu-used: 2            
             -pix_fmt: yuv444p12le
             -sws_flags: spline+accurate_rnd+full_chroma_int
             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
@@ -44,7 +48,7 @@ test_12bit:
             -color_primaries: 1
             -color_trc: 2
 
-        dnxhd: &base_args2
+        dnxhr-10-bit: &base_args2
             -c:v: dnxhd
             -pix_fmt: yuv444p10le
             -profile:v: dnxhr_444
@@ -55,6 +59,47 @@ test_12bit:
             -color_primaries: 1
             -color_trc: 2
 
+        oapv_qp25: 
+            -c:v: liboapv
+            -pix_fmt: yuv444p12le
+            -oapv-params: "profile=444-12"
+            -qp: 25
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+
+        oapv_qp28: 
+            -c:v: liboapv
+            -pix_fmt: yuv444p12le
+            -oapv-params: "profile=444-12"
+            -qp: 28
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+
+        prores_videotoolbox_yuv444p12le_4444: 
+            -c:v: prores_videotoolbox
+            -profile:v: 4444
+            -pix_fmt: yuv444p12le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        libx264_444: 
+            -c:v: libx264
+            -pix_fmt: yuv444p10le
+            -crf: 6
+            -g: 1
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
 
 ---
 
@@ -62,7 +107,7 @@ reports:
     graphs:
     - args:
         color: wedge
-        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
+        #colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         barmode: group
         x: media
@@ -71,7 +116,7 @@ reports:
       type: bar
     - args:
         color: wedge
-        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
+        #colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         barmode: group
         x: media
@@ -83,7 +128,7 @@ reports:
       type: bar
     - args:
         color: wedge
-        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
+        #colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         x: media
         barmode: group
@@ -92,16 +137,18 @@ reports:
       type: bar
     - args:
         color: wedge
-        colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
+        #colororder: ['libvpx-vp9-12bit', 'libaom-av1-12bit', 'dnxhd']
         height: 400
         x: media
         barmode: group
         y: filesize
       name: filesize.png
       type: bar
-    name: codec-test
-    title: Intraframe codecs 12-bit yuv444
-    description: This is comparing different codecs, with approximately the same tuning factors such that vmaf > 98..
+    name: codec-444p12-test
+    title:  Codecs 12-bit yuv444
+    description: This is comparing different codecs, with approximately the same tuning factors such that vmaf > 98.. testing oapv, h264, vp9, av1, prores
     directory: codec-encode
-    templatefile: basicmovie.html.jinja
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
 

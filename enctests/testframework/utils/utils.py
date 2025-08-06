@@ -1,7 +1,7 @@
 import os
 import json
 import shlex
-import pyseq
+import fileseq
 from pathlib import Path
 from subprocess import run, CalledProcessError
 
@@ -111,25 +111,25 @@ def create_media_reference(path, source_clip, is_sequence=False):
             print("Warning: ", path, " doesnt exist")
             return
         seq = max(
-            pyseq.get_sequences(parentdir),
-            key=lambda s: s.frames()
+            fileseq.findSequencesOnDisk(parentdir),
+           key=lambda s: len(s)
         )
         available_range = otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(
                 seq.start(), rate
             ),
             duration=otio.opentime.RationalTime(
-                seq.length(), rate
+                len(seq), rate
             )
         )
 
         mr = otio.schema.ImageSequenceReference(
-            target_url_base=Path(seq.directory()).as_posix(),
-            name_prefix=seq.head(),
-            name_suffix=seq.tail(),
+            target_url_base=Path(seq.dirname()).as_posix(),
+            name_prefix=seq.basename(),
+            name_suffix=seq.extension(),
             start_frame=seq.start(),
             frame_step=1,
-            frame_zero_padding=len(max(seq.digits, key=len)),
+            frame_zero_padding=seq.zfill(),
             rate=rate,
             available_range=available_range
         )

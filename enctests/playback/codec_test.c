@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/timestamp.h>
@@ -70,8 +69,6 @@ int decode_frames_with_library(const char* filename, const char* decoder_library
         avformat_close_input(&format_ctx);
         return -1;
     }
-
-
     
 
     if (avcodec_parameters_to_context(codec_ctx, codecpar) < 0) {

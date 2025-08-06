@@ -1,0 +1,128 @@
+test_intra_mov:
+    name: test_intra_mov
+    description: Different encoders with intraframe encoding 422 encoding.
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+    - testtype: yuvdiff
+    - testtype: frame_extract
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
+    wedges:
+        prores_ks_hq: &base_args2
+            -c:v: prores_ks
+            -profile:v: hq
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        prores_videotoolbox_yuv422p10le_hq:
+            << : *base_args2
+            -c:v: prores_videotoolbox
+            -profile:v: hq
+            -pix_fmt: yuv422p10le
+
+        oapv_422p10le_qp16:
+            -c:v: liboapv
+            -preset: fast
+            -qp: 16
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        oapv_422p10le_qp18:
+            -c:v: liboapv
+            -preset: fast
+            -qp: 18
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+
+        oapv_422p10le_bitrate220:
+            -c:v: liboapv
+            -preset: fast
+            -b:v: 220M
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+        dnxhd_hqx:
+            -c:v: dnxhd
+            -profile:v: dnxhr_hqx
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: wedge
+        height: 500
+        barmode: group
+        x: media
+        y: vmaf_harmonic_mean
+        range_y:  
+            - 90
+            - 100
+      name: vmaf_harmonic_mean.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: encode_time
+      name: encode_time.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: filesize
+      name: filesize.png
+      type: bar
+    - args:
+        color: wedge
+        height: 500
+        x: media
+        barmode: group
+        y: psnr_y_harmonic_mean
+      name: psnr_y_harmonic_mean.png
+      type: bar
+    name: intra-test422
+    title: Intraframe 422p10 encoding
+    description: Comparing different codecs for intraframe 422p10 encoding only, so no compression from frame to frame, ideal if you need to quickly seek to a frame for fast playback.
+    directory: intra-encode
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
