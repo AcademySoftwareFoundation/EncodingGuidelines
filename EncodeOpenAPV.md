@@ -8,7 +8,7 @@ parent: Codec Comparisons
 
 ## Overview
 
-[OpenAPV](https://github.com/AcademySoftwareFoundation/openapv) provides professional grade visually lossless video suitable as a raw video format. It is free and open source and this implementation is under the ASWF.
+[OpenAPV](https://github.com/AcademySoftwareFoundation/openapv) provides professional grade visually lossless video suitable as a raw video format, designed and developed by Samsung. It is free and open source and this implementation was contributed by Samsung to the ASWF.
 
 The codec specification allows:
 
@@ -24,13 +24,12 @@ There are four implementations:
 * OpenAPV library - [https://github.com/AcademySoftwareFoundation/OpenAPV](https://github.com/AcademySoftwareFoundation/OpenAPV) - which can encode a YCrCb stream to the apv format.  
 * [Ffapv](https://github.com/openapv/ffapv) - Which is an integration of the OpenAPV library into ffmpeg (see below). This supports both encoding at 422, 444 10-bit and 12-bit encoding.  
 * Native ffmpeg - FFmpeg has implemented their own decoder as part of the core ffmpeg app, they also have their own encoder using the OpenAPV library.  
-* Android Open Source Project (AOSP) 16 - Android has added support of APV in v16. https://developer.android.com/about/versions/16/features\#apv
+* Android Open Source Project (AOSP) 16 - Android has added support of APV in v16. [Android 16](https://developer.android.com/about/versions/16/features#apv).
 
 
 ### Related specification
 
 * APV Codec (bitstream): [https://datatracker.ietf.org/doc/draft-lim-apv/](https://datatracker.ietf.org/doc/draft-lim-apv/)  
-  * Scope of OpenAPV project  
 * APV ISO based media file format: [APV-ISOBMFF](https://github.com/AcademySoftwareFoundation/openapv/blob/main/readme/apv_isobmff.md)  
 * APV RTP payload format: [https://datatracker.ietf.org/doc/draft-lim-rtp-apv/](https://datatracker.ietf.org/doc/draft-lim-rtp-apv/)
 
@@ -57,7 +56,7 @@ Note, the y4m format only works with 422, but it does give you access to some of
 
 ## Ffmpeg
 
-Currently you need to grab the main branch, there is no official release yet that includes apv.  
+Currently you need to grab the main branch, there is no official release yet that includes APV, although its likely to be in ffmpeg 8.0.  
 There is a decoder which is impressively fast, and does support 422, 444 and 4444 at 10 and 12 bits.   
 The encoder uses the OpenAPV library, and currently supports 422, 444 and 4444 at 10 and 12 bits.
 
@@ -66,10 +65,12 @@ The encoder uses the OpenAPV library, and currently supports 422, 444 and 4444 a
 
 
 ```
-ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v oapv -qp 20 \
-     -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" -sws_flags spline+accurate_rnd+full_chroma_int \
+ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v liboapv -qp 20 \
+     -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" \
+     -sws_flags spline+accurate_rnd+full_chroma_int \
      -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
+     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
+     -y "OUTPUT.mov"
 ```
 
 Flags include:
@@ -95,7 +96,7 @@ For the current version of ffmpeg, an additional parameter is required to be pas
 
 Ffmpeg does default to 422-10, so if you are using that pix_fmt, the encode can be as simple as:
 ```
-ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v oapv -qp 20 \
+ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v liboapv -qp 20 \
      -preset fast -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int \
      -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
@@ -117,25 +118,12 @@ This will then pick an appropriate bitrate based on your resolution and frame-ra
 You will also need to match the pix_fmt setting with the oapv-params.
 
 ```
-ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v oapv -qp 20 \
+ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -vframes 200 -c:v liboapv -qp 20 \
      -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" -sws_flags spline+accurate_rnd+full_chroma_int \
      -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
 ```
 -->
-## Benchmarking
-
-These benchmarks were for HD versions of the netflix chimera media (200 frame clips). This is running on a M2 Macbook Pro, so we can compare directly with the videotoolbox apple prores encode (NOTE, which has hardware assist). We have picked a couple of QP values, and mostly consider a QP value of 20 to be the most desirable rate.
-
-For the 422 testing  
-We are encoding everything to 10-bit from 12-bit DPX source media.  
-![][image1]  
-As you can see in most cases you will see up to a 30% savings in storage for the same quality result compared to prores_ks and apple prores videotoolbox.
-
-For 444 testing:  
-Note, dnxhr and prores_ks are both encoding only to 10-bit, since they do not support 12-bit.  
-The XQ variant is a little unfair, since it is targeting a significantly higher bitrate, so we are really not seeing much benefit from this. Purely for review purposes it's excessive, but may have benefits as source media.  
-![][image2]
 
 ## Presets
 
@@ -166,8 +154,7 @@ QP (Quantization Parameter) is 0-40, the default being 30, for visually lossless
 
 ## Bitrate
 
-The OpenAPV documentation does have a list of recommended bitrates -   
-[apv_family.md](https://github.com/AcademySoftwareFoundation/openapv/blob/add_apv_family/readme/apv_family.md)  
+
 ![][image7]
 
 But in practice it does cap out at a quality above 300Mbps.
@@ -179,6 +166,28 @@ Note, if you look at the [YUV Diff](https://encode.taurich.org/wedge_results/ffm
         File size - 241,363,608                                                         214,007,491
 
 This is a known issue that hopefully will be addressed in a future update. It's worth stressing that this particular view does exaggerate extremely small changes, so if using bitrate is desirable, test to see if the results are acceptable.
+
+
+## Benchmarking
+
+These benchmarks were for HD versions of the netflix chimera media (200 frame clips). This is running on a M2 Macbook Pro, so we can compare directly with the videotoolbox apple prores encode (NOTE, which has hardware assist). We have picked a couple of QP values, and mostly consider a QP value of 15 to be the most desirable rate, we were picking codec settings (where available) to approximately match the prores PSNR value, so we can compare the different file sizes and encode time.
+
+
+| ![](enctests/reference-results/intra-test422-encode_time.png)  This is showing different intraframe codecs against encoding time. |
+| ![](enctests/reference-results/intra-test422-filesize.png) This is showing different intraframe codecs against file size. |
+| ![](enctests/reference-results/intra-test422-vmaf_harmonic_mean.png) This is showing different intraframe codecs against VMAF harmonic mean |
+| ![](enctests/reference-results/intra-test422-psnr_y_harmonic_mean.png) This is showing different intraframe codecs against psnr y harmonic mean |
+
+The APV encoder is compariable in this case to ffmpeg with video-toolbox on an M2 Max (with encoder hardware), it is unknown how optimal the ffmpeg wrapper is. But there are definately improvements over DNxHD. HTJ2K is a little unfair in this context since it is a full RGB image, but clearly is slower at encoding. Also worth noting prores_ks is quite a bit slower.
+
+For 444 testing:  
+Note, dnxhr and prores_ks are both encoding only to 10-bit, since they do not support 12-bit in ffmpeg. 
+
+| ![](enctests/reference-results/intra-test444-encode_time.png)  This is showing different intraframe codecs against encoding time. |
+| ![](enctests/reference-results/intra-test444-filesize.png) This is showing different intraframe codecs against file size. |
+| ![](enctests/reference-results/intra-test444-vmaf_harmonic_mean.png) This is showing different intraframe codecs against VMAF harmonic mean |
+| ![](enctests/reference-results/intra-test444-psnr_y_harmonic_mean.png) This is showing different intraframe codecs against psnr y harmonic mean |
+
 
 ## Playback performance
 
