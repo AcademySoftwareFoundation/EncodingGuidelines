@@ -276,18 +276,20 @@
         <div class="controls">
             <div class="image-selector">
                 <table width='100%'>
-                <TR><TD colspan=2>
+                <TR><TD colspan=1>
                 <div class="selector-group">
                     <B>Media Selection</B>
                     <select id="mediaSelect">
                     {% for media_name, test in tests.items() %}
-                           <option value="{{ media_name|e }} Source">{{ media_name|e }}</option>
-                           <option value="{{ media_name|e }}">{{ media_name|e }} YCrCb Diff</option>
-
+                           <option value="{{ media_name|e }}">{{ media_name|e }}</option>
                     {% endfor %}
                     </select>
                     <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
                     <input type="file" id="leftFile" accept="image/*,video/*">-->
+                </div>
+                </td><td>
+                <div class="selector-group">
+                    <input type="checkbox" id="diff" value=" Source">Show YCrCb Difference between Source and encoded media.</input>
                 </div>
                 </TD></TR>
                 <TR><TD width="50%">
@@ -408,7 +410,13 @@
                         url: '{{ enc_info.testbasename|e }}-x20diff.avif', 
                         name: '{{ enc_info.testbasename|e }}', 
                         encoder_args: '{{enc_info.encode_arguments | e}}',
-                        wedge_name: '{ enc_info.name|e }}',
+                        psnr: '{{enc_info.psnr_y_harmonic_mean |e }}',
+                        encode_time: '{{enc_info.encode_time |e }}',
+                        vmaf: '{{enc_info.vmaf_harmonic_mean |e }}',
+                        filesize: '{{ "{:,.2f}".format(enc_info.filesize / (1024 * 1024)) }}',
+                        wedge_name: '{{ enc_info.name|e }}',
+                        media_name: '{{ media_name|e }}',
+                        'diff': true,
                         name: '{{ enc_info.testbasename|e }} Encoded', 
                         },
                 {% endfor %}
@@ -423,7 +431,13 @@
                     '{{ enc_info.testbasename|e }} Encoded': {
                         url: '{{ enc_info.testbasename|e }}-encoded.avif', 
                         encoder_args: '{{enc_info.encode_arguments | e}}',
-                        wedge_name: '{ enc_info.name|e }}',
+                        psnr: '{{enc_info.psnr_y_harmonic_mean |e }}',
+                        vmaf: '{{enc_info.vmaf_harmonic_mean |e }}',
+                        encode_time: '{{enc_info.encode_time |e }}',
+                        filesize: '{{ "{:,.2f}".format(enc_info.filesize / (1024 * 1024)) }}',
+                        wedge_name: '{{ enc_info.name|e }}',
+                        media_name: '{{ media_name|e }}',
+                        diff: false,
                         name: '{{ enc_info.testbasename|e }} Encoded', 
                         },
                 {% endfor %}
@@ -481,6 +495,7 @@
         }
         // DOM elements
         const mediaSelect = document.getElementById('mediaSelect');
+        const diffSelect = document.getElementById('diff');
         const leftSelect = document.getElementById('leftSelect');
         const rightSelect = document.getElementById('rightSelect');
         const leftImage = document.getElementById('leftImage');
@@ -505,6 +520,7 @@
 
         // Event listeners
         mediaSelect.addEventListener('change', () => pickImage());
+        diffSelect.addEventListener('change', () => pickImage());
         leftSelect.addEventListener('change', () => loadImage('left', 'select'));
         rightSelect.addEventListener('change', () => loadImage('right', 'select'));
         zoomSlider.addEventListener('input', updateZoom);
@@ -560,23 +576,36 @@
         });
 
         function pickImage(){
-            const media = mediaSelect.value;
+            var media = mediaSelect.value;
+            if (!diffSelect.checked)
+                media += " Source";
             const values = mediaselections[media];
             console.log("Picking media:", media);
+            const leftInfo = imageList[leftSelect.value];
+            const rightInfo = imageList[rightSelect.value];
+            var leftIndex = 0;
+            var rightIndex = 1;
             leftSelect.innerHTML = '';
             rightSelect.innerHTML = '';
+            var i = 0;
             values.forEach(test => {
                 const optionLeft = document.createElement("option");
                 optionLeft.value = test;
                 optionLeft.textContent = test;
                 leftSelect.appendChild(optionLeft);
+                if (leftInfo && imageList[test].wedge_name == leftInfo.wedge_name)
+                    leftIndex = i;
                 const optionRight = document.createElement("option");
                 optionRight.value = test;
                 optionRight.textContent = test;
                 rightSelect.appendChild(optionRight);
+                if (rightInfo && imageList[test].wedge_name == rightInfo.wedge_name)
+                    rightIndex = i;
+                i = i + 1;
             });
             // Make sure the right side is different to left to start with.
-            rightSelect.selectedIndex = 1;
+            leftSelect.selectedIndex = leftIndex;
+            rightSelect.selectedIndex = rightIndex;
             // Load the media.
             loadImage('left', 'select');
             loadImage('right', 'select');
@@ -606,7 +635,19 @@
                 //d.innerHTML = imageList[select.value].encoder_args;
 
                 //encodeText.replaceChild(d);
-                encodeText.innerHTML = decodeURIComponent(imageList[select.value].encoder_args);
+                var table = "<table>";
+                if (imageList[select.value].encoder_args)
+                    table += "<TR><TD>Encoder args</TD><TD>"+imageList[select.value].encoder_args+"</td></tr>";
+                if (imageList[select.value].filesize)
+                    table += "<TR><TD>filesize</TD><TD>"+imageList[select.value].filesize+" MB</td></tr>";
+                if (imageList[select.value].encode_time)
+                    table += "<TR><TD>psnr</TD><TD>"+imageList[select.value].encode_time+" secs</td></tr>";
+                if (imageList[select.value].vmaf)
+                    table += "<TR><TD>vmaf</TD><TD>"+imageList[select.value].vmaf+"</td></tr>";
+                if (imageList[select.value].psnr)
+                    table += "<TR><TD>psnr</TD><TD>"+imageList[select.value].psnr+"</td></tr>";
+                table += "</table>";
+                encodeText.innerHTML = decodeURIComponent(table);
             } else if (source === 'file' && file.files[0]) {
                 const fileObj = file.files[0];
                 const reader = new FileReader();
@@ -894,6 +935,14 @@
         updateZoom();
         pickImage();
     </script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4ZZYZDFLDD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
+      gtag('config', 'G-4ZZYZDFLDD');
+    </script>
 </body></html>
 
