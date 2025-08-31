@@ -53,7 +53,8 @@ ENV         FFMPEG_VERSION=8.0 \
     LIBARIBB24_VERSION=1.0.3 \
     LIBPNG_VERSION=1.6.9 \
     LIBVMAF_VERSION=3.0.0 \
-    LIBOPENJPH_VERSION=0.21.5 \
+    OPENJPH_VERSION=0.21.5 \
+    OPENAPV_VERSION=0.2.0.1 \
     LIBZIMG_VERSION=3.0.5 \ 
     VMAF_MODEL_DIR=/usr/share/vmaf/model \
     SRC=/usr/local
@@ -353,7 +354,19 @@ RUN \
         DIR=/tmp/openjph && \
         mkdir -p ${DIR} && \
         cd ${DIR} && \
-        curl -sL https://github.com/aous72/OpenJPH/archive/v${OPENJPH_VERSION}.tar.gz | \
+        curl -sL https://github.com/aous72/OpenJPH/archive/refs/tags/${OPENJPH_VERSION}.tar.gz | \
+        tar -zx --strip-components=1 && \
+        cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+        make && \
+        make install && \
+        rm -rf ${DIR}
+
+## openapv https://github.com/AcademySoftwareFoundation/openapv
+RUN \
+        DIR=/tmp/openapv && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        curl -sL https://github.com/AcademySoftwareFoundation/openapv/archive/refs/tags/v${OPENAPV_VERSION}.tar.gz | \
         tar -zx --strip-components=1 && \
         cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
         make && \
@@ -692,7 +705,7 @@ RUN  \
         --enable-libzmq \
         --enable-nonfree \
         --enable-openssl \
-        --enable-postproc \
+        --enable-liboapv \
         --enable-shared \
         --enable-small \
         --enable-version3 \
