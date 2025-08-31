@@ -8,7 +8,10 @@ RUN     dnf install epel-release -y && \
         dnf clean all;
 
 RUN pip install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq  pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
-RUN pip install awscli
+RUN pip install awscli fileseq
+
+# Needed to get plotly working.
+RUN plotly_get_chrome -y
 
 FROM        base AS build
 
