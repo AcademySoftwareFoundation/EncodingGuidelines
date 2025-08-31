@@ -48,8 +48,12 @@ VMAF_MODEL_DIR = os.getenv(
     '/usr/share/vmaf'
 )
 
-OUTPUT_STILL_IMAGE_FORMAT = "avif"
-OUTPUT_FFMPEG_COMPRESSION_FLAGS = " -crf 23 -still-picture 1 -cpu-used 4 "
+# We used AVIF to keep the file-size down for web site of results, but for in-house
+# use its better to use PNG.
+#OUTPUT_STILL_IMAGE_FORMAT = "avif"
+#OUTPUT_FFMPEG_COMPRESSION_FLAGS = " -crf 23 -still-picture 1 -cpu-used 4 "
+OUTPUT_STILL_IMAGE_FORMAT = "png"
+OUTPUT_FFMPEG_COMPRESSION_FLAGS = " "
 
 if not Path(VMAF_MODEL_DIR, "vmaf_v0.6.1.json").exists():
     print(f"WARNING: Cannot find VMAF configuration files at path {VMAF_MODEL_DIR}, this is defined by the environment variable VMAF_MODEL_DIR.")
