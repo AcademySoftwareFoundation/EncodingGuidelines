@@ -11,7 +11,7 @@ This project is from the [ASWF Open Review Initiative](https://openreviewinitiat
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
 
-The main confluence page for this for now is [here](https://wiki.aswf.io/pages/viewpage.action?pageId=16031068)
+The main confluence page for this for now is [here](https://lf-aswf.atlassian.net/wiki/spaces/PRWG/pages/11274685/Movie+Compression+with+ffmpeg+for+media+review.)
 
 {: .highlight }
 We recommend usage of [VP9](EncodeVP9.html) and [AV1](EncodeAv1.html) over h264 and h265 where possible to encourage the usage of patent-free codecs, for more information on this see the white-paper [Next-gen codecs for VFX Community](https://docs.google.com/document/d/1EJ7Q_HhjL0ELNdjz5AgnPrraUvy7XCo52LL08WxgjtA/edit#heading=h.9rkn78tjmq48).  
