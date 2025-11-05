@@ -19,10 +19,9 @@ The codec specification allows:
 * Frame tiling for immersive content and for enabling parallel encoding and decoding.  
 * Support multi-video video and auxiliary video like depth, alpha and preview.
 
-There are four implementations:
+There are three implementations:
 
 * OpenAPV library - [https://github.com/AcademySoftwareFoundation/OpenAPV](https://github.com/AcademySoftwareFoundation/OpenAPV) - which can encode a YCrCb stream to the apv format.  
-* [Ffapv](https://github.com/openapv/ffapv) - Which is an integration of the OpenAPV library into ffmpeg (see below). This supports both encoding at 422, 444 10-bit and 12-bit encoding.  
 * Native ffmpeg - FFmpeg has implemented their own decoder as part of the core ffmpeg app, they also have their own encoder using the OpenAPV library.  
 * Android Open Source Project (AOSP) 16 - Android has added support of APV in v16. [Android 16](https://developer.android.com/about/versions/16/features#apv).
 
@@ -56,7 +55,8 @@ Note, the y4m format only works with 422, but it does give you access to some of
 
 ## Ffmpeg
 
-Currently you need to grab the main branch, there is no official release yet that includes APV, although its likely to be in ffmpeg 8.0.  
+OpenAPV is included in the 8.0 version of ffmpeg.
+
 There is a decoder which is impressively fast, and does support 422, 444 and 4444 at 10 and 12 bits.   
 The encoder uses the OpenAPV library, and currently supports 422, 444 and 4444 at 10 and 12 bits.
 
@@ -199,6 +199,8 @@ Note, dnxhr and prores_ks are both encoding only to 10-bit, since they do not su
 | ![](enctests/reference-results/intra-test444-encode_time.png)  This is showing different intraframe codecs against encoding time. | ![](enctests/reference-results/intra-test444-filesize.png) This is showing different intraframe codecs against file size. |
 | ![](enctests/reference-results/intra-test444-vmaf_harmonic_mean.png) This is showing different intraframe codecs against VMAF harmonic mean | ![](enctests/reference-results/intra-test444-psnr_y_harmonic_mean.png) This is showing different intraframe codecs against psnr y harmonic mean |
 
+## Playback
+For playback you need to at least be on ffmpeg 8.0. OpenRV does have a [Pull-request](https://github.com/AcademySoftwareFoundation/OpenRV/pull/843) to add 8.0 as an option to OpenRV. The changes are not specific to OpenAPV, but are related to updates to ffmpeg 8.0.
 
 ## Playback performance
 

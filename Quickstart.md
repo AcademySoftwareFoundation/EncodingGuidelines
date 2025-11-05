@@ -174,8 +174,3 @@ TODO: Do additional testing across all players.
 For more details see:
    * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
    * [Encoding Guide](Encoding.html#range)
-
-
-For more details see:
-   * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
-   * [Encoding Guide](Encoding.html#range)
