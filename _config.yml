@@ -4,6 +4,7 @@ exclude: ["ICC", "*.yml", "enctests/*/*.mov",
           "enctests/sources/encsources/*/*.png", "enctests/sources/encsources/*/*.exr", 
           "enctests/sources/encsources/*/*.tif", "enctests/sources/hdr_sources/*/*.png", 
           "enctests/*/*.mov",
+          "framerate/*",
           "MarkdownNotes.md",
           "enctests/sources/hdr_sources/*/*.exr", "enctests/sources/Sintel-trailer-1080p-png",
           "enctests/sources/1080p"]
@@ -42,7 +43,7 @@ callouts:
     color: green
   note:
     title: Note
-    color: purple
+    color: yellow
   warning:
     title: Warning
     color: red
@@ -63,6 +64,10 @@ nav_external_links:
     opens_in_new_tab: true # set to true to open this link in a new tab - defaults to false
   - title: Reporting Issues
     url: https://github.com/AcademySoftwareFoundation/EncodingGuidelines/issues
+    hide_icon: false # set to true to hide the external link icon - defaults to false
+    opens_in_new_tab: true # set to true to open this link in a new tab - defaults to false
+  - title: Test Results
+    url: https://encode.taurich.org/wedge_results/index.html
     hide_icon: false # set to true to hide the external link icon - defaults to false
     opens_in_new_tab: true # set to true to open this link in a new tab - defaults to false
   - title: Discussion
