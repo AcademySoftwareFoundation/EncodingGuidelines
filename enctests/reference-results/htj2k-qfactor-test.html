@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HTJ2K Comparing qfactor values for ojph for 12-bit input files.</title>
+  <link rel="stylesheet" href="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/css/just-the-docs-default.css"> 
+  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/vendor/lunr.min.js"></script> 
+  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/just-the-docs.js"></script>
+</head>
+
+<body>
+        <TABLE width="800">
+    <TR><TD><A HREF="http://openreviewinitiative.org/">Open Review Initiative</A></TD>
+    <TD><A HREF="https://academysoftwarefoundation.github.io/EncodingGuidelines/">ORI Encoding Guidelines</A></TD>
+        <TD><A HREF="../../../index.html">Test Indexes</A></TD></TR></TABLE>
+  <H1>HTJ2K Comparing qfactor values for ojph for 12-bit input files.</H1>
+  <P>Comparing different qfactor values using OpenHTJ2K</P>
+  <img src='htj2k-qfactor-test-filesize.png' />
+  <img src='htj2k-qfactor-test-encode_time.png' />
+  <img src='htj2k-qfactor-test-vmaf_harmonic_mean.png' />
+  <img src='htj2k-qfactor-test-psnr_y_harmonic_mean.png' /></BR>
+  
+  <a href="htj2k-qfactor-test-compare.html">Visual Compare</A></BR>
+
+
+  Testing with ffmpeg version: git-2025-07-22-1ce20f55cc on OS:Darwin 24.5.0 Architecture: arm.
+
+  
+
+  <h1>chimera_cars_srgb.%05d Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>chimera_cars_srgb.%05d.tif</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>1920 x 1080</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>25.0</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>2500 - 2700</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Test Results</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>VMAF Harmonic Mean</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>CAMBI Harmonic Mean</TH>
+   <TH>MS-SSIM Harmonic Mean</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor060.log">test_qfactor-qfactor060</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor060_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     845KiB time=00:00:00.04 bitrate=173059.8kbits/s speed=0.0106x elapsed=0:00:03.77    </A> </TD>
+        <td align=right>3.9027 </TD>
+        <td align=right>13,926,415 </TD>
+        <TD align=right>99.272032</TD>
+         <TD align=right>40.670137</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.994837</TD>
+        <TD>Clevels= 5 Qfactor= 60</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor070.log">test_qfactor-qfactor070</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor070_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     846KiB time=00:00:00.04 bitrate=173344.0kbits/s speed=0.0106x elapsed=0:00:03.78    </A> </TD>
+        <td align=right>3.9152 </TD>
+        <td align=right>17,211,316 </TD>
+        <TD align=right>99.612734</TD>
+         <TD align=right>41.745863</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.996095</TD>
+        <TD>Clevels= 5 Qfactor= 70</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor080.log">test_qfactor-qfactor080</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor080_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     841KiB time=00:00:00.04 bitrate=172332.4kbits/s speed=0.0107x elapsed=0:00:03.74    </A> </TD>
+        <td align=right>3.9676 </TD>
+        <td align=right>22,564,572 </TD>
+        <TD align=right>99.879249</TD>
+         <TD align=right>43.599659</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.997235</TD>
+        <TD>Clevels= 5 Qfactor= 80</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor090.log">test_qfactor-qfactor090</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor090_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     809KiB time=00:00:00.04 bitrate=165590.2kbits/s speed=0.0106x elapsed=0:00:03.78    </A> </TD>
+        <td align=right>4.025 </TD>
+        <td align=right>37,894,567 </TD>
+        <TD align=right>99.979395</TD>
+         <TD align=right>47.027387</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.998518</TD>
+        <TD>Clevels= 5 Qfactor= 90</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor094.log">test_qfactor-qfactor094</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor094_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     743KiB time=00:00:00.04 bitrate=152076.8kbits/s speed=0.0101x elapsed=0:00:03.96    </A> </TD>
+        <td align=right>3.9686 </TD>
+        <td align=right>58,488,984 </TD>
+        <TD align=right>99.983818</TD>
+         <TD align=right>49.842231</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.999089</TD>
+        <TD>Clevels= 5 Qfactor= 94</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor096.log">test_qfactor-qfactor096</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor096_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     640KiB time=00:00:00.04 bitrate=131007.0kbits/s speed=0.0105x elapsed=0:00:03.80    </A> </TD>
+        <td align=right>4.1064 </TD>
+        <td align=right>85,824,337 </TD>
+        <TD align=right>99.984737</TD>
+         <TD align=right>52.192447</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.999378</TD>
+        <TD>Clevels= 5 Qfactor= 96</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor098.log">test_qfactor-qfactor098</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor098_tests.log">Test frame=    1 fps=0.4 q=0.0 Lsize=     289KiB time=00:00:00.04 bitrate=59253.8kbits/s speed=0.0141x elapsed=0:00:02.82    </A> </TD>
+        <td align=right>4.2926 </TD>
+        <td align=right>175,801,752 </TD>
+        <TD align=right>99.985749</TD>
+         <TD align=right>56.236367</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.999723</TD>
+        <TD>Clevels= 5 Qfactor= 98</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor099.log">test_qfactor-qfactor099</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor099_tests.log">Test frame=    1 fps=0.6 q=0.0 Lsize=      21KiB time=00:00:00.04 bitrate=4351.4kbits/s speed=0.0226x elapsed=0:00:01.76    </A> </TD>
+        <td align=right>4.6009 </TD>
+        <td align=right>328,529,418 </TD>
+        <TD align=right>99.986314</TD>
+         <TD align=right>60.962292</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.999894</TD>
+        <TD>Clevels= 5 Qfactor= 99</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor100.log">test_qfactor-qfactor100</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_cars_srgb-test_qfactor-qfactor100_tests.log">Test frame=    1 fps=1.0 q=0.0 Lsize=      22KiB time=00:00:00.04 bitrate=4445.2kbits/s speed=0.0396x elapsed=0:00:01.00    </A> </TD>
+        <td align=right>6.9639 </TD>
+        <td align=right>1,717,573,726 </TD>
+        <TD align=right>99.986472</TD>
+         <TD align=right>66.08997</TD>
+         <TD align=right>1e-06</TD>
+         <TD align=right>0.999948</TD>
+        <TD>Clevels= 5 Qfactor= 100</TD>
+    </TR>
+  
+</TABLE>
+  
+
+  <h1>chimera_coaster_srgb.%06d Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>chimera_coaster_srgb.%06d.tif</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>1920 x 1080</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>25.0</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>44200 - 44400</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Test Results</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>VMAF Harmonic Mean</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>CAMBI Harmonic Mean</TH>
+   <TH>MS-SSIM Harmonic Mean</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor060.log">test_qfactor-qfactor060</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor060_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     741KiB time=00:00:00.04 bitrate=151805.0kbits/s speed=0.0104x elapsed=0:00:03.85    </A> </TD>
+        <td align=right>3.8703 </TD>
+        <td align=right>16,879,034 </TD>
+        <TD align=right>99.891469</TD>
+         <TD align=right>44.024723</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.995674</TD>
+        <TD>Clevels= 5 Qfactor= 60</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor070.log">test_qfactor-qfactor070</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor070_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     733KiB time=00:00:00.04 bitrate=150049.6kbits/s speed=0.0103x elapsed=0:00:03.89    </A> </TD>
+        <td align=right>3.8839 </TD>
+        <td align=right>20,308,503 </TD>
+        <TD align=right>99.948752</TD>
+         <TD align=right>44.958216</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.996758</TD>
+        <TD>Clevels= 5 Qfactor= 70</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor080.log">test_qfactor-qfactor080</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor080_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     719KiB time=00:00:00.04 bitrate=147286.6kbits/s speed=0.0101x elapsed=0:00:03.96    </A> </TD>
+        <td align=right>3.8696 </TD>
+        <td align=right>25,455,212 </TD>
+        <TD align=right>99.970976</TD>
+         <TD align=right>46.1214</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.99764</TD>
+        <TD>Clevels= 5 Qfactor= 80</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor090.log">test_qfactor-qfactor090</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor090_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     678KiB time=00:00:00.04 bitrate=138898.0kbits/s speed=0.00967x elapsed=0:00:04.13    </A> </TD>
+        <td align=right>3.9196 </TD>
+        <td align=right>39,029,480 </TD>
+        <TD align=right>99.981995</TD>
+         <TD align=right>48.482855</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.998637</TD>
+        <TD>Clevels= 5 Qfactor= 90</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor094.log">test_qfactor-qfactor094</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor094_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     624KiB time=00:00:00.04 bitrate=127812.2kbits/s speed=0.00981x elapsed=0:00:04.07    </A> </TD>
+        <td align=right>3.9326 </TD>
+        <td align=right>56,290,318 </TD>
+        <TD align=right>99.983842</TD>
+         <TD align=right>50.56723</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.9991</TD>
+        <TD>Clevels= 5 Qfactor= 94</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor096.log">test_qfactor-qfactor096</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor096_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     547KiB time=00:00:00.04 bitrate=111976.6kbits/s speed=0.011x elapsed=0:00:03.63    </A> </TD>
+        <td align=right>4.0638 </TD>
+        <td align=right>79,108,819 </TD>
+        <TD align=right>99.984645</TD>
+         <TD align=right>52.364901</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999369</TD>
+        <TD>Clevels= 5 Qfactor= 96</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor098.log">test_qfactor-qfactor098</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor098_tests.log">Test frame=    1 fps=0.4 q=0.0 Lsize=     262KiB time=00:00:00.04 bitrate=53685.8kbits/s speed=0.0149x elapsed=0:00:02.69    </A> </TD>
+        <td align=right>4.2524 </TD>
+        <td align=right>159,942,482 </TD>
+        <TD align=right>99.985797</TD>
+         <TD align=right>56.018242</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999743</TD>
+        <TD>Clevels= 5 Qfactor= 98</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor099.log">test_qfactor-qfactor099</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor099_tests.log">Test frame=    1 fps=0.6 q=0.0 Lsize=      22KiB time=00:00:00.04 bitrate=4517.4kbits/s speed=0.0239x elapsed=0:00:01.67    </A> </TD>
+        <td align=right>4.4946 </TD>
+        <td align=right>298,569,499 </TD>
+        <TD align=right>99.986334</TD>
+         <TD align=right>60.862527</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999907</TD>
+        <TD>Clevels= 5 Qfactor= 99</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor100.log">test_qfactor-qfactor100</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_coaster_srgb-test_qfactor-qfactor100_tests.log">Test frame=    1 fps=0.0 q=0.0 Lsize=      22KiB time=00:00:00.04 bitrate=4479.6kbits/s speed=0.0406x elapsed=0:00:00.98    </A> </TD>
+        <td align=right>6.7504 </TD>
+        <td align=right>1,679,762,839 </TD>
+        <TD align=right>99.986556</TD>
+         <TD align=right>66.138227</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999957</TD>
+        <TD>Clevels= 5 Qfactor= 100</TD>
+    </TR>
+  
+</TABLE>
+  
+
+  <h1>chimera_fountains_srgb.%05d Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>chimera_fountains_srgb.%05d.tif</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>1920 x 1080</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>25.0</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>5400 - 5600</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Test Results</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>VMAF Harmonic Mean</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>CAMBI Harmonic Mean</TH>
+   <TH>MS-SSIM Harmonic Mean</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor060.log">test_qfactor-qfactor060</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor060_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=    1262KiB time=00:00:00.04 bitrate=258356.6kbits/s speed=0.00931x elapsed=0:00:04.29    </A> </TD>
+        <td align=right>3.7703 </TD>
+        <td align=right>25,585,313 </TD>
+        <TD align=right>99.967836</TD>
+         <TD align=right>38.948171</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.992223</TD>
+        <TD>Clevels= 5 Qfactor= 60</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor070.log">test_qfactor-qfactor070</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor070_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=    1254KiB time=00:00:00.04 bitrate=256828.0kbits/s speed=0.00935x elapsed=0:00:04.28    </A> </TD>
+        <td align=right>3.7986 </TD>
+        <td align=right>31,037,578 </TD>
+        <TD align=right>99.972709</TD>
+         <TD align=right>39.927547</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.994433</TD>
+        <TD>Clevels= 5 Qfactor= 70</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor080.log">test_qfactor-qfactor080</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor080_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=    1237KiB time=00:00:00.04 bitrate=253423.0kbits/s speed=0.00943x elapsed=0:00:04.24    </A> </TD>
+        <td align=right>3.8098 </TD>
+        <td align=right>39,584,010 </TD>
+        <TD align=right>99.976957</TD>
+         <TD align=right>41.404306</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.996286</TD>
+        <TD>Clevels= 5 Qfactor= 80</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor090.log">test_qfactor-qfactor090</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor090_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=    1168KiB time=00:00:00.04 bitrate=239129.2kbits/s speed=0.00913x elapsed=0:00:04.38    </A> </TD>
+        <td align=right>3.907 </TD>
+        <td align=right>64,099,398 </TD>
+        <TD align=right>99.981401</TD>
+         <TD align=right>44.733538</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.998284</TD>
+        <TD>Clevels= 5 Qfactor= 90</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor094.log">test_qfactor-qfactor094</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor094_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=    1035KiB time=00:00:00.04 bitrate=212038.6kbits/s speed=0.00895x elapsed=0:00:04.46    </A> </TD>
+        <td align=right>3.9924 </TD>
+        <td align=right>96,766,835 </TD>
+        <TD align=right>99.983534</TD>
+         <TD align=right>47.957175</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999112</TD>
+        <TD>Clevels= 5 Qfactor= 94</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor096.log">test_qfactor-qfactor096</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor096_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     852KiB time=00:00:00.04 bitrate=174401.4kbits/s speed=0.00915x elapsed=0:00:04.37    </A> </TD>
+        <td align=right>4.1152 </TD>
+        <td align=right>138,732,442 </TD>
+        <TD align=right>99.98461</TD>
+         <TD align=right>50.956335</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999503</TD>
+        <TD>Clevels= 5 Qfactor= 96</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor098.log">test_qfactor-qfactor098</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor098_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     323KiB time=00:00:00.04 bitrate=66169.4kbits/s speed=0.0136x elapsed=0:00:02.94    </A> </TD>
+        <td align=right>4.3435 </TD>
+        <td align=right>257,700,860 </TD>
+        <TD align=right>99.9858</TD>
+         <TD align=right>56.336571</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.99984</TD>
+        <TD>Clevels= 5 Qfactor= 98</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor099.log">test_qfactor-qfactor099</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor099_tests.log">Test frame=    1 fps=0.6 q=0.0 Lsize=      21KiB time=00:00:00.04 bitrate=4262.0kbits/s speed=0.0238x elapsed=0:00:01.67    </A> </TD>
+        <td align=right>4.5937 </TD>
+        <td align=right>420,574,424 </TD>
+        <TD align=right>99.986322</TD>
+         <TD align=right>61.519157</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999941</TD>
+        <TD>Clevels= 5 Qfactor= 99</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor100.log">test_qfactor-qfactor100</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_fountains_srgb-test_qfactor-qfactor100_tests.log">Test frame=    1 fps=0.0 q=0.0 Lsize=      22KiB time=00:00:00.04 bitrate=4530.4kbits/s speed=0.0402x elapsed=0:00:00.99    </A> </TD>
+        <td align=right>7.2622 </TD>
+        <td align=right>1,805,314,849 </TD>
+        <TD align=right>99.986535</TD>
+         <TD align=right>66.139018</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999969</TD>
+        <TD>Clevels= 5 Qfactor= 100</TD>
+    </TR>
+  
+</TABLE>
+  
+
+  <h1>chimera_wind_srgb.%06d Results</h1>
+  <table>
+  <TR>
+    <TD ALIGN=RIGHT>File Path</TD><TD>chimera_wind_srgb.%06d.tif</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Resolution</TD><TD>1920 x 1080</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Source Frame Rate</TD><TD>25.0</TD>
+  </TR>
+  <TR>
+    <TD ALIGN=RIGHT>Frame Range</TD><TD>66600 - 66800</TD>
+  </TR>
+  </table>
+<table border=1>
+   <TR>
+   <TH>Test Name</TH>
+   <TH>Test Results</TH>
+   <TH>Encode Duration</TH>
+   <TH>File Size</TH>
+   <TH>VMAF Harmonic Mean</TH>
+   <TH>PSNR-Y Harmonic Mean</TH>
+   <TH>CAMBI Harmonic Mean</TH>
+   <TH>MS-SSIM Harmonic Mean</TH>
+   <TH>Encode Arguments</TH>
+   </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor060.log">test_qfactor-qfactor060</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor060_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     974KiB time=00:00:00.04 bitrate=199401.6kbits/s speed=0.00947x elapsed=0:00:04.22    </A> </TD>
+        <td align=right>3.8161 </TD>
+        <td align=right>25,027,031 </TD>
+        <TD align=right>97.376204</TD>
+         <TD align=right>38.777278</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.996652</TD>
+        <TD>Clevels= 5 Qfactor= 60</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor070.log">test_qfactor-qfactor070</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor070_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     971KiB time=00:00:00.04 bitrate=198883.2kbits/s speed=0.00935x elapsed=0:00:04.27    </A> </TD>
+        <td align=right>3.8336 </TD>
+        <td align=right>29,795,047 </TD>
+        <TD align=right>97.919877</TD>
+         <TD align=right>40.224133</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.997434</TD>
+        <TD>Clevels= 5 Qfactor= 70</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor080.log">test_qfactor-qfactor080</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor080_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     972KiB time=00:00:00.04 bitrate=198978.8kbits/s speed=0.00938x elapsed=0:00:04.26    </A> </TD>
+        <td align=right>3.8761 </TD>
+        <td align=right>37,498,967 </TD>
+        <TD align=right>98.3579</TD>
+         <TD align=right>42.321388</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.998122</TD>
+        <TD>Clevels= 5 Qfactor= 80</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor090.log">test_qfactor-qfactor090</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor090_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     935KiB time=00:00:00.04 bitrate=191558.0kbits/s speed=0.00893x elapsed=0:00:04.47    </A> </TD>
+        <td align=right>3.9537 </TD>
+        <td align=right>58,728,636 </TD>
+        <TD align=right>98.743469</TD>
+         <TD align=right>46.75477</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999005</TD>
+        <TD>Clevels= 5 Qfactor= 90</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor094.log">test_qfactor-qfactor094</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor094_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     844KiB time=00:00:00.04 bitrate=172928.8kbits/s speed=0.0089x elapsed=0:00:04.49    </A> </TD>
+        <td align=right>3.9862 </TD>
+        <td align=right>83,689,090 </TD>
+        <TD align=right>98.954053</TD>
+         <TD align=right>49.825722</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999378</TD>
+        <TD>Clevels= 5 Qfactor= 94</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor096.log">test_qfactor-qfactor096</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor096_tests.log">Test frame=    1 fps=0.2 q=0.0 Lsize=     712KiB time=00:00:00.04 bitrate=145729.0kbits/s speed=0.00976x elapsed=0:00:04.09    </A> </TD>
+        <td align=right>4.1138 </TD>
+        <td align=right>114,681,385 </TD>
+        <TD align=right>99.058442</TD>
+         <TD align=right>51.921578</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.99958</TD>
+        <TD>Clevels= 5 Qfactor= 96</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor098.log">test_qfactor-qfactor098</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor098_tests.log">Test frame=    1 fps=0.3 q=0.0 Lsize=     291KiB time=00:00:00.04 bitrate=59510.0kbits/s speed=0.0136x elapsed=0:00:02.93    </A> </TD>
+        <td align=right>4.3004 </TD>
+        <td align=right>213,217,309 </TD>
+        <TD align=right>99.17884</TD>
+         <TD align=right>56.084152</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999839</TD>
+        <TD>Clevels= 5 Qfactor= 98</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor099.log">test_qfactor-qfactor099</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor099_tests.log">Test frame=    1 fps=0.6 q=0.0 Lsize=      21KiB time=00:00:00.04 bitrate=4248.4kbits/s speed=0.0225x elapsed=0:00:01.77    </A> </TD>
+        <td align=right>4.5058 </TD>
+        <td align=right>365,751,028 </TD>
+        <TD align=right>99.227374</TD>
+         <TD align=right>61.107823</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999947</TD>
+        <TD>Clevels= 5 Qfactor= 99</TD>
+    </TR>
+  
+    <TR>
+    <TH><A  target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor100.log">test_qfactor-qfactor100</A></TH>
+          <td align=right><A target="_blank" HREF="chimera_wind_srgb-test_qfactor-qfactor100_tests.log">Test frame=    1 fps=0.0 q=0.0 Lsize=      22KiB time=00:00:00.04 bitrate=4458.2kbits/s speed=0.0426x elapsed=0:00:00.93    </A> </TD>
+        <td align=right>6.9255 </TD>
+        <td align=right>1,753,662,138 </TD>
+        <TD align=right>99.241819</TD>
+         <TD align=right>66.132349</TD>
+         <TD align=right>0.0</TD>
+         <TD align=right>0.999979</TD>
+        <TD>Clevels= 5 Qfactor= 100</TD>
+    </TR>
+  
+</TABLE>
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4ZZYZDFLDD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-4ZZYZDFLDD');
+    </script>
+</body>
+</html>

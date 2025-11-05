@@ -1,0 +1,2110 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {
+        "config_file": "test_wedge_configs/apv_preset_tests.yml",
+        "test_duration": 556.9386739730835,
+        "test_end": "2025-07-28 04:46:31",
+        "test_start": "2025-07-28 04:37:14"
+    },
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_git-2025-07-22-1ce20f55cc",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.dpx",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb_dpx_10",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".dpx",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_oapv_presets-fast": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fast -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-fast.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fast"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-fast.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000017,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:37:17.036428+00:00",
+                                            "encode_time": 0.978,
+                                            "filesize": 53864510,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997907,
+                                                "max": 0.998068,
+                                                "mean": 0.997907,
+                                                "min": 0.997758
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.391971,
+                                                "max": 51.694601,
+                                                "mean": 51.39227,
+                                                "min": 51.14622
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.136157,
+                                                "max": 49.510481,
+                                                "mean": 49.136518,
+                                                "min": 48.849542
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.531535,
+                                                "max": 47.88331,
+                                                "mean": 47.531986,
+                                                "min": 47.260968
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976982,
+                                                "max": 100.0,
+                                                "mean": 99.977668,
+                                                "min": 96.359559
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_cars_srgb-test_oapv_presets-fast",
+                                        "wedge_name": "fast"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_oapv_presets-fast.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-fast.mov"
+                            },
+                            "test_oapv_presets-fastest": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fastest -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-fastest.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fastest"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-fastest.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000017,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:37:15.850650+00:00",
+                                            "encode_time": 0.9633,
+                                            "filesize": 53864510,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997907,
+                                                "max": 0.998068,
+                                                "mean": 0.997907,
+                                                "min": 0.997758
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.391971,
+                                                "max": 51.694601,
+                                                "mean": 51.39227,
+                                                "min": 51.14622
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.136157,
+                                                "max": 49.510481,
+                                                "mean": 49.136518,
+                                                "min": 48.849542
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.531535,
+                                                "max": 47.88331,
+                                                "mean": 47.531986,
+                                                "min": 47.260968
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976982,
+                                                "max": 100.0,
+                                                "mean": 99.977668,
+                                                "min": 96.359559
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_cars_srgb-test_oapv_presets-fastest",
+                                        "wedge_name": "fastest"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_oapv_presets-fastest.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-fastest.mov"
+                            },
+                            "test_oapv_presets-medium": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset medium -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-medium.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "medium"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-medium.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000017,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:37:19.149700+00:00",
+                                            "encode_time": 1.9023,
+                                            "filesize": 50538469,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997645,
+                                                "max": 0.99784,
+                                                "mean": 0.997645,
+                                                "min": 0.997455
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.89728,
+                                                "max": 52.203898,
+                                                "mean": 51.897571,
+                                                "min": 51.673336
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.295052,
+                                                "max": 49.699523,
+                                                "mean": 49.295434,
+                                                "min": 48.982094
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.018944,
+                                                "max": 47.394909,
+                                                "mean": 47.019448,
+                                                "min": 46.729708
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.941725,
+                                                "max": 100.0,
+                                                "mean": 99.942704,
+                                                "min": 95.943194
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_cars_srgb-test_oapv_presets-medium",
+                                        "wedge_name": "medium"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_oapv_presets-medium.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-medium.mov"
+                            },
+                            "test_oapv_presets-placebo": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset placebo -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-placebo.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "placebo"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-placebo.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000017,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:38:26.536897+00:00",
+                                            "encode_time": 64.0316,
+                                            "filesize": 51224282,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997714,
+                                                "max": 0.997899,
+                                                "mean": 0.997714,
+                                                "min": 0.997541
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 52.029234,
+                                                "max": 52.342234,
+                                                "mean": 52.02952,
+                                                "min": 51.794655
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.545898,
+                                                "max": 49.926117,
+                                                "mean": 49.546251,
+                                                "min": 49.250753
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.185773,
+                                                "max": 47.556581,
+                                                "mean": 47.186264,
+                                                "min": 46.904929
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.959834,
+                                                "max": 100.0,
+                                                "mean": 99.960679,
+                                                "min": 96.079316
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_cars_srgb-test_oapv_presets-placebo",
+                                        "wedge_name": "placebo"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_oapv_presets-placebo.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-placebo.mov"
+                            },
+                            "test_oapv_presets-slow": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset slow -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-slow.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "slow"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-slow.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000017,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:37:22.290878+00:00",
+                                            "encode_time": 2.9326,
+                                            "filesize": 51106673,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997703,
+                                                "max": 0.997894,
+                                                "mean": 0.997703,
+                                                "min": 0.997519
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 51.96299,
+                                                "max": 52.272405,
+                                                "mean": 51.963289,
+                                                "min": 51.737772
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.330785,
+                                                "max": 49.740377,
+                                                "mean": 49.331174,
+                                                "min": 49.014052
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.085195,
+                                                "max": 47.462652,
+                                                "mean": 47.085704,
+                                                "min": 46.793557
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.931088,
+                                                "max": 100.0,
+                                                "mean": 99.932158,
+                                                "min": 95.851767
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_cars_srgb-test_oapv_presets-slow",
+                                        "wedge_name": "slow"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_oapv_presets-slow.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_cars_srgb-test_oapv_presets-slow.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.dpx",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb_dpx_10",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".dpx",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_oapv_presets-fast": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fast -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-fast.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fast"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-fast.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:39:34.801999+00:00",
+                                            "encode_time": 0.9739,
+                                            "filesize": 56435052,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.998001,
+                                                "max": 0.99828,
+                                                "mean": 0.998001,
+                                                "min": 0.99777
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.524822,
+                                                "max": 50.785105,
+                                                "mean": 49.532581,
+                                                "min": 48.436682
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.793473,
+                                                "max": 50.08561,
+                                                "mean": 48.80226,
+                                                "min": 47.612681
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.114001,
+                                                "max": 49.165634,
+                                                "mean": 48.119013,
+                                                "min": 47.162207
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.981325,
+                                                "max": 100.0,
+                                                "mean": 99.981968,
+                                                "min": 96.449227
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_coaster_srgb-test_oapv_presets-fast",
+                                        "wedge_name": "fast"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_oapv_presets-fast.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-fast.mov"
+                            },
+                            "test_oapv_presets-fastest": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fastest -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-fastest.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fastest"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-fastest.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:39:33.620278+00:00",
+                                            "encode_time": 0.9758,
+                                            "filesize": 56435052,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.998001,
+                                                "max": 0.99828,
+                                                "mean": 0.998001,
+                                                "min": 0.99777
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.524822,
+                                                "max": 50.785105,
+                                                "mean": 49.532581,
+                                                "min": 48.436682
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.793473,
+                                                "max": 50.08561,
+                                                "mean": 48.80226,
+                                                "min": 47.612681
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.114001,
+                                                "max": 49.165634,
+                                                "mean": 48.119013,
+                                                "min": 47.162207
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.981325,
+                                                "max": 100.0,
+                                                "mean": 99.981968,
+                                                "min": 96.449227
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_coaster_srgb-test_oapv_presets-fastest",
+                                        "wedge_name": "fastest"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_oapv_presets-fastest.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-fastest.mov"
+                            },
+                            "test_oapv_presets-medium": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset medium -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-medium.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "medium"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-medium.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:39:36.926119+00:00",
+                                            "encode_time": 1.9141,
+                                            "filesize": 54448343,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.99784,
+                                                "max": 0.998168,
+                                                "mean": 0.99784,
+                                                "min": 0.997558
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.089748,
+                                                "max": 51.406608,
+                                                "mean": 50.097667,
+                                                "min": 48.97713
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.23356,
+                                                "max": 50.583205,
+                                                "mean": 49.242108,
+                                                "min": 47.995174
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.736753,
+                                                "max": 48.854625,
+                                                "mean": 47.742221,
+                                                "min": 46.743891
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.974612,
+                                                "max": 100.0,
+                                                "mean": 99.975436,
+                                                "min": 96.040122
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_coaster_srgb-test_oapv_presets-medium",
+                                        "wedge_name": "medium"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_oapv_presets-medium.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-medium.mov"
+                            },
+                            "test_oapv_presets-placebo": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset placebo -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-placebo.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "placebo"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-placebo.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:40:43.265210+00:00",
+                                            "encode_time": 62.9365,
+                                            "filesize": 54911306,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997869,
+                                                "max": 0.998188,
+                                                "mean": 0.997869,
+                                                "min": 0.997608
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.259926,
+                                                "max": 51.551951,
+                                                "mean": 50.26755,
+                                                "min": 49.175495
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.459084,
+                                                "max": 50.747406,
+                                                "mean": 49.467778,
+                                                "min": 48.254588
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.843473,
+                                                "max": 48.932313,
+                                                "mean": 47.848749,
+                                                "min": 46.867284
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976263,
+                                                "max": 100.0,
+                                                "mean": 99.977045,
+                                                "min": 96.120198
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_coaster_srgb-test_oapv_presets-placebo",
+                                        "wedge_name": "placebo"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_oapv_presets-placebo.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-placebo.mov"
+                            },
+                            "test_oapv_presets-slow": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset slow -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-slow.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "slow"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-slow.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:39:40.116434+00:00",
+                                            "encode_time": 2.9827,
+                                            "filesize": 54975242,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997891,
+                                                "max": 0.998212,
+                                                "mean": 0.997891,
+                                                "min": 0.997619
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.135978,
+                                                "max": 51.466899,
+                                                "mean": 50.144027,
+                                                "min": 49.014051
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.274263,
+                                                "max": 50.63142,
+                                                "mean": 49.282896,
+                                                "min": 48.029945
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.805879,
+                                                "max": 48.923973,
+                                                "mean": 47.811353,
+                                                "min": 46.811024
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972772,
+                                                "max": 100.0,
+                                                "mean": 99.97368,
+                                                "min": 95.864186
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_coaster_srgb-test_oapv_presets-slow",
+                                        "wedge_name": "slow"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_oapv_presets-slow.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_coaster_srgb-test_oapv_presets-slow.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.dpx",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_dpx_10",
+                                "name_prefix": "chimera_fountains.",
+                                "name_suffix": ".dpx",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_oapv_presets-fast": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fast -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-fast.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fast"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-fast.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:41:50.879550+00:00",
+                                            "encode_time": 1.0382,
+                                            "filesize": 79407788,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997364,
+                                                "max": 0.997488,
+                                                "mean": 0.997364,
+                                                "min": 0.997185
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.944164,
+                                                "max": 50.289534,
+                                                "mean": 49.944638,
+                                                "min": 49.627581
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.907978,
+                                                "max": 48.366753,
+                                                "mean": 47.909239,
+                                                "min": 47.311147
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.287655,
+                                                "max": 45.823196,
+                                                "mean": 45.28962,
+                                                "min": 44.551621
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980798,
+                                                "max": 100.0,
+                                                "mean": 99.981498,
+                                                "min": 96.299535
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_fountains-test_oapv_presets-fast",
+                                        "wedge_name": "fast"
+                                    }
+                                },
+                                "name": "chimera_fountains-test_oapv_presets-fast.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-fast.mov"
+                            },
+                            "test_oapv_presets-fastest": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fastest -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-fastest.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fastest"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-fastest.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:41:49.631322+00:00",
+                                            "encode_time": 1.0719,
+                                            "filesize": 79407788,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997364,
+                                                "max": 0.997488,
+                                                "mean": 0.997364,
+                                                "min": 0.997185
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.944164,
+                                                "max": 50.289534,
+                                                "mean": 49.944638,
+                                                "min": 49.627581
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.907978,
+                                                "max": 48.366753,
+                                                "mean": 47.909239,
+                                                "min": 47.311147
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.287655,
+                                                "max": 45.823196,
+                                                "mean": 45.28962,
+                                                "min": 44.551621
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.980798,
+                                                "max": 100.0,
+                                                "mean": 99.981498,
+                                                "min": 96.299535
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_fountains-test_oapv_presets-fastest",
+                                        "wedge_name": "fastest"
+                                    }
+                                },
+                                "name": "chimera_fountains-test_oapv_presets-fastest.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-fastest.mov"
+                            },
+                            "test_oapv_presets-medium": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset medium -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-medium.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "medium"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-medium.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:41:53.166797+00:00",
+                                            "encode_time": 2.0812,
+                                            "filesize": 74313538,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997042,
+                                                "max": 0.99719,
+                                                "mean": 0.997042,
+                                                "min": 0.99683
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.324555,
+                                                "max": 50.694872,
+                                                "mean": 50.325096,
+                                                "min": 49.986831
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.969283,
+                                                "max": 48.494608,
+                                                "mean": 47.970729,
+                                                "min": 47.393512
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.787275,
+                                                "max": 45.347865,
+                                                "mean": 44.789392,
+                                                "min": 44.031914
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.978007,
+                                                "max": 100.0,
+                                                "mean": 99.978921,
+                                                "min": 95.784118
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_fountains-test_oapv_presets-medium",
+                                        "wedge_name": "medium"
+                                    }
+                                },
+                                "name": "chimera_fountains-test_oapv_presets-medium.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-medium.mov"
+                            },
+                            "test_oapv_presets-placebo": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset placebo -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-placebo.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "placebo"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-placebo.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:43:04.346158+00:00",
+                                            "encode_time": 67.2219,
+                                            "filesize": 75235919,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997144,
+                                                "max": 0.997293,
+                                                "mean": 0.997144,
+                                                "min": 0.996954
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.432221,
+                                                "max": 50.782235,
+                                                "mean": 50.432694,
+                                                "min": 50.123965
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.236905,
+                                                "max": 48.688233,
+                                                "mean": 48.238226,
+                                                "min": 47.613406
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.943452,
+                                                "max": 45.491996,
+                                                "mean": 44.945514,
+                                                "min": 44.184026
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.978717,
+                                                "max": 100.0,
+                                                "mean": 99.979573,
+                                                "min": 95.914638
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_fountains-test_oapv_presets-placebo",
+                                        "wedge_name": "placebo"
+                                    }
+                                },
+                                "name": "chimera_fountains-test_oapv_presets-placebo.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-placebo.mov"
+                            },
+                            "test_oapv_presets-slow": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains.%05d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset slow -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-slow.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "slow"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-slow.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.0,
+                                                "max": 0.0,
+                                                "mean": 0.0,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:41:56.914889+00:00",
+                                            "encode_time": 3.5399,
+                                            "filesize": 74963482,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.997125,
+                                                "max": 0.997268,
+                                                "mean": 0.997125,
+                                                "min": 0.996917
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.35945,
+                                                "max": 50.733748,
+                                                "mean": 50.360001,
+                                                "min": 50.021441
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.989641,
+                                                "max": 48.517451,
+                                                "mean": 47.991097,
+                                                "min": 47.412246
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.847065,
+                                                "max": 45.411043,
+                                                "mean": 44.849206,
+                                                "min": 44.089416
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.976991,
+                                                "max": 100.0,
+                                                "mean": 99.977988,
+                                                "min": 95.597688
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_fountains-test_oapv_presets-slow",
+                                        "wedge_name": "slow"
+                                    }
+                                },
+                                "name": "chimera_fountains-test_oapv_presets-slow.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_fountains-test_oapv_presets-slow.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 66600,
+                                    "path": "chimera_wind_srgb.%06d.dpx",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_wind_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 66600.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 66600.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_wind_srgb_dpx_10",
+                                "name_prefix": "chimera_wind_srgb.",
+                                "name_suffix": ".dpx",
+                                "start_frame": 66600,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_oapv_presets-fast": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 66600 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fast -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-fast.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fast"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-fast.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000012,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:44:13.024711+00:00",
+                                            "encode_time": 0.9838,
+                                            "filesize": 70972982,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.998723,
+                                                "max": 0.998792,
+                                                "mean": 0.998723,
+                                                "min": 0.998267
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.116623,
+                                                "max": 49.245953,
+                                                "mean": 49.116662,
+                                                "min": 49.034238
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.382646,
+                                                "max": 48.649175,
+                                                "mean": 48.382796,
+                                                "min": 48.287811
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.428802,
+                                                "max": 47.503945,
+                                                "mean": 47.428986,
+                                                "min": 47.026077
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.664808,
+                                                "max": 98.858975,
+                                                "mean": 98.665054,
+                                                "min": 96.826129
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_wind_srgb-test_oapv_presets-fast",
+                                        "wedge_name": "fast"
+                                    }
+                                },
+                                "name": "chimera_wind_srgb-test_oapv_presets-fast.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-fast.mov"
+                            },
+                            "test_oapv_presets-fastest": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 66600 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset fastest -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-fastest.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "fastest"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-fastest.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000012,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:44:11.830696+00:00",
+                                            "encode_time": 0.9942,
+                                            "filesize": 70972982,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.998723,
+                                                "max": 0.998792,
+                                                "mean": 0.998723,
+                                                "min": 0.998267
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.116623,
+                                                "max": 49.245953,
+                                                "mean": 49.116662,
+                                                "min": 49.034238
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.382646,
+                                                "max": 48.649175,
+                                                "mean": 48.382796,
+                                                "min": 48.287811
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.428802,
+                                                "max": 47.503945,
+                                                "mean": 47.428986,
+                                                "min": 47.026077
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.664808,
+                                                "max": 98.858975,
+                                                "mean": 98.665054,
+                                                "min": 96.826129
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_wind_srgb-test_oapv_presets-fastest",
+                                        "wedge_name": "fastest"
+                                    }
+                                },
+                                "name": "chimera_wind_srgb-test_oapv_presets-fastest.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-fastest.mov"
+                            },
+                            "test_oapv_presets-medium": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 66600 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset medium -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-medium.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "medium"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-medium.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000012,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:44:15.289951+00:00",
+                                            "encode_time": 2.0478,
+                                            "filesize": 68450623,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.99863,
+                                                "max": 0.998713,
+                                                "mean": 0.99863,
+                                                "min": 0.998102
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.633303,
+                                                "max": 49.718094,
+                                                "mean": 49.633317,
+                                                "min": 49.575328
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.538785,
+                                                "max": 48.844283,
+                                                "mean": 48.538965,
+                                                "min": 48.457796
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.043635,
+                                                "max": 47.127577,
+                                                "mean": 47.043887,
+                                                "min": 46.584241
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.205537,
+                                                "max": 98.429079,
+                                                "mean": 98.205793,
+                                                "min": 96.372005
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_wind_srgb-test_oapv_presets-medium",
+                                        "wedge_name": "medium"
+                                    }
+                                },
+                                "name": "chimera_wind_srgb-test_oapv_presets-medium.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-medium.mov"
+                            },
+                            "test_oapv_presets-placebo": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 66600 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset placebo -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-placebo.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "placebo"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-placebo.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000012,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:45:24.390455+00:00",
+                                            "encode_time": 65.5051,
+                                            "filesize": 69323629,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.998653,
+                                                "max": 0.99873,
+                                                "mean": 0.998653,
+                                                "min": 0.998142
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.863104,
+                                                "max": 49.967703,
+                                                "mean": 49.863132,
+                                                "min": 49.779422
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.962864,
+                                                "max": 49.202458,
+                                                "mean": 48.962991,
+                                                "min": 48.877957
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.199554,
+                                                "max": 47.284198,
+                                                "mean": 47.199798,
+                                                "min": 46.749099
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.406681,
+                                                "max": 98.608823,
+                                                "mean": 98.406935,
+                                                "min": 96.553401
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_wind_srgb-test_oapv_presets-placebo",
+                                        "wedge_name": "placebo"
+                                    }
+                                },
+                                "name": "chimera_wind_srgb-test_oapv_presets-placebo.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-placebo.mov"
+                            },
+                            "test_oapv_presets-slow": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 66600 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx\" -vframes 200 -c:v liboapv -pix_fmt yuv422p10le -preset slow -color_range tv -colorspace bt709 -color_primaries bt709 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-slow.mov\"",
+                                        "description": "variations of oapv_presets",
+                                        "encode_arguments": {
+                                            "-c:v": "liboapv",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-preset": "slow"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "24.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-slow.mov",
+                                        "results": {
+                                            "cambi": {
+                                                "harmonic_mean": 0.000001,
+                                                "max": 0.000012,
+                                                "mean": 0.000001,
+                                                "min": 0.0
+                                            },
+                                            "completed_utc": "2025-07-28T15:44:18.678568+00:00",
+                                            "encode_time": 3.182,
+                                            "filesize": 69043615,
+                                            "float_ms_ssim": {
+                                                "harmonic_mean": 0.998664,
+                                                "max": 0.998742,
+                                                "mean": 0.998664,
+                                                "min": 0.998156
+                                            },
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.679078,
+                                                "max": 49.762451,
+                                                "mean": 49.679091,
+                                                "min": 49.620426
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.571632,
+                                                "max": 48.876825,
+                                                "mean": 48.57181,
+                                                "min": 48.490336
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.137254,
+                                                "max": 47.224064,
+                                                "mean": 47.137516,
+                                                "min": 46.669899
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.36953,
+                                                "max": 98.587221,
+                                                "mean": 98.369799,
+                                                "min": 96.524192
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/apv_preset_tests.yml",
+                                        "test_prefix": "test_oapv_presets",
+                                        "testbasename": "chimera_wind_srgb-test_oapv_presets-slow",
+                                        "wedge_name": "slow"
+                                    }
+                                },
+                                "name": "chimera_wind_srgb-test_oapv_presets-slow.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_preset_tests-encode/chimera_wind_srgb-test_oapv_presets-slow.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}

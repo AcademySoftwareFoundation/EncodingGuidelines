@@ -1,0 +1,2167 @@
+
+
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+
+
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTJ2K Comparing qfactor values for ojph for 12-bit input files.</title>
+    <style>
+/* Proper Dark Theme styling */
+    :root {
+    --dark-bg: #121212;
+    --dark-surface: #1e1e1e;
+    --dark-surface-raised: #252525;
+    --dark-border: #333333;
+    --dark-text-primary: #e0e0e0;
+    --dark-text-secondary: #aaaaaa;
+    --dark-accent: #bbbabcff;
+    --dark-accent-alt: #6f6f6fff;
+    }
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--dark-bg);
+    color: var(--dark-text-primary);
+    min-height: 100vh;
+    padding: 20px;
+    margin: 0;
+    }
+    a:-webkit-any-link {
+    color: #9292c0ff;
+    text-decoration: none;
+}
+    .container {
+    margin: 0 auto;
+    background: var(--dark-surface);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--dark-border);
+    overflow: hidden;
+    }
+    .header {
+    background: var(--dark-surface-raised);
+    color: var(--dark-text-primary);
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--dark-border);
+    }
+    .header h1 {
+    color: var(--dark-text-primary);
+    margin-bottom: 10px;
+    }
+    .header p {
+    color: var(--dark-text-secondary);
+    opacity: 0.9;
+    }
+    .controls {
+    padding: 5px;
+    background: var(--dark-surface);
+    border-bottom: 1px solid var(--dark-border);
+    }
+    .control-group {
+    margin-bottom: 25px;
+    }
+    .selector-group {
+    background: var(--dark-surface-raised);
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid var(--dark-border);
+    transition: all 0.3s ease;
+    }
+    .selector-group:hover {
+    border-color: var(--dark-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(187, 134, 252, 0.15);
+    }
+    .selector-group h3 {
+    color: var(--dark-text-primary);
+    margin-bottom: 15px;
+    }
+    select, input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--dark-border);
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #333;
+    color: var(--dark-text-primary);
+    transition: border-color 0.3s ease;
+    }
+    select:focus, input[type="file"]:focus {
+    outline: none;
+    border-color: var(--dark-accent);
+    }
+    .zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--dark-surface-raised);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--dark-border);
+    }
+    .zoom-controls label {
+    margin: 0;
+    color: var(--dark-text-primary);
+    font-weight: 500;
+    }
+    .zoom-slider {
+    flex: 1;
+    height: 6px;
+    background: var(--dark-border);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+    }
+    .zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--dark-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+    .zoom-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--dark-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+    .zoom-value {
+    font-weight: 600;
+    color: var(--dark-text-primary);
+    min-width: 60px;
+    text-align: center;
+    }
+    .comparison-area {
+    position: relative;
+    height: 70vh;
+    background: #000000;
+    overflow: hidden;
+    margin: 0;
+    }
+    .image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: move;
+    }
+
+    .image-container img, .image-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            image-rendering: pixelated;
+            max-width: none;
+            max-height: none;
+            transition: transform 0.1s ease;
+            user-select: none;
+            -webkit-user-drag: none;
+    }
+
+    .divider {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: var(--dark-accent);
+    cursor: ew-resize;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 20px;
+    height: 20px;
+    background: var(--dark-accent);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .divider::after {
+            content: '⟷';
+            position: absolute;
+            top: 50%;
+            left: -6px;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #333;
+    }
+        .image-left {
+            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+        }
+
+        .image-right {
+            clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+        }
+
+    .instructions {
+        background: var(--dark-surface-raised);
+        color: var(--dark-text-primary);
+        padding: 20px;
+        margin: 20px 30px;
+        border-radius: 8px;
+        border-left: 4px solid var(--dark-accent);
+    }
+    .instructions h3 {
+        color: var(--dark-text-primary);
+        margin-bottom: 10px;
+    }
+    button {
+        background: var(--dark-accent);
+        color: #000;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    button:hover {
+        background: var(--dark-accent-alt);
+        color: white;
+    }
+    .placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+    }
+
+    @media (max-width: 768px) {
+            .image-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .zoom-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .comparison-area {
+                height: 50vh;
+            }
+    }
+
+    </style>
+
+    
+
+    <div class="container">
+        <div class="header">
+        <TABLE width="800">
+    <TR><TD><A HREF="http://openreviewinitiative.org/">Open Review Initiative</A></TD>
+    <TD><A HREF="https://academysoftwarefoundation.github.io/EncodingGuidelines/">ORI Encoding Guidelines</A></TD>
+        <TD><A HREF="../../../index.html">Test Indexes</A></TD></TR></TABLE>
+            <h1>HTJ2K Comparing qfactor values for ojph for 12-bit input files.</h1>
+            <p>Comparing different qfactor values using OpenHTJ2K</p>
+            <a href="htj2k-qfactor-test.html">Test Data</A></BR>
+            <p>This allows you pick which media was encoded, and then compare the results of the encode. What you are looking at is a YCrCb diff x20 which allows you to see significant differences. See <a href="#instructions">Instructions</a> for usage.
+        </div>
+
+        <div class="controls">
+            <div class="image-selector">
+                <table width='100%'>
+                <TR><TD colspan=1>
+                <div class="selector-group">
+                    <B>Media Selection</B>
+                    <select id="mediaSelect">
+                    
+                           <option value="chimera_cars_srgb.%05d">chimera_cars_srgb.%05d</option>
+                    
+                           <option value="chimera_coaster_srgb.%06d">chimera_coaster_srgb.%06d</option>
+                    
+                           <option value="chimera_fountains_srgb.%05d">chimera_fountains_srgb.%05d</option>
+                    
+                           <option value="chimera_wind_srgb.%06d">chimera_wind_srgb.%06d</option>
+                    
+                    </select>
+                    <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
+                    <input type="file" id="leftFile" accept="image/*,video/*">-->
+                </div>
+                </td><td>
+                <div class="selector-group">
+                    <input type="checkbox" id="diff" value=" Source">Show YCrCb Difference between Source and encoded media.</input>
+                </div>
+                </TD></TR>
+                <TR><TD width="50%">
+                <div class="selector-group">
+                    <B>Left Image</B>
+                    <select id="leftSelect"><option value="">Select preset media...</option>
+                    
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor060">chimera_cars_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor070">chimera_cars_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor080">chimera_cars_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor090">chimera_cars_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor094">chimera_cars_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor096">chimera_cars_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor098">chimera_cars_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor099">chimera_cars_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor100">chimera_cars_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor060">chimera_coaster_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor070">chimera_coaster_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor080">chimera_coaster_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor090">chimera_coaster_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor094">chimera_coaster_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor096">chimera_coaster_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor098">chimera_coaster_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor099">chimera_coaster_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor100">chimera_coaster_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor060">chimera_fountains_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor070">chimera_fountains_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor080">chimera_fountains_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor090">chimera_fountains_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor094">chimera_fountains_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor096">chimera_fountains_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor098">chimera_fountains_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor099">chimera_fountains_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor100">chimera_fountains_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor060">chimera_wind_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor070">chimera_wind_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor080">chimera_wind_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor090">chimera_wind_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor094">chimera_wind_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor096">chimera_wind_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor098">chimera_wind_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor099">chimera_wind_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor100">chimera_wind_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                    </select>
+                    <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
+                    <input type="file" id="leftFile" accept="image/*,video/*">-->
+                </div>
+                </TD><TD width="50%">
+                <div class="selector-group">
+                    <B>Right Image</B>
+                    <select id="rightSelect"><option value="">Select preset media...</option>
+                    
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor060">chimera_cars_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor070">chimera_cars_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor080">chimera_cars_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor090">chimera_cars_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor094">chimera_cars_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor096">chimera_cars_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor098">chimera_cars_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor099">chimera_cars_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_cars_srgb-test_qfactor-qfactor100">chimera_cars_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor060">chimera_coaster_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor070">chimera_coaster_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor080">chimera_coaster_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor090">chimera_coaster_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor094">chimera_coaster_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor096">chimera_coaster_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor098">chimera_coaster_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor099">chimera_coaster_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_coaster_srgb-test_qfactor-qfactor100">chimera_coaster_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor060">chimera_fountains_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor070">chimera_fountains_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor080">chimera_fountains_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor090">chimera_fountains_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor094">chimera_fountains_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor096">chimera_fountains_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor098">chimera_fountains_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor099">chimera_fountains_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_fountains_srgb-test_qfactor-qfactor100">chimera_fountains_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor060">chimera_wind_srgb-test_qfactor-qfactor060</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor070">chimera_wind_srgb-test_qfactor-qfactor070</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor080">chimera_wind_srgb-test_qfactor-qfactor080</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor090">chimera_wind_srgb-test_qfactor-qfactor090</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor094">chimera_wind_srgb-test_qfactor-qfactor094</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor096">chimera_wind_srgb-test_qfactor-qfactor096</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor098">chimera_wind_srgb-test_qfactor-qfactor098</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor099">chimera_wind_srgb-test_qfactor-qfactor099</option>
+                        
+                           <option value="chimera_wind_srgb-test_qfactor-qfactor100">chimera_wind_srgb-test_qfactor-qfactor100</option>
+                        
+                    
+                    </select>
+                    <!-- <div style="margin: 10px 0; text-align: center; color: #666;">or</div>
+                    <!-- <input type="file" id="rightFile" accept="image/*,video/*"> -->
+                </div>
+                </TD></TR>
+                <TR><TD id="leftEncode"><div id="replace"></div>
+                </TD><TD id="rightEncode"><div id="replace"></div>
+                </TD></TR>
+                </TABLE>
+            </div>
+
+            <div class="control-group">
+                <div class="zoom-controls">
+                    <label>Zoom:</label>
+                    <input type="range" id="zoomSlider" class="zoom-slider" min="0.1" max="20" step="0.1" value="1">
+                    <div class="zoom-value" id="zoomValue">80%</div>
+                </div>
+            </div>
+
+            <div class="control-group" id="timeControls" style="display: none;">
+                <div class="zoom-controls">
+                    <label>Time:</label>
+                    <input type="range" id="timeSlider" class="zoom-slider" min="0" max="100" step="0.1" value="0">
+                    <div class="zoom-value" id="timeValue">0:00</div>
+                    <button id="playPauseBtn" style="margin-left: 10px; padding: 8px 16px; border: none; background: #667eea; color: white; border-radius: 6px; cursor: pointer;">▶️ Play</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-area" id="comparisonArea" style="cursor: move;">
+            <div class="placeholder" style="display: none;">
+                Select two images to begin comparison
+            </div>
+            <div class="image-container image-left" id="leftContainer" style="display: block; clip-path: polygon(0px 0px, 49.5714% 0px, 49.5714% 100%, 0px 100%);">
+                <img id="leftImage" src="./compare_files/204-800x600.jpg" alt="Left image" style="display: block; width: 1120px; height: 840px; transform: translate(calc(-50% + 0px), calc(-50% + 0px));">
+                <video id="leftVideo" src="" alt="Left video" style="display: none; width: 2660px; height: 1496.25px; transform: translate(calc(-50% + 0px), calc(-50% + 0px));" muted="" loop=""></video>
+            </div>
+            <div class="image-container image-right" id="rightContainer" style="display: block; clip-path: polygon(49.5714% 0px, 100% 0px, 100% 100%, 49.5714% 100%);">
+                <img id="rightImage" src="./compare_files/704-800x600.jpg" alt="Right image" style="display: block; width: 1120px; height: 840px; transform: translate(calc(-50% + 0px), calc(-50% + 0px));">
+                <video id="rightVideo" src="" alt="Right video" style="display: none; width: 2660px; height: 1496px; transform: translate(calc(-50% + 0px), calc(-50% + 0px));" muted="" loop=""></video>
+            </div>
+            <div class="divider" id="divider" style="display: block; left: 49.5714%;"></div>
+        </div>
+
+        <div class="instructions" id="instructions">
+            <h3>How to Use:</h3>
+            <ul>
+                <li>Select two images/videos from the dropdowns or upload your own files</li>
+                <li>Drag the white divider left and right to compare different parts of the media</li>
+                <li>Use the zoom slider to zoom in/out of both media simultaneously</li>
+                <li>Use mouse wheel over the comparison area to zoom in/out quickly</li>
+                <li>Click and drag within the comparison area to pan around zoomed media</li>
+                <li>For videos: use the time slider to scrub through footage and play/pause button</li>
+                <li>Media is automatically centered and scaled to fit the comparison area</li>
+            </ul>
+            <!--
+            <h3>Custom Image Lists:</h3>
+            <p>You can customize the dropdown images by adding URL parameters:</p>
+            <code style="background: #e9ecef; padding: 5px; border-radius: 4px; display: block; margin: 10px 0;">
+                ?img1=https://example.com/image1.jpg&amp;name1=Custom Image 1&amp;img2=https://example.com/image2.jpg&amp;name2=Custom Image 2
+            </code>
+            <ul>
+                <li>Use <strong>img1</strong>, <strong>img2</strong>, etc. for image URLs</li>
+                <li>Use <strong>name1</strong>, <strong>name2</strong>, etc. for display names (optional)</li>
+                <li>Add as many images as needed by incrementing the numbers</li>
+            </ul> -->
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters to get custom image/video list
+        function parseImageListFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const customImages = {};
+            
+            // Look for parameters like img1, img2, img3, etc.
+            let imageIndex = 1;
+            while (urlParams.has(`img${imageIndex}`)) {
+                const imageUrl = urlParams.get(`img${imageIndex}`);
+                const imageName = urlParams.get(`name${imageIndex}`) || `Media ${imageIndex}`;
+                customImages[`img${imageIndex}`] = {
+                    url: imageUrl,
+                    name: imageName
+                };
+                imageIndex++;
+            }
+            
+            // If no custom images found, use default samples
+            if (Object.keys(customImages).length === 0) {
+                return {
+            
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor060': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor060-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor060', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '40.670137',
+                        vmaf: '99.272032',
+                        filesize: '13.28',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor070': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor070-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor070', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '41.745863',
+                        vmaf: '99.612734',
+                        filesize: '16.41',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor080': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor080-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor080', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '43.599659',
+                        vmaf: '99.879249',
+                        filesize: '21.52',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor090': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor090-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor090', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '47.027387',
+                        vmaf: '99.979395',
+                        filesize: '36.14',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor094': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor094-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor094', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '49.842231',
+                        vmaf: '99.983818',
+                        filesize: '55.78',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor096': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor096-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor096', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '52.192447',
+                        vmaf: '99.984737',
+                        filesize: '81.85',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor098': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor098-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor098', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.236367',
+                        vmaf: '99.985749',
+                        filesize: '167.66',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor099': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor099-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor099', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '60.962292',
+                        vmaf: '99.986314',
+                        filesize: '313.31',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor100': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor100-x20diff.avif', 
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor100', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.08997',
+                        vmaf: '99.986472',
+                        filesize: '1,638.01',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor060': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor060-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor060', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '44.024723',
+                        vmaf: '99.891469',
+                        filesize: '16.10',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor070': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor070-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor070', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '44.958216',
+                        vmaf: '99.948752',
+                        filesize: '19.37',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor080': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor080-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor080', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '46.1214',
+                        vmaf: '99.970976',
+                        filesize: '24.28',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor090': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor090-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor090', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '48.482855',
+                        vmaf: '99.981995',
+                        filesize: '37.22',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor094': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor094-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor094', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '50.56723',
+                        vmaf: '99.983842',
+                        filesize: '53.68',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor096': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor096-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor096', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '52.364901',
+                        vmaf: '99.984645',
+                        filesize: '75.44',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor098': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor098-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor098', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.018242',
+                        vmaf: '99.985797',
+                        filesize: '152.53',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor099': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor099-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor099', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '60.862527',
+                        vmaf: '99.986334',
+                        filesize: '284.74',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor100': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor100-x20diff.avif', 
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor100', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.138227',
+                        vmaf: '99.986556',
+                        filesize: '1,601.95',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor060': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor060-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor060', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '38.948171',
+                        vmaf: '99.967836',
+                        filesize: '24.40',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor070': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor070-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor070', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '39.927547',
+                        vmaf: '99.972709',
+                        filesize: '29.60',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor080': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor080-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor080', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '41.404306',
+                        vmaf: '99.976957',
+                        filesize: '37.75',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor090': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor090-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor090', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '44.733538',
+                        vmaf: '99.981401',
+                        filesize: '61.13',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor094': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor094-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor094', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '47.957175',
+                        vmaf: '99.983534',
+                        filesize: '92.28',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor096': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor096-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor096', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '50.956335',
+                        vmaf: '99.98461',
+                        filesize: '132.31',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor098': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor098-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor098', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.336571',
+                        vmaf: '99.9858',
+                        filesize: '245.76',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor099': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor099-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor099', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '61.519157',
+                        vmaf: '99.986322',
+                        filesize: '401.09',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor100': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor100-x20diff.avif', 
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor100', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.139018',
+                        vmaf: '99.986535',
+                        filesize: '1,721.68',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        'diff': true,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor060': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor060-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor060', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '38.777278',
+                        vmaf: '97.376204',
+                        filesize: '23.87',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor070': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor070-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor070', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '40.224133',
+                        vmaf: '97.919877',
+                        filesize: '28.41',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor080': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor080-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor080', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '42.321388',
+                        vmaf: '98.3579',
+                        filesize: '35.76',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor090': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor090-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor090', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '46.75477',
+                        vmaf: '98.743469',
+                        filesize: '56.01',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor094': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor094-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor094', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '49.825722',
+                        vmaf: '98.954053',
+                        filesize: '79.81',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor096': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor096-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor096', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '51.921578',
+                        vmaf: '99.058442',
+                        filesize: '109.37',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor098': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor098-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor098', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.084152',
+                        vmaf: '99.17884',
+                        filesize: '203.34',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor099': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor099-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor099', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '61.107823',
+                        vmaf: '99.227374',
+                        filesize: '348.81',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor100': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor100-x20diff.avif', 
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor100', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.132349',
+                        vmaf: '99.241819',
+                        filesize: '1,672.42',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        'diff': true,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+
+            
+                'chimera_cars_srgb.%05d Source':  {
+                    url: '../../../source_images/chimera_cars_srgb.avif', 
+                    name: 'chimera_cars_srgb.%05d Source' 
+                    },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor060 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor060-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '40.670137',
+                        vmaf: '99.272032',
+                        filesize: '13.28',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor070 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor070-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '41.745863',
+                        vmaf: '99.612734',
+                        filesize: '16.41',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor080 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor080-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '43.599659',
+                        vmaf: '99.879249',
+                        filesize: '21.52',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor090 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor090-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '47.027387',
+                        vmaf: '99.979395',
+                        filesize: '36.14',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor094 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor094-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '49.842231',
+                        vmaf: '99.983818',
+                        filesize: '55.78',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor096 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor096-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '52.192447',
+                        vmaf: '99.984737',
+                        filesize: '81.85',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor098 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor098-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.236367',
+                        vmaf: '99.985749',
+                        filesize: '167.66',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor099 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor099-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '60.962292',
+                        vmaf: '99.986314',
+                        filesize: '313.31',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_cars_srgb-test_qfactor-qfactor100 Encoded': {
+                        url: 'chimera_cars_srgb-test_qfactor-qfactor100-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.08997',
+                        vmaf: '99.986472',
+                        filesize: '1,638.01',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_cars_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_cars_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                'chimera_coaster_srgb.%06d Source':  {
+                    url: '../../../source_images/chimera_coaster_srgb.avif', 
+                    name: 'chimera_coaster_srgb.%06d Source' 
+                    },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor060 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor060-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '44.024723',
+                        vmaf: '99.891469',
+                        filesize: '16.10',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor070 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor070-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '44.958216',
+                        vmaf: '99.948752',
+                        filesize: '19.37',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor080 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor080-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '46.1214',
+                        vmaf: '99.970976',
+                        filesize: '24.28',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor090 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor090-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '48.482855',
+                        vmaf: '99.981995',
+                        filesize: '37.22',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor094 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor094-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '50.56723',
+                        vmaf: '99.983842',
+                        filesize: '53.68',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor096 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor096-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '52.364901',
+                        vmaf: '99.984645',
+                        filesize: '75.44',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor098 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor098-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.018242',
+                        vmaf: '99.985797',
+                        filesize: '152.53',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor099 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor099-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '60.862527',
+                        vmaf: '99.986334',
+                        filesize: '284.74',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_coaster_srgb-test_qfactor-qfactor100 Encoded': {
+                        url: 'chimera_coaster_srgb-test_qfactor-qfactor100-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.138227',
+                        vmaf: '99.986556',
+                        filesize: '1,601.95',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_coaster_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_coaster_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                'chimera_fountains_srgb.%05d Source':  {
+                    url: '../../../source_images/chimera_fountains_srgb.avif', 
+                    name: 'chimera_fountains_srgb.%05d Source' 
+                    },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor060 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor060-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '38.948171',
+                        vmaf: '99.967836',
+                        filesize: '24.40',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor070 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor070-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '39.927547',
+                        vmaf: '99.972709',
+                        filesize: '29.60',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor080 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor080-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '41.404306',
+                        vmaf: '99.976957',
+                        filesize: '37.75',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor090 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor090-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '44.733538',
+                        vmaf: '99.981401',
+                        filesize: '61.13',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor094 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor094-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '47.957175',
+                        vmaf: '99.983534',
+                        filesize: '92.28',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor096 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor096-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '50.956335',
+                        vmaf: '99.98461',
+                        filesize: '132.31',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor098 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor098-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.336571',
+                        vmaf: '99.9858',
+                        filesize: '245.76',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor099 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor099-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '61.519157',
+                        vmaf: '99.986322',
+                        filesize: '401.09',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_fountains_srgb-test_qfactor-qfactor100 Encoded': {
+                        url: 'chimera_fountains_srgb-test_qfactor-qfactor100-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.139018',
+                        vmaf: '99.986535',
+                        filesize: '1,721.68',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_fountains_srgb.%05d',
+                        diff: false,
+                        name: 'chimera_fountains_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                'chimera_wind_srgb.%06d Source':  {
+                    url: '../../../source_images/chimera_wind_srgb.avif', 
+                    name: 'chimera_wind_srgb.%06d Source' 
+                    },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor060 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor060-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 60',
+                        psnr: '38.777278',
+                        vmaf: '97.376204',
+                        filesize: '23.87',
+                        wedge_name: 'test_qfactor-qfactor060',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor060 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor070 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor070-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 70',
+                        psnr: '40.224133',
+                        vmaf: '97.919877',
+                        filesize: '28.41',
+                        wedge_name: 'test_qfactor-qfactor070',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor070 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor080 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor080-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 80',
+                        psnr: '42.321388',
+                        vmaf: '98.3579',
+                        filesize: '35.76',
+                        wedge_name: 'test_qfactor-qfactor080',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor080 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor090 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor090-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 90',
+                        psnr: '46.75477',
+                        vmaf: '98.743469',
+                        filesize: '56.01',
+                        wedge_name: 'test_qfactor-qfactor090',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor090 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor094 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor094-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 94',
+                        psnr: '49.825722',
+                        vmaf: '98.954053',
+                        filesize: '79.81',
+                        wedge_name: 'test_qfactor-qfactor094',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor094 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor096 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor096-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 96',
+                        psnr: '51.921578',
+                        vmaf: '99.058442',
+                        filesize: '109.37',
+                        wedge_name: 'test_qfactor-qfactor096',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor096 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor098 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor098-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 98',
+                        psnr: '56.084152',
+                        vmaf: '99.17884',
+                        filesize: '203.34',
+                        wedge_name: 'test_qfactor-qfactor098',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor098 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor099 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor099-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 99',
+                        psnr: '61.107823',
+                        vmaf: '99.227374',
+                        filesize: '348.81',
+                        wedge_name: 'test_qfactor-qfactor099',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor099 Encoded', 
+                        },
+                
+                    'chimera_wind_srgb-test_qfactor-qfactor100 Encoded': {
+                        url: 'chimera_wind_srgb-test_qfactor-qfactor100-encoded.avif', 
+                        encoder_args: 'Clevels= 5 Qfactor= 100',
+                        psnr: '66.132349',
+                        vmaf: '99.241819',
+                        filesize: '1,672.42',
+                        wedge_name: 'test_qfactor-qfactor100',
+                        media_name: 'chimera_wind_srgb.%06d',
+                        diff: false,
+                        name: 'chimera_wind_srgb-test_qfactor-qfactor100 Encoded', 
+                        },
+                
+            
+                };
+            }
+            
+            return customImages;
+        }
+        
+        const imageList = parseImageListFromURL();
+
+        // Populate dropdowns with available media
+        function populateDropdowns() {
+            // Clear existing options except the first one
+            leftSelect.innerHTML = '<option value="">Select preset media...</option>';
+            rightSelect.innerHTML = '<option value="">Select preset media...</option>';
+            
+            // Add options for each image in the list
+            Object.keys(imageList).forEach(key => {
+                const leftOption = document.createElement('option');
+                leftOption.value = key;
+                leftOption.textContent = imageList[key].name;
+                leftSelect.appendChild(leftOption);
+                
+                const rightOption = document.createElement('option');
+                rightOption.value = key;
+                rightOption.textContent = imageList[key].name;
+                rightSelect.appendChild(rightOption);
+            });
+        }
+        let currentZoom = 1;
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let imageOffset = { left: { x: 0, y: 0 }, right: { x: 0, y: 0 } };
+        let hasVideo = false;
+        let isPlaying = false;
+        let mediaselections = {
+                    
+                    "chimera_cars_srgb.%05d": [
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor060",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor070",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor080",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor090",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor094",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor096",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor098",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor099",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor100",
+                        
+                    ],
+                    
+                    "chimera_coaster_srgb.%06d": [
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor060",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor070",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor080",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor090",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor094",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor096",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor098",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor099",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor100",
+                        
+                    ],
+                    
+                    "chimera_fountains_srgb.%05d": [
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor060",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor070",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor080",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor090",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor094",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor096",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor098",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor099",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor100",
+                        
+                    ],
+                    
+                    "chimera_wind_srgb.%06d": [
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor060",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor070",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor080",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor090",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor094",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor096",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor098",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor099",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor100",
+                        
+                    ],
+                    
+                    // Do Source/Encoded Versions
+                    
+                    "chimera_cars_srgb.%05d Source": [
+                        "chimera_cars_srgb.%05d Source",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor060 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor070 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor080 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor090 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor094 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor096 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor098 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor099 Encoded",
+                        
+                           "chimera_cars_srgb-test_qfactor-qfactor100 Encoded",
+                        
+                    ],
+                    
+                    "chimera_coaster_srgb.%06d Source": [
+                        "chimera_coaster_srgb.%06d Source",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor060 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor070 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor080 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor090 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor094 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor096 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor098 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor099 Encoded",
+                        
+                           "chimera_coaster_srgb-test_qfactor-qfactor100 Encoded",
+                        
+                    ],
+                    
+                    "chimera_fountains_srgb.%05d Source": [
+                        "chimera_fountains_srgb.%05d Source",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor060 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor070 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor080 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor090 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor094 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor096 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor098 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor099 Encoded",
+                        
+                           "chimera_fountains_srgb-test_qfactor-qfactor100 Encoded",
+                        
+                    ],
+                    
+                    "chimera_wind_srgb.%06d Source": [
+                        "chimera_wind_srgb.%06d Source",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor060 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor070 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor080 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor090 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor094 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor096 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor098 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor099 Encoded",
+                        
+                           "chimera_wind_srgb-test_qfactor-qfactor100 Encoded",
+                        
+                    ],
+                    
+        }
+        // DOM elements
+        const mediaSelect = document.getElementById('mediaSelect');
+        const diffSelect = document.getElementById('diff');
+        const leftSelect = document.getElementById('leftSelect');
+        const rightSelect = document.getElementById('rightSelect');
+        const leftImage = document.getElementById('leftImage');
+        const rightImage = document.getElementById('rightImage');
+        const leftVideo = document.getElementById('leftVideo');
+        const rightVideo = document.getElementById('rightVideo');
+        const leftContainer = document.getElementById('leftContainer');
+        const rightContainer = document.getElementById('rightContainer');
+        const divider = document.getElementById('divider');
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomValue = document.getElementById('zoomValue');
+        const timeSlider = document.getElementById('timeSlider');
+        const timeValue = document.getElementById('timeValue');
+        const timeControls = document.getElementById('timeControls');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const comparisonArea = document.getElementById('comparisonArea');
+        const placeholder = document.querySelector('.placeholder');
+        let inStartup = true;
+
+        // Initialize dropdowns with available images
+        populateDropdowns();
+
+        // Event listeners
+        mediaSelect.addEventListener('change', () => pickImage());
+        diffSelect.addEventListener('change', () => pickImage());
+        leftSelect.addEventListener('change', () => loadImage('left', 'select'));
+        rightSelect.addEventListener('change', () => loadImage('right', 'select'));
+        zoomSlider.addEventListener('input', updateZoom);
+        timeSlider.addEventListener('input', updateTime);
+        playPauseBtn.addEventListener('click', togglePlayPause);
+
+        // Divider drag functionality
+        let isDraggingDivider = false;
+        divider.addEventListener('mousedown', startDividerDrag);
+        document.addEventListener('mousemove', dragDivider);
+        document.addEventListener('mouseup', endDividerDrag);
+
+        // Image panning functionality
+        comparisonArea.addEventListener('mousedown', startImageDrag);
+        comparisonArea.addEventListener('mousemove', dragImage);
+        comparisonArea.addEventListener('mouseup', endImageDrag);
+
+        // Mouse wheel zoom functionality
+        comparisonArea.addEventListener('wheel', handleMouseWheel, { passive: false });
+
+        function updateURLParams() {
+            if (inStartup){
+                console.log("In startup");
+                return;
+            }
+            const params = new URLSearchParams(window.location.search);
+            params.set('media', mediaSelect.value);
+            params.set('left', leftSelect.value);
+            params.set('right', rightSelect.value);
+            const newUrl = window.location.pathname + '?' + params.toString();
+            window.history.replaceState({}, '', newUrl);
+        }
+
+        function setSelectionsFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('media')) {
+                mediaSelect.value = params.get('media');
+                pickImage();
+            }
+            // Wait for pickImage to populate left/right selects
+            setTimeout(() => {
+                if (params.has('left')) leftSelect.value = params.get('left');
+                if (params.has('right')) rightSelect.value = params.get('right');
+                loadImage('left', 'select');
+                loadImage('right', 'select');
+            }, 0);
+            inStartup = false;
+        }
+
+        // Call this after DOM and dropdowns are ready
+        window.addEventListener('DOMContentLoaded', () => {
+            setSelectionsFromURL();
+        });
+
+        function pickImage(){
+            var media = mediaSelect.value;
+            if (!diffSelect.checked)
+                media += " Source";
+            const values = mediaselections[media];
+            console.log("Picking media:", media);
+            const leftInfo = imageList[leftSelect.value];
+            const rightInfo = imageList[rightSelect.value];
+            var leftIndex = 0;
+            var rightIndex = 1;
+            leftSelect.innerHTML = '';
+            rightSelect.innerHTML = '';
+            var i = 0;
+            values.forEach(test => {
+                const optionLeft = document.createElement("option");
+                optionLeft.value = test;
+                optionLeft.textContent = test;
+                leftSelect.appendChild(optionLeft);
+                if (leftInfo && imageList[test].wedge_name == leftInfo.wedge_name)
+                    leftIndex = i;
+                const optionRight = document.createElement("option");
+                optionRight.value = test;
+                optionRight.textContent = test;
+                rightSelect.appendChild(optionRight);
+                if (rightInfo && imageList[test].wedge_name == rightInfo.wedge_name)
+                    rightIndex = i;
+                i = i + 1;
+            });
+            // Make sure the right side is different to left to start with.
+            leftSelect.selectedIndex = leftIndex;
+            rightSelect.selectedIndex = rightIndex;
+            // Load the media.
+            loadImage('left', 'select');
+            loadImage('right', 'select');
+        }
+
+        function loadImage(side, source) {
+            const select = side === 'left' ? leftSelect : rightSelect;
+            const img = side === 'left' ? leftImage : rightImage;
+            const video = side === 'left' ? leftVideo : rightVideo;
+            const encodeText = side === 'left' ? leftEncode : rightEncode;
+            // Hide both img and video initially
+            img.style.display = 'none';
+            video.style.display = 'none';
+            img.src = '';
+            video.src = '';
+
+            if (source === 'select' && select.value) {
+                const url = imageList[select.value].url;
+                if (isVideoFile(url)) {
+                    video.src = url;
+                    video.style.display = 'block';
+                } else {
+                    img.src = url;
+                    img.style.display = 'block';
+                }
+                //d = document.createElement("textarea");
+                //d.innerHTML = imageList[select.value].encoder_args;
+
+                //encodeText.replaceChild(d);
+                var table = "<table>";
+                if (imageList[select.value].encoder_args)
+                    table += "<TR><TD>Encoder args</TD><TD>"+imageList[select.value].encoder_args+"</td></tr>";
+                if (imageList[select.value].filesize)
+                    table += "<TR><TD>filesize</TD><TD>"+imageList[select.value].filesize+" MB</td></tr>";
+                if (imageList[select.value].vmaf)
+                    table += "<TR><TD>vmaf</TD><TD>"+imageList[select.value].vmaf+"</td></tr>";
+                if (imageList[select.value].psnr)
+                    table += "<TR><TD>psnr</TD><TD>"+imageList[select.value].psnr+"</td></tr>";
+                table += "</table>";
+                encodeText.innerHTML = decodeURIComponent(table);
+            } else if (source === 'file' && file.files[0]) {
+                const fileObj = file.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (fileObj.type.startsWith('video/')) {
+                        video.src = e.target.result;
+                        video.style.display = 'block';
+                    } else {
+                        img.src = e.target.result;
+                        img.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(fileObj);
+                select.value = '';
+            }
+
+            // Set up load handlers
+            img.onload = () => {
+                showComparison();
+                //resetImagePosition(side);
+                checkForVideo();
+            };
+            
+            video.onloadedmetadata = () => {
+                showComparison();
+                //resetImagePosition(side);
+                checkForVideo();
+                setupVideoSync();
+            };
+            updateImageSizes();
+            updateURLParams();
+        }
+
+        function isVideoFile(url) {
+            const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+            return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
+        }
+
+        function checkForVideo() {
+            const leftHasVideo = leftVideo.src && leftVideo.style.display !== 'none';
+            const rightHasVideo = rightVideo.src && rightVideo.style.display !== 'none';
+            hasVideo = leftHasVideo || rightHasVideo;
+            
+            if (hasVideo) {
+                timeControls.style.display = 'block';
+                updateTimeSliderMax();
+            } else {
+                timeControls.style.display = 'none';
+            }
+        }
+
+        function setupVideoSync() {
+            if (leftVideo.src) {
+                leftVideo.addEventListener('timeupdate', syncTimeDisplay);
+            }
+            if (rightVideo.src) {
+                rightVideo.addEventListener('timeupdate', syncTimeDisplay);
+            }
+        }
+
+        function syncTimeDisplay() {
+            if (!hasVideo) return;
+            
+            const activeVideo = leftVideo.src ? leftVideo : rightVideo;
+            const currentTime = activeVideo.currentTime;
+            const percentage = (currentTime / activeVideo.duration) * 100;
+            
+            if (!timeSlider.matches(':active')) {
+                timeSlider.value = percentage;
+                timeValue.textContent = formatTime(currentTime);
+            }
+        }
+
+        function updateTimeSliderMax() {
+            const leftDuration = leftVideo.duration || 0;
+            const rightDuration = rightVideo.duration || 0;
+            const maxDuration = Math.max(leftDuration, rightDuration);
+            
+            if (maxDuration > 0) {
+                timeSlider.max = 100;
+            }
+        }
+
+        function updateTime() {
+            if (!hasVideo) return;
+            
+            const percentage = parseFloat(timeSlider.value);
+            
+            if (leftVideo.src && leftVideo.duration) {
+                const time = (percentage / 100) * leftVideo.duration;
+                leftVideo.currentTime = time;
+            }
+            
+            if (rightVideo.src && rightVideo.duration) {
+                const time = (percentage / 100) * rightVideo.duration;
+                rightVideo.currentTime = time;
+            }
+            
+            const activeVideo = leftVideo.src ? leftVideo : rightVideo;
+            if (activeVideo.duration) {
+                const time = (percentage / 100) * activeVideo.duration;
+                timeValue.textContent = formatTime(time);
+            }
+        }
+
+        function togglePlayPause() {
+            if (!hasVideo) return;
+            
+            if (isPlaying) {
+                if (leftVideo.src) leftVideo.pause();
+                if (rightVideo.src) rightVideo.pause();
+                playPauseBtn.textContent = '▶️ Play';
+                isPlaying = false;
+            } else {
+                if (leftVideo.src) leftVideo.play();
+                if (rightVideo.src) rightVideo.play();
+                playPauseBtn.textContent = '⏸️ Pause';
+                isPlaying = true;
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function showComparison() {
+            const leftHasMedia = (leftImage.src && leftImage.style.display !== 'none') || (leftVideo.src && leftVideo.style.display !== 'none');
+            const rightHasMedia = (rightImage.src && rightImage.style.display !== 'none') || (rightVideo.src && rightVideo.style.display !== 'none');
+            
+            if (leftHasMedia && rightHasMedia) {
+                placeholder.style.display = 'none';
+                leftContainer.style.display = 'block';
+                rightContainer.style.display = 'block';
+                divider.style.display = 'block';
+                updateImageSizes();
+            }
+        }
+
+        function updateZoom() {
+            currentZoom = parseFloat(zoomSlider.value);
+            zoomValue.textContent = Math.round(currentZoom * 100) + '%';
+            updateImageSizes();
+        }
+
+        function updateImageSizes() {
+            const containerWidth = comparisonArea.clientWidth;
+            const containerHeight = comparisonArea.clientHeight;
+
+            // Handle left side
+            const leftElement = leftImage.style.display !== 'none' ? leftImage : leftVideo;
+            if (leftElement.src || leftElement.videoWidth) {
+                updateElementSize(leftElement, containerWidth, containerHeight, 'left');
+            }
+
+            // Handle right side
+            const rightElement = rightImage.style.display !== 'none' ? rightImage : rightVideo;
+            if (rightElement.src || rightElement.videoWidth) {
+                updateElementSize(rightElement, containerWidth, containerHeight, 'right');
+            }
+        }
+
+        function updateElementSize(element, containerWidth, containerHeight, side) {
+            let naturalWidth, naturalHeight;
+            
+            if (element.tagName === 'VIDEO') {
+                naturalWidth = element.videoWidth || element.clientWidth;
+                naturalHeight = element.videoHeight || element.clientHeight;
+            } else {
+                naturalWidth = element.naturalWidth;
+                naturalHeight = element.naturalHeight;
+            }
+            
+            if (naturalWidth && naturalHeight) {
+                // Calculate scale to fit container
+                const scaleX = containerWidth / naturalWidth;
+                const scaleY = containerHeight / naturalHeight;
+                const baseScale = Math.min(scaleX, scaleY);
+                
+                // Apply zoom
+                const finalScale = baseScale * currentZoom;
+                
+                element.style.width = naturalWidth * finalScale + 'px';
+                element.style.height = naturalHeight * finalScale + 'px';
+                
+                // Apply offset
+                const offsetX = imageOffset[side].x;
+                const offsetY = imageOffset[side].y;
+                element.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+            }
+        }
+
+        function resetImagePosition(side) {
+            if (side) {
+                imageOffset[side] = { x: 0, y: 0 };
+            } else {
+                imageOffset.left = { x: 0, y: 0 };
+                imageOffset.right = { x: 0, y: 0 };
+            }
+            updateImageSizes();
+        }
+
+        // Divider drag functions
+        function startDividerDrag(e) {
+            isDraggingDivider = true;
+            e.preventDefault();
+        }
+
+        function dragDivider(e) {
+            if (!isDraggingDivider) return;
+            
+            const rect = comparisonArea.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+            
+            divider.style.left = percentage + '%';
+            leftContainer.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+            rightContainer.style.clipPath = `polygon(${percentage}% 0, 100% 0, 100% 100%, ${percentage}% 100%)`;
+        }
+
+        function endDividerDrag() {
+            isDraggingDivider = false;
+        }
+
+        // Image panning functions
+        function startImageDrag(e) {
+            const leftHasMedia = (leftImage.src && leftImage.style.display !== 'none') || (leftVideo.src && leftVideo.style.display !== 'none');
+            const rightHasMedia = (rightImage.src && rightImage.style.display !== 'none') || (rightVideo.src && rightVideo.style.display !== 'none');
+            
+            if (isDraggingDivider || !leftHasMedia || !rightHasMedia) return;
+            isDragging = true;
+            dragStart.x = e.clientX;
+            dragStart.y = e.clientY;
+            comparisonArea.style.cursor = 'grabbing';
+        }
+
+        function dragImage(e) {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - dragStart.x;
+            const deltaY = e.clientY - dragStart.y;
+            
+            imageOffset.left.x += deltaX;
+            imageOffset.left.y += deltaY;
+            imageOffset.right.x += deltaX;
+            imageOffset.right.y += deltaY;
+            
+            updateImageSizes();
+            
+            dragStart.x = e.clientX;
+            dragStart.y = e.clientY;
+        }
+
+        function endImageDrag() {
+            isDragging = false;
+            comparisonArea.style.cursor = 'move';
+        }
+
+        // Mouse wheel zoom handler
+        function handleMouseWheel(e) {
+            e.preventDefault();
+            
+            // Only zoom if media is loaded
+            const leftHasMedia = (leftImage.src && leftImage.style.display !== 'none') || (leftVideo.src && leftVideo.style.display !== 'none');
+            const rightHasMedia = (rightImage.src && rightImage.style.display !== 'none') || (rightVideo.src && rightVideo.style.display !== 'none');
+            
+            if (!leftHasMedia || !rightHasMedia) return;
+            
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            const newZoom = Math.max(0.1, Math.min(20, currentZoom + delta));
+            
+            // Update zoom slider and zoom level
+            zoomSlider.value = newZoom;
+            currentZoom = newZoom;
+            zoomValue.textContent = Math.round(currentZoom * 100) + '%';
+            
+            updateImageSizes();
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', updateImageSizes);
+
+        // Initialize
+        updateZoom();
+        pickImage();
+    </script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4ZZYZDFLDD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-4ZZYZDFLDD');
+    </script>
+</body></html>

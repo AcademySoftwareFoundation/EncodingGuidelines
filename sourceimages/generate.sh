@@ -173,3 +173,8 @@ rm smptehdbars_8_yuv422p_a.png smptehdbars_8_yuv422p.yuv
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt rgb48be zoneplate_rgb16.png
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv420p10 -strict -1 zoneplate_yuv420p10.y4m
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv422p10 -strict -1 zoneplate_yuv422p10.y4m
+
+#curl https://raw.githubusercontent.com/AcademySoftwareFoundation/openexr-images/main/ScanLines/Tree.exr -o Tree.exr
+#oiiotool -i Tree.exr --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o tree_rec2020pq.png
+curl https://raw.githubusercontent.com/AcademySoftwareFoundation/openexr-images/main/ScanLines/StillLife.exr -o StillLife.exr
+oiiotool -i StillLife.exr --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o stilllife_rec2020pq.png

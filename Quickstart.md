@@ -166,6 +166,9 @@ ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
 ```
 We have seen the full range encoding work across all browsers, and a number of players including RV.
 
+{: .important }
+Its worth noting however, that with the increasing support for 10-bit or more encoding, that its really preferable to use 10-bit legal range, rather than stick with 8-bit at all. The file size can be compariable if not a little smaller than 8-bit, and you will more likely eliminate many of the quantizing issues that you will see at 8-bit.
+
 TODO: Do additional testing across all players.
 
 For more details see:
