@@ -44,7 +44,7 @@ However, since we are typically talking about VFX review for individual shots, t
 
 So instead of specifying a gamma curve as the transfer function, the Perceptual Quantizer (PQ), standardized as [SMPTE ST2084](https://en.wikipedia.org/wiki/Perceptual_quantizer) represents luminance from 0 to 10000 nits. It still uses a power function to give more detail in the lower range. Office monitors are often in the 250-350 nit range.
 
-In practice most HDR monitors are more likely to be in the 1000-2000 range, and even there they often try to limit the percentage of the overall screen that is full brightness This is done to manage power consumption and prevent overheating from thermal throttling.
+In practice most HDR monitors are more likely to be in the 1000-2000 nit range, and even there they often try to limit the percentage of the overall screen that is full brightness This is done to manage power consumption and prevent overheating from thermal throttling.
 
 ### Frame prep
 
@@ -58,7 +58,7 @@ export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr\
      --iscolorspace "ACES2065-1" --resize 1920x1014 \
        --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & P3 lim)" \
-       -d uint16 -o sparks2_pq2000/sparks2_pq1000.#.png
+       -d uint16 -o sparks2_pq1000/sparks2_pq1000.#.png
 ```
 
 | --- | --- |
@@ -70,7 +70,7 @@ The other option built in for PQ is a config with 2000 nits \-
 \--ociodisplay "Rec.2100-PQ \- Display" "ACES 1.1 \- HDR Video (2000 nits & Rec.2020 lim)"  
 There is also a 4000 nit max and P3 target gamuts available in the OCIO config mentioned above. And if you are willing to use OCIO 2.5, there are improved HDR view transforms based on ACES 2.0. This has 500, 1000, 2000, 4000 nit max luminance and P3 and Rec.2020 target gamuts.
 
-### PQ10 FFMPEG encoding
+### PQ10 FFMPEG H265 encoding
 
 PQ10 is a simplified HDR format essentially HDR10 without the metadata. It uses the [PQ EOTF](https://en.wikipedia.org/wiki/Perceptual_quantizer) aka SMPTE ST 2084 otherwise is somewhat similar to create as HLG, but there may be different reasons for choosing each.
 
@@ -114,12 +114,14 @@ ffmpeg  \
 
 In many cases this may be sufficient, particularly if you are using the ACES transforms that closely map to the maximum luminance of the review monitor (e.g. the 1000 nit view-transforms). It depends on how much the monitor can take advantage of the master-display parameters (see below).
 
-### PQ 444 FFMPEG encoding
+This will also work for other codecs such as h264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
+
+### PQ 422 FFMPEG H265 encoding
 
 Here we are going to add the additional Mastering Display metadata, in addition to the parameters used by PQ10.
 
 <!---
-name: test_pq2000
+name: test_pq1000
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
@@ -133,14 +135,13 @@ comparisontest:
 -->
 ```console
 ffmpeg  \
-    -r 30 -start_number 6700 -i sparks2_pq2000/sparks2_pq2000.%05d.png   \
+    -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
     -c:v libx265   \
     -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
-	-tag:v hvc1  \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
-    -pix_fmt yuv444p10le 
-    -x265-params "hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400"  -tag:v hvc1 \
-    sparks2_pq2000_444.mov
+    -pix_fmt yuv422p10le 	-tag:v hvc1  \
+    -x265-params "hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
+    sparks2_pq1000_422.mov
 ```
 
 The HDR metadata parameters really is what separates HDR10 from PQ10. The parameters below are:
@@ -223,6 +224,18 @@ See:
 To specify the display-master parameters with VP9, you need to use the  [mkvmerge](https://mkvtoolnix.download/doc/mkvmerge.html) tool, which is part of [mkvtoolnix](https://mkvtoolnix.download/) to apply the metadata once the file has been created. For more information, please see: [https://developers.google.com/media/vp9/hdr-encoding](https://developers.google.com/media/vp9/hdr-encoding)
 
 It is currently not possible to add this metadata with ffmpeg, but this hopefully will be addressed.
+
+### ProRes
+
+ProRes does have the ability to add the Mastering Display Metadata, and while it seems ffmpeg can convert a file with it to another, preserving the metadata, there does not appear a way to add it to a newly created ProRes file (if you know how to, do please let us know).
+
+An example of this file is the [NAS Sole Mates ASWF DPEL HDR Production Sample](https://dpel-assets.aswf.io/solemates/quicktime_media-sdr_hdr-v1.0.0.zip), and if you look at the file with ffprobe, you will see:
+
+```
+    Side data:
+      Mastering Display Metadata, has_primaries:1 has_luminance:1 r(0.6800,0.3200) g(0.2650,0.6900) b(0.1500 0.0600) wp(0.3127, 0.3290) min_luminance=0.000100, max_luminance=1000.000000
+```
+
 
 ## HLG
 
