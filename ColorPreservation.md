@@ -49,7 +49,7 @@ comparisontest:
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
     -pix_fmt yuv444p10le -vf "colormatrix=bt470bg:bt709" \
-    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -qscale:v 1 \
+    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
     ./chip-chart-yuvconvert/spline444colormatrix2.mp4
 ```
@@ -81,7 +81,7 @@ comparisontest:
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -pix_fmt yuv444p10le -vf "colorspace=bt709:iall=bt601-6-625:fast=1" \
-   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -qscale:v 1 \
+   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444colorspace.mp4
 ```
@@ -114,7 +114,7 @@ comparisontest:
 ```
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -pix_fmt yuv444p10le -vf "zscale=m=709:min=709:rangein=full:range=limited" \
-   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -qscale:v 1 \
+   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
@@ -146,7 +146,7 @@ comparisontest:
 ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -pix_fmt yuv444p10le \
    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
-   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -qscale:v 1 \
+   -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
    ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
