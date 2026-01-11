@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDR Video Comparison</title>
+    <style>
+        body {
+            background-color: black;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .grid-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center; /* Centers items if they don't fill the row */
+        }
+        .video-card {
+            flex: 0 0 600px; /* Fixed width of 600px */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .filename {
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+        #capabilities {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #111;
+            border-top: 2px solid #333;
+            text-align: center;
+            border-radius: 8px;
+        }
+        .cap-item {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        .highlight {
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-container">
+        <!-- Video 1 -->
+        <div class="video-card">
+            <video autoplay muted playsinline loop>
+                <source src="output_hdr10.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="filename">No display-master parameters specified, should show full HDR rec2020 if available..</div>
+        </div>
+
+        <!-- Video 2 -->
+        <div class="video-card">
+            <video autoplay muted playsinline loop>
+                <source src="output_hdr10_rec709.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="filename">Configured to only show rec709 using the display-master, if you see the full HDR, then the tonemapping isnt working correctly.</div>
+        </div>
+
+        <!-- Video 3 -->
+        <div class="video-card">
+            <video autoplay muted playsinline loop>
+                <source src="output_hdr10_p3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="filename">Full 2000 nit HDR, but with p3 gamut display master.</div>
+        </div>
+
+        <!-- Video 4 -->
+        <div class="video-card">
+            <video autoplay muted playsinline loop>
+                <source src="output_srgb.mov" type="video/quicktime">
+                <source src="output_srgb.mov" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="filename">Reference HDR converted to sRGB using tonemapping, this gives you a sense of what you should see if tonemapping is working correctly.</div>
+        </div>
+    </div>
+
+    <div id="capabilities">
+        <h2>System Display Capabilities</h2>
+        <div class="cap-item" id="gamut-info">Detected Gamut: Checking...</div>
+        <div class="cap-item" id="hdr-info">HDR Support: Checking...</div>
+    </div>
+
+    <script>
+        function checkCapabilities() {
+            const gamutInfo = document.getElementById('gamut-info');
+            const hdrInfo = document.getElementById('hdr-info');
+
+            // 1. Detect Color Gamut
+            let gamut = [];
+            if (window.matchMedia('(color-gamut: srgb)').matches) gamut.push('sRGB');
+            if (window.matchMedia('(color-gamut: p3)').matches) gamut.push('P3');
+            if (window.matchMedia('(color-gamut: rec2020)').matches) gamut.push('Rec.2020');
+            
+            if (gamut.length > 0) {
+                // The last one is usually the widest supported
+                gamutInfo.innerHTML = `Detected Gamut: <span class="highlight">${gamut[gamut.length - 1]}</span> (Support: ${gamut.join(', ')})`;
+            } else {
+                gamutInfo.textContent = 'Detected Gamut: Unknown';
+            }
+
+            // 2. Detect HDR
+            let isHDR = false;
+            let hdrText = 'SDR (Standard Dynamic Range)';
+            
+            // Check 'dynamic-range' (screen capabilities)
+            if (window.matchMedia('(dynamic-range: high)').matches) {
+                isHDR = true;
+                hdrText = 'HDR (High Dynamic Range)';
+            }
+            
+            // Check 'video-dynamic-range' (specifically for video plane)
+            let videoHDR = '';
+            if (window.matchMedia('(video-dynamic-range: high)').matches) {
+                videoHDR = ' [Video Plane: HDR Supported]';
+            }
+
+            hdrInfo.innerHTML = `Dynamic Range: <span class="highlight">${hdrText}</span>${videoHDR}`;
+        }
+
+        // Run initially
+        checkCapabilities();
+
+        // Listen for changes (e.g. moving window to another monitor)
+        const queries = [
+            '(color-gamut: srgb)', 
+            '(color-gamut: p3)', 
+            '(color-gamut: rec2020)', 
+            '(dynamic-range: high)', 
+            '(video-dynamic-range: high)'
+        ];
+
+        queries.forEach(q => {
+            try {
+                window.matchMedia(q).addEventListener('change', checkCapabilities);
+            } catch (e) {
+                // old browser support
+                try {
+                    window.matchMedia(q).addListener(checkCapabilities);
+                } catch (e2) {}
+            }
+        });
+    </script>
+</body>
+</html>
