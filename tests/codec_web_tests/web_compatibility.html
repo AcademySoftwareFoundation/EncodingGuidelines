@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html lang='en'>
 <head>
   <meta charset='utf-8'>
-  <title>AV1 Comparison</title>
+  <title>Codec Browser Comparison</title>
   <style>
     body {
 	font-family: system-ui,-apple-system,blinkmacsystemfont,'Segoe UI',roboto,'Helvetica Neue',arial,sans-serif,'Segoe UI Emoji';
@@ -32,6 +33,39 @@ h2, .text-beta, #toctitle {
     font-size: 1.1rem !important;
     line-height: .5em;
 }
+.video-container {
+    position: relative;
+    width: 128px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.video-container video {
+    width: 100%;
+    height: 100%;
+}
+.fallback-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #ff6b6b;
+    background-color: #1a1a1a;
+    padding: 0.25rem;
+}
+.video-container.error .fallback-text {
+    display: flex;
+}
+.video-container.error video {
+    display: none;
+}
   </style>
 </head>
 
@@ -42,44 +76,40 @@ h2, .text-beta, #toctitle {
     <tbody>
 <TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
 <TR>
-<td ><video width='128px'  > <source type='video/mp4' src='test420-test_8_420-libx264.mp4'> </video></TD>
-<td ><video width='128px'  > <source type='video/mp4' src='test420-test_8_420-libx265.mp4'> </video></TD>
-<td ><video width='128px'  > <source type='video/mp4' src='test420-test_8_420-vp9.mp4'> </video></TD>
-    <td ><video width='128px'  > <source type='video/mp4' src='test420-test_8_420-libsvtav1.mp4'> </video></TD>
-
+<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
 </TR><TR>
-<td ><video width='128px'  > <source type='video/mp4' src='test422-test_8_422-libx264.mp4'/> </video></TD>
-    <td ><video width='128px'  > <source type='video/mp4' src='test422-test_8_422-libx265.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test422-test_8_422-vp9.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test422-test_8_422-libaom-av1.mp4'/> </video></TD>
+<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
 </TR><TR>
-
-<td ><video width='128px'  > <source type='video/mp4' src='test444-test_8_444-libx264.mp4'/> </video></TD>
-    <td ><video width='128px'  > <source type='video/mp4' src='test444-test_8_444-libx265.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test444-test_8_444-vp9.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test444-test_8_444-libaom-av1.mp4'/> </video></TD>
+<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
 </TR></tbody>
 </TABLE>
 <h2>10-bit</h2>
 <table>
     <TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
     <TR>
-    <td ><video width='128px'  > <source type='video/mp4' src='test420-test_10_420-libx264.mp4'/> </video></TD>
-    <td ><video width='128px'  > <source type='video/mp4' src='test420-test_10_420-libx265.mp4'/> </video></TD>
-    <td ><video width='128px'  > <source type='video/mp4' src='test420-test_10_420-vp9.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test420-test_10_420-libsvtav1.mp4'/> </video></TD>
-    
+    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
     </TR><TR>
-    <td ><video width='128px'  > <source type='video/mp4' src='test422-test_10_422-libx264.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test422-test_10_422-libx265.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test422-test_10_422-vp9.mp4'/> </video></TD>
-                <td ><video width='128px'  > <source type='video/mp4' src='test422-test_10_422-libaom-av1.mp4'/> </video></TD>
+    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
     </TR><TR>
-    
-    <td ><video width='128px'  > <source type='video/mp4' src='test444-test_10_444-libx264.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test444-test_10_444-libx265.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test444-test_10_444-vp9.mp4'/> </video></TD>
-                <td ><video width='128px'  > <source type='video/mp4' src='test444-test_10_444-libaom-av1.mp4'/> </video></TD>
+    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
     </TR>
     </TABLE>
     <h2>12-bit</h2>
@@ -87,23 +117,43 @@ h2, .text-beta, #toctitle {
     <table>
         <TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
         <TR>
-        <td ><video width='128px'  > <source type='video/mp4' src='test420-test_12_420-libx264.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test420-test_12_420-libx265.mp4'/> </video></TD>
-        <td ><video width='128px'  > <source type='video/mp4' src='test420-test_12_420-vp9.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test420-test_12_420-libsvtav1.mp4'/> </video></TD>
-        
+        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         </TR><TR>
-        <td ><video width='128px'  > <source type='video/mp4' src='test422-test_12_422-libx264.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test422-test_12_422-libx265.mp4'/> </video></TD>
-                <td ><video width='128px'  > <source type='video/mp4' src='test422-test_12_422-vp9.mp4'/> </video></TD>
-                    <td ><video width='128px'  > <source type='video/mp4' src='test422-test_12_422-libaom-av1.mp4'/> </video></TD>
+        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         </TR><TR>
-        
-        <td ><video width='128px'  > <source type='video/mp4' src='test444-test_12_444-libx264.mp4'/> </video></TD>
-            <td ><video width='128px'  > <source type='video/mp4' src='test444-test_12_444-libx265.mp4'/> </video></TD>
-                <td ><video width='128px'  > <source type='video/mp4' src='test444-test_12_444-vp9.mp4'/> </video></TD>
-                    <td ><video width='128px'  > <source type='video/mp4' src='test444-test_12_444-libaom-av1.mp4'/> </video></TD>
+        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         </TR>
         </TABLE>
+
+<script>
+// Detect video loading errors and show fallback text
+document.addEventListener('DOMContentLoaded', function() {
+    const containers = document.querySelectorAll('.video-container');
+    
+    containers.forEach(container => {
+        const video = container.querySelector('video');
+        
+        video.addEventListener('error', function() {
+            container.classList.add('error');
+        });
+        
+        // Also check if video can't load after a short timeout
+        setTimeout(() => {
+            if (video.readyState === 0) {
+                container.classList.add('error');
+            }
+        }, 1000);
+    });
+});
+</script>
 </body>
 </html>
