@@ -523,7 +523,7 @@ def identity_compare(source_dict, source_clip, test_ref, testname, comparisontes
             }
         else:
             result = {'success': True, 'testresult': lines[-1]}
-            for line in lines[-2:]:
+            for line in lines[-5:]:
                 if filterquery+" " not in line:
                     continue
                 line = line.split(f" {filterquery} ")[1]
