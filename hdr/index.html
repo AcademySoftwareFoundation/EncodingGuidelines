@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,14 +13,18 @@
             margin: 0;
             padding: 20px;
         }
+
         .grid-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            justify-content: center; /* Centers items if they don't fill the row */
+            justify-content: center;
+            /* Centers items if they don't fill the row */
         }
+
         .video-card {
-            flex: 0 0 600px; /* Fixed width of 600px */
+            flex: 0 0 600px;
+            /* Fixed width of 600px */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,17 +33,84 @@
             border-radius: 8px;
             box-sizing: border-box;
         }
-        video {
+
+        .media-container {
+            position: relative;
+            width: 100%;
+            /* Maintain aspect ratio or let content dictate? Let content dictate. */
+        }
+
+        video,
+        canvas {
             width: 100%;
             height: auto;
             border-radius: 4px;
+            display: block;
         }
+
+        canvas {
+            display: none;
+            /* Hidden by default */
+        }
+
+        .media-container.canvas-mode video {
+            /* display: none causes the video to stop decoding in some browsers/contexts. 
+               Use opacity/absolute positioning instead to keep it active. */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .media-container.canvas-mode canvas {
+            display: block;
+        }
+
         .filename {
             margin-top: 10px;
             font-family: monospace;
             font-size: 0.9em;
             word-break: break-all;
         }
+
+        .controls {
+            margin-bottom: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .toggle-btn {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .toggle-btn:hover {
+            background-color: #444;
+        }
+
+        .toggle-btn.active {
+            background-color: #4caf50;
+            /* Green when active */
+            border-color: #4caf50;
+        }
+
+        .filename {
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
         #capabilities {
             margin-top: 40px;
             padding: 20px;
@@ -47,54 +119,84 @@
             text-align: center;
             border-radius: 8px;
         }
+
         .cap-item {
             margin: 10px 0;
             font-size: 1.1em;
         }
+
         .highlight {
             color: #4caf50;
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
 
     <div class="grid-container">
         <!-- Video 1 -->
         <div class="video-card">
-            <video autoplay muted playsinline loop>
-                <source src="output_hdr10.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="filename">No display-master parameters specified, should show full HDR rec2020 if available..</div>
+            <div class="controls">
+                <button class="toggle-btn">Switch to WebGL</button>
+            </div>
+            <div class="media-container">
+                <video autoplay muted playsinline loop>
+                    <source src="output_hdr10.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <canvas></canvas>
+            </div>
+            <div class="filename">No display-master parameters specified, should show full HDR rec2020 if available..
+            </div>
         </div>
 
         <!-- Video 2 -->
         <div class="video-card">
-            <video autoplay muted playsinline loop>
-                <source src="output_hdr10_rec709.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="filename">Configured to only show rec709 using the display-master, if you see the full HDR, then the tonemapping isnt working correctly.</div>
+            <div class="controls">
+                <button class="toggle-btn">Switch to WebGL</button>
+            </div>
+            <div class="media-container">
+                <video autoplay muted playsinline loop>
+                    <source src="output_hdr10_rec709.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <canvas></canvas>
+            </div>
+            <div class="filename">Configured to only show rec709 using the display-master, if you see the full HDR, then
+                the tonemapping isnt working correctly.</div>
         </div>
 
         <!-- Video 3 -->
         <div class="video-card">
-            <video autoplay muted playsinline loop>
-                <source src="output_hdr10_p3.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <div class="controls">
+                <button class="toggle-btn">Switch to WebGL</button>
+            </div>
+            <div class="media-container">
+                <video autoplay muted playsinline loop>
+                    <source src="output_hdr10_p3.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <canvas></canvas>
+            </div>
             <div class="filename">Full 2000 nit HDR, but with p3 gamut display master.</div>
         </div>
 
         <!-- Video 4 -->
         <div class="video-card">
-            <video autoplay muted playsinline loop>
-                <source src="output_srgb.mov" type="video/quicktime">
-                <source src="output_srgb.mov" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="filename">Reference HDR converted to sRGB using tonemapping, this gives you a sense of what you should see if tonemapping is working correctly.</div>
+            <div class="controls">
+                <button class="toggle-btn">Switch to WebGL</button>
+            </div>
+            <div class="media-container">
+                <video autoplay muted playsinline loop>
+                    <source src="output_srgb.mov" type="video/quicktime">
+                    <source src="output_srgb.mov" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <canvas></canvas>
+            </div>
+            <div class="filename">Reference HDR converted to sRGB using tonemapping, this gives you a sense of what you
+                should see if tonemapping is working correctly.</div>
         </div>
     </div>
 
@@ -105,6 +207,499 @@
     </div>
 
     <script>
+        class WebGLVideoPlayer {
+            constructor(videoElement, canvasElement) {
+                this.video = videoElement;
+                this.canvas = canvasElement;
+                // Robust Context Creation Helper
+                const tryCreateContext = (type, attrs) => {
+                    try {
+                        return this.canvas.getContext(type, attrs);
+                    } catch (e) {
+                        return null;
+                    }
+                };
+
+                const hdrAttrs = { colorSpace: 'display-p3', toneMapping: 'extended' };
+                const p3Attrs = { colorSpace: 'display-p3' };
+
+                // 1. Try WebGL2 with HDR (Extended Tone Mapping)
+                this.gl = tryCreateContext('webgl2', hdrAttrs);
+
+                // 2. Try WebGL2 with P3 only (fallback if toneMapping throws)
+                if (!this.gl) this.gl = tryCreateContext('webgl2', p3Attrs);
+
+                // 3. Try WebGL1 with various configs
+                if (!this.gl) this.gl = tryCreateContext('webgl', hdrAttrs);
+                if (!this.gl) this.gl = tryCreateContext('webgl', p3Attrs);
+
+                // 4. Last resort: Defaults
+                if (!this.gl) this.gl = tryCreateContext('webgl2', {}) || tryCreateContext('webgl', {});
+                this.isPlaying = false;
+
+                if (!this.gl) {
+                    console.error('WebGL not supported');
+                    return;
+                }
+
+                if ('drawingBufferColorSpace' in this.gl) {
+                    this.gl.drawingBufferColorSpace = 'display-p3';
+                }
+
+                // If supported, tell WebGL that the texture data we are uploading (video) is in P3 
+                // so it doesn't try to convert or treat it as sRGB.
+                if ('unpackColorSpace' in this.gl) {
+                    this.gl.unpackColorSpace = 'display-p3';
+                }
+
+                this.initGL();
+                this.setupTexture();
+
+                // Bind resize event
+                // element resize observer might be better, but window resize is a good start
+                window.addEventListener('resize', () => this.resize());
+                this.resize(); // initial size
+            }
+
+            initGL() {
+                const gl = this.gl;
+
+                // Vertex shader
+                const vsSource = `
+            attribute vec2 a_position;
+            attribute vec2 a_texCoord;
+            varying vec2 v_texCoord;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+                v_texCoord = a_texCoord;
+            }
+        `;
+
+                // Fragment shader
+                const fsSource = `
+            precision mediump float;
+            uniform sampler2D u_image;
+            varying vec2 v_texCoord;
+            void main() {
+                gl_FragColor = texture2D(u_image, v_texCoord);
+            }
+        `;
+
+                const vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vsSource);
+                const fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+                this.program = this.createProgram(gl, vertexShader, fragmentShader);
+
+                // Look up locations
+                this.positionLocation = gl.getAttribLocation(this.program, "a_position");
+                this.texCoordLocation = gl.getAttribLocation(this.program, "a_texCoord");
+
+                // Provide texture coordinates for the rectangle.
+                const texCoordBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+                // Flip Y for WebGL texture coordinates (0,0 is bottom left, images are top left usually, but for video it depends. 
+                // Standard quad:
+                // 0.0, 0.0,
+                // 1.0, 0.0,
+                // 0.0, 1.0,
+                // 0.0, 1.0,
+                // 1.0, 0.0,
+                // 1.0, 1.0,
+                // Actually, let's just stick to standard and see if it's flipped. Video textures often need flipY unpixelstorei.
+
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    0.0, 0.0,
+                    1.0, 0.0,
+                    0.0, 1.0,
+                    0.0, 1.0,
+                    1.0, 0.0,
+                    1.0, 1.0,
+                ]), gl.STATIC_DRAW);
+
+                gl.enableVertexAttribArray(this.texCoordLocation);
+                gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+                // Create a buffer for the positions.
+                const positionBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                // Full clip space quad
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1.0, 1.0,
+                    1.0, 1.0,
+                    -1.0, -1.0,
+                    -1.0, -1.0,
+                    1.0, 1.0,
+                    1.0, -1.0,
+                ]), gl.STATIC_DRAW);
+
+                gl.enableVertexAttribArray(this.positionLocation);
+                gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
+            }
+
+            createShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    console.error(gl.getShaderInfoLog(shader));
+                    gl.deleteShader(shader);
+                    return null;
+                }
+                return shader;
+            }
+
+            createProgram(gl, vertexShader, fragmentShader) {
+                const program = gl.createProgram();
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                gl.linkProgram(program);
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error(gl.getProgramInfoLog(program));
+                    gl.deleteProgram(program);
+                    return null;
+                }
+                return program;
+            }
+
+            setupTexture() {
+                const gl = this.gl;
+                this.texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
+                // Set the parameters so we can render any size image.
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            }
+
+            resize() {
+                // Match canvas size to video size (or container size)
+                // For now, let's match the video's display size.
+                // Actually, we want resolution to match video resolution for best quality, 
+                // but css size to match container.
+                // Let's use videoWidth/Height for internal resolution.
+
+                if (this.video.videoWidth) {
+                    this.canvas.width = this.video.videoWidth;
+                    this.canvas.height = this.video.videoHeight;
+                    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+                }
+            }
+
+            start() {
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                this.render();
+            }
+
+            stop() {
+                this.isPlaying = false;
+            }
+
+            render() {
+                if (!this.isPlaying) return;
+
+                const gl = this.gl;
+
+                // Check if video is ready
+                if (this.video.readyState >= this.video.HAVE_CURRENT_DATA) {
+                    // Resize if needed (e.g. if video metadata just loaded)
+                    if (this.canvas.width !== this.video.videoWidth || this.canvas.height !== this.video.videoHeight) {
+                        this.resize();
+                    }
+
+                    gl.useProgram(this.program);
+                    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
+                    // Flip Y for video texture if needed? 
+                    // Analysis showed that UNPACK_FLIP_Y_WEBGL causes inversion with our quad setup.
+                    // Removing it to fix the vertical flip issue.
+                    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.video);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                }
+
+                // Prioritize requestVideoFrameCallback if available for distinct frames, 
+                // but we might need a fallback if it doesn't fire (e.g. background/hidden).
+                // For this simple demo, requestAnimationFrame is often more robust for keeping the loop alive
+                // even if less efficient. Let's use rAF for now to ensure updates happen.
+                // If we want to be strict:
+                // if (this.video.requestVideoFrameCallback) {
+                //      this.video.requestVideoFrameCallback(this.render.bind(this));
+                // } else {
+                //      requestAnimationFrame(this.render.bind(this));
+                // }
+
+                // Using rAF to ensure regular updates even if video is "hidden" by CSS opacity
+                requestAnimationFrame(this.render.bind(this));
+            }
+        }
+        class WebGPUVideoPlayer {
+            constructor(videoElement, canvasElement) {
+                this.video = videoElement;
+                this.canvas = canvasElement;
+                this.adapter = null;
+                this.device = null;
+                this.context = null;
+                this.pipeline = null;
+                this.isPlaying = false;
+                this.init();
+            }
+
+            async init() {
+                if (!navigator.gpu) {
+                    console.error("WebGPU not supported");
+                    return;
+                }
+
+                this.adapter = await navigator.gpu.requestAdapter();
+                if (!this.adapter) {
+                    console.error("No WebGPU adapter found");
+                    return;
+                }
+                this.device = await this.adapter.requestDevice();
+                this.context = this.canvas.getContext("webgpu");
+
+                // Configure for HDR
+                // We MUST use rgba16float to support values > 1.0 (Extended Range)
+                const format = 'rgba16float';
+                this.context.configure({
+                    device: this.device,
+                    format: format,
+                    colorSpace: 'srgb', // scRGB model: uses srgb primaries but allows > 1.0 values
+                    toneMapping: { mode: 'extended' },
+                    alphaMode: 'opaque' // Opaque often helps with HDR compositing promotion
+                });
+
+                // Shader with HDR Test Pattern
+                const shaderCode = `
+                    struct VertexOutput {
+                        @builtin(position) Position : vec4<f32>,
+                        @location(0) uv : vec2<f32>,
+                    }
+
+                    @vertex
+                    fn vert_main(@builtin(vertex_index) VertexIndex : u32) -> VertexOutput {
+                        var pos = array<vec2<f32>, 6>(
+                            vec2<f32>(-1.0,  1.0),
+                            vec2<f32>( 1.0,  1.0),
+                            vec2<f32>(-1.0, -1.0),
+                            vec2<f32>(-1.0, -1.0),
+                            vec2<f32>( 1.0,  1.0),
+                            vec2<f32>( 1.0, -1.0)
+                        );
+                        
+                        var uvs = array<vec2<f32>, 6>(
+                            vec2<f32>(0.0, 0.0),
+                            vec2<f32>(1.0, 0.0),
+                            vec2<f32>(0.0, 1.0),
+                            vec2<f32>(0.0, 1.0),
+                            vec2<f32>(1.0, 0.0),
+                            vec2<f32>(1.0, 1.0)
+                        );
+                        
+                        var output : VertexOutput;
+                        output.Position = vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+                        output.uv = uvs[VertexIndex];
+                        return output;
+                    }
+
+                    @group(0) @binding(0) var mySampler : sampler;
+                    @group(0) @binding(1) var myTexture : texture_external;
+
+                    @fragment
+                    fn frag_main(@location(0) uv : vec2<f32>) -> @location(0) vec4<f32> {
+                        // HDR Test Pattern on the right side
+                        if (uv.x > 0.9) {
+                            // Peak White (400% or more depending on display mapping)
+                            return vec4<f32>(4.0, 4.0, 4.0, 1.0); 
+                        } else if (uv.x > 0.8) {
+                            // SDR Reference White (100%)
+                            return vec4<f32>(1.0, 1.0, 1.0, 1.0);
+                        }
+                        
+                        return textureSampleBaseClampToEdge(myTexture, mySampler, uv);
+                    }
+                `;
+
+                const module = this.device.createShaderModule({ code: shaderCode });
+
+                this.pipeline = this.device.createRenderPipeline({
+                    layout: 'auto',
+                    vertex: {
+                        module: module,
+                        entryPoint: 'vert_main',
+                    },
+                    fragment: {
+                        module: module,
+                        entryPoint: 'frag_main',
+                        targets: [{ format: format }]
+                    },
+                    primitive: {
+                        topology: 'triangle-list',
+                    },
+                });
+
+                this.sampler = this.device.createSampler({
+                    magFilter: 'linear',
+                    minFilter: 'linear',
+                });
+            }
+
+            resize() {
+                if (this.video.videoWidth) {
+                    this.canvas.width = this.video.videoWidth;
+                    this.canvas.height = this.video.videoHeight;
+                }
+            }
+
+            start() {
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                this.render();
+            }
+
+            stop() {
+                this.isPlaying = false;
+            }
+
+            render() {
+                if (!this.isPlaying) return;
+
+                // If not ready, keep loop alive but do nothing
+                if (!this.device || !this.pipeline || this.video.readyState < 2) {
+                    requestAnimationFrame(this.render.bind(this));
+                    return;
+                }
+
+                if (this.canvas.width !== this.video.videoWidth || this.canvas.height !== this.video.videoHeight) {
+                    this.resize();
+                }
+
+                // Prepare texture from video
+                const texture = this.device.importExternalTexture({ source: this.video });
+
+                const bindGroup = this.device.createBindGroup({
+                    layout: this.pipeline.getBindGroupLayout(0),
+                    entries: [
+                        { binding: 0, resource: this.sampler },
+                        { binding: 1, resource: texture }
+                    ]
+                });
+
+                const commandEncoder = this.device.createCommandEncoder();
+                const textureView = this.context.getCurrentTexture().createView();
+
+                const renderPassDescriptor = {
+                    colorAttachments: [{
+                        view: textureView,
+                        clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+                        loadOp: 'clear',
+                        storeOp: 'store',
+                    }],
+                };
+
+                const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+                passEncoder.setPipeline(this.pipeline);
+                passEncoder.setBindGroup(0, bindGroup);
+                passEncoder.draw(6);
+                passEncoder.end();
+
+                this.device.queue.submit([commandEncoder.finish()]);
+
+                requestAnimationFrame(this.render.bind(this));
+            }
+        }
+    </script>
+    <script>
+        // Initialize Players
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoCards = document.querySelectorAll('.video-card');
+
+            videoCards.forEach(card => {
+                const video = card.querySelector('video');
+                let canvas = card.querySelector('canvas');
+                const btn = card.querySelector('.toggle-btn');
+                const container = card.querySelector('.media-container');
+
+                // Create Mode Label
+                const modeLabel = document.createElement('span');
+                modeLabel.style.marginLeft = '10px';
+                modeLabel.style.fontWeight = 'bold';
+                modeLabel.style.color = '#fff'; // Assuming dark background
+                modeLabel.innerText = 'Mode: Native';
+                btn.parentNode.insertBefore(modeLabel, btn.nextSibling);
+
+                // State: 0=Native, 1=WebGL, 2=WebGPU
+                let currentState = 0;
+                let player = null;
+
+                const cleanupPlayer = () => {
+                    if (player) {
+                        player.stop();
+                        player = null;
+                    }
+                };
+
+                const switchMode = (mode) => {
+                    cleanupPlayer();
+
+                    // Reset UI
+                    container.classList.remove('canvas-mode');
+                    video.style.opacity = '1';
+                    canvas.style.opacity = '0';
+
+                    // Re-create canvas to ensure clean context
+                    const newCanvas = canvas.cloneNode(true);
+                    canvas.parentNode.replaceChild(newCanvas, canvas);
+                    canvas = newCanvas;
+
+                    currentState = mode;
+
+                    if (mode === 0) {
+                        // Native
+                        btn.textContent = 'Switch to WebGL';
+                        modeLabel.innerText = 'Mode: Native';
+                    } else if (mode === 1) {
+                        // WebGL
+                        container.classList.add('canvas-mode');
+                        video.style.opacity = '0'; // Keep decoding
+                        canvas.style.opacity = '1';
+
+                        player = new WebGLVideoPlayer(video, canvas);
+                        player.start();
+                        btn.textContent = 'Switch to WebGPU';
+                        modeLabel.innerText = 'Mode: WebGL (P3)';
+                    } else if (mode === 2) {
+                        // WebGPU
+                        container.classList.add('canvas-mode');
+                        video.style.opacity = '0';
+                        canvas.style.opacity = '1';
+
+                        if (navigator.gpu) {
+                            player = new WebGPUVideoPlayer(video, canvas);
+                            player.start();
+                        } else {
+                            console.warn("WebGPU not supported on this browser.");
+                        }
+                        btn.textContent = 'Switch to Native';
+                        modeLabel.innerText = 'Mode: WebGPU (scRGB)';
+                    }
+                };
+
+                // Check initial state (if statically set, though simplified here to default native)
+                // If we wanted to preserve 'canvas-mode', we'd need to guess which one. 
+                // Let's default to Native for correctness on reload.
+
+                btn.addEventListener('click', () => {
+                    let nextState = (currentState + 1) % 3;
+                    switchMode(nextState);
+                });
+            });
+        });
+
         function checkCapabilities() {
             const gamutInfo = document.getElementById('gamut-info');
             const hdrInfo = document.getElementById('hdr-info');
@@ -114,7 +709,7 @@
             if (window.matchMedia('(color-gamut: srgb)').matches) gamut.push('sRGB');
             if (window.matchMedia('(color-gamut: p3)').matches) gamut.push('P3');
             if (window.matchMedia('(color-gamut: rec2020)').matches) gamut.push('Rec.2020');
-            
+
             if (gamut.length > 0) {
                 // The last one is usually the widest supported
                 gamutInfo.innerHTML = `Detected Gamut: <span class="highlight">${gamut[gamut.length - 1]}</span> (Support: ${gamut.join(', ')})`;
@@ -125,13 +720,13 @@
             // 2. Detect HDR
             let isHDR = false;
             let hdrText = 'SDR (Standard Dynamic Range)';
-            
+
             // Check 'dynamic-range' (screen capabilities)
             if (window.matchMedia('(dynamic-range: high)').matches) {
                 isHDR = true;
                 hdrText = 'HDR (High Dynamic Range)';
             }
-            
+
             // Check 'video-dynamic-range' (specifically for video plane)
             let videoHDR = '';
             if (window.matchMedia('(video-dynamic-range: high)').matches) {
@@ -146,10 +741,10 @@
 
         // Listen for changes (e.g. moving window to another monitor)
         const queries = [
-            '(color-gamut: srgb)', 
-            '(color-gamut: p3)', 
-            '(color-gamut: rec2020)', 
-            '(dynamic-range: high)', 
+            '(color-gamut: srgb)',
+            '(color-gamut: p3)',
+            '(color-gamut: rec2020)',
+            '(dynamic-range: high)',
             '(video-dynamic-range: high)'
         ];
 
@@ -160,9 +755,10 @@
                 // old browser support
                 try {
                     window.matchMedia(q).addListener(checkCapabilities);
-                } catch (e2) {}
+                } catch (e2) { }
             }
         });
     </script>
 </body>
+
 </html>

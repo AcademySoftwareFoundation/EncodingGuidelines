@@ -1,3 +1,8 @@
+# Trying to test what HDR looks like in a browser, and what
+# the tonemapping looks like - https://www.itu.int/dms_pub/itu-r/opb/rep/R-REP-BT.2390-12-2025-PDF-E.pdf
+
+
+
 # Firstly we convert the test image, which should have a "Bad Image" in full rec2020 red, and a background which should be a rec709 red. I think the resulting image should be just red when tonemapped properly.
 
 ffmpeg -y -i hdr_test_chart_v3_pq.tif -c:v libx265 -crf 18 -pix_fmt yuv420p10le -c:v libx265 -crf 18 -pix_fmt yuv420p10le -x265-params " \
