@@ -38,8 +38,8 @@ class LibVmafRecipe(ConanFile):
         
     def build_requirements(self):
         self.tool_requires("meson/1.6.0")
-        if self.settings.arch in ["x86", "x86_64"]:
-            self.tool_requires("nasm/2.16.01")
+        #if self.settings.arch in ["x86", "x86_64"]:
+        #    self.tool_requires("nasm/2.16.01")
     
     def build(self):
         meson = Meson(self)
@@ -54,9 +54,13 @@ class LibVmafRecipe(ConanFile):
     def package_info(self):
         self.cpp_info.libs = ["vmaf"]
         self.cpp_info.includedirs = ["include", os.path.join("include", "libvmaf")]
-        if self.settings.os in ["Linux", "FreeBSD"]:
+        if self.settings.os == "Windows":
+            # MinGW requires explicit linking of the C++ standard library and math library
+            self.cpp_info.system_libs.extend(["m", "stdc++"])
+        elif self.settings.os in ["Linux", "FreeBSD"]:
             self.cpp_info.system_libs.extend(["m", "stdc++"])
         elif self.settings.os == "Macos":
             self.cpp_info.system_libs.append("c++")
         # This ensures FFmpeg's ./configure finds it easily
         self.cpp_info.set_property("pkg_config_name", "libvmaf")
+        self.cpp_info.set_property("cmake_file_name", "libvmaf")
