@@ -18,7 +18,7 @@ We will break the encoding process into three parts:
 
 # Color space conversion.  <a name="Color-space-conversion"></a>
 
-FFmpeg is not a great tool for colorspace conversion. We recommend that any color space conversion be done using tools such as [Nuke](https://www.foundry.com/products/nuke-family/nuke) or [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) using [OCIO](https://opencolorio.org/). We strongly recommend using the ACES configuration whenever possible, since it provides a good baseline for colorspace conversion. Note, we may mention the use of Nuke a number of times, there are now a large number of 3rd party tools that will also do great at this color space conversion using OCIO.
+FFmpeg is not a great tool for colorspace conversion. We recommend that any color space conversion be done using tools such as [Nuke](https://www.foundry.com/products/nuke-family/nuke) or [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) using [OCIO](https://opencolorio.org/), or using [FFmpeg OCIO Filter](FfmpegOcio.html). We strongly recommend using the ACES configuration whenever possible, since it provides a good baseline for colorspace conversion. Note, we may mention the use of Nuke a number of times, there are now a large number of 3rd party tools that will also do great at this color space conversion using OCIO.
 
 Typically, we would assume that an intermediate file would get written out, such as PNG, TIF or DPX for processing in ffmpeg.
 
@@ -28,7 +28,7 @@ Hint: by default the nuke PNG writer will have the slow compression enabled, thi
 
 Two options for building ffmpeg include:
 
-* [rocky-ffmpeg-8.1](docker/rocky-ffmpeg-8.1).
+* [rocky-ffmpeg-8.1](docker/rocky-ffmpeg-8.1), will build ffmpeg, oiiotool and OCIO (including the OCIO filter for ffmpeg).
 * [conan](conan/README.md) directory that can be used to build ffmpeg with OCIO support on MacOS, linux and windows.
 
 ## Quick introduction to color conversion using oiiotool
