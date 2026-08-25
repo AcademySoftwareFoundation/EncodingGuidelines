@@ -20,6 +20,8 @@ With the introduction of FFmpeg 8.1 a [OCIO](https://ocio.readthedocs.io/en/late
 
 If you are encoding to YCbCr, you should perform the OCIO conversion in an RGB colorspace first, and then convert to YCbCr using the `scale` filter. FFmpeg's `scale` filter automatically handles the conversion from RGB formats (like `rgb48`) to YCbCr variants (like `yuv420p10le`), ensuring correct chroma subsampling and range mapping.
 
+Note that `scale` uses `swscale` for the RGB to YCbCr conversion, and in some cases this can introduce a perceptible difference from the source. If you run into this, use the `zscale` filter instead, which uses the `zimg` library.
+
 ## Example Usage
 
 ### Using OCIO-Display
@@ -32,6 +34,14 @@ ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
    -vf "ocio=input=ACEScct:display=sRGB - Display:view=ACES 1.0 - SDR Video:format=rgb48,scale=in_color_matrix=bt709:out_color_matrix=bt709,format=yuv444p10"   OUTPUTFILE.mov
 ```
 
+Using `zscale` instead of `scale`:
+
+```console
+ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
+   -c:v h264 -pix_fmt yuv420p10le -crf 18 -preset slow \
+   -vf "ocio=input=ACEScct:display=sRGB - Display:view=ACES 1.0 - SDR Video:format=rgb48,zscale=matrix=709:primaries=709:primariesin=709:transfer=unspecified:transferin=unspecified:rangein=pc:range=limited"   OUTPUTFILE.mov
+```
+
 ### Using an output colorspace (in this case ACEScct)
 
 This is using the older style colorspace conversion where you are specifying an output colorspace (in this case ACEScct).
@@ -40,6 +50,14 @@ This is using the older style colorspace conversion where you are specifying an 
 ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
    -c:v h264 -pix_fmt yuv420p10le -crf 18 -preset slow \
     -vf "ocio=input=ACEScg:output=ACEScct:format=rgb48,scale=in_color_matrix=bt709:out_color_matrix=bt709,format=yuv444p10"   OUTPUTFILE.mov
+```
+
+Using `zscale` instead of `scale`:
+
+```console
+ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
+   -c:v h264 -pix_fmt yuv420p10le -crf 18 -preset slow \
+    -vf "ocio=input=ACEScg:output=ACEScct:format=rgb48,zscale=matrix=709:primaries=unspecified:primariesin=unspecified:transfer=unspecified:transferin=unspecified:rangein=pc:range=limited"   OUTPUTFILE.mov
 ```
 
 The format parameter that's part of the OCIO filter allows you to specify an output pixel_format that OCIO will be converting to. This has to be an RGB colorspace since OCIO doesn't know how to convert to YCbCr. If you do not supply the format, the output will match the input with the exception of half-floats which will be converted to full floats (due to poor support for half-floats).
