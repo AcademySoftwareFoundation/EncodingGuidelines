@@ -98,7 +98,17 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
 -vf "zscale=m=709:min=709:rangein=full:range=limited"
 ```
 
-[zscale](https://github.com/sekrit-twc/zimg) is an alternative to libswscale, which does produce pretty good results for image resizing, but purely for RGB to YCbCr conversion libswscale appears very slightly better. It is required to be explicitly compiled into ffmpeg.
+[zscale](https://github.com/sekrit-twc/zimg) is an alternative to libswscale. **This is the recommended filter for RGB to YCbCr conversion.** It is required to be explicitly compiled into ffmpeg (`--enable-libzimg`); the Docker builds and the Conan recipe in this repository both enable it.
+
+We previously recommended libswscale here on the basis that it looked very slightly better. More careful measurement against a reference implementation shows the opposite: libswscale has a systematic bias in its full-range to limited-range conversion, placing white above the specification value at every bit depth, while zscale matches the specification exactly.
+
+| Bit depth | scale (libswscale) | zscale | BT.709 specification |
+| :--- | :--- | :--- | :--- |
+| 8-bit | 236 | 235 | 235 |
+| 10-bit | 943 | 940 | 940 |
+| 12-bit | 3774 | 3760 | 3760 |
+
+The error is luma only and grows with brightness; black and chroma are correct. It is small in absolute terms — one code value at 8-bit is not visible in a single pass — but it is systematic, it accumulates across round trips, and it grows in absolute terms as you move to higher bit depths. For the full measurements, including the reverse YCbCr to RGB direction, see [Colour range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions).
 
 More detailed docs are: [here](http://underpop.online.fr/f/ffmpeg/help/zscale.htm.gz)
 
@@ -132,7 +142,7 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
 
 Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.  [https://www.ffmpeg.org/ffmpeg-filters.html#scale-1](https://www.ffmpeg.org/ffmpeg-filters.html#scale-1)
 
-This is the recommended filter.
+This is the most widely available filter, since libswscale is always compiled in, and it is what you will find in most existing command lines. However it carries the range-conversion bias described in the [zscale](#zscale-filter) section above, so we now recommend zscale where it is available. If you are stuck with libswscale, note that the bias applies whenever the output is limited range — which includes leaving the range unspecified, since that is the default for YCbCr output. Using `out_range=full` avoids it, at the cost of producing full-range video.
 
 Example:
 

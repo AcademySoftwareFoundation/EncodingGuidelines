@@ -21,7 +21,7 @@ class EncodingGuidelines(ConanFile):
         "shared": False,
         "with_opencolorio": True,
         "with_vmaf": True,
-        "with_zimg": False,
+        "with_zimg": True,
         "with_x265": False,
         "with_libaom": False,
     }

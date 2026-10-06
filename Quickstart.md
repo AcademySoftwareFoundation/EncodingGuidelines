@@ -38,11 +38,20 @@ comparisontest:
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
-        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vf "zscale=matrixin=709:matrix=709:rangein=full:range=limited" \
         -frames:v 100 -c:v libx264 -preset slower -crf 18 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
        -movflags faststart outputfile.mp4
 ```
+
+{: .note }
+> `zscale` needs an FFmpeg built with zimg (`--enable-libzimg`). Check with `ffmpeg -filters | grep zscale`. If your build does not have it, use the libswscale equivalent instead:
+>
+> ```console
+> -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"
+> ```
+>
+> That will work everywhere, but libswscale has a small systematic bias when converting to limited range — it places white slightly above the specification value. See [RGB to YCbCr Conversion](ColorPreservation.html#zscale-filter) for the measurements.
 
 | Flag | Description |
 | --- | --- |
@@ -59,14 +68,18 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
 | **-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See [detailed web color preservation tests](WebColorPreservation.html). In some cases, you may also want -color_trc bt709 |
 | **-movflags faststart** | This re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 
-**-vf "scale=in_color_matrix=bt709:out_color_matrix=bt709"** means use the sw-scale filter, setting:
+**-vf "zscale=matrixin=709:matrix=709:rangein=full:range=limited"** means use the zscale filter, setting:
 
 | Setting | Description |
 | --- | --- |
-| **in_color_matrix=bt709** | color space bt709 video coming in (normal for TV/Desktop video). |
-| **out_color_matrix=bt709** | means color space bt709 video going out. |
+| **matrixin=709** | color space bt709 video coming in (normal for TV/Desktop video). |
+| **matrix=709** | means color space bt709 video going out. |
+| **rangein=full** | the incoming still images use the full 0-255 range, which is normal for PNG, TIFF and other stills. |
+| **range=limited** | the outgoing video uses the limited (studio) range, which is the standard for web playback. |
 
-The combination of this and in_color_matrix will mean the color encoding will match the source media. If you are only adding one set of flags, this is the one, otherwise it will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays.
+Setting the matrix is the important part — without it FFmpeg will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays. If you are only adding one set of flags, this is the one.
+
+Setting the range explicitly is also worth doing. It is the default behaviour for still images in to video out, but stating it means you are not relying on FFmpeg guessing correctly from the input format.
 
 Separately, if you are converting from exr's in other colorspaces, **please use [OCIO](https://opencolorio.org/) to do the color space conversions.** [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
 
@@ -148,7 +161,7 @@ For more details see:
 
 ## TV vs. Full range. <a name="tvfull"></a>
 
-All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..235] with 128 as the neutral value. This frequently results in quantisation artifacts for 8-bit encoding (the standard for web playback).
+All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..235] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (the standard for web playback).
 
 This reduction in range, especially in 8-bit, can lead to visible "banding" or quantization artifacts in smooth gradients (like skies or shadows).
 

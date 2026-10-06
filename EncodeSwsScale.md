@@ -11,6 +11,51 @@ As mentioned previously, **we recommend doing any image resizing outside of ffmp
 
 There are two scaling libraries that can be used in ffmpeg, libswscale, and zscale. This guide is mainly focusing on the additional options of the libswscale library.
 
+## Colour range accuracy: prefer zscale for range conversions
+
+{: .warning }
+> libswscale has a systematic bias when converting between full range and limited (studio) range. If your command line sets `out_range=tv`, or converts RGB to Y'CbCr without specifying a range, the result will be slightly too bright. Use `zscale` for range and matrix conversions. This has been addressed by recent versions of the ffmpeg library (ffmpeg 8.1 and higher).
+
+Converting full-range RGB white to limited-range Y'CbCr, `scale` puts white above the value the specification calls for, at every bit depth:
+
+| Bit depth | scale (libswscale) | zscale | BT.709 specification |
+| :--- | :--- | :--- | :--- |
+| 8-bit | 236 | 235 | 235 |
+| 10-bit | 943 | 940 | 940 |
+| 12-bit | 3774 | 3760 | 3760 |
+
+The error is one-sided and affects luma only, growing with brightness — black is correct, and chroma is unaffected. It is a gain error rather than rounding noise: libswscale derives the scale factor as a ratio of full scale rather than as the bit-shifted narrow-range span, plus a rounding step. `zscale` matches the specification exactly.
+
+The same bias appears in the other direction. Converting limited-range Y'CbCr white (Y=940 at 10-bit) back to 16-bit RGB gives 65283 with `scale`, where the specification calls for 65535. `zscale` gives 65472, the remaining difference being how the 10-bit value is expanded to 16 bits rather than an error in the conversion.
+
+This is worth knowing rather than alarming. One code value at 8-bit is below the threshold of visibility in a single pass. It matters because it is *systematic* — it is simply wrong against the specification, it accumulates across round trips, and it grows in absolute terms with bit depth, which is the direction these guidelines recommend moving in.
+
+### What is and is not affected
+
+- **Affected**: any conversion that produces limited range. That includes `out_range=tv`, and it includes leaving the range unset, because FFmpeg defaults to limited range for Y'CbCr output.
+- **Not affected**: `in_range=full:out_range=full`. With no narrow-range squeeze there is no bias, and `scale` returns the correct value.
+- **Not a workaround**: the `unstable` flag ("allow experimental new code") corrects the range scaling, but only for 4:4:4 formats. For 4:2:2 and 4:2:0 — which is what most delivery formats use — it makes no difference. Note it has to be set on the filter itself, as `scale=…:flags=unstable`; passing it as the global `-sws_flags unstable` has no effect on this.
+
+### Recommended replacement
+
+Where a command line uses `scale` for a matrix or range conversion:
+
+```console
+-vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"
+```
+
+the `zscale` equivalent is:
+
+```console
+-vf "zscale=matrixin=709:matrix=709:rangein=full:range=limited"
+```
+
+`zscale` requires an FFmpeg built with `--enable-libzimg`. The Docker builds in this repository enable it, and the Conan build now enables it by default.
+
+Note that `zscale` is not a drop-in replacement for every use of `scale`. It does not do padding or aspect-ratio fitting, so command lines that combine scaling with `pad`, `force_original_aspect_ratio` or `setsar` need the colour conversion separated from the geometry operations rather than simply swapped.
+
+These measurements were taken against a float64 reference implementation of the BT.709 conversion, and cross-checked against uncompressed reference renders from Nuke. The behaviour is identical on FFmpeg 8.1 and on a 9.1 development build, so the libswscale rewrite in FFmpeg 9 does not change it.
+
 ## libswscale Scaling Summary
 
 For most cases, when converting from RGB to Y’CbCr the default options are fine, but if you are downsampling the image inside ffmpeg, you probably want to use the lanczos filter rather than the default bicubic
@@ -82,7 +127,7 @@ Zscale does produce a slightly different result, using the flags:
 -vf "zscale=m=709:min=709:rangein=full:range=limited:filter=lanczos"
 ```
 
-Its frankly hard to say between zscale and swscale which is better.
+On chroma resampling quality the two are close, and which looks better depends on the material. On the range conversion itself they are not close: `scale` places white at 943 rather than 940 at 10-bit, where `zscale` is exact. See [Colour range accuracy](#colour-range-accuracy-prefer-zscale-for-range-conversions) above. For that reason we now recommend `zscale` here.
 
 The one test pattern that creates errors for both of the scalers is the smpteHDbars, zscale is the worse of the two, but unless you use the “area” filter, the bars results are not great. If you have a fairly graphic look, and are converting to 422, you may want to try area, but do be aware that for other cases it may not create a great result.
 
@@ -102,7 +147,7 @@ Zscale does produce a slightly improved if occasionally softer result, using the
 -vf "zscale=m=709:min=709:rangein=full:range=limited:filter=lanczos"
 ```
 
-Its frankly hard to say between zscale and swscale which is better.
+As with 4:2:2, the chroma resampling is a close call and the range conversion is not — `zscale` is exact where `scale` is systematically bright. We recommend `zscale` for this conversion.
 
 ### Exporting from Y’CbCr
 
