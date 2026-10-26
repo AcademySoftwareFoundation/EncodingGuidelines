@@ -48,12 +48,17 @@ RGB image sequence to BT.709 Y'CbCr, on every FFmpeg version we tested (6.0 to 9
 
 ```console
 ffmpeg -i input.%06d.dpx \
-  -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+  -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
   -c:v prores_ks -profile:v 4444xq -pix_fmt yuv444p10le \
   output.mov
 ```
 
 * `rangein=full` says the RGB source is full range, `matrix=709` and `range=limited` are the output.
+* `filter=lanczos` sets the resampling filter used for the 4:2:2/4:2:0 chroma (and for any resize). zscale's
+  default, `bilinear`, gives softer chroma: on 4:2:0 test charts it left 99th percentile edge errors of 61 code
+  values against 46 with `lanczos`. On 4:2:2 the two were within a code value or so on average, with `bilinear`
+  very slightly cleaner on hard-edged graphics. The filter makes no difference to the colour accuracy inside flat
+  areas, or to the chroma siting.
 * `zscale` tags its output frames with the matrix and range, which the encoder copies into the file.
 * `setparams` adds the primaries and transfer, which `zscale` only sets if you ask it to convert them (see
   [below](#what-zscale-tags)).
@@ -83,7 +88,7 @@ ends up in the file:
 So this is equivalent to the recommended command, without `setparams` (tested on 6.0 and 9.0, ProRes):
 
 ```console
--vf "zscale=rangein=full:matrix=709:range=limited:primariesin=709:primaries=709:transferin=iec61966-2-1:transfer=iec61966-2-1"
+-vf "zscale=rangein=full:matrix=709:range=limited:primariesin=709:primaries=709:transferin=iec61966-2-1:transfer=iec61966-2-1:filter=lanczos"
 ```
 
 ## Options
@@ -99,7 +104,7 @@ input frame".
 | `primaries` | `p` | `primariesin` / `pin` | Colour primaries: `709`, `2020`, ... | input |
 | `transfer` | `t` | `transferin` / `tin` | Transfer: `709`, `iec61966-2-1` (sRGB), `smpte2084` (PQ), `linear`, ... | input |
 | `chromal` | `c` | `chromalin` / `cin` | Chroma location: `left`, `center`, `topleft`, ... | input |
-| `filter` | `f` | | Resampling filter, for resizing and for chroma: `point`, `bilinear`, `bicubic`, `spline16`, `spline36`, `spline64`, `lanczos` | `bilinear` |
+| `filter` | `f` | | Resampling filter, for resizing and for chroma subsampling: `point`, `bilinear`, `bicubic`, `spline16`, `spline36`, `spline64`, `lanczos`. We recommend `lanczos` | `bilinear` |
 | `dither` | `d` | | `none`, `ordered`, `random`, `error_diffusion` | `none` |
 | `npl` | | | Nominal peak luminance, for linear light conversions | |
 
@@ -134,8 +139,8 @@ run with `-v verbose` and look for `auto_scale` lines: anything other than a pla
 
 `zscale` resizes (`w`, `h`, `filter`), but does not pad or fit to an aspect ratio, so command lines that combine
 scaling with `pad`, `force_original_aspect_ratio` or `setsar` need the colour conversion separated from the
-geometry rather than swapping `scale` for `zscale`. Its default filter is `bilinear`; for resizing, choose
-`filter=lanczos` or `filter=spline36`. Resizing scene-linear EXR data must be done with `zscale`, not `scale`;
+geometry rather than swapping `scale` for `zscale`. Its default filter is `bilinear`; for resizing, as for chroma
+subsampling, use `filter=lanczos`. Resizing scene-linear EXR data must be done with `zscale`, not `scale`;
 see [FFmpeg OCIO Filter](FfmpegOcio.html).
 
 ### Dithering

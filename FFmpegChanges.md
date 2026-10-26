@@ -39,7 +39,7 @@ This gives correct pixels and correct colour tags, in every place they are store
 
 ```console
 ffmpeg -i input.%06d.dpx \
-  -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+  -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
   -c:v prores_ks -profile:v 4444xq -pix_fmt yuv444p10le \
   -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
   output.mov
@@ -48,7 +48,11 @@ ffmpeg -i input.%06d.dpx \
 * **`zscale=rangein=full:matrix=709:range=limited`** does the RGB to Y'CbCr conversion. Without an explicit
   conversion, 7.0 and earlier convert with BT.601. `zscale` was exact in all our tests; see
   [below](#libswscale-white-level-for-high-bit-depth-input) for why we do not use `scale`. `zscale` also sets the
-  matrix and range on its output frames, which is what tags them.
+  matrix and range on its output frames, which is what tags them. `filter=lanczos` sets the resampling filter used for the 4:2:2/4:2:0 chroma (and for any resize). zscale's
+  default, `bilinear`, gives softer chroma: on 4:2:0 test charts it left 99th percentile edge errors of 61 code
+  values against 46 with `lanczos`. On 4:2:2 the two were within a code value or so on average, with `bilinear`
+  very slightly cleaner on hard-edged graphics. The filter makes no difference to the colour accuracy inside flat
+  areas, or to the chroma siting.
 * **`setparams=color_primaries=bt709:color_trc=iec61966-2-1`** sets primaries and transfer on the frames. This is
   the only way to set them on 7.1 and later.
 * **The four `-color_*` flags** turned out to be redundant with this filter chain on every version we tested,
@@ -68,7 +72,7 @@ version we tested (6.0 to 9.0), for ProRes and H.264:
 
 ```console
 ffmpeg -i input.%06d.dpx \
-  -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+  -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
   -c:v prores_ks -profile:v 4444xq -pix_fmt yuv444p10le \
   output.mov
 ```
@@ -230,7 +234,7 @@ The same pattern as the SDR commands works for HDR. On every version:
 
 ```console
 ffmpeg -i hdr_pq.tif \
-  -vf "zscale=rangein=full:matrix=2020_ncl:range=limited,setparams=color_primaries=bt2020:color_trc=smpte2084" \
+  -vf "zscale=rangein=full:matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
   -c:v libx265 -crf 18 -pix_fmt yuv420p10le \
   -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=2000,50" \
   -color_range tv -colorspace bt2020nc -color_primaries bt2020 -color_trc smpte2084 \
@@ -242,7 +246,7 @@ As with the SDR command, the `-color_*` flags are redundant here; this shorter f
 
 ```console
 ffmpeg -i hdr_pq.tif \
-  -vf "zscale=rangein=full:matrix=2020_ncl:range=limited,setparams=color_primaries=bt2020:color_trc=smpte2084" \
+  -vf "zscale=rangein=full:matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
   -c:v libx265 -crf 18 -pix_fmt yuv420p10le \
   -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=2000,50" \
   -movflags +faststart+write_colr -tag:v hvc1 output_hdr10.mp4

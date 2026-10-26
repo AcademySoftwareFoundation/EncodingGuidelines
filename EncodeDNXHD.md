@@ -48,7 +48,7 @@ comparisontest:
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -pix_fmt yuv422p10le -profile:v dnxhr_hqx \
-    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
 ```
 
@@ -116,7 +116,7 @@ comparisontest:
 ```console
 ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -frames:v 100 \
     -pix_fmt yuv422p \
-    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -146,7 +146,7 @@ comparisontest:
 ```console
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
     -pix_fmt yuv422p \
-    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -180,7 +180,7 @@ comparisontest:
 -->
 ```console
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
-    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -pix_fmt yuv422p10 -c:v dnxhd -b:v 175M \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 \
       outputfile.mov
