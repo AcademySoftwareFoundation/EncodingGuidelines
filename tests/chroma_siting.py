@@ -18,8 +18,12 @@ measurements, both in luma samples, 0 = co-sited with the even luma sample (left
     averaged pairs of pixels before filtering (libswscale does this for RGB input unless full_chroma_inp
     is set), which throws away the real siting.
 
-Run every version through rez and summarize:
-    rez-env encodingguidelines_env -- python tests/chroma_siting.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0 9.1.dev
+Run once per FFmpeg version, each time with that version's ffmpeg on the PATH (or FFMPEG_BIN and
+FFPROBE_BIN set), naming the run with --label; then combine the runs into summary.md:
+    python tests/chroma_siting.py --label 9.0
+    python tests/chroma_siting.py --summarize
+With a rez setup that has an ffmpeg-<version> package per version, --rez runs them all and summarizes:
+    python tests/chroma_siting.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0
 """
 import argparse
 import json

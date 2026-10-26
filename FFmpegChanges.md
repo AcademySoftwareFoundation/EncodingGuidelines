@@ -95,9 +95,16 @@ the tags only exist in the video stream.
 The scripts are in the repository, and run once per FFmpeg version:
 
 ```console
-python tests/colour_flags_matrix.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0
-python tests/rgb2ycbcr_accuracy.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0
+python tests/colour_flags_matrix.py --label 9.0     # once per FFmpeg version
+python tests/colour_flags_matrix.py --summarize     # tests/colour-flags-matrix/summary.md
+python tests/rgb2ycbcr_accuracy.py --label 9.0
+python tests/rgb2ycbcr_accuracy.py --summarize
 ```
+
+Each script measures whichever `ffmpeg` is on the `PATH` (or `FFMPEG_BIN` and `FFPROBE_BIN`). Run it once per
+FFmpeg version with `--label`, then `--summarize` combines the runs into the script's `summary.md`. With a rez
+setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
+and the OpenImageIO Python bindings (`requirements.txt`).
 
 ## `-colorspace` and `-color_range` now drive the conversion (7.1) {#colorspace-flags-71}
 

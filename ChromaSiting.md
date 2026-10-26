@@ -163,10 +163,16 @@ literally sees 4:2:0 siting on 4:2:2 material. So for 4:2:2 MXF, leave `zscale`'
   tagging and DNxHR tests, which encode with each codec.
 
 ```console
-rez-env encodingguidelines_env -- python tests/chroma_siting.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0 9.1.dev
-rez-env encodingguidelines_env ffmpeg-9.0 -- python tests/chroma_siting_containers.py
-rez-env encodingguidelines_env ffmpeg-9.0 -- python tests/chroma_siting_images.py
+python tests/chroma_siting.py --label 9.0      # once per FFmpeg version
+python tests/chroma_siting.py --summarize      # tests/chroma-siting/summary.md
+python tests/chroma_siting_containers.py --label 9.0
+python tests/chroma_siting_images.py
 ```
+
+Each script measures whichever `ffmpeg` is on the `PATH` (or `FFMPEG_BIN` and `FFPROBE_BIN`). Run it once per
+FFmpeg version with `--label`, then `--summarize` combines the runs into the script's `summary.md`. With a rez
+setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
+and the OpenImageIO Python bindings (`requirements.txt`).
 
 Not yet covered: the reverse direction. What FFmpeg assumes when reading 4:2:2 or 4:2:0 back to RGB, for example
 making review stills from a ProRes, has not been tested yet.

@@ -18,8 +18,8 @@ depend on any ffmpeg colour conversion, so that ffmpeg's conversions can be test
 
 | File | What it is | Made with |
 | :--- | :--- | :--- |
-| `rp219_yuv444p10.y4m` | 10-bit 4:4:4 Y'CbCr, limited range, BT.709. The expected values. | vapoursynth-colorbars |
-| `rp219_yuv444p12.y4m` | 12-bit 4:4:4 Y'CbCr, limited range, BT.709. The expected values. | vapoursynth-colorbars |
+| `rp219_yuv444p10.mkv` | 10-bit 4:4:4 Y'CbCr, limited range, BT.709. The expected values. Lossless FFV1. | vapoursynth-colorbars |
+| `rp219_yuv444p12.mkv` | 12-bit 4:4:4 Y'CbCr, limited range, BT.709. The expected values. Lossless FFV1. | vapoursynth-colorbars |
 | `rp219_reference.vpy` | The VapourSynth script that generates the two files above. | |
 | `validate_reference.py` | Checks the references against RP 219 and against the Resolve RGB bars. | |
 | `smptehdbars_10_resolve.dpx` | 10-bit full-range R'G'B' bars. The source image for the RGB to Y'CbCr tests. | DaVinci Resolve |
@@ -50,14 +50,23 @@ from `~/git/vapoursynth-colorbars/.libs/libcolorbars.dylib`, edit the path to ma
 
 ```console
 cd sourceimages/rp219
-vspipe -c y4m -a bits=10 rp219_reference.vpy rp219_yuv444p10.y4m
-vspipe -c y4m -a bits=12 rp219_reference.vpy rp219_yuv444p12.y4m
+vspipe -c y4m -a bits=10 rp219_reference.vpy - | ffmpeg -i - \
+    -vf "setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709" \
+    -c:v ffv1 -level 3 -slicecrc 1 rp219_yuv444p10.mkv
+vspipe -c y4m -a bits=12 rp219_reference.vpy - | ffmpeg -i - \
+    -vf "setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709" \
+    -c:v ffv1 -level 3 -slicecrc 1 rp219_yuv444p12.mkv
 ```
+
+The references are stored as lossless FFV1 in Matroska (about 65 KB each, rather than 12 MB as `.y4m`), tagged
+BT.709 limited range. Read them by decoding at their own pixel format (`-f rawvideo -pix_fmt yuv444p10le` or
+`yuv444p12le`), so FFmpeg does no colour conversion; `validate_reference.py` shows how. If a tool needs them as
+`.y4m`, `generate.sh` converts them.
 
 To validate:
 
 ```console
-rez-env encodingguidelines_env -- python sourceimages/rp219/validate_reference.py
+python sourceimages/rp219/validate_reference.py
 ```
 
 This checks:

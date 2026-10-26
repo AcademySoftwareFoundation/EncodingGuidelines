@@ -1,0 +1,10 @@
+# Python dependencies for the enctests test framework.
+# Keep these in sync with rez/encodingguidelines_env/package.py.
+numpy==2.2.6
+PyYAML==6.0.2
+Fileseq==2.1.2
+Jinja2==3.1.6
+pandas==2.3.1
+plotly==6.2.0
+OpenTimelineIO==0.18.1
+OpenImageIO==3.1.12.0
