@@ -55,6 +55,9 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
         -y outputfile.mov
 ```
 
+{: .note }
+> The `scale` filter in these examples carries a small systematic bias when converting to limited range, in both the RGB to YCbCr and the YCbCr to RGB directions. Where your build has zimg, `zscale=matrixin=709:matrix=709:rangein=full:range=limited` is the more accurate choice for the encode, and `zscale=matrixin=709:matrix=709:rangein=limited:range=full` for reading a ProRes file back to a still. See [RGB to YCbCr Conversion](ColorPreservation.html#zscale-filter). The examples on this page still use `scale` because they are tied to the automated comparison results below, which were generated with it.
+
 Options that can be used include:
 
 | --- | --- |

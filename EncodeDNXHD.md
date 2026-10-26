@@ -23,6 +23,13 @@ There are a number of pre-defined resolutions, frame-rates and bit-rates that ar
 
 Supported pixel formats: yuv422p yuv422p10le yuv444p10le gbrp10le
 
+{: .note }
+> The Y'CbCr examples on this page use `zscale` for the RGB to Y'CbCr conversion. Earlier versions used
+> `scale` (libswscale), which on every FFmpeg version centres the 4:2:2 chroma while the formats here assume it is
+> co-sited (half a pixel off, and in MXF labelled co-sited), and puts white at 943 instead of 940 from 10-bit
+> sources. See [Chroma Siting](ChromaSiting.html) and [zscale Conversion](EncodeZscale.html). If your FFmpeg has no
+> `zscale`, see the fallback in [FFmpeg Version Changes](FFmpegChanges.html#recommended-commands).
+
 Example encoding:
 
 <!---
@@ -41,7 +48,7 @@ comparisontest:
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -pix_fmt yuv422p10le -profile:v dnxhr_hqx \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
 ```
 
@@ -109,7 +116,7 @@ comparisontest:
 ```console
 ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -frames:v 100 \
     -pix_fmt yuv422p \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -137,9 +144,9 @@ comparisontest:
        less: 0.00195
 -->
 ```console
-ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 -pix_fmt yuv422p \
+ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
     -pix_fmt yuv422p \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" 
+    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -173,7 +180,7 @@ comparisontest:
 -->
 ```console
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "zscale=rangein=full:matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709" \
     -pix_fmt yuv422p10 -c:v dnxhd -b:v 175M \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 \
       outputfile.mov
