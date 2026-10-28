@@ -13,7 +13,8 @@ For each converter the chart is converted to 4:2:2 (16-bit, raw, no codec), then
 
 <band> is "even" (lines on even columns) or "odd" (lines on odd columns).
 
-    rez-env encodingguidelines_env ffmpeg-9.0 -- python tests/chroma_siting_images.py
+Uses the ffmpeg on the PATH (or FFMPEG_BIN):
+    python tests/chroma_siting_images.py
 """
 import os
 import subprocess

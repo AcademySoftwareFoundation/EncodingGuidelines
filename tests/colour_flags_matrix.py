@@ -10,11 +10,12 @@ For each recipe this encodes an untagged 16-bit RGB PNG to 10-bit 4:4:4 YCbCr, t
 They also report the Y' of 100% white (940 at 10-bit), which shows libswscale's white level error for
 high-bit-depth sources.
 
-Run every version through rez and summarize:
-    rez-env encodingguidelines_env -- python tests/colour_flags_matrix.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0
-
-Or run with whatever ffmpeg is on the PATH:
-    python tests/colour_flags_matrix.py --outdir tests/colour-flags-matrix
+Run once per FFmpeg version, each time with that version's ffmpeg on the PATH (or FFMPEG_BIN and
+FFPROBE_BIN set), naming the run with --label; then combine the runs into summary.md:
+    python tests/colour_flags_matrix.py --label 9.0
+    python tests/colour_flags_matrix.py --summarize
+With a rez setup that has an ffmpeg-<version> package per version, --rez runs them all and summarizes:
+    python tests/colour_flags_matrix.py --rez 6.0 7.0 7.1 8.0.1 8.1 9.0
 """
 import argparse
 import json

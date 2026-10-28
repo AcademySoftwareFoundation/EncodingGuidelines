@@ -3,13 +3,21 @@
 test_av1_color:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
-    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: mean_error
-      less: 0.002
+      value: p99_error_10bit
+      less: 5
+    - assert: less
+      value: mean_error_10bit
+      less: 0.6
   description: av1 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
   name: test_av1_color
@@ -22,7 +30,7 @@ test_av1_color:
       -crf: 20
       -svtav1-params: tune=0
       -preset: 3
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

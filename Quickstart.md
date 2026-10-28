@@ -17,7 +17,8 @@ title: Encoding Cheatsheet
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
-This document is based on results from FFmpeg 8.1.
+The commands on this page were tested with FFmpeg 6.0 and 9.0. Colour handling changed in FFmpeg 7.1, and these
+commands give the same result either side of it; see [FFmpeg Version Changes](FFmpegChanges.html).
 
 ## H264 Encoding from an image sequence for Web Review
 
@@ -28,30 +29,45 @@ name: test_quickstart
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 0.5
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 tv
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
-        -vf "zscale=matrixin=709:matrix=709:rangein=full:range=limited" \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -frames:v 100 -c:v libx264 -preset slower -crf 18 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-       -movflags faststart outputfile.mp4
+        -movflags +faststart+write_colr outputfile.mp4
 ```
 
 {: .note }
 > `zscale` needs an FFmpeg built with zimg (`--enable-libzimg`). Check with `ffmpeg -filters | grep zscale`. If your build does not have it, use the libswscale equivalent instead:
 >
 > ```console
-> -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"
+> -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
 > ```
 >
-> That will work everywhere, but libswscale has a small systematic bias when converting to limited range — it places white slightly above the specification value. See [RGB to YCbCr Conversion](ColorPreservation.html#zscale-filter) for the measurements.
+> Keep `-colorspace bt709` in the command with it: on FFmpeg 6.0 `scale` does not tag the matrix. That works on every version, but it is less accurate: from 10-bit and 16-bit sources libswscale puts white at 943 instead of 940 (at 10-bit), and it centres the 4:2:2/4:2:0 chroma rather than co-siting it. See [zscale Conversion](EncodeZscale.html) and [Chroma Siting](ChromaSiting.html) for the measurements.
 
 | Flag | Description |
 | --- | --- |
@@ -62,24 +78,22 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
 | **-c:v libx264** | use the h264 encoding library (libx264) |
 | **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow. |
 | **-pix_fmt yuv420p10le** | use yuv420 10-bit video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le |
-| **-color_range tv** | mp4 metadata - specifying color range as 64-940 (which is default for 10-bit web playback). |
-| **-colorspace bt709** | mp4 metadata - specifying bt709 yuv color pixel format |
-| **-color_primaries bt709** | mp4 metadata - bt709 color gamut primaries |
-| **-color_trc iec61966-2-1** | mp4 metadata color transfer = iec61966-2-1 = sRGB - See [detailed web color preservation tests](WebColorPreservation.html). In some cases, you may also want -color_trc bt709 |
-| **-movflags faststart** | This re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+| **-color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1** | The colour tags for the file: limited range (64-940 at 10-bit), BT.709 matrix, BT.709 primaries and the sRGB transfer function. The filter chain already sets all four (see below), so these are not needed, but they are harmless. Do not rely on them alone: before FFmpeg 7.1 they do not change the conversion, and from 7.1 `-color_primaries` and `-color_trc` are ignored. See [FFmpeg Version Changes](FFmpegChanges.html). |
+| **-movflags +faststart+write_colr** | `faststart` re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. `write_colr` writes the colour tags into the MP4 `colr` atom as well as the H.264 stream; without it the MP4 muxer leaves them out. |
 
-**-vf "zscale=matrixin=709:matrix=709:rangein=full:range=limited"** means use the zscale filter, setting:
+**-vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"** converts the RGB images to Y'CbCr with the zscale filter, then labels the result:
 
 | Setting | Description |
 | --- | --- |
-| **matrixin=709** | color space bt709 video coming in (normal for TV/Desktop video). |
-| **matrix=709** | means color space bt709 video going out. |
-| **rangein=full** | the incoming still images use the full 0-255 range, which is normal for PNG, TIFF and other stills. |
+| *(no input settings)* | zscale reads the input from the frames: RGB images (PNG, TIFF, DPX, EXR) are always full range, and JPEG and video sources carry their own tags. Only describe the input for a source with no tags; see [Sources without tags](EncodeZscale.html#sources-without-tags). |
+| **matrix=709** | convert to Y'CbCr with the BT.709 matrix, and tag the frames as BT.709. |
 | **range=limited** | the outgoing video uses the limited (studio) range, which is the standard for web playback. |
+| **filter=lanczos** | the filter used to subsample the chroma to 4:2:0 (zscale's default, `bilinear`, is softer). |
+| **setparams=color_primaries=bt709:color_trc=iec61966-2-1** | tag the frames with the BT.709 primaries and sRGB transfer function. This does not change the pixels; the encoder copies the tags into the file. |
 
-Setting the matrix is the important part — without it FFmpeg will default to an output colorspace of bt601, which is a standard definition spec from the last century, and not suitable for sRGB or HD displays. If you are only adding one set of flags, this is the one.
+Setting the matrix is the important part. Without a filter that sets it, FFmpeg before 7.1 converts with the BT.601 matrix, a standard definition spec from the last century, and not suitable for sRGB or HD displays. From 7.1, `-colorspace bt709` on its own does switch the conversion to BT.709, but through libswscale, and the primaries and transfer function are lost. The filter chain above gives the same, correct, result on every version we tested.
 
-Setting the range explicitly is also worth doing. It is the default behaviour for still images in to video out, but stating it means you are not relying on FFmpeg guessing correctly from the input format.
+The input side is deliberately left to zscale. Earlier versions of this page forced it (`in_color_matrix=bt709`), which made no difference to RGB images but gave JPEG sequences a visible hue and saturation shift, because JPEGs are BT.601; forcing the input range to full does the same kind of damage to video sources. See [Sources without tags](EncodeZscale.html#sources-without-tags).
 
 Separately, if you are converting from exr's in other colorspaces, **please use [OCIO](https://opencolorio.org/) to do the color space conversions.** [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
 
@@ -98,23 +112,33 @@ name: test_proresquickstart
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 4
+     - assert: less
+       value: mean_error_10bit
+       less: 0.8
+     - assert: less
+       value: max_error_10bit
+       less: 13
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -pix_fmt yuv422p10le -frames:v 100 \
-    -c:v prores_ks -profile:v 3 -qscale:v 9 \
-    -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -vendor apl0 outputfile.mov
+    -c:v prores_ks -profile:v 3 -qscale:v 9 -vendor apl0 outputfile.mov
 ```
 
 | Flag | Description |
 | --- | --- |
+| **-vf "zscale=...,setparams=..."** | Convert to BT.709 Y'CbCr and tag it, as for [H.264 above](#h264-encoding-from-an-image-sequence-for-web-review). ProRes takes its colour tags from the frames, so no `-color_*` flags are needed. |
 | **-profile:v 3** | Prores profile |
 | **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
@@ -134,18 +158,29 @@ name: test_prores444
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
+   - testtype: ycbcr
+     # ProRes 4444 decodes at 12-bit, so these are 12-bit code values.
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 5
+     - assert: less
+       value: mean_error_10bit
+       less: 0.8
+     - assert: less
+       value: max_error_10bit
+       less: 12
 -->
 ```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  \
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -pix_fmt yuv444p10le -frames:v 100 \
-   -c:v prores_ks -profile:v 4444 -qscale:v 9 \
-   -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 outputfile.mov
+    -c:v prores_ks -profile:v 4444 -qscale:v 9 -vendor apl0 outputfile.mov
 ```
 
 | Flag | Description |
@@ -156,12 +191,12 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  \
 
 For more details see:
 
-* [Prores](Encoding.html#prores)
+* [Prores](EncodeProres.html)
 * [YUV Conversion](ColorPreservation.html#yuv)
 
 ## TV vs. Full range. <a name="tvfull"></a>
 
-All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..235] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (the standard for web playback).
+All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (the standard for web playback).
 
 This reduction in range, especially in 8-bit, can lead to visible "banding" or quantization artifacts in smooth gradients (like skies or shadows).
 
@@ -175,17 +210,13 @@ When encoding in 8-bit, only 219 levels are available for luminance (16–235). 
 | **8-bit** | **Full (PC)** | **Medium** | Better, but not always supported by hardware players. |
 | **10-bit** | **TV (Legal)** | **Low** | Preferred for professional review; supported by modern browsers and players. |
 
-You can force the encoding to be full range using the libswscale library by using
+You can encode full range by setting the output range in the zscale filter:
 
 ```console
--vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"
+-vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
 ```
 
-Specifying *out_range=full* forces the output range, but you also need to set the NCLX tag:
-
-```console
--color_range pc
-```
+zscale tags the frames as full range, so the file is tagged correctly. Adding `-color_range pc` as well is harmless.
 
 A full example encode would look like:
 
@@ -194,18 +225,39 @@ name: test_fullrange
 sources: 
 - sourceimages/radialgrad.png.yml
 comparisontest:
-   - testtype: idiff
+   - testtype: ycbcr
+     range: pc
+     # Limits (10-bit code values): just above the result of this command, FFmpeg 6.0 and 9.0, 2026-10-26.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 1.3
+     - assert: less
+       value: max_error_10bit
+       less: 12
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 pc
 -->
 ```console
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
-    -pix_fmt yuv420p -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" \
-    -c:v libx264 -t 5  -qscale:v 1 \
-    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
+    -pix_fmt yuv420p -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+    -c:v libx264 -t 5 -qscale:v 1 \
+    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
+    -movflags +write_colr ./greyramp-fulltv/radialgrad-full.mp4
 ```
 
 We have seen the full range encoding work across all browsers, and a number of players including RV.
@@ -218,4 +270,3 @@ While 10-bit TV range is generally well-supported, always verify playback on you
 For more details see:
 
 * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
-* [Encoding Guide](Encoding.html#range)

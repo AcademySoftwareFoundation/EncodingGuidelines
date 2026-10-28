@@ -3,13 +3,24 @@
 test_rgb:
   app: ffmpeg
   comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 {newpngfile}
-    testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: p99_error_10bit
+      less: 1
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
+    - assert: less
+      value: max_error_10bit
+      less: 2
   description: Uncompressed tests.
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -24,7 +35,7 @@ test_rgb:
       -preset: placebo
       -qp: 0
       -pix_fmt: yuv444p10le
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -33,10 +44,9 @@ test_rgb:
       -c:v: png
       -pix_fmt: rgb48be
       -colorspace: rgb
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"zscale=range=full"'
       -color_range: pc
       -color_primaries: bt709
-      -color_range: tv
       -color_trc: bt709
     vp9_10bit_rgb:
       -c:v: libvpx-vp9
@@ -46,10 +56,9 @@ test_rgb:
       -row-mt: 1
       -pix_fmt: gbrp10le
       -colorspace: rgb
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"zscale=range=full"'
       -color_range: pc
       -color_primaries: bt709
-      -color_range: tv
       -color_trc: bt709
     vp9_12bit_rgb:
       -c:v: libvpx-vp9
@@ -59,22 +68,33 @@ test_rgb:
       -row-mt: 1
       -pix_fmt: gbrp12le
       -colorspace: rgb
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"zscale=range=full"'
       -color_range: pc
       -color_primaries: bt709
-      -color_range: tv
       -color_trc: bt709
 
 test_rgb8:
   app: ffmpeg
   comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb24 -frames:v 1 {newpngfile}
-    testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
+    # 8bit_mjpeg fails: MJPEG cannot store RGB, so it is converted to full range BT.601 Y'CbCr.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: p99_error_10bit
+      less: 1
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
+    - assert: less
+      value: max_error_10bit
+      less: 2
   description: Uncompressed tests.
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -88,7 +108,7 @@ test_rgb8:
       -pix_fmt: yuv444p
       -preset: placebo
       -qp: 0
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -99,7 +119,7 @@ test_rgb8:
       -preset: placebo 
       -qp: 0
       -colorspace: rgb
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"zscale=range=full"'
       -x264-params: "keyint=15:no-deblock=1"
       -color_range: pc
       -color_primaries: bt709
@@ -108,7 +128,7 @@ test_rgb8:
       -c:v: png
       -pix_fmt: rgb24
       -colorspace: rgb
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"zscale=range=full"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -127,7 +147,7 @@ test_rgb8:
       -crf: 0
       -pix_fmt: gbrp
       -colorspace: rgb
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"zscale=range=full"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -135,13 +155,24 @@ test_rgb8:
 test_rgb_mov:
   app: ffmpeg
   comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
-    testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: p99_error_10bit
+      less: 1
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
+    - assert: less
+      value: max_error_10bit
+      less: 4
   description: Uncompressed tests.
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -155,10 +186,10 @@ test_rgb_mov:
     10bit_dnxhd:  &base_args2
       -c:v: dnxhd
       -pix_fmt: gbrp10le
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=range=full"'
       -profile:v: dnxhr_444
       -color_primaries: bt709
-      -color_range: tv
+      -color_range: pc
       -color_trc: bt709
       -colorspace: rgb
 ---

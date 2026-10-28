@@ -2,13 +2,21 @@
 test_vp8_color_420:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
-    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: p99_error_10bit
+      less: 10
+    - assert: less
+      value: mean_error_10bit
+      less: 1.5
   description: vp9 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -22,7 +30,7 @@ test_vp8_color_420:
       -quality: good
       -crf: 4
       -b:v: 200M
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

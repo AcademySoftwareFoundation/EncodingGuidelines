@@ -48,20 +48,31 @@ VP9 has some excellent 10 and 12 bit RGB encodes.
 Example encoding:
 
 <!---
-name: test_vp9
+name: test_vp9_rgb
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the result of this command, FFmpeg 6.0 and 9.0, 2026-10-26.
    - testtype: assertresults
      tests:
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 3
+     - assert: less
+       value: mean_error_10bit
+       less: 0.3
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9 \
-    -crf 22 -pix_fmt gbrp10le -quality good -row-mt 1 -speed 2 -vf "scale=in_range=full:out_range=full" \
+    -crf 22 -pix_fmt gbrp10le -quality good -row-mt 1 -speed 2 \
+    -vf "zscale=range=full,format=gbrp10le,setparams=color_primaries=bt709:color_trc=bt709" \
     -color_primaries bt709 -color_range pc -color_trc bt709 -colorspace rgb   \
      -y outputfile.mp4
 ```

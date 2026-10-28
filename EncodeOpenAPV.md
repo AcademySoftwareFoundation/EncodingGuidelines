@@ -63,10 +63,9 @@ The encoder uses the OpenAPV library, and currently supports 422, 444 and 4444 a
 ## Example Encoding
 
 ```console
-ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
+ffmpeg -start_number 2500 -i "INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
      -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" \
-     -sws_flags spline+accurate_rnd+full_chroma_int \
-     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+     -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
      -y "OUTPUT.mov"
 ```
@@ -92,9 +91,9 @@ For the current version of ffmpeg, an additional parameter is required to be pas
 Ffmpeg does default to 422-10, so if you are using that pix_fmt, the encode can be as simple as:
 
 ```console
-ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
-     -preset fast -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int \
-     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+ffmpeg -start_number 2500 -i "INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
+     -preset fast -pix_fmt yuv422p10le \
+     -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
 ```
 
@@ -114,7 +113,7 @@ This will then pick an appropriate bitrate based on your resolution and frame-ra
 You will also need to match the pix_fmt setting with the oapv-params.
 
 ```
-ffmpeg -start_number 2500 -i “INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
+ffmpeg -start_number 2500 -i "INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
      -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" -sws_flags spline+accurate_rnd+full_chroma_int \
      -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"

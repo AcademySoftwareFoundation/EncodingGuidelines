@@ -48,20 +48,35 @@ name: test_h265
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 8
+     - assert: less
+       value: mean_error_10bit
+       less: 1.25
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 tv
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
-    -pix_fmt yuv420p10le -crf 22 -preset slow -sws_flags spline+accurate_rnd+full_chroma_int \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -pix_fmt yuv420p10le -crf 22 -preset slow \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-    -movflags faststart -y outputfile.mp4
+    -movflags +faststart+write_colr -y outputfile.mp4
 ```
 
 | -- | -- |
@@ -70,7 +85,8 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
 | -x265-params lossless=1 | Does lossless encoding, -crf 0 is not required |
 | -tag:v hvc1 | To make it "Apple "Industry standard" compliant |
 | -profile main | Profile can be one of main or main10 or main12 |
-| **-movflags faststart** | This re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+| **-movflags +faststart+write_colr** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. `write_colr` writes the colour tags into the MP4 `colr` atom as well as the video stream. |
+| **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
 
 ## libx265 crf values
 

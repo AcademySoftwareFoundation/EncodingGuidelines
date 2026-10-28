@@ -3,12 +3,25 @@
 test_mjpeg_444:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
+    # The libswscale wedges convert to BT.709 but are tagged BT.601, so they fail.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: mean_error
-      less: 0.003
+      value: p99_error_10bit
+      less: 10
+    - assert: less
+      value: mean_error_10bit
+      less: 1.5
+    - assert: less
+      value: max_error_10bit
+      less: 12
   description: mjpeg color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -32,7 +45,7 @@ test_mjpeg_444:
       << : *basemjpeg
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
-      -color_range: full
+      -color_range: pc
       -color_trc: bt709
       -colorspace: bt709
 
@@ -40,20 +53,32 @@ test_mjpeg_444:
       << : *basemjpeg
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
-      -color_range: full
+      -color_range: pc
       -color_trc: bt709
       -colorspace: bt709
  
 test_mjpeg_422:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
-    compare_image: ../sourceimages/chip-chart-1080-noicc-yuv422p.png
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
+    # The libswscale wedges convert to BT.709 but are tagged BT.601, so they fail.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.0039
+      value: p99_error_10bit
+      less: 10
+    - assert: less
+      value: mean_error_10bit
+      less: 1.5
+    - assert: less
+      value: max_error_10bit
+      less: 12
   description: mjpeg color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -71,7 +96,7 @@ test_mjpeg_422:
       << : *basemjpeg422
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
-      -color_range: full
+      -color_range: pc
       -color_trc: bt709
       -colorspace: bt709
 
@@ -79,7 +104,7 @@ test_mjpeg_422:
       << : *basemjpeg422
       -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
       -color_primaries: bt709
-      -color_range: full
+      -color_range: pc
       -color_trc: bt709
       -colorspace: bt709
 
@@ -91,7 +116,7 @@ reports:
       height: 400
       barmode: group
       x: media
-      y: max_error
+      y: max_error_10bit
     name: max_error.png
     type: bar
   - args:

@@ -23,12 +23,25 @@ name: test_mjpeg
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
+   - testtype: ycbcr
+     matrix: bt470bg
+     range: pc
+     # MJPEG is full range BT.601 by default.
+     # Limits (10-bit code values): just above the result of this command, FFmpeg 6.0 and 9.0, 2026-10-26.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-2.5, 2.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 2.5
+     - assert: less
+       value: max_error_10bit
+       less: 16
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 \

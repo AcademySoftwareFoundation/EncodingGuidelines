@@ -3,13 +3,20 @@
 test_rgb2yuv:
   app: ffmpeg
   comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 {newpngfile}
-    testtype: idiff
+  - testtype: ycbcr
+    matrix: bt709
+    range: auto
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: max_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
   description: Testing options for converting RGB to YUV
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -49,7 +56,7 @@ test_rgb2yuv:
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
     10bit_zscale:
       << : *base_args
-      -vf: '"zscale=m=709:min=709:rangein=full:range=limited"'
+      -vf: '"zscale=m=709:min=709:range=limited"'
     12bit_libswscale:
       << : *base_args
       -pix_fmt: yuv444p12le   
@@ -57,7 +64,7 @@ test_rgb2yuv:
     12bit_zscale:
       << : *base_args
       -pix_fmt: yuv444p12le   
-      -vf: '"zscale=m=709:min=709:rangein=full:range=limited"'
+      -vf: '"zscale=m=709:min=709:range=limited"'
     8bit_libswscale_full:
       << : *base_args
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
@@ -76,7 +83,7 @@ test_rgb2yuv:
 
 ---
 reports:
-  description: This is testing the different options for doing RGB to YCbCr and then back to RGB using y4m as an intermediate container of raw YCbCr data. The pass rate for max-error is 0.00195 = 2/1024 = 1/512. So it has to be 1-bit better than 8-bit values.
+  description: This is testing the different options for converting RGB to YCbCr, using y4m as a container of raw YCbCr data. Each result is compared with the ideal BT.709 conversion of the source, in 10-bit code values; to pass, the white level must be within 1.5 and every patch within 1 code value, which only an exact conversion achieves.
   directory: color-encode
   name: color-tests
   templatefile: colorweb.html.jinja

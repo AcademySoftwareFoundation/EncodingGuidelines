@@ -3,12 +3,24 @@
 test_dnxhd_444:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: mean_error
-      less: 0.0004
+      value: p99_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.15
+    - assert: less
+      value: max_error_10bit
+      less: 4
   description: dnxhd color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -20,7 +32,7 @@ test_dnxhd_444:
     dnxhd-yuv444p10le: &basednxhd
       -c:v: dnxhd
       -profile:v: dnxhr_444
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -39,8 +51,9 @@ test_dnxhd_444:
 
     dnxhd-gbrp10:
       << : *basednxhd
-      #-vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
-      # -color_range: pc
+      -vf: '"zscale=range=full"'
+      # RGB is full range; with tv (inherited) FFmpeg 7.1+ makes libswscale do the bit depth change.
+      -color_range: pc
       -colorspace: rgb
       -pix_fmt: gbrp10le
 
@@ -53,7 +66,7 @@ test_dnxhd_444:
 
     dnxhd-yuv444full:
       << : *basednxhd
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=full:filter=lanczos"'
       -color_range: pc
       #-colorspace: rgb
       #-pix_fmt: gbrp10le
@@ -61,13 +74,24 @@ test_dnxhd_444:
 test_dnxhd_422:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
-    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv422p10le.png
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: mean_error
-      less: 0.0004
+      value: p99_error_10bit
+      less: 6
+    - assert: less
+      value: mean_error_10bit
+      less: 0.3
+    - assert: less
+      value: max_error_10bit
+      less: 16
   description: dnxhd color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -80,7 +104,7 @@ test_dnxhd_422:
       -c:v: dnxhd
       -profile:v: dnxhr_hqx
       -b:v: 440m
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -142,7 +166,7 @@ reports:
       height: 400
       barmode: group
       x: media
-      y: max_error
+      y: max_error_10bit
     name: max_error.png
     type: bar
   - args:

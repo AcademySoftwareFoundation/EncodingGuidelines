@@ -151,6 +151,60 @@ test_colorspace_yuv420p:
             -crf: 23
 ```
 
+#### Comparison tests
+
+`comparisontest` lists the checks run on each encode, in order. If it is left out, `vmaf` is used. The other
+types are `vmaf3`, `ffmpeg_psnr`, `identity`, `ycbcr`, `idiff`, `yuvdiff`, `frame_extract` and `assertresults`.
+
+For colour accuracy, use `ycbcr`. It decodes the first frame of the encode at the stream's own pixel format, so
+FFmpeg does no colour conversion, and compares it with the ideal conversion of the source RGB, worked out in
+numpy (see `testframework/ycbcr_compare.py`). RGB encodes are compared with the source RGB directly. Unlike
+`idiff`, it does not extract the encode to a PNG with `scale`, which added a second libswscale conversion, so it
+can see libswscale's errors.
+
+```yaml
+comparisontest:
+- testtype: ycbcr
+  matrix: bt709   # bt709 (default), bt2020nc, bt470bg, smpte170m, or auto to use the stream's tag
+  range: tv       # tv (default), pc, or auto to use the stream's tag
+- testtype: assertresults
+  tests:
+  - assert: between
+    value: white_error
+    between: [-1.5, 1.5]
+  - assert: less
+    value: max_error
+    less: 4
+  - assert: stringmatch
+    value: color_primaries
+    string: bt709
+```
+
+A source that is not RGB (a JPEG, or a video file) cannot be the reference itself, so its `.yml` names the RGB
+image it should decode to, relative to the `.yml`:
+
+```yaml
+path: chip-chart-1080-420.jpg
+reference: chip-chart-1080-420-libjpeg.png
+```
+
+Its results are in code values at the encode's bit depth:
+
+| Result | Meaning |
+| :--- | :--- |
+| `max_error`, `mean_error` (and `_y`, `_cb`, `_cr`, or `_g`, `_b`, `_r` per plane) | Worst and mean error more than 8 pixels (`margin`) from any edge, so 4:2:2/4:2:0 chroma filtering and siting do not count |
+| `max_error_all` | Worst error anywhere |
+| `p99_error` (and per plane) | 99th percentile error away from edges. For lossy codecs use this rather than `max_error`, which is a single pixel set by compression |
+| `white_y`, `white_y_ideal`, `white_error` | Average Y' over the brightest areas, what it should be, and the difference. Compression noise averages out, so this shows a white level error (e.g. libswscale's +3 at 10-bit) that `max_error` cannot |
+| `max_error_10bit`, `mean_error_10bit`, `p99_error_10bit`, `white_error_10bit` | The same, in 10-bit code values, so one threshold covers several bit depths |
+| `color_range`, `color_space`, `color_primaries`, `color_transfer`, `chroma_location` | The stream's tags, from `ffprobe` |
+| `colr` | The MOV/MP4 `colr` atom, e.g. `nclx 1/13/1 tv`, or `none` |
+
+The encode also gets a viewable PNG (converted in numpy) and an `-x20diff.png` error image.
+
+`assertresults` checks results from the earlier tests with `less`, `greater`, `between` (two values in a list),
+`equal` or `stringmatch` (with `string:`).
+
 ### Run the tests
 
 To run the default tests, simply run the app like below

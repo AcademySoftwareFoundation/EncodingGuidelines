@@ -6,5 +6,7 @@ Fileseq==2.1.2
 Jinja2==3.1.6
 pandas==2.3.1
 plotly==6.2.0
+# Writes the report graphs; needs Chrome (or run `kaleido_get_chrome`).
+kaleido==1.5.0
 OpenTimelineIO==0.18.1
 OpenImageIO==3.1.12.0

@@ -1,0 +1,116 @@
+
+---
+test_oapv_color10:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: p99_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.3
+    - assert: less
+      value: max_error_10bit
+      less: 6
+  description: oapv color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_oapv_color
+  sources:
+  #- ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_10.dpx
+  suffix: .mov
+  wedges:
+    oapv_yuv444p10:
+      -c:v: liboapv
+      -oapv-params: "profile=444-10"
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv444p10le
+      -preset: placebo
+      -qp: 1
+
+    prores_ks: &base_args2
+        -c:v: prores_ks
+        -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+        -profile:v: 4444xq
+        -pix_fmt: yuv444p10le
+        -color_range: tv
+        -colorspace: bt709
+        -color_primaries: bt709
+        -color_trc: bt709
+
+test_oapv_color12:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: p99_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.3
+    - assert: less
+      value: max_error_10bit
+      less: 6
+  description: oapv color tests of different pix-fmts
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_oapv_color
+  sources:
+  #- ../sourceimages/chip-chart-1080-noicc.png.yml
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_12.dpx
+  suffix: .mov
+  wedges:
+    oapv_yuv444p12:
+      -c:v: liboapv
+      -oapv-params: "profile=444-12"
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+      -pix_fmt: yuv444p12le
+      -preset: placebo
+      -qp: 1
+
+
+    prores_videotoolbox_yuv444p12le_xq:
+        << : *base_args2
+        -c:v: prores_videotoolbox
+        -profile:v: xq
+        # prores_videotoolbox takes p416le, which zscale cannot output; FFmpeg repacks yuv444p16le.
+        -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv444p16le"'
+        -pix_fmt: yuv444p12le
+
+
+
+---
+reports:
+  description: This is testing oapv color encoding.
+  directory: oapv-color-encode
+  name: oapv-color-tests
+  templatefile: colorweb.html.jinja
+  title: oapv color tests

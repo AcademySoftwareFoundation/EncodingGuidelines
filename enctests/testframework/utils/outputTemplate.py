@@ -98,10 +98,10 @@ def processTemplate(config, timeline):
             merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
             merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
             if 'psnr_y' in merge_test_info:
-              merge_test_info['psnr_y_harmonic_mean'] = float(merge_test_info.get('psnr_y', {}).get('harmonic_mean', -1))
+              merge_test_info['psnr_y_harmonic_mean'] = float((merge_test_info.get('psnr_y') or {}).get('harmonic_mean', -1))
             if "cambi" in merge_test_info:
-              merge_test_info['cambi_harmonic_mean'] = float(merge_test_info.get('cambi', {}).get('harmonic_mean', -1))
-              merge_test_info['float_ms_ssim_harmonic_mean'] = float(merge_test_info.get('float_ms_ssim', {}).get('harmonic_mean', -1))
+              merge_test_info['cambi_harmonic_mean'] = float((merge_test_info.get('cambi') or {}).get('harmonic_mean', -1))
+              merge_test_info['float_ms_ssim_harmonic_mean'] = float((merge_test_info.get('float_ms_ssim') or {}).get('harmonic_mean', -1))
           else:
             merge_test_info['psnr_y'] = {}
             merge_test_info['psnr_cr'] = {}
@@ -234,7 +234,7 @@ def outputSummaryIndex(output_dir):
                     if 'vmaf' in merge_test_info and merge_test_info.get('vmaf') is not None:
                         sub_test_data['vmaf_harmonic_mean'] = merge_test_info.get('vmaf', {}).get('harmonic_mean', -1)
                     if 'psnr_y' in merge_test_info and merge_test_info.get('psnr_y') is not None:
-                        sub_test_data['psnr_y_harmonic_mean'] = merge_test_info.get('psnr_y', {}).get('harmonic_mean', -1)
+                        sub_test_data['psnr_y_harmonic_mean'] = (merge_test_info.get('psnr_y') or {}).get('harmonic_mean', -1)
                     
                     results['sub_tests'].append(sub_test_data)
 

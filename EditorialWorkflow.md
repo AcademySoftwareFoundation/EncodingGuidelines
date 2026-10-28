@@ -31,10 +31,10 @@ E.g.
 
 ```console
 ffmpeg -r 24 -start_number <STARTFRAME> -i inputfile.%04d.png \
-        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -frames:v 100 -c:v libx264 -preset slow -pix_fmt yuv420p \
-        -timecode  <STARTFRAMETIMECODE>
-        outputfile.mp4
+        -timecode <STARTFRAMETIMECODE> \
+        -movflags +write_colr outputfile.mp4
 ```
 
 There are three approaches for what to use for the timecode:
@@ -183,8 +183,7 @@ A simple example of this is to convert all your clips to raw DNxHD files, e.g.:
 
 ```console
 ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
-    -sws_flags lanczos -pix_fmt yuv422p \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name=$clip  -timecode 01:00:20:00 \

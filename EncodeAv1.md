@@ -46,20 +46,35 @@ name: test_libsvtav1
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 7
+     - assert: less
+       value: mean_error_10bit
+       less: 1.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 tv
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 \
-        -pix_fmt yuv420p10le -crf 18 -preset 5  -svtav1-params tune=0 -sws_flags lanczos \
-        -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+        -pix_fmt yuv420p10le -crf 18 -preset 5  -svtav1-params tune=0 \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
-        -y outputfile.mp4
+        -movflags +write_colr -y outputfile.mp4
 ```
 
 | --- | --- |
@@ -107,10 +122,10 @@ Example encoding:
 
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1  \
-        -pix_fmt yuv420p10le -cpu-used 6 -crf 20 -row-mt 1 -sws_flags lanczos \
-        -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+        -pix_fmt yuv420p10le -cpu-used 6 -crf 20 -row-mt 1 \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
-        -y outputfile.mp4
+        -movflags +write_colr -y outputfile.mp4
 ```
 
 | --- | --- |

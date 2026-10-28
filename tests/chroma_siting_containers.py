@@ -11,7 +11,8 @@ Part 2: encodes sourceimages/chroma_siting_chart.png to DNxHR HQX 4:2:2 in MXF (
 commands from EncodeDNXHD.md and with zscale, and compares the MXF ColorSiting label with where the chroma
 actually is in the decoded DNxHR (measured as in tests/chroma_siting.py).
 
-    rez-env encodingguidelines_env ffmpeg-9.0 -- python tests/chroma_siting_containers.py
+Uses the ffmpeg/ffprobe on the PATH (or FFMPEG_BIN / FFPROBE_BIN), and writes containers-<label>.md:
+    python tests/chroma_siting_containers.py --label 9.0
 """
 import argparse
 import os

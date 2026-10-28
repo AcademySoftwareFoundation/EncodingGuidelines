@@ -32,20 +32,31 @@ name: test_vp8
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 0.2
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 \
     -c:v libvpx -crf 20 -b:v 200M -pix_fmt yuv420p \
     -qmin 0 -qmax 50 -quality good -speed 4 \
-   -sws_flags spline+accurate_rnd+full_chroma_int \
-   -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+   -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
      -y outputfile.webm
 ```

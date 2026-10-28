@@ -2,12 +2,21 @@
 test_vp9_color_444:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: p99_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
   description: vp9 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -20,7 +29,7 @@ test_vp9_color_444:
       -c:v: libvpx-vp9
       -quality: good
       -crf: 0
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -30,18 +39,21 @@ test_vp9_color_444:
 
     vp9-gbrp:
       << : *basevp9
+      -vf: '"zscale=range=full"'
       -pix_fmt: gbrp
       -color_range: pc
       -colorspace: rgb
 
     vp9-gbrp10le:
       << : *basevp9
+      -vf: '"zscale=range=full"'
       -pix_fmt: gbrp10le
       -color_range: pc
       -colorspace: rgb
 
     vp9-gbrp12le:
       << : *basevp9
+      -vf: '"zscale=range=full"'
       -pix_fmt: gbrp12le
       -color_range: pc
       -colorspace: rgb
@@ -59,13 +71,21 @@ test_vp9_color_444:
 test_vp9_color_420:
   app: ffmpeg
   comparisontest:
-  - testtype: idiff
-    compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: max_error
-      less: 0.00195
+      value: p99_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
   description: vp9 color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -78,7 +98,7 @@ test_vp9_color_420:
       -c:v: libvpx-vp9
       -quality: good
       -crf: 0
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

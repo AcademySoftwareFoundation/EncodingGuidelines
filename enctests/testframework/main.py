@@ -27,6 +27,7 @@ from .utils import (
 )
 
 from .utils.outputTemplate import processTemplate, outputSummaryIndex
+from . import ycbcr_compare
 
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
@@ -925,6 +926,58 @@ def yuvdiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
 
+def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the first frame of the encode with the ideal conversion of the source, reading the decoded
+    planes without any FFmpeg colour conversion. See ycbcr_compare.py.
+
+    comparisontestinfo options:
+    matrix -- the Y'CbCr matrix the encode should use: bt709 (default), bt2020nc, bt470bg or smpte170m,
+              or auto to use the stream's own tag (checks that the pixels match their tags).
+    range  -- the range it should use: tv (default) or pc, or auto to use the stream's tag.
+    margin -- pixels either side of an edge left out of max_error (default 8).
+    The source is the reference, unless its .yml has "reference: <RGB image>" (for JPEG or video sources).
+
+    Results (errors are in code values at the decoded bit depth, Y'/Cb/Cr or G/B/R planes):
+    max_error, max_error_y/cb/cr (or _g/_b/_r) -- the worst error away from edges.
+    mean_error, mean_error_y/cb/cr               -- the mean error away from edges.
+    max_error_all                                -- the worst error anywhere, including edges.
+    p99_error, p99_error_y/cb/cr                 -- the 99th percentile error away from edges; use for lossy codecs.
+    white_y, white_y_ideal, white_error          -- mean Y' of the brightest areas, what it should be, and the difference.
+    compared_fraction                            -- the fraction of the frame away from edges (0: compared everywhere).
+    max_error_10bit, mean_error_10bit, white_error_10bit -- the same in 10-bit code values, for comparing bit depths.
+    color_range, color_space, color_primaries, color_transfer, chroma_location -- from ffprobe.
+    colr                                         -- the MOV/MP4 colr atom, e.g. "nclx 1/13/1 tv", or "none".
+    """
+    if not distorted.exists():
+        result = {'success': False, 'testresult': "No movie generated."}
+    else:
+        source_meta = get_source_metadata_dict(source_clip)
+        source_file = source_path.as_posix()
+        if source_meta.get('reference'):
+            # A source that is not RGB (JPEG, video) names the RGB image it should decode to.
+            source_file = Path(source_path.parent, source_meta['reference']).as_posix()
+        elif source_meta.get('images'):
+            source_file = source_file % int(source_meta.get('in'))
+        try:
+            result = ycbcr_compare.compare(
+                source_file, distorted,
+                ffmpeg=FFMPEG_BIN,
+                ffprobe=FFMPEG_BIN.replace("ffmpeg", "ffprobe"),
+                matrix=comparisontestinfo.get("matrix", "bt709"),
+                range_=comparisontestinfo.get("range", "tv"),
+                margin=comparisontestinfo.get("margin", 8),
+                image_path=Path(distorted.parent, distorted.stem + f".{OUTPUT_STILL_IMAGE_FORMAT}"),
+                diff_path=Path(distorted.parent, distorted.stem + f"-x20diff.{OUTPUT_STILL_IMAGE_FORMAT}"),
+                log=log_file_object)
+        except Exception as e:
+            # Report it against this test rather than stopping the whole run.
+            result = {'success': False, 'testresult': f"Unable to compare: {e!r}"}
+    print(f"ycbcr result: {result}", file=log_file_object)
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(result)
+
+
 def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Check the results of the tests against known values (or value ranges).
@@ -1110,6 +1163,8 @@ def run_tests(args, config_data, timeline):
                             psnr_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "vmaf3":
                             vmaf3_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        elif testtype == "ycbcr":
+                            ycbcr_test(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "idiff":
                             idiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "yuvdiff":

@@ -1,0 +1,175 @@
+---
+# Sources that are already Y'CbCr: a JPEG (full range BT.601) and BT.709 limited range video, tagged and untagged.
+# The recommended commands leave the input to the frame's tags, so they should be correct for all of them; see
+# EncodeZscale.md "Sources without tags". Each source's .yml names the RGB image it should decode to.
+# Encodes are lossless H.264 4:4:4, so the errors come from the conversion (and, for the JPEG, its compression).
+test_input_tagged:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+    # Limits (10-bit code values): just above the result on FFmpeg 6.0 and 9.0, 2026-10-28.
+    # The video source is exact; the JPEG is 0.5 mean, 3 p99 (JPEG compression and chroma upsampling).
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: p99_error_10bit
+      less: 4
+    - assert: less
+      value: mean_error_10bit
+      less: 0.75
+  description: The recommended zscale command, from a JPEG and from tagged BT.709 video.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_input_tagged
+  sources:
+  - ../sourceimages/chip-chart-1080-420.jpg.yml
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale:
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+
+---
+test_input_tagged_scale:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+    # Limits (10-bit code values): just above the result on FFmpeg 6.0 and 9.0, 2026-10-28. The input matrix is
+    # right (the forced bt709 version is 19 mean); white is libswscale's usual +3.5 from the JPEG.
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 4]
+    - assert: less
+      value: p99_error_10bit
+      less: 6
+    - assert: less
+      value: mean_error_10bit
+      less: 1.5
+  description: The libswscale fallback (scale=out_color_matrix=bt709:out_range=tv), from a JPEG and from tagged BT.709 video.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_input_tagged_scale
+  sources:
+  - ../sourceimages/chip-chart-1080-420.jpg.yml
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709.mkv.yml
+  suffix: .mkv
+  wedges:
+    scale:
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+      -colorspace: bt709
+
+---
+test_input_untagged:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+    # Should be exact. Without matrixin, zscale stops with "no path between colorspaces" (no movie).
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error_10bit
+      less: 1
+  description: Untagged BT.709 video, with the input described.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_input_untagged
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-untagged.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale_described:
+      -vf: '"zscale=matrixin=709:rangein=limited:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+    scale_described:
+      -vf: '"scale=in_color_matrix=bt709:in_range=tv:out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+      -colorspace: bt709
+
+---
+test_input_forced_jpeg:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+    # Pins the reported failure: forcing in_color_matrix=bt709 decodes the BT.601 JPEG with the wrong matrix
+    # (a visible hue and saturation shift). 19 mean on 6.0 and 9.0, 2026-10-28; a correct result is under 1.5.
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: mean_error_10bit
+      between: [15, 25]
+  description: The old recipe, which forced the input to BT.709, from a JPEG. Expected to be wrong.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_input_forced_jpeg
+  sources:
+  - ../sourceimages/chip-chart-1080-420.jpg.yml
+  suffix: .mkv
+  wedges:
+    scale_forced:
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+      -colorspace: bt709
+      -color_range: tv
+
+---
+test_input_forced_video:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+    # Pins the failure: forcing the input to full range reads limited range video as full, so white is about 70
+    # code values low (-68 to -70 on 6.0 and 9.0, 2026-10-28).
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-75, -60]
+  description: The old recipes, which forced the input to full range, from tagged BT.709 video. Expected to be wrong.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_input_forced_video
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale_rangein_full:
+      -vf: '"zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+    scale_in_range_full:
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+      -colorspace: bt709
+
+---
+reports:
+  description: Commands applied to sources that are already Y'CbCr (JPEG, tagged and untagged video), compared with
+    the RGB each source should decode to. The forced-input tests pin the old recipes' known errors.
+  directory: input-tags-encode
+  name: input-tags-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg input tag tests

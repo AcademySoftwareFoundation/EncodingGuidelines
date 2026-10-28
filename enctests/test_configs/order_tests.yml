@@ -1,0 +1,58 @@
+test_order:
+  app: ffmpeg
+  comparisontest:
+  - testtype: identity
+  - testtype: assertresults
+    tests:
+    - assert: equal
+      value: Y
+      equal: 1
+    - assert: equal
+      value: U
+      equal: 1
+    - assert: equal
+      value: V
+      equal: 1
+  description: Parameter Ordering tests
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+    -y "{outfile}"
+  name: test_sws
+  sources:
+  - ../sourceimages/zoneplate_rgb16.png
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_10.dpx
+  - ../sourceimages/bellnuitHDTestchart.tif
+  #- ../sourceimages/SonyF35.StillLife_srgb.png
+  # - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
+  #- /Users/sam/Downloads/mm-test-close3/hcw_mmtest_close.0105.png
+  suffix: .y4m
+  wedges:
+    default:  &base_args2
+      -loglevel: verbose
+      -strict: -1
+      -pix_fmt: yuv444p10le
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+
+
+    colorattrs:
+      << : *base_args2
+      -color_primaries: bt709
+      -color_range: tv
+      -color_trc: bt709
+      -colorspace: bt709
+
+    colorattrsonly:
+      -strict: -1
+      -pix_fmt: yuv444p10le
+      -color_primaries: bt709
+      -color_trc: bt709
+      -colorspace: bt709
+
+
+---
+reports:
+  description: Testing the ordering of the input parameters.
+  directory: ordering
+  name: ordering-tests
+  templatefile: basicimagecompare.html.jinja
+  title: Parameter Ordering Tests

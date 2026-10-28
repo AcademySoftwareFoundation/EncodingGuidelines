@@ -38,25 +38,39 @@ name: test_proresks
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags lanczos+accurate_rnd+full_chroma_int {newpngfile}"
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 3
+     - assert: less
+       value: mean_error_10bit
+       less: 0.1
+     - assert: less
+       value: max_error_10bit
+       less: 20
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
 -->
 ```console
 ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
-         -pix_fmt yuv422p10le -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+         -pix_fmt yuv422p10le -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -frames:v 100 -c:v prores_ks -profile:v 3 -vendor apl0 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         -y outputfile.mov
 ```
 
 {: .note }
-> The `scale` filter in these examples carries a small systematic bias when converting to limited range, in both the RGB to YCbCr and the YCbCr to RGB directions. Where your build has zimg, `zscale=matrixin=709:matrix=709:rangein=full:range=limited` is the more accurate choice for the encode, and `zscale=matrixin=709:matrix=709:rangein=limited:range=full` for reading a ProRes file back to a still. See [RGB to YCbCr Conversion](ColorPreservation.html#zscale-filter). The examples on this page still use `scale` because they are tied to the automated comparison results below, which were generated with it.
+> These examples convert with `zscale`, which needs FFmpeg built with zimg; see [zscale Conversion](EncodeZscale.html). The `scale` filter (libswscale) puts white at 943 instead of 940 when converting a 10-bit or higher source to limited range. ProRes takes its colour tags from the frames, so `setparams` sets the primaries and transfer function; the `-color_*` flags are harmless but not needed. The automated comparison results further down this page were made with `scale`.
 
 Options that can be used include:
 
@@ -119,25 +133,43 @@ name: test_prores_videotoolbox
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be  -frames:v 1 -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 -sws_flags spline+accurate_rnd+full_chroma_int {newpngfile}"
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 2
+     - assert: less
+       value: mean_error_10bit
+       less: 0.1
+     - assert: less
+       value: max_error_10bit
+       less: 5
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png  \
          -pix_fmt yuv422p10le \
-        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le,setparams=color_primaries=bt709:color_trc=bt709" \
         -frames:v 100 -c:v prores_videotoolbox -profile:v 3  \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 outputfile.mov
 
 ```
 
 NOTE, it does not appear to allow `-color_trc iec61966-2-1` (sRGB) -- so this needs more testing.
+
+The `format=yuv422p10le` after `zscale` matters: `prores_videotoolbox` takes a semi-planar format (`p210le`) that
+`zscale` cannot output, so without it FFmpeg leaves `zscale`'s output as RGB and converts with libswscale instead
+(white at 943). With it, libswscale only repacks the planes. Tested on FFmpeg 6.0 and 9.0.
 
 ### Prores_videotoolbox profile
 

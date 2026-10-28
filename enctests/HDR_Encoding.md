@@ -76,29 +76,42 @@ name: test_pq10
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 14
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: smpte2084
 -->
 ```console
 ffmpeg  \
     -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
     -c:v libx265   \
-    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
  -tag:v hvc1  \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
-    -pix_fmt yuv444p10le  -tag:v hvc1 \
+    -pix_fmt yuv444p10le \
     sparks2_pq1000_444.mov
 ```
 
 | :---- | :---- |
 | \-c:v libx265 | Use the h265 encoder |
 | \-tag:v hvc1 | Tag the file to enable playback with QuickTime Player |
-| \-vf "scale=in\_range=full:in\_color\_matrix=bt2020:out\_range=tv:out\_color\_matrix=bt2020" | Make sure we treat the input and output color primaries to be bt2020. Without this, FFmpeg can assume the source is different, and apply a primary that shouldn't be there. |
+| \-vf "zscale=matrix=2020\_ncl:range=limited:filter=lanczos,setparams=color\_primaries=bt2020:color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [zscale Conversion](../EncodeZscale.html). |
 | \-color\_range tv | Set the source range to be tv range. |
 | \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
 | \-color\_primaries bt2020 | Use the bt2020 color primaries |
@@ -118,19 +131,32 @@ name: test_pq1000
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 9
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: smpte2084
 -->
 ```console
 ffmpeg  \
     -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
     -c:v libx265   \
-    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
     -pix_fmt yuv422p10le  -tag:v hvc1  \
     -x265-params "hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
@@ -257,21 +283,34 @@ name: test_hlg
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 14
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: arib-std-b67
 -->
 ```console
 ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
     -c:v libx265  -tag:v hvc1  \
-    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=arib-std-b67" \
     -color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc  \
     -pix_fmt yuv444p10le   \
-    -x265-params "colorprim=bt2020:colormatrix=bt2020nc:transfer=bt2020-10:atc-sei=18:pic-struct=0" \
+    -x265-params "atc-sei=18:pic-struct=0" \
     sparks2_hlg_444.mov
 ```
 
@@ -292,13 +331,14 @@ ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 
 #### X265 parameters
 
-We explicitly define the X265 parameters (see [x265](https://x265.readthedocs.io/en/2.5/cli.html) )
+The colour tags come from the filter chain (`zscale` and `setparams`), which FFmpeg passes to libx265, so they are
+not repeated in `-x265-params` (see [x265](https://x265.readthedocs.io/en/2.5/cli.html)). Setting them there as
+well can disagree with the filter chain: with `transfer=bt2020-10`, FFmpeg 6.0 wrote `bt2020-10` into the stream
+and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#hdr-and--x265-params).
 
 | --- | --- |
-| colorprim=bt2020 | Set the colorprimaries to bt2020 |
-| transfer=arib-std-b67 | Set the ETOF to HLG (aka. arib-std-bt67 ) |
-| colormatrix=bt2020nc | UTagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| range=limited | Set the source range to be tv range. |
+| atc-sei=18 | Adds an alternative transfer characteristics SEI saying the transfer is HLG (ARIB STD-B67). |
+| pic-struct=0 | Picture structure SEI: progressive frames. |
 
 ### cICP/mDCV/cLLI in PNG
 

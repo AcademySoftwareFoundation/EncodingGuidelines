@@ -37,18 +37,33 @@ name: test_dnxhd_mov
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 2
+     - assert: less
+       value: mean_error_10bit
+       less: 0.1
+     - assert: less
+       value: max_error_10bit
+       less: 6
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -pix_fmt yuv422p10le -profile:v dnxhr_hqx \
-    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
 ```
 
@@ -75,16 +90,30 @@ name: test_dnxhd_rgb
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the result of this command, FFmpeg 6.0 and 9.0, 2026-10-26.
    - testtype: assertresults
      tests:
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 1
+     - assert: less
+       value: mean_error_10bit
+       less: 0.1
+     - assert: less
+       value: max_error_10bit
+       less: 4
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
      -c:v dnxhd -profile:v dnxhr_444 \
+     -vf "setparams=color_primaries=bt709:color_trc=bt709" \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace rgb \
      -pix_fmt gbrp10le outputfile.mov
 ```
@@ -105,18 +134,33 @@ name: test_dnxhd_op1a_mxf
 sources: 
 - sourceimages/smptehdbars_8.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_8_yuv422p.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 0.1
+     - assert: less
+       value: max_error_10bit
+       less: 16
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -frames:v 100 \
     -pix_fmt yuv422p \
-    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -135,18 +179,33 @@ name: test_dnxhd_opatom_mxf
 sources: 
 - sourceimages/smptehdbars_8.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_8_yuv422p.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 0.1
+     - assert: less
+       value: max_error_10bit
+       less: 16
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
     -pix_fmt yuv422p \
-    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name="MY CLIP"  -timecode 01:00:20:00 \
@@ -170,17 +229,32 @@ name: test_dnxhd_profile
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_10_yuv422p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 3
+     - assert: less
+       value: mean_error_10bit
+       less: 0.3
+     - assert: less
+       value: max_error_10bit
+       less: 14
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: bt709
 -->
 ```console
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
-    -vf "zscale=rangein=full:matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
     -pix_fmt yuv422p10 -c:v dnxhd -b:v 175M \
      -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace bt709 \
       outputfile.mov

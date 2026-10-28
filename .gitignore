@@ -168,3 +168,15 @@ enctests/sources/hdr_sources/sparks2_htj2k_0.01
 enctests/sources/hdr_sources/sparks2_htj2k_0.025
 enctests/tauricho@162.241.252.176/encode.taurich.org/results
 enctests/sources/enc_sources/chimera_wind_srgb_tif_12
+conan/build-osx-static
+conan/build-osx
+conan/build-windows
+
+# Measurement script output (tests/*.py --rez): per-version results and encodes. The summary.md files are kept.
+tests/colour-flags-matrix/*/
+tests/chroma-siting/*/
+!tests/chroma-siting/images/
+tests/chroma-siting/images/*.png
+tests/rgb2ycbcr-accuracy/*/
+# The RP 219 references are stored as FFV1; generate.sh can recreate these.
+sourceimages/rp219/*.y4m

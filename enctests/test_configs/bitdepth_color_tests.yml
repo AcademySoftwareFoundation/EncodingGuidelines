@@ -3,13 +3,21 @@
 test_bitdepth:
   app: ffmpeg
   comparisontest:
-  - extracttemplate: ffmpeg -y -i {newfile} -compression_level 10 -pred mixed -pix_fmt rgb48be -frames:v 1 {newpngfile}
-    testtype: idiff
+  - testtype: ycbcr
+    matrix: auto
+    range: auto
+    # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
     - assert: less
-      value: mean_error
-      less: 0.002
+      value: p99_error_10bit
+      less: 6
+    - assert: less
+      value: mean_error_10bit
+      less: 0.1
   description: Bitdepth tests.
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -23,7 +31,7 @@ test_bitdepth:
       -preset: placebo
       -qp: 0
       -pix_fmt: yuv420p
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -33,7 +41,7 @@ test_bitdepth:
       -preset: placebo
       -qp: 0
       -pix_fmt: yuv420p10le
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -44,7 +52,7 @@ test_bitdepth:
       -crf: 0
       -pix_fmt: yuv420p
       -colorspace: bt709
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_range: tv
       -color_primaries: bt709
       -color_range: tv
@@ -55,7 +63,7 @@ test_bitdepth:
       -crf: 0
       -pix_fmt: yuv420p10le
       -colorspace: bt709
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_range: tv
       -color_primaries: bt709
       -color_range: tv
@@ -66,7 +74,7 @@ test_bitdepth:
       -crf: 0
       -pix_fmt: yuv420p12le
       -colorspace: bt709
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

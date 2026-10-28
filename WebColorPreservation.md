@@ -101,18 +101,30 @@ name: test_movgama
 sources: 
 - sourceimages/smptehdbars_8.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/smptehdbars_8_yuv420p.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 10
+     - assert: less
+       value: mean_error_10bit
+       less: 0.6
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: unknown
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
     -pix_fmt yuv420p \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=unknown" \
     -c:v libx264 -t 5 -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 \
     -color_trc unknown -movflags write_colr+write_gama -mov_gamma 2.4 outputfile.mov
 ```

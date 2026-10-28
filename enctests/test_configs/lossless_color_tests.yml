@@ -1,0 +1,210 @@
+---
+# Lossless encodes: with zscale doing the conversion, the decoded frame should match the ideal conversion of the
+# source exactly (0 code values), so any error comes from the conversion or the codec, not compression.
+# 4:4:4 and RGB are checked with both test charts. Subsampled (4:2:2/4:2:0) encodes are checked with the RP 219
+# bars only: the chip chart has areas where the chroma changes slowly, where a subsampled sample is not exactly
+# the point value, so even a lossless encode is up to 8 (10-bit) code values out there.
+test_lossless_444:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error_10bit
+      less: 1
+    - assert: between
+      value: white_error_10bit
+      between: [-0.5, 0.5]
+  description: Lossless Y'CbCr 4:4:4 encodes, converted with zscale.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_lossless_444
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  suffix: .mkv
+  wedges:
+    x264_yuv444p10: &base444
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv444p10le"'
+      -pix_fmt: yuv444p10le
+      -c:v: libx264
+      -qp: 0
+    x265_yuv444p10:
+      << : *base444
+      -c:v: libx265
+      -x265-params: lossless=1
+    aom_yuv444p10:
+      # libaom-av1 is not in every build (e.g. our FFmpeg 6.0).
+      << : *base444
+      -c:v: libaom-av1
+      -aom-params: lossless=1
+      -cpu-used: 8
+      -row-mt: 1
+    vp9_yuv444p10:
+      << : *base444
+      -c:v: libvpx-vp9
+      -lossless: 1
+      -cpu-used: 8
+      -row-mt: 1
+    ffv1_yuv444p10:
+      << : *base444
+      -c:v: ffv1
+      -level: 3
+    ffvhuff_yuv444p10:
+      << : *base444
+      -c:v: ffvhuff
+    jpeg2000_yuv444p10:
+      # FFmpeg 6.0's jpeg2000 decodes this as yuv444p16le with the wrong values; fine in 9.0.
+      << : *base444
+      -c:v: jpeg2000
+      -pred: 1
+    openjpeg_yuv444p10:
+      << : *base444
+      -c:v: libopenjpeg
+
+---
+test_lossless_rgb:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error_10bit
+      less: 1
+  description: Lossless RGB encodes. zscale does the bit depth change (rounding); libswscale truncates.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_lossless_rgb
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  suffix: .mkv
+  wedges:
+    x264rgb_bgr24:
+      -vf: '"zscale=range=full,format=gbrp"'
+      -pix_fmt: bgr24
+      -c:v: libx264rgb
+      -qp: 0
+    x265_gbrp10: &basergb10
+      -vf: '"zscale=range=full,format=gbrp10le"'
+      -pix_fmt: gbrp10le
+      -c:v: libx265
+      -x265-params: lossless=1
+    vp9_gbrp10:
+      << : *basergb10
+      -c:v: libvpx-vp9
+      -lossless: 1
+      -cpu-used: 8
+      -row-mt: 1
+    ffv1_gbrp16:
+      -vf: '"zscale=range=full,format=gbrp16le"'
+      -pix_fmt: gbrp16le
+      -c:v: ffv1
+      -level: 3
+    jpeg2000_rgb48:
+      -vf: '"zscale=range=full,format=gbrp16le"'
+      -pix_fmt: rgb48le
+      -c:v: jpeg2000
+      -pred: 1
+
+---
+test_lossless_subsampled:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error_10bit
+      less: 1
+    - assert: between
+      value: white_error_10bit
+      between: [-0.5, 0.5]
+  description: Lossless 4:2:2 and 4:2:0 encodes, converted with zscale.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_lossless_subsampled
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  suffix: .mkv
+  wedges:
+    x264_yuv420p10: &base420
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv420p10le"'
+      -pix_fmt: yuv420p10le
+      -c:v: libx264
+      -qp: 0
+    x265_yuv420p10:
+      << : *base420
+      -c:v: libx265
+      -x265-params: lossless=1
+    svtav1_yuv420p10:
+      # Needs an AV1 decoder to check (not in our FFmpeg 6.0).
+      << : *base420
+      -c:v: libsvtav1
+      -svtav1-params: lossless=1
+    vp9_yuv420p10:
+      << : *base420
+      -c:v: libvpx-vp9
+      -lossless: 1
+      -cpu-used: 8
+      -row-mt: 1
+    ffv1_yuv422p10:
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le"'
+      -pix_fmt: yuv422p10le
+      -c:v: ffv1
+      -level: 3
+    utvideo_yuv422p: &base422_8
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p"'
+      -pix_fmt: yuv422p
+      -c:v: utvideo
+    magicyuv_yuv422p:
+      << : *base422_8
+      -c:v: magicyuv
+
+---
+test_lossless_mov:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error_10bit
+      less: 1
+  description: Uncompressed and lossless QuickTime codecs.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_lossless_mov
+  sources:
+  - ../sourceimages/smptehdbars_10.dpx.yml
+  suffix: .mov
+  wedges:
+    v210_yuv422p10:
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le"'
+      -pix_fmt: yuv422p10le
+      -c:v: v210
+    r210_gbrp10:
+      -vf: '"zscale=range=full,format=gbrp10le"'
+      -pix_fmt: gbrp10le
+      -c:v: r210
+    png_rgb48:
+      -vf: '"zscale=range=full,format=gbrp16le"'
+      -pix_fmt: rgb48be
+      -c:v: png
+    qtrle_rgb24:
+      -vf: '"zscale=range=full,format=gbrp"'
+      -pix_fmt: rgb24
+      -c:v: qtrle
+
+---
+reports:
+  description: Lossless encodes converted with zscale, compared with the ideal conversion of the source. Every
+    result should be exact (0 code values).
+  directory: lossless-color-encode
+  name: lossless-color-tests
+  templatefile: colorweb.html.jinja
+  title: Ffmpeg lossless encoding color tests

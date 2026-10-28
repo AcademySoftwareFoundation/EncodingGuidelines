@@ -50,7 +50,7 @@ Where a command line uses `scale` for a matrix or range conversion:
 the `zscale` equivalent is:
 
 ```console
--vf "zscale=matrixin=709:matrix=709:rangein=full:range=limited"
+-vf "zscale=matrixin=709:matrix=709:range=limited"
 ```
 
 `zscale` requires an FFmpeg built with `--enable-libzimg`. The Docker builds in this repository enable it, and the Conan build now enables it by default.
@@ -127,7 +127,7 @@ E.g.
 Zscale does produce a slightly different result, using the flags:
 
 ```console
--vf "zscale=m=709:min=709:rangein=full:range=limited:filter=lanczos"
+-vf "zscale=m=709:min=709:range=limited:filter=lanczos"
 ```
 
 On chroma resampling quality the two are close, and which looks better depends on the material. On the range conversion itself they are not close: `scale` places white at 943 rather than 940 at 10-bit, where `zscale` is exact. See [Colour range accuracy](#colour-range-accuracy-prefer-zscale-for-range-conversions) above. For that reason we now recommend `zscale` here.
@@ -147,7 +147,7 @@ E.g.
 Zscale does produce a slightly improved if occasionally softer result, using the flags:
 
 ```console
--vf "zscale=m=709:min=709:rangein=full:range=limited:filter=lanczos"
+-vf "zscale=m=709:min=709:range=limited:filter=lanczos"
 ```
 
 As with 4:2:2, the chroma resampling is a close call and the range conversion is not — `zscale` is exact where `scale` is systematically bright. We recommend `zscale` for this conversion.

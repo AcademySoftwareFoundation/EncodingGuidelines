@@ -39,23 +39,37 @@ Example encoding:
 <!---
 name: test_h264
 sources: 
-- sourceimages/chromatest_1080.png.yml
+- sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/chromatest_1080-yuv420p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 0.5
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 tv
 -->
 ```console
 ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 \
         -pix_fmt yuv420p10le -crf 18 -preset slow \
-        -sws_flags spline+accurate_rnd+full_chroma_int \
-        -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-        -movflags faststart -y outputfile.mp4
+        -movflags +faststart+write_colr -y outputfile.mp4
 ```
 
 | Flag | Description |
@@ -65,7 +79,8 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
 | **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ) |
 | **-qscale:v 9** | Generic quality scale flag: [https://www.ffmpeg.org/ffmpeg.html#toc-Main-options](https://www.ffmpeg.org/ffmpeg.html#toc-Main-options). This is typically used for fixed-quality encoding in some codecs, but CRF is preferred for H.264. |
 | **-tune film** | See below. |
-| **-movflags faststart** | This re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+| **-movflags +faststart+write_colr** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. `write_colr` writes the colour tags into the MP4 `colr` atom as well as the video stream. |
+| **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
 
 ### Tune Parameter
 

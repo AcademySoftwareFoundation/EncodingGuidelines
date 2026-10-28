@@ -1,0 +1,9 @@
+images: false
+path: chip-chart-1080-yuv444p10-bt709.mkv
+# Lossless FFV1, BT.709 limited range 4:4:4 10-bit, converted from chip-chart-1080-16bit-noicc.png with zscale, tagged BT.709
+reference: chip-chart-1080-16bit-noicc.png
+width: 1920
+height: 1080
+in: 0
+duration: 1
+rate: 25.0
