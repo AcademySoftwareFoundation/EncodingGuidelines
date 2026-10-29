@@ -17,7 +17,7 @@ It does lower the compression efficiency a little, but eliminates any concern th
 | [HEVC/H265](EncodeHevc.html) | libx265 | 8 10 12 | rgb rgb-10 rgb-12 | All browsers |
 | [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | rgb rgb-10 rgb-12 | All browsers |
 | [VP9](EncodeVP9.html) | libvpx-vp9 | 8 10 12 | rgb rgb-10 rgb-12 | All Browsers |
-| [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 | no |
+| [Mjpeg](EncodeMJPEG.html) | mjpeg | 8 | yuv-4:2:2 yuv-4:4:4 (no RGB, see below) | no |
 | [DNxHD](EncodeDNXHD.html) | dnxhd | 8 10 | rgb | no |
 | [HTJ2K](EncodeHTJ2K.html) |  | 8 -> 16 | rgb | no |
 
@@ -35,11 +35,9 @@ Has no support in web browsers, but there is limited support in players such as 
 
 ## mjpeg RGB Encoding
 
-For more details see: [Mjpeg](EncodeMJPEG.html). This is an 8-bit only encode.
-
-```console
- -c:v mjpeg -color_primaries bt709 -color_range pc -color_trc bt709 -colorspace rgb -pix_fmt rgb24 -q:v 2 -vf "scale=in_range=full:out_range=full"
-```
+FFmpeg's `mjpeg` encoder cannot store RGB. Asking for `-pix_fmt rgb24` gives a file in full range BT.601
+Y'CbCr 4:4:4 (`yuvj444p`), tagged as such, whatever `-colorspace` says (FFmpeg 6.1.6 and 9.0.2). It decodes back
+to RGB correctly, but it is not an RGB encode, and it is 8-bit only. For details see: [Mjpeg](EncodeMJPEG.html).
 
 ## VP9 RGB Encoding
 
@@ -97,4 +95,4 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 For more details see:
 
 * [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
-* [Encoding Guide](Encoding.html#range)
+* [TV vs. full range](Quickstart.html#tvfull)

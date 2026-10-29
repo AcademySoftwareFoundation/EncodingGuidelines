@@ -115,7 +115,7 @@ You will also need to match the pix_fmt setting with the oapv-params.
 ```
 ffmpeg -start_number 2500 -i "INPUT.%05d.dpx" -frames:v 200 -c:v liboapv -qp 20 \
      -preset fast -pix_fmt yuv444p12le -oapv-params "profile=444-12" -sws_flags spline+accurate_rnd+full_chroma_int \
-     -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+     -vf "scale=out_color_matrix=bt709:out_range=tv" \
      -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y "OUTPUT.mov"
 ```
 -->

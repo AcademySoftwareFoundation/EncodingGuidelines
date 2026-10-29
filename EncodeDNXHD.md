@@ -114,7 +114,7 @@ comparisontest:
 ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
      -c:v dnxhd -profile:v dnxhr_444 \
      -vf "setparams=color_primaries=bt709:color_trc=bt709" \
-     -color_primaries bt709 -color_range tv -color_trc bt709 -colorspace rgb \
+     -color_primaries bt709 -color_range pc -color_trc bt709 -colorspace rgb \
      -pix_fmt gbrp10le outputfile.mov
 ```
 

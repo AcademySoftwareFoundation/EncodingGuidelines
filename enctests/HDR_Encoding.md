@@ -22,7 +22,7 @@ There are a lot of competing standards for [HDR](https://www.lightillusion.com/w
 2. [HDR10](https://en.wikipedia.org/wiki/HDR10)/PQ10 which uses the [PQ EOTF](https://en.wikipedia.org/wiki/Perceptual_quantizer).
 
 {:.note }  
-For VFX/Animation review we are recommending using the PQ10 standard (essentially HDR10 without the master-display/max-cll parameters). We would recommend mastering to a known max luminance such as 1000 nit, and configuring OCIO to match that value, rather than relying on the monitor to apply a tonemap, at least for internal review. This also gives you a fair degree of flexibility in terms of which codecs you can use (essentially most 10+bit codecs should work), since you can use the [PQ10 Encoding](#pq10-ffmpeg-encoding) approach.
+For VFX/Animation review we are recommending using the PQ10 standard (essentially HDR10 without the master-display/max-cll parameters). We would recommend mastering to a known max luminance such as 1000 nit, and configuring OCIO to match that value, rather than relying on the monitor to apply a tonemap, at least for internal review. This also gives you a fair degree of flexibility in terms of which codecs you can use (essentially most 10+bit codecs should work), since you can use the [PQ10 Encoding](#pq10-ffmpeg-h265-encoding) approach.
 
 ## HDR10
 
@@ -159,9 +159,13 @@ ffmpeg  \
     -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
     -pix_fmt yuv422p10le  -tag:v hvc1  \
-    -x265-params "hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
+    -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
     sparks2_pq1000_422.mov
 ```
+
+x265's `hdr-opt=1` (HDR10 optimisation) is left out: x265 only applies it to 10-bit 4:2:0 with BT.2020
+primaries and matrix and PQ transfer, and otherwise disables it with a "Recommended Settings for HDR10-opt"
+error. Add it for 10-bit 4:2:0 HDR10 deliveries.
 
 The HDR metadata parameters really is what separates HDR10 from PQ10. The parameters below are:
 

@@ -68,7 +68,7 @@ This is converting from a ACEScg image sequence to a HDR PQ quicktime.
 
 ```console
 ffmpeg -y -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%04d.exr -c:v libx265 -pix_fmt yuv422p10le -threads 0 -vf "ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc -tag:v hvc1  \
-    -x265-params "hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" OUTPUTFILE.mov
+    -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" OUTPUTFILE.mov
 ```
 
 ## Converting an HDR movie back to ACEScg EXRs
@@ -78,7 +78,7 @@ To demonstrate converting from an HDR movie back to ACEScg, we first create a hi
 To test converting from an HDR movie, we are going to create an HDR movie first:
 
 ```console
-ffmpeg -y -framerate 24 -start_number 6100 -i <INPUTFILE>.%05d.exr -c:v libx265 -pix_fmt yuv444p12le -vf "ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc -tag:v hvc1      -x265-params "lossless=1:hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" sparks_lossless_h265.mov
+ffmpeg -y -framerate 24 -start_number 6100 -i <INPUTFILE>.%05d.exr -c:v libx265 -pix_fmt yuv444p12le -vf "ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc -tag:v hvc1      -x265-params "lossless=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" sparks_lossless_h265.mov
 ```
 
 Note this is both 12-bit 444 and lossless, to make the comparison a little easier to rule out any encoding artifacts.
@@ -194,7 +194,7 @@ If you are already manually building ffmpeg, you can enable OCIO support by addi
 
 This does require opencolorio to be installed on the system, and be found by pkg-config.
 
-If not, you may want to refer to the docker container build files in the [docker](docker) directory. In particular the [rocky-ffmpeg-8.1](docker/rocky-ffmpeg-8.1) directory. There is also a conan recipe in the [conan](conan/README.md) directory that can be used to build ffmpeg with OCIO support on macOS, linux and windows.
+If not, you may want to refer to the docker container build files in the [docker](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/docker) directory. In particular the [rocky-ffmpeg-8.1](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/docker/rocky-ffmpeg-8.1) directory. There is also a conan recipe in the [conan](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/conan) directory that can be used to build ffmpeg with OCIO support on macOS, linux and windows.
 
 We do also want to flag a patch that didnt make it into the ffmpeg 8.1 release - <https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/21799>. This reworks how the OCIO filter negotiates pixel formats with the filters around it. On the 8.1 release the format parameter is applied too late in negotiation, so downstream filters such as `zscale` can be handed the wrong pixel format, and chains that put a resize *before* the OCIO filter fail to resolve formats at all:
 

@@ -76,7 +76,7 @@ test_dnxhd_rgb:
       -profile:v: dnxhr_444
       -vf: setparams=color_primaries=bt709:color_trc=bt709
       -color_primaries: bt709
-      -color_range: tv
+      -color_range: pc
       -color_trc: bt709
       -colorspace: rgb
       -pix_fmt: gbrp10le
@@ -809,7 +809,7 @@ test_vp9_rgb:
   encoding_template: 'ffmpeg {input_args} -i {source} -frames:v {duration} -y {encoding_args}
     -y {outfile} '
   suffix: .mp4
-  description: Test from ../RGBEncoding.md line 71
+  description: Test from ../RGBEncoding.md line 69
   app: ffmpeg
   wedges:
     wedge0:
@@ -1047,7 +1047,7 @@ test_pq1000:
       -colorspace: bt2020nc
       -pix_fmt: yuv422p10le
       -tag:v: hvc1
-      -x265-params: hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400
+      -x265-params: colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400
 ---
 test_hlg:
   name: test_hlg
@@ -1077,7 +1077,7 @@ test_hlg:
       string: arib-std-b67
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../enctests/HDR_Encoding.md line 306
+  description: Test from ../enctests/HDR_Encoding.md line 310
   app: ffmpeg
   wedges:
     wedge0:

@@ -99,7 +99,7 @@ test_colorspace_yuv420p:
             -x264-params: '"keyint=15:no-deblock=1"'
             -pix_fmt: yuv420p
             -sws_flags: spline+accurate_rnd+full_chroma_int
-            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -vf: '"scale=out_color_matrix=bt709:out_range=tv"'
             -color_range: 1
             -colorspace: 1
             -color_primaries: 1
@@ -119,7 +119,7 @@ test_colorspace_yuv420p:
         slow_full_range:
             << : *base_args
             -crf: 18
-            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+            -vf: '"scale=out_color_matrix=bt709:out_range=full"'
             -color_range: 2
             -color_trc: 1
 ---
