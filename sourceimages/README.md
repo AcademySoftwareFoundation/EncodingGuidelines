@@ -17,6 +17,10 @@ Source images for tests.
 > libswscale (`scale=in_color_matrix=bt709:out_color_matrix=bt709`). They therefore include any libswscale
 > conversion error, and should not be used to validate libswscale. Use the `rp219/` references for that.
 
+`strip_png_exif.py` removes the EXIF chunk that OpenImageIO 2.4 wrote into PNGs: its TIFF header is byte-swapped,
+and FFmpeg 8.1 and later fail to decode the image (see FFmpegChanges.md). `generate.sh` and the
+`enctests/sources/*/download_media.sh` scripts run it on what they make. The pixels are not changed.
+
 ## SMPTE RP 219 reference bars (`rp219/`)
 
 These are the reference images for testing RGB to Y'CbCr conversion. The aim is a reference that does not

@@ -29,6 +29,7 @@ commands that give the right result on all of them.
 | [ProRes writes its colour tags from the frame, not the flags](#prores-colour-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
 | [`-x265-params` colour settings only tag the HEVC stream](#hdr-and--x265-params) | All | They do not change the conversion. Without `-colorspace` or a conversion filter, the pixels are BT.601 in a file tagged BT.2020. |
 | [libswscale puts limited-range white too high for high-bit-depth input](#libswscale-white-level-for-high-bit-depth-input) | All, including 9.0 | 10-bit RGB to 10-bit Y'CbCr puts 100% white at 943 instead of 940. Use `zscale`. `scale=...:flags=unstable` (8.1 and later) fixes 4:4:4 only. |
+| [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
 
 ## Recommended commands
 
@@ -259,6 +260,36 @@ ffmpeg -i hdr_pq.tif \
   checked whether players also need them in the MP4 `mdcv`/`clli` boxes.
 * Tested on 7.0, 8.0.1, 8.1 and 9.0. The 7.1 build we had crashes on any `libx265` encode, so HDR was not
   tested on 7.1.
+
+## PNGs with bad EXIF data no longer decode (8.1) {#png-exif-81}
+
+From 8.1 the PNG decoder reads the `eXIf` chunk, and if the EXIF data cannot be parsed it fails the whole frame
+instead of ignoring the metadata:
+
+```console
+[png @ 0x...] invalid TIFF header in EXIF data: Invalid data found when processing input
+[dec:png @ 0x...] Decoding error: Invalid data found when processing input
+```
+
+`ffprobe` still reports the stream normally, so the file looks fine until you decode it, and none of
+`-err_detect ignore_err`, `-ec 0` or `-max_error_rate 1` gets the frame back. The encode ends with an empty
+output. With `-loop 1` on a single image, `ffmpeg` keeps retrying and never finishes.
+
+We hit this with PNGs written by OpenImageIO 2.4 (`oiiotool` 2.4.15), which wrote a big-endian TIFF header with
+the magic number byte-swapped (`MM*\0` instead of `MM\0*`). Images written by OpenImageIO 3.1 decode correctly.
+Earlier FFmpeg versions ignored `eXIf` in PNG, so the same files decode on 8.0 and before.
+
+To repair a file, remove the EXIF block. The pixels are not changed:
+
+```console
+exiftool -overwrite_original -EXIF= image.png
+```
+
+Re-saving with a current `oiiotool` also works, but it adds `sRGB`, `gAMA` and `cHRM` chunks, which FFmpeg reads
+as colour tags.
+
+* Tested on 6.0, 7.1.5, 8.0.1 (decode), and 8.1, 9.0.2 and 9.1-dev (fail).
+* Introduced by FFmpeg commit `44af382979` ("avcodec/pngdec: support reading EXIF profiles"), first in 8.1.
 
 ## Relabelling a file
 

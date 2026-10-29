@@ -183,3 +183,6 @@ oiiotool -i StillLife.exr --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay
 # into .y4m for tools that need raw Y'CbCr. -pix_fmt is the stored format, so ffmpeg does no conversion.
 ffmpeg -y -i rp219/rp219_yuv444p10.mkv -pix_fmt yuv444p10le -strict -1 rp219/rp219_yuv444p10.y4m
 ffmpeg -y -i rp219/rp219_yuv444p12.mkv -pix_fmt yuv444p12le -strict -1 rp219/rp219_yuv444p12.y4m
+
+# OpenImageIO 2.4 wrote PNG EXIF that FFmpeg 8.1+ cannot parse, which makes the whole frame fail to decode.
+python3 strip_png_exif.py .

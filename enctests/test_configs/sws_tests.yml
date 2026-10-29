@@ -16,7 +16,7 @@ test_sws:
       value: V
       equal: 1
   description: Sws tests
-  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
+  encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args} -c:v ffv1
     -y "{outfile}"
   name: test_sws
   sources:
@@ -25,7 +25,7 @@ test_sws:
   - ../sourceimages/bellnuitHDTestchart.tif
   - ../sourceimages/SonyF35.StillLife_srgb.png
   - sources/hdr_sources/sparks_srgb/sparks_srgb.06201.png
-  suffix: .y4m
+  suffix: .mkv
   wedges:
     default:  &base_args2
       -loglevel: verbose

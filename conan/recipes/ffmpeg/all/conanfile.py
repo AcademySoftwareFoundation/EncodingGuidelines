@@ -396,7 +396,8 @@ class FFMpegConan(ConanFile):
         if self.options.get_safe("with_vulkan"):
             self.requires("vulkan-loader/1.3.243.0")
         if self.options.get_safe("with_libsvtav1"):
-            self.requires("libsvtav1/2.1.0")
+            # SVT-AV1 3.x changed its API; FFmpeg supports it from 7.1.2 (and 8.0).
+            self.requires("libsvtav1/3.1.2" if Version(self.version) >= "7.1.2" else "libsvtav1/2.1.0")
         if self.options.with_libaom:
             self.requires("libaom-av1/3.6.1")
         if self.options.get_safe("with_libdav1d"):
@@ -406,7 +407,8 @@ class FFMpegConan(ConanFile):
         if self.options.get_safe("with_whisper"):
             self.requires("whisper-cpp/1.7.6")
         if self.options.get_safe("with_openapv"):
-            self.requires("openapv/0.2.0.4")
+            # FFmpeg 9.0's encoder uses the mastering display / content light level API from 0.2.1.0.
+            self.requires("openapv/0.2.1.0" if Version(self.version) >= "9.0" else "openapv/0.2.0.4")
         if self.options.get_safe("with_opencolorio"):
             self.requires("opencolorio/2.5.1")
         if self.options.get_safe("with_libzimg"):
@@ -648,13 +650,15 @@ class FFMpegConan(ConanFile):
             opt_enable_disable("nonfree", self.options.get_safe("with_libfdk_aac") or (self.options.with_ssl and (
                 self.options.with_libx264 or self.options.with_libx265 or self.options.get_safe("postproc")))),
             opt_enable_disable("gpl", self.options.with_libx264 or self.options.with_libx265 or self.options.get_safe("postproc")),
-            opt_enable_disable("libopencolorio", self.options.get_safe("with_opencolorio")),
             opt_enable_disable("libzimg", self.options.get_safe("with_libzimg")),
         ]
 
         # Version specific options
         if Version(self.version) < "8.0":
             args.append(opt_enable_disable("postproc", self.options.get_safe("postproc")))
+        if Version(self.version) >= "8.1":
+            # The OCIO filter (and its configure option) is new in 8.1.
+            args.append(opt_enable_disable("libopencolorio", self.options.get_safe("with_opencolorio")))
 
         # Individual Component Options
         opt_append_disable_if_set(args, "everything", self.options.disable_everything)

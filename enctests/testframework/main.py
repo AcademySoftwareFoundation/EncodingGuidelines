@@ -560,12 +560,15 @@ def build_y4m(source_clip: dict, source_path: str, comparisontestinfo: dict, log
     env = os.environ
 
     y4m_pix_fmt = comparisontestinfo.get('pix_fmt', 'yuv444p16')
-    y4m_source = f"{source_path}-{y4m_pix_fmt}{framerange}{comparisontestinfo.get('ext', '.y4m')}"
+    # Stored as lossless FFV1 by default; raw .y4m of a 200 frame sequence is several GB.
+    y4m_ext = comparisontestinfo.get('ext', '.mkv')
+    y4m_codec = '-c:v ffv1 ' if y4m_ext == '.mkv' else ''
+    y4m_source = f"{source_path}-{y4m_pix_fmt}{framerange}{y4m_ext}"
     y4m_convert_cmd = '{ffmpeg_bin} {reference} {ffmpegflags} -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -y {y4m_source}'
     y4mcmd = y4m_convert_cmd.format(
-        ffmpeg_bin=FFMPEG_BIN, 
+        ffmpeg_bin=FFMPEG_BIN,
         reference=reference.replace("\\", "/"),
-        ffmpegflags=f"-strict -1 -pix_fmt {y4m_pix_fmt} ",
+        ffmpegflags=f"-strict -1 -pix_fmt {y4m_pix_fmt} {y4m_codec}",
         y4m_source=y4m_source.replace("\\", "/"))
     
     if not os.path.exists(y4m_source) or os.path.getsize(y4m_source) == 0:

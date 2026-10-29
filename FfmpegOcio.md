@@ -126,30 +126,16 @@ FFmpeg has its own implementation of libOpenEXR support, and this can lead to so
 
 ### What happens to out-of-range values if you do not clamp
 
-If a display transform emits values outside 0.0 - 1.0 and you let them through to the YCbCr conversion, they become luma values outside the legal 64-940 window (at 10-bit). It is worth knowing what happens to them, because the answer is not "the encoder deals with it".
+The `format` you give the OCIO filter decides whether out-of-range values reach the file. An integer format such as `rgb48` clamps to 0.0 - 1.0 inside the filter. A float format such as `gbrpf32le` (or leaving `format` unset with a float source) keeps them, and `zscale` then writes them into the Y'CbCr as luma outside the 64-940 range (at 10-bit). It only clips at the ends of the code range, 0 and 1023. The encoder will not clamp them either: 0 to 1023 are all valid values in a 10-bit bitstream, and the 64-940 range is a signalling convention rather than something the codec enforces.
 
-**No encoder clamps them.** Encoding a test pattern of 10-bit luma values and decoding it back:
+Grey float RGB converted to 10-bit limited range with `zscale`, then back to 16-bit RGB with `zscale` as a player would (FFmpeg 7.1 and 8.1):
 
-| Encoder | 0 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| FFV1 (lossless) | 0 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
-| libx264 `-qp 0` | 0 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
-| libx265 lossless | 0 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
-| libx264 `-crf 18` | 0 | 16 | 40 | 64 | 509 | 940 | 960 | 1000 | 1023 |
-| prores_ks 4444 | 1 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
-| prores_videotoolbox | 1 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
+| RGB in | -0.1 | -0.05 | 0.0 | 0.5 | 1.0 | 1.05 | 1.1 | 1.5 |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 10-bit Y' | 0 | 20 | 64 | 502 | 940 | 984 | 1023 | 1023 |
+| Back to 16-bit RGB | 0 | 0 | 0 | 32767 | 65535 | 65535 | 65535 | 65535 |
 
-This makes sense: 0 to 1023 are all legal values to put in a 10-bit bitstream. The 64-940 window is a signalling convention, not something the codec enforces.
-
-**The player destroys them instead.** Converting that same pattern to RGB the way a player would, interpreting it as limited range:
-
-| Luma in | 0 | 16 | 40 | 64 | 512 | 940 | 960 | 1000 | 1023 |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 16-bit RGB out | 0 | 0 | 0 | 0 | 33472 | 65472 | 65472 | 65472 | 65472 |
-
-Everything at or below 64 collapses to black, and everything at or above 940 collapses to white.
-
-So out-of-range values reach the encoded media, cost you bitrate, and are then thrown away by the first conversion to RGB. Worse, different players may handle them differently, so the same file can look different in different viewers. Clamping deliberately — by setting an integer `format` on the OCIO filter — is better than leaving it to chance downstream.
+Values below black and above white survive into the file but are clipped by the conversion back to RGB, so they are not recoverable in practice. Players that convert differently, or apps that show the raw Y'CbCr, may not treat them the same way. Unless you deliberately want to keep super-whites, set an integer `format` on the OCIO filter so the clamp happens in a known place.
 
 ## Filter order: resizing before or after the OCIO filter
 

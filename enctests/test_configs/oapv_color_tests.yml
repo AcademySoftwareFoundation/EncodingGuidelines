@@ -21,6 +21,12 @@ test_oapv_color10:
     - assert: less
       value: max_error_10bit
       less: 6
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
   description: oapv color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -34,10 +40,8 @@ test_oapv_color10:
     oapv_yuv444p10:
       -c:v: liboapv
       -oapv-params: "profile=444-10"
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
-      -color_primaries: bt709
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: tv
-      -color_trc: bt709
       -colorspace: bt709
       -pix_fmt: yuv444p10le
       -preset: placebo
@@ -45,13 +49,11 @@ test_oapv_color10:
 
     prores_ks: &base_args2
         -c:v: prores_ks
-        -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+        -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
         -profile:v: 4444xq
         -pix_fmt: yuv444p10le
         -color_range: tv
         -colorspace: bt709
-        -color_primaries: bt709
-        -color_trc: bt709
 
 test_oapv_color12:
   app: ffmpeg
@@ -74,6 +76,12 @@ test_oapv_color12:
     - assert: less
       value: max_error_10bit
       less: 6
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
   description: oapv color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -87,10 +95,8 @@ test_oapv_color12:
     oapv_yuv444p12:
       -c:v: liboapv
       -oapv-params: "profile=444-12"
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
-      -color_primaries: bt709
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: tv
-      -color_trc: bt709
       -colorspace: bt709
       -pix_fmt: yuv444p12le
       -preset: placebo
@@ -102,7 +108,7 @@ test_oapv_color12:
         -c:v: prores_videotoolbox
         -profile:v: xq
         # prores_videotoolbox takes p416le, which zscale cannot output; FFmpeg repacks yuv444p16le.
-        -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv444p16le"'
+        -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv444p16le,setparams=color_primaries=bt709:color_trc=bt709"'
         -pix_fmt: yuv444p12le
 
 

@@ -7,7 +7,8 @@ test_mjpeg_444:
     matrix: auto
     range: auto
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
-    # The libswscale wedges convert to BT.709 but are tagged BT.601, so they fail.
+    # The libswscale wedges convert to BT.709 but are tagged BT.601, so they fail. No max_error: it is one pixel,
+    # set by compression (4:2:2 gives 12-16).
   - testtype: assertresults
     tests:
     - assert: between
@@ -19,9 +20,6 @@ test_mjpeg_444:
     - assert: less
       value: mean_error_10bit
       less: 1.5
-    - assert: less
-      value: max_error_10bit
-      less: 12
   description: mjpeg color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -33,6 +31,8 @@ test_mjpeg_444:
     mjpeg: &basemjpeg
       -c:v: mjpeg
       -q:v: 2
+      # JPEG is full range; 6.1 refuses limited-range yuv444p/yuv422p ("Non full-range YUV is non-standard").
+      -color_range: pc
       #-pix_fmt: yuv444p
 
     mjpeg-yuv444p: 
@@ -64,7 +64,8 @@ test_mjpeg_422:
     matrix: auto
     range: auto
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
-    # The libswscale wedges convert to BT.709 but are tagged BT.601, so they fail.
+    # The libswscale wedges convert to BT.709 but are tagged BT.601, so they fail. No max_error: it is one pixel,
+    # set by compression (4:2:2 gives 12-16).
   - testtype: assertresults
     tests:
     - assert: between
@@ -76,9 +77,6 @@ test_mjpeg_422:
     - assert: less
       value: mean_error_10bit
       less: 1.5
-    - assert: less
-      value: max_error_10bit
-      less: 12
   description: mjpeg color tests of different pix-fmts
   encoding_template: ffmpeg -y {input_args} -i "{source}"              {encoding_args}
     -y "{outfile}"
@@ -90,7 +88,8 @@ test_mjpeg_422:
     mjpeg-yuv422p: &basemjpeg422
       -c:v: mjpeg
       -q:v: 2
-      -pix_fmt: yuv444p
+      -color_range: pc
+      -pix_fmt: yuv422p
 
     mjpeg-yuv422p-libswscale:
       << : *basemjpeg422

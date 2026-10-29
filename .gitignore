@@ -170,6 +170,7 @@ enctests/tauricho@162.241.252.176/encode.taurich.org/results
 enctests/sources/enc_sources/chimera_wind_srgb_tif_12
 conan/build-osx-static
 conan/build-osx
+conan/build-osx-*
 conan/build-windows
 
 # Measurement script output (tests/*.py --rez): per-version results and encodes. The summary.md files are kept.

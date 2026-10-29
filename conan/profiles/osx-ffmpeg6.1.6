@@ -1,0 +1,18 @@
+[settings]
+os=Macos
+compiler=apple-clang
+compiler.version=15
+arch=armv8
+build_type=Release
+compiler.libcxx=libc++
+compiler.cppstd=gnu17
+
+[options]
+# Force the stable version
+EncodingGuidelines/*:ffmpeg_version=6.1.6
+# Force all libraries in the graph to be static
+*:shared=False
+EncodingGuidelines/*:with_x265=True
+EncodingGuidelines/*:with_libaom=True
+EncodingGuidelines/*:with_zimg=True
+#libx265/*:bit_depth=12

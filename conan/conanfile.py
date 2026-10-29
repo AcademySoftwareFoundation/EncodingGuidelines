@@ -8,7 +8,7 @@ class EncodingGuidelines(ConanFile):
     generators = "VirtualRunEnv"
 
     options = {
-        "ffmpeg_version": ["6.1.1", "7.1.3", "8.0.1", "8.1", "8.1.1"],
+        "ffmpeg_version": ["6.1.1", "6.1.6", "7.1.3", "7.1.5", "8.0.1", "8.1", "8.1.1", "9.0.2"],
         "shared": [True, False],
         "with_opencolorio": [True, False],
         "with_vmaf": [True, False],
@@ -27,17 +27,18 @@ class EncodingGuidelines(ConanFile):
     }
 
     def requirements(self):
-        if self.options.ffmpeg_version in ["8.1", "8.1.1"]:
+        if self.options.ffmpeg_version in ["8.1", "8.1.1", "9.0.2"]:
             self.requires(f"ffmpeg/{self.options.ffmpeg_version}")
             self.requires("openapv/[>=0.2.0.4]")
             self.requires("openjpeg/2.5.2", run=True)
             self.requires("opencolorio/2.5.1", run=True, force=True)
-        elif self.options.ffmpeg_version == "6.1.1":
-            self.requires("ffmpeg/6.1.1")
+        elif self.options.ffmpeg_version in ["6.1.1", "6.1.6"]:
+            self.requires(f"ffmpeg/{self.options.ffmpeg_version}")
             self.requires("libx264/cci.20240224", run=True)
             self.requires("openjpeg/2.5.2", run=True)
-        elif self.options.ffmpeg_version == "7.1.3":
-            self.requires("ffmpeg/7.1.3")
+        elif self.options.ffmpeg_version in ["7.1.3", "7.1.5"]:
+            # 7.1.1 and later fix libx265 for x265 4.1 (7.1.0 crashes with it).
+            self.requires(f"ffmpeg/{self.options.ffmpeg_version}")
             self.requires("libx264/cci.20240224", run=True)
             self.requires("openjpeg/2.5.4", run=True)
         else:
@@ -86,7 +87,10 @@ class EncodingGuidelines(ConanFile):
         # Dependency-specific fixes
         self.options["dav1d"].assembly = False
         self.options["libx265"].assembly = False
+        # 8, 10 and 12-bit in one library (recipes/libx265), like Homebrew; a single-depth build makes FFmpeg
+        # silently convert other bit depths.
+        self.options["libx265"].multilib = True
         
         # Enable 8.1 specific features
-        if self.options.ffmpeg_version in ["8.1", "8.1.1"]:
+        if self.options.ffmpeg_version in ["8.1", "8.1.1", "9.0.2"]:
             ffmpeg.with_opencolorio = self.options.with_opencolorio

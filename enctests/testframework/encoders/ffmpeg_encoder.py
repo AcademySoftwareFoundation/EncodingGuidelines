@@ -24,6 +24,15 @@ VMAF_LIB_DIR = os.getenv(
     f'{os.path.dirname(__file__)}/.venv/usr/local/lib/x86_64-linux-gnu'
 )
 
+# A single still image is encoded as this many frames (the tests compare the first). x265 sometimes gives a
+# one-frame encode with B-frames a garbage dts, which the MOV muxer rejects ("Not yet implemented") or writes as
+# a file that decodes to nothing; with more frames it does not happen.
+STILL_IMAGE_FRAMES = 5
+STILL_IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.tif', '.tiff', '.dpx', '.exr'}
+
+# Seconds before an encode is killed. A looped image that fails to decode makes ffmpeg spin forever.
+ENCODE_TIMEOUT = float(os.getenv('ENCODE_TIMEOUT', 1800))
+
 FFMPEG_BIN = os.getenv(
     'FFMPEG_BIN',
     sys.platform  in ['win', 'win32'] and 'ffmpeg.exe' or 'ffmpeg'
@@ -94,7 +103,13 @@ class FFmpegEncoder(ABCTestEncoder):
                     env=env
                 )
 
-                process.wait()
+                try:
+                    process.wait(timeout=ENCODE_TIMEOUT)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+                    print(f"ERROR: {test_name} killed after {ENCODE_TIMEOUT:g} seconds")
+                    print(f"ERROR: killed after {ENCODE_TIMEOUT:g} seconds", file=log_file_object)
 
             # Store timing
             enctime = time.perf_counter() - t1
@@ -166,6 +181,12 @@ class FFmpegEncoder(ABCTestEncoder):
         encoding_args = ' '.join(encoding_args_v)
 
         duration = self.source_clip.source_range.duration.to_frames()
+        if (not source_meta.get('images') and duration == 1
+                and source_path.suffix.lower() in STILL_IMAGE_SUFFIXES):
+            # Loop the image; -t limits the input, since not every template has -frames:v {duration}.
+            rate = float(source_meta.get('rate') or 25)
+            input_args = f"-loop 1 -framerate {rate:g} -t {STILL_IMAGE_FRAMES / rate:g}"
+            duration = STILL_IMAGE_FRAMES
 
         cmd = template.format(
             ffmpeg_bin = FFMPEG_BIN,

@@ -90,3 +90,6 @@ then
 	oiiotool -v --framepadding 5 --parallel-frames --frames 21800-21999 -i chimera_dancers/Chimera_DCI4k2398p_HDR_P3PQ_@@@@@.tif --resize 1920x1080  --powc 2  -d uint16 -o chimera_dancers_srgb/chimera_dancers_srgb.#.png
 	#rm -rf chimera_fountains
 fi
+
+# OpenImageIO 2.4 wrote PNG EXIF that FFmpeg 8.1+ cannot parse, which makes the whole frame fail to decode.
+python3 ../../../sourceimages/strip_png_exif.py .
