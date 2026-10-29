@@ -82,6 +82,8 @@ test_sws:
 
     lanczos+accurate_rnd+unstable:
       << : *base_args2
+      requires:
+        ffmpeg: ">=8.1"   # the unstable flag is new in 8.1
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=unstable+accurate_rnd+lanczos+print_info"'
     bilinear+accurate_rnd:
       << : *base_args2

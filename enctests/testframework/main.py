@@ -1145,6 +1145,9 @@ def run_tests(args, config_data, timeline):
                     'hostname': platform.node(),
                 }
                 distorted = Path(test_ref.target_url)
+                if enc_meta['results'].get('skipped'):
+                    # The build or machine lacks something the wedge needs; nothing was encoded.
+                    continue
 
                 print(f"Testing: {distorted.name}")
                 # Send all the log output of the tests to a separate log file.

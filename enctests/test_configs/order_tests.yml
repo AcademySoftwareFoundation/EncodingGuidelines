@@ -42,6 +42,9 @@ test_order:
       -colorspace: bt709
 
     colorattrsonly:
+      requires:
+        # Before 7.1 the -color_* flags only relabel, so this does not convert (FFmpegChanges.md).
+        ffmpeg: ">=7.1"
       -strict: -1
       -pix_fmt: yuv444p10le
       -color_primaries: bt709

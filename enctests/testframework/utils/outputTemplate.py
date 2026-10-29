@@ -119,6 +119,8 @@ def processTemplate(config, timeline):
           # We merge the arguments into the dictionary too, as well as merge it into a single string, to make the graphing simpler.
           args=[]
           for k,v in test_info.metadata['aswf_enctests']['encode_arguments'].items():
+            if k == 'requires':
+              continue
             args.extend([k,str(v)])
             merge_test_info[k] = v 
           merge_test_info['encode_arguments'] = " ".join(args)
@@ -208,6 +210,7 @@ def outputSummaryIndex(output_dir):
                            'relativeurl': str(htmlreport.relative_to(output_dir)),
                            'error_tests': 0,
                            'success_tests': 0,
+                           'skipped_tests': 0,
                            'test_start': timeline.metadata.get("test_start", "unknown"),
                            'platform': timeline.metadata.get("platform", path.parent.parent.name),
                            'applicationVersion': timeline.metadata.get("applicationVersion", path.parent.parent.parent.name),
@@ -219,7 +222,9 @@ def outputSummaryIndex(output_dir):
                     if ref_name == "DEFAULT_MEDIA":
                        continue
                     merge_test_info = test_info.metadata['aswf_enctests']['results']
-                    if merge_test_info.get('success', True):
+                    if merge_test_info.get('skipped'):
+                       results['skipped_tests'] += 1
+                    elif merge_test_info.get('success', True):
                        results['success_tests'] += 1
                     else:
                        results['error_tests'] += 1
@@ -228,6 +233,7 @@ def outputSummaryIndex(output_dir):
                     sub_test_data = {
                         'name': f"{ref_name} ({trackitem.name})",
                         'success': merge_test_info.get('success', True),
+                        'skipped': merge_test_info.get('skipped', False),
                         'encode_time': merge_test_info.get('encode_time', -1),
                         'filesize': merge_test_info.get('filesize', -1)
                     }

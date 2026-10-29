@@ -12,6 +12,7 @@ import fileseq
 import opentimelineio as otio
 
 from .base import ABCTestEncoder
+from ..capabilities import FFmpegCapabilities, implied_requires, merge_requires
 from ..utils import (
     create_media_reference,
     get_test_metadata_dict,
@@ -38,6 +39,9 @@ FFMPEG_BIN = os.getenv(
     sys.platform  in ['win', 'win32'] and 'ffmpeg.exe' or 'ffmpeg'
 )
 
+# Shared by all tests in a run, so each ffmpeg query (version, encoder list, hardware trial) happens once.
+CAPABILITIES = FFmpegCapabilities(FFMPEG_BIN)
+
 class FFmpegEncoder(ABCTestEncoder):
     def __init__(
             self,
@@ -60,10 +64,34 @@ class FFmpegEncoder(ABCTestEncoder):
             test_name = f"{self.test_config.get('name')}-{wedge_name}"
             out_file, testbasename = self.get_output_filename(test_name)
 
-            # Remove it, so if the new run fails to create anything 
+            # Remove it, so if the new run fails to create anything
             # we are not accidentally using the old one.
             if out_file.exists():
                 out_file.unlink()
+
+            unmet = CAPABILITIES.unmet(merge_requires(
+                self.test_config.get('requires'), wedge.get('requires'), implied_requires(wedge)))
+            if unmet:
+                print(f"Skipping Wedge: {test_name}, needs {'; '.join(unmet)}")
+                mr = create_media_reference(out_file, self.source_clip)
+                test_meta = get_test_metadata_dict(mr)
+                test_meta['test_config_path'] = str(self.test_config.get('test_config_path'))
+                test_meta['wedge_name'] = wedge_name
+                test_meta['test_prefix'] = self.test_config.get('name')
+                test_meta['encode_arguments'] = wedge
+                test_meta['description'] = self.test_config.get('description')
+                test_meta['outputfile'] = str(out_file)
+                test_meta['testbasename'] = testbasename
+                test_meta['command'] = ''
+                test_meta.setdefault('results', {}).update({
+                    'skipped': True,
+                    'testresult': f"Skipped: needs {'; '.join(unmet)}",
+                    'completed_utc': datetime.now(timezone.utc).isoformat(),
+                    'encode_time': 0,
+                    'filesize': -1,
+                })
+                results.update({test_name: mr})
+                continue
 
             cmd = self.prep_encoding_command(wedge, out_file)
 
@@ -174,6 +202,8 @@ class FFmpegEncoder(ABCTestEncoder):
 
         encoding_args_v = []
         for key, value in wedge.items():
+            if key == 'requires':
+                continue
             if value == '':
                 encoding_args_v.append(key)
             else:

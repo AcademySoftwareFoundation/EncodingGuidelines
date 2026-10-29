@@ -145,6 +145,9 @@ test_lossless_subsampled:
       << : *base420
       -c:v: libsvtav1
       -svtav1-params: lossless=1
+      requires:
+        # SVT-AV1 lossless needs SVT-AV1 3.x, which FFmpeg supports from 7.1.2 (6.1 ignores lossless=1).
+        ffmpeg: ">=7.1.2"
     vp9_yuv420p10:
       << : *base420
       -c:v: libvpx-vp9

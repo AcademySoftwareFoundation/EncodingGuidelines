@@ -23,6 +23,7 @@
 <TH> Platform/App version</TH>
 <TH>Success</TH>
 <TH>Fail</TH>
+<TH>Skipped</TH>
 <TH>Started</TH>
 <TH>Duration</TH>
 </TR>
@@ -34,6 +35,7 @@
 <TD>{{report.platform}} {{report.applicationVersion}}
 <TD align=right>{{report.success_tests}}</TD>
 <TD align=right>{{report.error_tests}}</TD>
+<TD align=right>{{report.skipped_tests|default(0)}}</TD>
 <TD >{{report.test_start}}</TD>
 <TD align=right>{{"%.2f"|format(report.test_duration) }}</TD>
 

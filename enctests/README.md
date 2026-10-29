@@ -205,6 +205,42 @@ The encode also gets a viewable PNG (converted in numpy) and an `-x20diff.png` e
 `assertresults` checks results from the earlier tests with `less`, `greater`, `between` (two values in a list),
 `equal` or `stringmatch` (with `string:`).
 
+#### Requirements: skipping tests the build or machine cannot run
+
+A wedge whose `-c:v` encoder is not in the FFmpeg build is skipped, not failed. So is a hardware encoder
+(`*_nvenc`, `*_videotoolbox`, `*_qsv`, `*_vaapi`, ...) that is built in but cannot encode one test frame, for
+example `hevc_nvenc` without an NVIDIA GPU. Anything else a test needs goes in a `requires:` block, either on the
+whole test or on one wedge (a wedge's requirements add to the test's):
+
+```yaml
+test_example:
+  requires:
+    filters: [zscale]
+  wedges:
+    lanczos+unstable:
+      requires:
+        ffmpeg: ">=8.1"           # a string, or a list that must all hold
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv:flags=unstable+lanczos"'
+```
+
+| Key | Needs |
+| :--- | :--- |
+| `ffmpeg` | A version range: `>=`, `>`, `<=`, `<`, `==`, `!=`, e.g. `[">=7.1", "<9.0"]`. `==9.0` matches any 9.0.x |
+| `encoders`, `decoders`, `filters`, `hwaccels` | Names listed by `ffmpeg -encoders`, `-decoders`, `-filters`, `-hwaccels` |
+| `hardware` | Encoders that must encode a test frame |
+| `platform` | `sys.platform` values, e.g. `darwin`, `linux`, `win32` |
+
+Git builds print no release number (`ffmpeg version N-124257-g73262c9136`). They are placed after the newest
+release whose libavutil version they include, shown as e.g. `8.1+dev`: newer than any 8.1.x, older than 9.0.
+For a feature that is only in development builds, use e.g. `>=9.0+dev`. The libavutil version of each release
+is listed in `testframework/capabilities.py`; add new releases there.
+
+A skipped wedge is not encoded or compared. Its result says what was missing, e.g.
+`Skipped: needs encoder liboapv`, and the report index counts it under Skipped.
+
+An encode that runs longer than `ENCODE_TIMEOUT` seconds (environment variable, default 1800) is stopped and
+fails.
+
 ### Run the tests
 
 To run the default tests, simply run the app like below
