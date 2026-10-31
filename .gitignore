@@ -181,3 +181,7 @@ tests/chroma-siting/images/*.png
 tests/rgb2ycbcr-accuracy/*/
 # The RP 219 references are stored as FFV1; generate.sh can recreate these.
 sourceimages/rp219/*.y4m
+
+# Made by sourceimages/generate.sh, not committed.
+sourceimages/SonyF35.StillLife.exr
+sourceimages/SonyF35.StillLife_srgb.png
