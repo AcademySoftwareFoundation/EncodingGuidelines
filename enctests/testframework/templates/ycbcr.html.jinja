@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+{#- Report for the ycbcr comparison (ycbcr_compare.py). All errors are in 10-bit code values. -#}
+{%- macro status(r) -%}
+  {%- if r.skipped -%}skipped{%- elif r.known_issue -%}known{%- elif r.unexpected_pass -%}unexpected
+  {%- elif r.success is not defined or r.success -%}pass{%- else -%}fail{%- endif -%}
+{%- endmacro -%}
+{%- macro num(v, digits=2) -%}{%- if v is number -%}{{ "%.*f" | format(digits, v) }}{%- else -%}&ndash;{%- endif -%}{%- endmacro -%}
+{#- Mean signed error against the ideal level, one line per plane. The scale fits the largest error, at least +-2. -#}
+{%- macro level_plot(r) -%}
+  {%- set levels = r.error_by_level or {} -%}
+  {%- set ns = namespace(top=2) -%}
+  {%- for name, points in levels.items() -%}{%- for p in points -%}
+    {%- if p[1] | abs > ns.top -%}{%- set ns.top = [p[1] | abs, 64] | min -%}{%- endif -%}
+  {%- endfor -%}{%- endfor -%}
+  {%- set top = ns.top | round(0, 'ceil') -%}
+  {%- set w, h, pad = 380, 150, 28 -%}
+  <svg class="plot" viewBox="0 0 {{ w }} {{ h }}" role="img" aria-label="Mean error against level">
+    <rect x="{{ pad }}" y="4" width="{{ w - pad - 16 }}" height="{{ h - 24 }}" class="frame"/>
+    {%- for v in [top, top / 2, 0, -top / 2, -top] %}
+    {%- set y = 4 + (h - 24) * (top - v) / (2 * top) %}
+    <line x1="{{ pad }}" x2="{{ w - 16 }}" y1="{{ y }}" y2="{{ y }}" class="{{ 'zero' if v == 0 else 'grid' }}"/>
+    <text x="{{ pad - 4 }}" y="{{ y + 3 }}" text-anchor="end">{{ "%+g" | format(v) if v else "0" }}</text>
+    {%- endfor %}
+    {%- for v in [0, 256, 512, 768, 1023] %}
+    {%- set x = pad + (w - pad - 16) * v / 1023 %}
+    <text x="{{ x }}" y="{{ h - 8 }}" text-anchor="middle">{{ v }}</text>
+    {%- endfor %}
+    {%- for name, points in levels.items() if points %}
+    <polyline class="line {{ name }}" points="
+      {%- for p in points %}{{ '%.1f' | format(pad + (w - pad - 16) * p[0] / 1023) }},{{ '%.1f' | format(4 + (h - 24) * (top - ([[p[1], top] | min, -top] | max)) / (2 * top)) }} {% endfor %}"/>
+    {%- endfor %}
+  </svg>
+{%- endmacro -%}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ config.title }}</title>
+  <style>
+    :root { --bg: #fff; --fg: #1d1f23; --muted: #646a73; --line: #d8dbe0; --panel: #f5f6f8;
+            --pass: #1e7b3a; --fail: #b3261e; --known: #8a5a00; --unexpected: #6b3fb5; --skipped: #646a73;
+            --y: #1d1f23; --cb: #2b6cd6; --cr: #d0342c; --link: #1a5fb4; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #17181b; --fg: #e6e7ea; --muted: #9aa0a8; --line: #33363c; --panel: #202226;
+              --pass: #5cc27a; --fail: #ff7b72; --known: #e5b54a; --unexpected: #b794f6; --skipped: #9aa0a8;
+              --y: #e6e7ea; --cb: #6ea8ff; --cr: #ff7b72; --link: #9ecbff; }
+    }
+    body { background: var(--bg); color: var(--fg); font: 14px/1.45 system-ui, sans-serif; margin: 0 auto;
+           max-width: 1500px; padding: 16px; }
+    h1 { font-size: 1.6em; margin: 0 0 .3em; } h2 { margin: 1.6em 0 .4em; } h3 { margin: 0 0 .3em; font-size: 1.05em; }
+    p, .muted { color: var(--muted); }
+    code { font: 12px ui-monospace, monospace; }
+    a, a:visited { color: var(--link); }
+    a:hover { text-decoration-thickness: 2px; }
+    .scroll { overflow-x: auto; }
+    table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { border-bottom: 1px solid var(--line); padding: 4px 8px; text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child, td.left { text-align: left; }
+    thead th { color: var(--muted); font-weight: 600; }
+    .badge { border-radius: 4px; color: #fff; display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 6px; }
+    .pass { background: var(--pass); } .fail { background: var(--fail); } .known { background: var(--known); }
+    .unexpected { background: var(--unexpected); } .skipped { background: var(--skipped); }
+    .bad { color: var(--fail); font-weight: 600; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin: 12px 0; padding: 12px; }
+    .card .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+    .card img.map { max-width: 100%; width: 900px; image-rendering: pixelated; border-radius: 4px; }
+    .card img.thumb { width: 160px; margin-top: 6px; border-radius: 4px; }
+    .note { margin: .3em 0; }
+    .legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin: 6px 0 12px; flex-wrap: wrap; }
+    .ramp { width: 240px; height: 12px; border-radius: 2px;
+            background: linear-gradient(to right, #1ae6ff, #0a3c66 40%, #03132e 47%, #000 50%, #2e1a01 53%, #66420a 60%, #ffff00); }
+    .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -2px; }
+    .plot { width: 380px; max-width: 100%; }
+    .plot text { fill: var(--muted); font-size: 9px; }
+    .plot .frame { fill: none; stroke: var(--line); } .plot .grid { stroke: var(--line); stroke-dasharray: 2 3; }
+    .plot .zero { stroke: var(--muted); } .plot .line { fill: none; stroke-width: 1.6; }
+    .plot .y, .plot .g { stroke: var(--y); } .plot .cb, .plot .b { stroke: var(--cb); } .plot .cr, .plot .r { stroke: var(--cr); }
+    details summary { cursor: pointer; color: var(--muted); }
+    th[title] { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+    dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 6px 0 0; font-size: 13px; max-width: 1100px; }
+    dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <h1>{{ config.title }}</h1>
+  <p>{{ config.description }}</p>
+  <p class="muted">FFmpeg {{ testinfo.ffmpeg_version }}
+    {%- if testinfo.host_config %} on {{ testinfo.host_config.os }} {{ testinfo.host_config.os_version }} {{ testinfo.host_config.processor }}{% endif %}.
+    Each encode is decoded at its own pixel format (no FFmpeg colour conversion) and compared with the ideal conversion
+    of the source. Errors are in 10-bit code values (one 8-bit code value is 4), so different bit depths compare directly.</p>
+  <details>
+    <summary>What the columns mean</summary>
+    <dl class="key">
+      <dt>Result</dt><dd>pass or fail against the config's asserts. <b>known</b>: a failure listed as a known issue for this
+        FFmpeg version. <b>unexpected</b>: a known issue that passed, so it may have been fixed. <b>skipped</b>: this build
+        cannot run it (FFmpeg version, encoder or hardware).</dd>
+      <dt>White</dt><dd>Mean Y' error over the brightest areas, signed. Compression noise averages out, so this shows a
+        white level (gain) error even when the max is dominated by noise. More than &plusmn;1.5 is shown in red.</dd>
+      <dt>Max</dt><dd>The largest error of any pixel, in the worst plane, away from edges. 1 is rounding.</dd>
+      <dt>Mean</dt><dd>The mean error, averaged over the planes, away from edges.</dd>
+      <dt>p99</dt><dd>The 99th percentile error in the worst plane: 99% of pixels are at or below it. For lossy codecs,
+        where Max is often one pixel set by compression, this shows whether the image as a whole is off.</dd>
+      <dt>Max per plane</dt><dd>Max for each plane: Y'/Cb/Cr, or G/B/R for RGB encodes.</dd>
+      <dt>Range tag</dt><dd>The stream's colour range tag: tv (limited) or pc (full).</dd>
+    </dl>
+    <p class="muted">Away from edges: more than 8 pixels from any step in the ideal image, so chroma subsampling filters and
+      siting do not count.</p>
+  </details>
+
+  {% for media_name, test in tests.items() %}
+  <h2>{{ media_name }}</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Test</th><th title="pass, fail, known issue, unexpected pass or skipped">Result</th>
+      <th title="Mean Y' error over the brightest areas (white level)">White</th>
+      <th title="Largest error of any pixel, worst plane">Max</th>
+      <th title="Mean error over all planes">Mean</th>
+      <th title="99th percentile error, worst plane: less sensitive to single noisy pixels">p99</th>
+      <th title="Max for each plane: Y'/Cb/Cr, or G/B/R">Max per plane</th><th title="Stream colour range tag">Range tag</th><th>pix_fmt</th><th class="left">Arguments</th>
+    </tr></thead>
+    <tbody>
+    {% for r in test.results %}
+    {%- set to10 = 2.0 ** (10 - (r.bits or 10)) %}
+    <tr>
+      <td><a href="#{{ r.testbasename | e }}">{{ r.name | e }}</a></td>
+      <td><span class="badge {{ status(r) }}">{{ status(r) }}</span></td>
+      <td class="{{ 'bad' if r.white_error_10bit is number and r.white_error_10bit | abs > 1.5 }}">{{ num(r.white_error_10bit) }}</td>
+      <td>{{ num(r.max_error_10bit, 1) }}</td>
+      <td>{{ num(r.mean_error_10bit) }}</td>
+      <td>{{ num(r.p99_error_10bit, 1) }}</td>
+      <td title="{{ (r.plane_names or []) | join('/') }}">{% for n in (r.plane_names or []) %}{{ num(r['max_error_' ~ n] * to10, 1) if r['max_error_' ~ n] is number else '–' }}{{ ' / ' if not loop.last }}{% endfor %}</td>
+      <td>{{ r.color_range | default('–') }}</td>
+      <td>{{ r.pix_fmt | default('–') }}</td>
+      <td class="left"><code>{{ r.encode_arguments | e }}</code></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  <div class="legend">
+    Error maps, planes left to right (Y' | Cb | Cr, or G | B | R), 10-bit code values: <span>{{ "%+g" | format(-(test.results[0].error_map_limit or 4)) }}</span><span class="ramp"></span>
+    <span>{{ "%+g" | format(test.results[0].error_map_limit or 4) }}</span> (too low / too high; dim: within one code value of the encode, i.e. rounding; grey: edges, not compared).
+    Plots: mean error against level,
+    <span class="swatch" style="background: var(--y)"></span> Y' / G
+    <span class="swatch" style="background: var(--cb)"></span> Cb / B
+    <span class="swatch" style="background: var(--cr)"></span> Cr / R.
+  </div>
+
+  {% for r in test.results %}
+  <div class="card" id="{{ r.testbasename | e }}">
+    <h3>{{ r.name | e }} <span class="badge {{ status(r) }}">{{ status(r) }}</span></h3>
+    <div class="note">{{ r.testresult | e }}
+      &middot; <a target="_blank" href="{{ r.testbasename | e }}.log">encode log</a>
+      &middot; <a target="_blank" href="{{ r.testbasename | e }}_tests.log">test log</a></div>
+    {% if r.error_by_level %}
+    <div class="row">
+      <a target="_blank" href="{{ r.testbasename | e }}-errormap.png"><img class="map" loading="lazy"
+         src="{{ r.testbasename | e }}-errormap.png" alt="Signed error of {{ (r.plane_names or []) | join(', ') }}, side by side"/></a>
+      <div>
+        {{ level_plot(r) }}
+        <div class="muted">Mean error against level (10-bit)</div>
+        <a target="_blank" href="{{ r.testbasename | e }}.png"><img class="thumb" loading="lazy" src="{{ r.testbasename | e }}.png" alt="Decoded frame"/></a>
+      </div>
+    </div>
+    {% endif %}
+    <details><summary>Command</summary><code>{{ r.command | e }}</code></details>
+  </div>
+  {% endfor %}
+  {% endfor %}
+</body>
+</html>

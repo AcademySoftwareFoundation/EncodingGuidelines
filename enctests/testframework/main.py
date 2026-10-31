@@ -28,6 +28,7 @@ from .utils import (
 
 from .utils.outputTemplate import processTemplate, outputSummaryIndex
 from . import ycbcr_compare
+from .encoders.ffmpeg_encoder import CAPABILITIES
 
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
@@ -972,6 +973,8 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
                 margin=comparisontestinfo.get("margin", 8),
                 image_path=Path(distorted.parent, distorted.stem + f".{OUTPUT_STILL_IMAGE_FORMAT}"),
                 diff_path=Path(distorted.parent, distorted.stem + f"-x20diff.{OUTPUT_STILL_IMAGE_FORMAT}"),
+                error_map_path=Path(distorted.parent, distorted.stem + f"-errormap.{OUTPUT_STILL_IMAGE_FORMAT}"),
+                error_map_limit=comparisontestinfo.get("error_map_limit", 4.0),
                 log=log_file_object)
         except Exception as e:
             # Report it against this test rather than stopping the whole run.
@@ -979,6 +982,24 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
     print(f"ycbcr result: {result}", file=log_file_object)
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
+
+
+def apply_known_issue(enc_meta, test_config):
+    """
+    Mark a result covered by a `known_issue:` block (wedge or test level, see capabilities.py). On an affected
+    version a failure becomes a known issue, and a pass an unexpected pass, so an upstream fix shows up.
+    """
+    known = enc_meta['encode_arguments'].get('known_issue') or test_config.get('known_issue')
+    if not known or not CAPABILITIES.known_issue_applies(known):
+        return
+    result = enc_meta['results']
+    note = known.get('note', 'known issue')
+    if result.get('success', True):
+        result['unexpected_pass'] = True
+        result['testresult'] = f"Unexpected pass, check whether this is fixed: {note}"
+    else:
+        result['known_issue'] = note
+        result['testresult'] = f"Known issue: {note} ({result.get('testresult', 'failed')})"
 
 
 def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
@@ -1186,6 +1207,8 @@ def run_tests(args, config_data, timeline):
                         if enc_meta['results'].get('stopProcessing', False):
                             print("Aborting further processing due to 'stopProcessing'", file=log_file_object)
                             break
+
+                apply_known_issue(enc_meta, test_config)
 
             # Update dict of references
             references.update(results)

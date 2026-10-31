@@ -200,7 +200,13 @@ Its results are in code values at the encode's bit depth:
 | `color_range`, `color_space`, `color_primaries`, `color_transfer`, `chroma_location` | The stream's tags, from `ffprobe` |
 | `colr` | The MOV/MP4 `colr` atom, e.g. `nclx 1/13/1 tv`, or `none` |
 
-The encode also gets a viewable PNG (converted in numpy) and an `-x20diff.png` error image.
+The encode also gets a viewable PNG (converted in numpy), an `-x20diff.png` error image (unsigned, for
+`colorweb.html.jinja`) and an `-errormap.png`: the signed error of each plane side by side, in 10-bit code values,
+orange/yellow too high and blue/cyan too low, full colour at `error_map_limit` (default 4). Errors within one code
+value of the encode (rounding) are dim, and edges left out of the comparison are grey. The results also hold
+`error_by_level`, the mean signed error per plane against the ideal level, which shows a gain error as a slope and
+an offset as a shift. The `ycbcr.html.jinja` report template shows both, with the white, max, mean and p99 errors
+and the range tag for each wedge.
 
 `assertresults` checks results from the earlier tests with `less`, `greater`, `between` (two values in a list),
 `equal` or `stringmatch` (with `string:`).
@@ -237,6 +243,24 @@ is listed in `testframework/capabilities.py`; add new releases there.
 
 A skipped wedge is not encoded or compared. Its result says what was missing, e.g.
 `Skipped: needs encoder liboapv`, and the report index counts it under Skipped.
+
+#### Known issues: tracking problems across FFmpeg versions
+
+A wedge that is known to fail on some versions has a `known_issue:` block, with the same `ffmpeg` and `platform`
+keys as `requires:` (default: every version), and a note:
+
+```yaml
+    libswscale_12bit:
+      -vf: '"scale=out_range=full"'
+      known_issue:
+        ffmpeg: "<8.0"
+        note: "libswscale: white 4 low (10-bit code values), fixed in 8.0 by 384fe39623"
+```
+
+On an affected version, a failure is reported as `Known issue: <note>` and counted under Known issue in the
+report index, not under Fail. A pass is reported as an unexpected pass, which usually means the issue has been
+fixed upstream: check it, then narrow or remove the block. On other versions the wedge is an ordinary test, so
+a failure there is a regression. `ycbcr_range_tests.yml` uses this to follow libswscale's range conversion.
 
 An encode that runs longer than `ENCODE_TIMEOUT` seconds (environment variable, default 1800) is stopped and
 fails.

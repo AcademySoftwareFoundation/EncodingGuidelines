@@ -21,6 +21,17 @@ Version specifiers are `>=`, `>`, `<=`, `<`, `==` and `!=`. `==9.0` matches any 
 release number (`N-124257-g73262c9136`); they are placed after the newest release whose libavutil they include,
 as `8.1+dev`, which is newer than any 8.1.x and older than 9.0. To ask for a feature that is only in development
 builds, write e.g. `>=9.0+dev`.
+
+A `known_issue:` block (test or wedge level) marks a result that is expected to fail on some versions, so the
+tests can show both that nothing has broken and when an upstream fix arrives:
+
+    known_issue:
+      ffmpeg: ">=8.0"              # the versions affected, as in requires: (default: all)
+      platform: [darwin]           # optional, as in requires:
+      note: "libswscale full range gain too high (384fe39623)"
+
+On an affected version a failure is reported as a known issue rather than a failure, and a pass as an
+unexpected pass, which usually means it has been fixed. On other versions the wedge is an ordinary test.
 """
 import re
 import subprocess
@@ -41,6 +52,9 @@ RELEASE_LIBAVUTIL = [
     ((8, 1), (60, 26)),
     ((9, 0), (61, 1)),
 ]
+
+# Wedge keys that are read by the test framework, not passed to ffmpeg.
+FRAMEWORK_KEYS = ('requires', 'known_issue')
 
 HARDWARE_SUFFIXES = ('_nvenc', '_videotoolbox', '_qsv', '_vaapi', '_amf', '_vulkan', '_mf', '_v4l2m2m', '_d3d12va')
 
@@ -169,6 +183,10 @@ class FFmpegCapabilities:
             missing.append(f'platform {" or ".join(platforms)}')
 
         return missing
+
+    def known_issue_applies(self, known_issue):
+        """Whether a `known_issue:` block covers this build and machine."""
+        return not self.unmet({k: v for k, v in known_issue.items() if k in ('ffmpeg', 'platform')})
 
 
 def wedge_encoder(wedge):

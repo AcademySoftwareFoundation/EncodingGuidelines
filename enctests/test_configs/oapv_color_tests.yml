@@ -118,5 +118,5 @@ reports:
   description: This is testing oapv color encoding.
   directory: oapv-color-encode
   name: oapv-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: oapv color tests

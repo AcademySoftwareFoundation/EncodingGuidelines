@@ -171,5 +171,5 @@ reports:
     the RGB each source should decode to. The forced-input tests pin the old recipes' known errors.
   directory: input-tags-encode
   name: input-tags-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg input tag tests

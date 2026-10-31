@@ -209,5 +209,5 @@ reports:
     result should be exact (0 code values).
   directory: lossless-color-encode
   name: lossless-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg lossless encoding color tests

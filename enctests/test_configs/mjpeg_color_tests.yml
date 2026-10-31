@@ -137,5 +137,5 @@ reports:
   description: This is testing mjpeg color encoding, make sure we know what settings do the least amount of damage.
   directory: mjpeg-color-encode
   name: mjpeg-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg mjpeg encoding guide tests

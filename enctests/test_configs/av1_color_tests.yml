@@ -58,5 +58,5 @@ reports:
   description: This is testing av1 color encoding.
   directory: av1-color-encode
   name: av1-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg AV1 encoding color tests

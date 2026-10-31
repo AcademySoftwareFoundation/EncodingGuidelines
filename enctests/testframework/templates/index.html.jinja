@@ -23,6 +23,8 @@
 <TH> Platform/App version</TH>
 <TH>Success</TH>
 <TH>Fail</TH>
+<TH>Known issue</TH>
+<TH>Unexpected pass</TH>
 <TH>Skipped</TH>
 <TH>Started</TH>
 <TH>Duration</TH>
@@ -35,6 +37,8 @@
 <TD>{{report.platform}} {{report.applicationVersion}}
 <TD align=right>{{report.success_tests}}</TD>
 <TD align=right>{{report.error_tests}}</TD>
+<TD align=right>{{report.known_issue_tests|default(0)}}</TD>
+<TD align=right>{% if report.unexpected_pass_tests %}<b>{{report.unexpected_pass_tests}}</b>{% else %}0{% endif %}</TD>
 <TD align=right>{{report.skipped_tests|default(0)}}</TD>
 <TD >{{report.test_start}}</TD>
 <TD align=right>{{"%.2f"|format(report.test_duration) }}</TD>

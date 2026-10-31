@@ -197,5 +197,5 @@ reports:
   description: Testing different codecs encoding directly to RGB rather than YCbCr. What we see is good color accuracy at the expense of file compression.
   directory: rgb-color-encode
   name: rgb-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg RGB encoding color tests.

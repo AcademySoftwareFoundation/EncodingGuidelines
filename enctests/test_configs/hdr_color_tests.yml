@@ -92,5 +92,5 @@ reports:
     title: Comparison of hdr processing.
     description: This is comparing encoding mechanisms for HDR.
     directory: hdr-color-encode
-    templatefile: colorweb.html.jinja
+    templatefile: ycbcr.html.jinja
 

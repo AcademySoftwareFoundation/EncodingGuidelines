@@ -194,8 +194,62 @@ def write_images(planes, ideal, mask, bits, kind, matrix, range_, sxsy, image_pa
     buf.write(str(diff_path))
 
 
+def diverging(err, limit, rounding=1.0):
+    """Signed error to RGB: black at 0, orange to yellow when too high, blue to cyan when too low.
+
+    Errors up to rounding are drawn dim; above it the colour brightens, to full at limit.
+    """
+    mag = np.abs(err)
+    above = np.clip((mag - rounding) / max(limit - rounding, 1e-6), 0, 1)
+    level = np.where(mag < 1e-6, 0, np.where(mag <= rounding + 1e-6, 0.18, 0.4 + 0.6 * above))
+    pos, neg = np.where(err > 0, level, 0), np.where(err < 0, level, 0)
+    r = pos + neg * 0.1
+    g = pos * (0.35 + 0.65 * pos) + neg * (0.35 + 0.65 * neg) * 0.9
+    b = neg + pos * 0.05 * (1 - pos)
+    return np.stack([r, g, b], axis=-1)
+
+
+def write_error_map(errors, masks, path, limit=4.0, rounding=1.0, pool=2):
+    """The signed error of each plane, side by side, in 10-bit code values (saturating at +-limit).
+
+    errors and masks are full resolution, one per plane. Each panel is reduced by pool, keeping the largest
+    error in each block (with its sign), so single-pixel errors still show. Edge areas left out of the
+    comparison are dark grey.
+    """
+    import OpenImageIO as oiio
+    panels = []
+    for err, mask in zip(errors, masks):
+        h, w = (err.shape[0] // pool) * pool, (err.shape[1] // pool) * pool
+        blocks = err[:h, :w].reshape(h // pool, pool, w // pool, pool).transpose(0, 2, 1, 3).reshape(h // pool, w // pool, -1)
+        pick = np.take_along_axis(blocks, np.abs(blocks).argmax(-1)[..., None], -1)[..., 0]
+        inside = mask[:h:pool, :w:pool]
+        rgb = diverging(pick, limit, rounding)
+        rgb[~inside] = 0.22
+        panels.append(rgb)
+        panels.append(np.full((rgb.shape[0], 8, 3), 1.0))  # A white gap between panels.
+    out = np.concatenate(panels[:-1], axis=1)
+    spec = oiio.ImageSpec(out.shape[1], out.shape[0], 3, oiio.UINT8)
+    buf = oiio.ImageBuf(spec)
+    buf.set_pixels(oiio.ROI(), out.astype(np.float32))
+    buf.write(str(path))
+
+
+def error_by_level(ideal_plane, err, mask, bits, bins=32):
+    """Mean signed error (10-bit code values) against the ideal level (10-bit), as [[level, error], ...]."""
+    to10 = 2.0 ** (10 - bits)
+    level, err = ideal_plane[mask] * to10, err[mask] * to10
+    if not level.size:
+        return []
+    index = np.clip((level / 1024 * bins).astype(int), 0, bins - 1)
+    count = np.bincount(index, minlength=bins)
+    total = np.bincount(index, err, minlength=bins)
+    centre = np.bincount(index, level, minlength=bins)
+    return [[round(float(centre[i] / count[i]), 1), round(float(total[i] / count[i]), 3)]
+            for i in range(bins) if count[i]]
+
+
 def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt709", range_="tv",
-            margin=8, image_path=None, diff_path=None, log=None):
+            margin=8, image_path=None, diff_path=None, error_map_path=None, error_map_limit=4.0, log=None):
     """Compare the first frame of movie with the ideal conversion of source_file. Returns a results dict."""
     info = probe(ffprobe, movie)
     if not info:
@@ -224,12 +278,17 @@ def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt70
     result = {"success": True, "testresult": "ok", "pix_fmt": info["pix_fmt"], "bits": bits,
               "source_bits": source_bits, "compared_as": kind if kind == "rgb" else f"{matrix} {RANGES[range_]}"}
     worst, worst_all, means, p99 = 0, 0, [], 0
+    signed_errors, plane_masks, by_level = [], [], {}
     for i, (name, plane, ideal_plane) in enumerate(zip(names, planes, ideal)):
         # Chroma is constant inside the masked area, so subsampling the ideal there is exact.
         step_y, step_x = (sy, sx) if i else (1, 1)
         ideal_plane = ideal_plane[::step_y, ::step_x][:plane.shape[0], :plane.shape[1]]
         m = mask[::step_y, ::step_x][:plane.shape[0], :plane.shape[1]]
-        diff = np.abs(plane - ideal_plane)
+        signed = plane - ideal_plane
+        signed_errors.append(signed * 2.0 ** (10 - bits))
+        plane_masks.append(m)
+        by_level[name] = error_by_level(ideal_plane, signed, m, bits)
+        diff = np.abs(signed)
         # A source with no flat areas (e.g. fine chroma detail) is compared everywhere; see compared_fraction.
         inside = diff[m] if m.any() else diff.ravel()
         result[f"max_error_{name}"] = int(inside.max())
@@ -265,4 +324,15 @@ def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt70
         print(json.dumps(result, indent=2), file=log)
     if image_path or diff_path:
         write_images(planes, ideal, mask, bits, kind, matrix, range_, (sx, sy), image_path, diff_path)
+    # Kept out of the log, which already has the summary numbers.
+    result["error_by_level"] = by_level
+    result["plane_names"] = names
+    if error_map_path:
+        # Chroma panels at full size, so the three line up.
+        h, w = planes[0].shape
+        full = [signed_errors[0]] + [np.repeat(np.repeat(e, sy, 0), sx, 1)[:h, :w] for e in signed_errors[1:]]
+        full_masks = [plane_masks[0]] + [np.repeat(np.repeat(m, sy, 0), sx, 1)[:h, :w] for m in plane_masks[1:]]
+        # Dim up to one code value of the encode, or one 10-bit code value for 12-bit and above.
+        write_error_map(full, full_masks, error_map_path, error_map_limit, max(1.0, 2.0 ** (10 - bits)))
+        result["error_map_limit"] = error_map_limit
     return result

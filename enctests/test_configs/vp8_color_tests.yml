@@ -57,5 +57,5 @@ reports:
   description: This is testing vp9 color encoding.
   directory: vp9-color-encode
   name: vp9-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg vp9 encoding color tests

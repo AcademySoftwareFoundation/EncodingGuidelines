@@ -144,5 +144,5 @@ reports:
   description: This is testing h265 color encoding.
   directory: hevc-color-encode
   name: hevc-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: h265 color tests

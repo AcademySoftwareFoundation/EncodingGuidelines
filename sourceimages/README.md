@@ -12,6 +12,10 @@ Source images for tests.
        libjpeg through OpenImageIO. chip-chart-1080-420-libjpeg.png is libjpeg's decode of it.
      * chip-chart-1080-yuv444p10-bt709.mkv, chip-chart-1080-yuv444p10-untagged.mkv - lossless FFV1, BT.709 limited
        range 4:4:4 10-bit, from chip-chart-1080-16bit-noicc.png with zscale; one tagged BT.709, one with no tags.
+     * chip-chart-1080-yuv444p10-bt709-full.mkv, smptehdbars_10-yuv444p10-bt709.mkv,
+       smptehdbars_10-yuv444p10-bt709-full.mkv - the same, full and limited range, for the range conversion tests
+       (`enctests/test_configs/ycbcr_range_tests.yml`). The command is in each `.yml`. All four match the ideal
+       conversion of their reference exactly.
 
 > The `*_yuv420p*`, `*_yuv422p*` comparison images made by `generate.sh` were converted to Y'CbCr and back with
 > libswscale (`scale=in_color_matrix=bt709:out_color_matrix=bt709`). They therefore include any libswscale

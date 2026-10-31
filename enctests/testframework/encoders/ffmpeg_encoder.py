@@ -12,7 +12,7 @@ import fileseq
 import opentimelineio as otio
 
 from .base import ABCTestEncoder
-from ..capabilities import FFmpegCapabilities, implied_requires, merge_requires
+from ..capabilities import FFmpegCapabilities, FRAMEWORK_KEYS, implied_requires, merge_requires
 from ..utils import (
     create_media_reference,
     get_test_metadata_dict,
@@ -202,7 +202,7 @@ class FFmpegEncoder(ABCTestEncoder):
 
         encoding_args_v = []
         for key, value in wedge.items():
-            if key == 'requires':
+            if key in FRAMEWORK_KEYS:
                 continue
             if value == '':
                 encoding_args_v.append(key)

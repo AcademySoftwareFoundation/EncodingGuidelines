@@ -84,5 +84,5 @@ reports:
   description: Testing colorbars at different bit-depths for h264 and vp9, showing the file size.
   directory: bitdepth-color-encode
   name: bitdepth-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title:  Bit-depth color comparisons. Browser support.

@@ -188,5 +188,5 @@ reports:
   description: This is testing DNxHR color encoding.
   directory: dnxhd-color-encode
   name: dnxhd-color-tests
-  templatefile: colorweb.html.jinja
+  templatefile: ycbcr.html.jinja
   title: Ffmpeg DNxHR encoding guide tests
