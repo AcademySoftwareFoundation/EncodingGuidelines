@@ -28,7 +28,10 @@ commands that give the right result on all of them.
 | [`-color_primaries` and `-color_trc` are ignored](#primaries-trc-flags-71) | 7.1 and later | The flags are silently dropped. Use `setparams` to set primaries and transfer. |
 | [ProRes writes its colour tags from the frame, not the flags](#prores-colour-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
 | [`-x265-params` colour settings only tag the HEVC stream](#hdr-and--x265-params) | All | They do not change the conversion. Without `-colorspace` or a conversion filter, the pixels are BT.601 in a file tagged BT.2020. |
+| [Some encoders only accept limited range](#limited-range-encoders-71) | 7.1 and later | FFV1, ProRes, DNxHR, HuffYUV and others: full-range frames are converted back to limited range unless you add `-color_range pc`. |
 | [libswscale puts limited-range white too high for high-bit-depth input](#libswscale-white-level-for-high-bit-depth-input) | All, including 9.0 | 10-bit RGB to 10-bit Y'CbCr puts 100% white at 943 instead of 940. Use `zscale`. `scale=...:flags=unstable` (8.1 and later) fixes 4:4:4 only. |
+| [libswscale RGB to full-range Y'CbCr is too bright](#libswscale-full-range-80) | 8.0 and later | 10-bit and 12-bit output: luma gain too high, white about 3 code values (10-bit) high. Exact up to 7.1. Use `zscale`. |
+| [libswscale Y'CbCr range conversion was 3 code values out](#libswscale-full-range-80) | 7.1 and earlier | Limited to full and full to limited at 10/12-bit. Fixed in 8.0 by the same change. |
 | [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
 
 ## Recommended commands
@@ -58,7 +61,8 @@ ffmpeg -i input.%06d.dpx \
   the only way to set them on 7.1 and later.
 * **The four `-color_*` flags** turned out to be redundant with this filter chain on every version we tested,
   because the encoder takes its tags from the frames, which `zscale` and `setparams` have already set. They do no
-  harm, and make the intent of the command explicit.
+  harm, and make the intent of the command explicit. The exception is full-range output: there `-color_range pc`
+  is needed for many encoders; see [Some encoders only accept limited range](#limited-range-encoders-71).
 
 `zscale` needs FFmpeg built with zimg (`--enable-libzimg`). Check with `ffmpeg -filters | grep zscale`. If your
 build does not have it, `scale=out_color_matrix=bt709:out_range=tv` followed by
@@ -166,6 +170,39 @@ The same applies when transcoding: a tagged source keeps its own primaries and t
 sets them, but only in the H.264 stream: the MP4 `colr` atom keeps the unspecified values, so the two disagree,
 and on 8.1 and 9.0 `ffprobe` reported the unspecified ones.
 
+## Some encoders only accept limited range (7.1) {#limited-range-encoders-71}
+
+Each encoder in FFmpeg declares the colour ranges it supports. From 7.1 `ffmpeg` passes that list into the filter
+graph, together with `-colorspace` and `-color_range` (the same change as
+[above](#colorspace-flags-71), [commit a850f80e2c](https://github.com/FFmpeg/FFmpeg/commit/a850f80e2c)). Many
+encoders declare limited range only, so if the frames reaching them are full range, `ffmpeg` inserts a libswscale
+`scale` and converts them back to limited range, without a warning. The full-range `zscale` in your filter chain is
+quietly undone.
+
+Encoders that declare limited range only include FFV1, ProRes (`prores_ks`, `prores_aw`), DNxHD/DNxHR, HuffYUV and
+FFVHuff, MagicYUV, JPEG 2000 (`jpeg2000`, `libopenjpeg`), TIFF and MPEG-2. `libx264`, `libx265`, `libsvtav1`,
+`libaom-av1`, `libvpx` and the VideoToolbox encoders accept both ranges.
+
+`-color_range pc` tells `ffmpeg` that full range is what you want, and the frames are passed through unchanged.
+Encoding 10-bit RGB bars with `zscale=matrix=709:range=full`:
+
+| Encoder | 6.1 | 7.1 and later, no `-color_range` | 7.1 and later, `-color_range pc` |
+| :--- | :--- | :--- | :--- |
+| FFV1, DNxHR, FFVHuff, MagicYUV | Full range | **Converted to limited range** | Full range |
+| ProRes (`prores_ks`) | Full range | **Converted to limited range** | Full range pixels, but see below |
+| `libx264` | Full range | Full range | Full range |
+
+* With `-color_range pc` the encoder accepts the frames, but it still can only record what its format allows.
+  ProRes has no range field, so a full-range ProRes file is not marked as such, and from 8.1 `ffprobe` (and the
+  FFmpeg decoder) reports it as limited range. Avoid full range with ProRes and DNxHR unless you control the
+  player.
+* The inserted conversion is libswscale, so for 10-bit and higher sources it also has the
+  [range conversion errors](#libswscale-full-range-80) of the version you run.
+* For limited-range output nothing changes: `-color_range tv` is redundant with `zscale=range=limited`, as in the
+  recommended commands.
+
+Tested on 6.1.6, 7.1.5 and 9.0.2, reading the pixels back at the stream's own pixel format.
+
 ## ProRes colour tags come from the frame
 
 The ProRes encoder (`prores_ks`) writes primaries, transfer and matrix into each frame header from the frame's
@@ -207,6 +244,42 @@ This has not changed in any version from 6.0 to 9.0:
 
 See [Ffmpeg Scaling Options](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) for
 more on the cause.
+
+## libswscale full-range conversions changed in 8.0 {#libswscale-full-range-80}
+
+[Commit 384fe39623](https://github.com/FFmpeg/FFmpeg/commit/384fe39623) ("swscale/range_convert: fix mpeg ranges in
+yuv range conversion for non-8-bit pixel formats", first in 8.0) changed libswscale's range conversion for 10-bit
+and higher formats. It fixed conversions between limited and full-range Y'CbCr, and broke RGB to full-range Y'CbCr,
+which had been exact.
+
+Errors against the ideal BT.709 conversion of the SMPTE bars, in 10-bit code values (white level / largest error):
+
+| Conversion | `scale`, 7.1 and earlier | `scale`, 8.0 to 9.0 | `scale=...:flags=unstable` (8.1+) | `zscale` |
+| :--- | :--- | :--- | :--- | :--- |
+| 10-bit RGB to 10-bit full-range Y'CbCr | 0 / 0 | **+2.8 / 3** | 0 / 1 | 0 / 0 |
+| 10-bit RGB to 12-bit full-range Y'CbCr | -0.75 / 0.75 | **+2.9 / 3** | -0.25 / 0.25 | 0 / 0 |
+| 10-bit limited to full-range Y'CbCr | **-3.0 / 3** | 0 / 2 | -0.2 / 2 | 0 / 1 |
+| 12-bit limited to full-range Y'CbCr | **-4.0 / 4.25** | -0.25 / 0.75 | -0.25 / 0.75 | -0.25 / 0.75 |
+| 10-bit full to limited-range Y'CbCr | **+3.0 / 3** | 0 / 1 | 0.1 / 1 | 0 / 1 |
+| 12-bit full to limited-range Y'CbCr | **+2.5 / 2.75** | -0.75 / 0.75 | -0.25 / 0.5 | 0 / 0.5 |
+
+* **RGB to full range, 8.0 and later:** the luma gain is too high. A 10-bit grey of 1019 comes out as 1022 instead
+  of 1019, 851 as 854, and the brightest values clip at 1023. The 8.1 fix for the same commit's green tint on greys
+  ([ticket 11646](https://trac.ffmpeg.org/ticket/11646)) did not change our results.
+  8-bit output is affected less: the largest error went from 1 to 2 (8-bit) code values.
+* **Y'CbCr range conversion, 7.1 and earlier:** white was 3 to 4 code values out in both directions. From 8.0 it
+  is close to `zscale`, though limited to full at 10-bit still has a mean error about twice `zscale`'s.
+* **Limited-range RGB to Y'CbCr** (the usual case) is unchanged; see
+  [above](#libswscale-white-level-for-high-bit-depth-input).
+* `flags=unstable` (libswscale's new conversion code, 8.1 and later) gets close to `zscale` in all of these. We
+  tested 4:4:4 only. On the development branch after 9.0, some format pairs (e.g. 10-bit RGB to 12-bit Y'CbCr) log
+  "No backend found for operations" and silently fall back to the old code.
+
+`zscale` gave the same results on every version, so it remains the recommendation for any range conversion.
+
+Tested on 6.1.6, 7.1.5, 8.0.1, 8.1 (git build), 9.0.2 and the development branch (N-127508). The tests that
+measure this are `color_tests.yml` and `ycbcr_range_tests.yml` in `enctests/test_configs`; they mark the
+libswscale results as known issues, so a run on a new version reports whether they have been fixed.
 
 ## HDR and `-x265-params` {#hdr-and--x265-params}
 

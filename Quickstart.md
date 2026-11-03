@@ -216,7 +216,10 @@ You can encode full range by setting the output range in the zscale filter:
 -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
 ```
 
-zscale tags the frames as full range, so the file is tagged correctly. Adding `-color_range pc` as well is harmless.
+zscale tags the frames as full range. Also add `-color_range pc`: from FFmpeg 7.1, many encoders (including FFV1,
+ProRes and DNxHR) only accept limited range, and without it `ffmpeg` silently converts the frames back to limited
+range. `libx264` and `libx265` accept full range either way. See
+[Some encoders only accept limited range](FFmpegChanges.html#limited-range-encoders-71).
 
 A full example encode would look like:
 
