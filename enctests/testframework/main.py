@@ -985,13 +985,18 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
     enc_meta['results'].update(result)
 
 
-def apply_known_issue(enc_meta, test_config):
+def apply_known_issue(enc_meta, test_config, source_name):
     """
     Mark a result covered by a `known_issue:` block (wedge or test level, see capabilities.py). On an affected
     version a failure becomes a known issue, and a pass an unexpected pass, so an upstream fix shows up.
+    The block can be a list; the first that applies to this build, machine and source is used.
     """
-    known = enc_meta['encode_arguments'].get('known_issue') or test_config.get('known_issue')
-    if not known or not CAPABILITIES.known_issue_applies(known):
+    blocks = enc_meta['encode_arguments'].get('known_issue') or test_config.get('known_issue')
+    if hasattr(blocks, 'keys'):
+        # One block; in the OTIO metadata it is an AnyDictionary, not a dict.
+        blocks = [blocks]
+    known = next((b for b in blocks or [] if CAPABILITIES.known_issue_applies(b, source_name)), None)
+    if not known:
         return
     result = enc_meta['results']
     note = known.get('note', 'known issue')
@@ -1209,7 +1214,7 @@ def run_tests(args, config_data, timeline):
                             print("Aborting further processing due to 'stopProcessing'", file=log_file_object)
                             break
 
-                apply_known_issue(enc_meta, test_config)
+                apply_known_issue(enc_meta, test_config, source_clip.name)
 
             # Update dict of references
             references.update(results)

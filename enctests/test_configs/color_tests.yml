@@ -25,6 +25,8 @@ test_rgb2yuv:
   - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
   - ../sourceimages/smptehdbars_10.dpx.yml
   suffix: .mkv
+  # Most wedges here are deliberately wrong methods, kept to show what they do. Their known_issue blocks mean a
+  # FAIL is a change: a regression, or a new version behaving differently. Numbers are from 6.1.6 to 9.1.dev.
   wedges:
     10bit_default:
       #-c:v: v410
@@ -36,31 +38,47 @@ test_rgb2yuv:
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
-    10bit_colormatrix: &base_args
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "No filter: before 7.1 the -color* flags only label the output, and libswscale converts with its default matrix: max 114 (10-bit)"
+      - ffmpeg: ">=7.1"
+        note: "No filter: the auto-inserted libswscale converts to BT.709, white +3.5 (10-bit)"
+    # The correct conversion, and the base for the others.
+    10bit_zscale: &base_args
       -loglevel: verbose
       -strict: -1
-      -vf: '"colormatrix=bt470bg:bt709"'
+      -vf: '"zscale=m=709:min=709:range=limited"'
       -pix_fmt: yuv444p10le
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
+    10bit_colormatrix:
+      << : *base_args
+      -vf: '"colormatrix=bt470bg:bt709"'
+      known_issue:
+        note: "colormatrix after the auto-inserted libswscale conversion: white +3.5, max 10 (10-bit), all versions"
     10bit_colorspace_fast:
       << : *base_args
       -vf: '"colorspace=bt709:iall=bt601-6-625:fast=1"'
+      known_issue:
+        note: "colorspace fast=1 after the auto-inserted libswscale conversion: white +3.5, max 4 (10-bit), all versions"
     10bit_colorspace:
       << : *base_args
       -vf: '"colorspace=bt709:iall=bt601-6-625:fast=0"'
+      known_issue:
+        note: "colorspace treats the source as BT.601 625 and converts its primaries and transfer too: max 81 (10-bit), all versions"
     10bit_libswscale:
       << : *base_args
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
-    10bit_zscale:
-      << : *base_args
-      -vf: '"zscale=m=709:min=709:range=limited"'
+      known_issue:
+        note: "libswscale RGB to limited range: white +3.5 (10-bit) from 10-bit and 16-bit sources, all versions"
     12bit_libswscale:
       << : *base_args
       -pix_fmt: yuv444p12le   
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      known_issue:
+        note: "libswscale RGB to limited range: white +3.5 (10-bit) from 10-bit and 16-bit sources, all versions"
     12bit_zscale:
       << : *base_args
       -pix_fmt: yuv444p12le   
@@ -70,22 +88,30 @@ test_rgb2yuv:
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p   
       -color_range: pc
+      known_issue:
+        note: "libswscale RGB to 8-bit full range: white +2, max 8 (10-bit; 2 8-bit code values), all versions"
     10bit_libswscale_full:
       << : *base_args
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p10le
       -color_range: pc
       known_issue:
-        ffmpeg: ">=8.0"
+      - ffmpeg: ">=8.0"
         note: "libswscale RGB to full range: luma gain too high, white +2.8 (10-bit), since 384fe39623"
+      - ffmpeg: "<8.0"
+        source: "chip-chart*"
+        note: "libswscale RGB to full range from 16-bit: within 1 but biased, mean 0.21, white +0.5 (10-bit); exact from the 10-bit bars"
     12bit_libswscale_full:
       << : *base_args
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
       -pix_fmt: yuv444p12le
       -color_range: pc
       known_issue:
-        ffmpeg: ">=8.0"
+      - ffmpeg: ">=8.0"
         note: "libswscale RGB to full range: luma gain too high, white +2.8 (10-bit), since 384fe39623"
+      - ffmpeg: "<8.0"
+        source: "smptehdbars*"
+        note: "libswscale 10-bit RGB to 12-bit full range: white 3 12-bit code values short (-0.75 10-bit)"
     # The same conversions with libswscale's new conversion code (flags=unstable). Without the flag, 8.1 and 9.0
     # still use the old code for integer formats; see prefer_ops_backend() in libswscale/graph.c.
     10bit_libswscale_unstable:
@@ -93,6 +119,8 @@ test_rgb2yuv:
       requires:
         ffmpeg: ">=8.1"   # the unstable flag is new in 8.1
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=unstable"'
+      known_issue:
+        note: "flags=unstable to limited range: within 1 but biased, mean 0.22 (chip chart) and 0.12 (bars) (10-bit)"
     8bit_libswscale_full_unstable:
       << : *base_args
       requires:
@@ -100,6 +128,8 @@ test_rgb2yuv:
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable"'
       -pix_fmt: yuv444p
       -color_range: pc
+      known_issue:
+        note: "flags=unstable to 8-bit full range: max 4 (10-bit; one 8-bit code value), mean 0.83 (chip chart), 0.5 (bars)"
     10bit_libswscale_full_unstable:
       << : *base_args
       requires:
@@ -107,6 +137,9 @@ test_rgb2yuv:
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable"'
       -pix_fmt: yuv444p10le
       -color_range: pc
+      known_issue:
+        source: "chip-chart*"
+        note: "flags=unstable to full range from 16-bit: within 1 but biased, mean 0.22 (10-bit); passes on the bars"
     12bit_libswscale_full_unstable:
       << : *base_args
       requires:
@@ -114,6 +147,11 @@ test_rgb2yuv:
       -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable"'
       -pix_fmt: yuv444p12le
       -color_range: pc
+      known_issue:
+      - ffmpeg: ">=9.0+dev"
+        note: "Development builds after 9.0 log 'No backend found' for gbrp10le to yuv444p12le and fall back to the old code: white +2.8"
+      - source: "chip-chart*"
+        note: "flags=unstable to 12-bit full range from 16-bit: 1 12-bit code value low on about half the chips, mean 0.12 (10-bit)"
 
 ---
 reports:

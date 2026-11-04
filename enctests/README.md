@@ -264,6 +264,22 @@ report index, not under Fail. A pass is reported as an unexpected pass, which us
 fixed upstream: check it, then narrow or remove the block. On other versions the wedge is an ordinary test, so
 a failure there is a regression. `ycbcr_range_tests.yml` uses this to follow libswscale's range conversion.
 
+A block can also name the sources it covers (`source:`, a glob or a list of them, matched against the source
+name, e.g. `chip-chart*`), and `known_issue:` can be a list of blocks, for an issue that differs between versions
+or sources. The first block that applies is used:
+
+```yaml
+      known_issue:
+      - ffmpeg: ">=8.0"
+        note: "libswscale RGB to full range: luma gain too high, white +2.8 (10-bit), since 384fe39623"
+      - ffmpeg: "<8.0"
+        source: "chip-chart*"
+        note: "within 1 but biased from the 16-bit chip chart; exact from the 10-bit bars"
+```
+
+`color_tests.yml` gives every deliberately wrong method a block like this, so that on any version only a change
+shows as a failure.
+
 An encode that runs longer than `ENCODE_TIMEOUT` seconds (environment variable, default 1800) is stopped and
 fails.
 

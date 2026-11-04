@@ -28,11 +28,14 @@ tests can show both that nothing has broken and when an upstream fix arrives:
     known_issue:
       ffmpeg: ">=8.0"              # the versions affected, as in requires: (default: all)
       platform: [darwin]           # optional, as in requires:
+      source: "chip-chart*"        # optional: only these sources (glob, or a list)
       note: "libswscale full range gain too high (384fe39623)"
 
 On an affected version a failure is reported as a known issue rather than a failure, and a pass as an
 unexpected pass, which usually means it has been fixed. On other versions the wedge is an ordinary test.
+A list of blocks covers different versions or sources with different notes; the first that applies is used.
 """
+import fnmatch
 import re
 import subprocess
 import sys
@@ -184,8 +187,14 @@ class FFmpegCapabilities:
 
         return missing
 
-    def known_issue_applies(self, known_issue):
-        """Whether a `known_issue:` block covers this build and machine."""
+    def known_issue_applies(self, known_issue, source_name=None):
+        """Whether a `known_issue:` block covers this build and machine, and the source if it names any."""
+        sources = known_issue.get('source')
+        if sources:
+            if isinstance(sources, str):
+                sources = [sources]
+            if source_name is None or not any(fnmatch.fnmatch(source_name, s) for s in sources):
+                return False
         return not self.unmet({k: v for k, v in known_issue.items() if k in ('ffmpeg', 'platform')})
 
 
