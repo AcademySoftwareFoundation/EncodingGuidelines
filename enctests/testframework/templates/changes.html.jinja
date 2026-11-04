@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+{#- What changed between FFmpeg versions (versionChanges.py). -#}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Changes between FFmpeg versions</title>
+  <style>
+{% include "_style.css.jinja" %}
+    td.better { background: color-mix(in srgb, var(--pass) 28%, transparent); }
+    td.worse { background: color-mix(in srgb, var(--fail) 30%, transparent); }
+    td.changed { background: color-mix(in srgb, var(--known) 30%, transparent); }
+    td.same { color: var(--muted); }
+    tr.first td { border-top: 1px solid var(--muted); }
+    tr:not(.first) td.wedge { color: transparent; }
+    th.dev { color: var(--unexpected); }
+    .controls { margin: 12px 0; color: var(--muted); }
+    body.worse-only tbody tr:not(.has-worse) { display: none; }
+    td.status { font-weight: 600; }
+  </style>
+</head>
+<body>
+  {% include "_nav.html.jinja" %}
+  <p><a href="index.html">&larr; Test index</a></p>
+  <h1>Changes between FFmpeg versions</h1>
+  <p>Each test's results compared across the FFmpeg versions in this folder: the result (pass or fail), the stream
+    tags, the pixel format and the measured errors. A value is flagged when it differs from the previous release:
+    <span class="badge pass">better</span> closer to the ideal, <span class="badge fail">worse</span> further from it,
+    <span class="badge known">changed</span> neither (a tag, a pixel format, a file size). Development builds are
+    compared with the newest release. This shows changes whether or not an assert covers them; each one should end up
+    explained, in FFmpegChanges.md, a <code>known_issue</code>, or a bug report.</p>
+  <p class="muted">Only runs of the same config file contents are compared, so a change to a config or its asserts is
+    not mistaken for an FFmpeg change: each section below is one version of a config.
+    {%- if legacy %} {{ legacy }} older results, from before the config was recorded, are left out; re-run them to
+    include them.{% endif %}</p>
+
+  <h2>Summary</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Platform</th><th>From</th><th>To</th><th>Better</th><th>Worse</th><th>Changed</th><th class="left">Configs</th></tr></thead>
+    <tbody>
+    {%- for p in pairs %}
+    <tr>
+      <td>{{ p.platform }}</td><td>{{ p.old }}</td><td>{{ p.new }}{% if not release(p.new) %} <span class="muted">(dev)</span>{% endif %}</td>
+      <td>{% if p.better %}<span class="badge pass">{{ p.better }}</span>{% else %}<span class="muted">0</span>{% endif %}</td>
+      <td>{% if p.worse %}<span class="badge fail">{{ p.worse }}</span>{% else %}<span class="muted">0</span>{% endif %}</td>
+      <td>{% if p.changed %}<span class="badge known">{{ p.changed }}</span>{% else %}<span class="muted">0</span>{% endif %}</td>
+      <td class="left desc">{% for c in p.configs %}<a href="#{{ c.id }}">{{ c.config }}</a>{{ ", " if not loop.last }}{% endfor %}</td>
+    </tr>
+    {%- else %}
+    <tr><td colspan="7" class="muted">No changes, or fewer than two versions of any config.</td></tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  <label class="controls"><input type="checkbox" id="worse-only"> Only show rows with something worse</label>
+
+  {%- for s in sections %}
+  <h2 id="{{ s.id }}">{{ s.config }} <span class="muted">{{ s.platform }}, config {{ s.sha }}</span></h2>
+  {%- set commits = s.commits.values() | unique | list %}
+  <p class="muted">{{ s.versions | length }} versions{% if commits %}, test framework {{ commits | join(", ") }}{% endif %}.
+    {%- if not s.rows %} No changes.{% endif %}</p>
+  {%- if s.rows %}
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Source / wedge</th><th class="left">Field</th>
+      {%- for v in s.versions %}<th class="{{ '' if release(v) else 'dev' }}" title="{{ 'Release' if release(v) else 'Development build, compared with the newest release' }}">{{ v }}</th>{% endfor %}
+    </tr></thead>
+    <tbody>
+    {%- for row in s.rows %}
+      {%- for field, line in row.fields.items() %}
+      {%- set worse = namespace(any=false) %}{% for v, c in line.items() if c.verdict == "worse" %}{% set worse.any = true %}{% endfor %}
+      <tr class="{{ 'first' if loop.first }} {{ 'has-worse' if worse.any }}">
+        <td class="wedge left">{{ row.source }} <b>{{ row.wedge }}</b></td>
+        <td class="left">{{ field }}</td>
+        {%- for v in s.versions %}
+        {%- set c = line.get(v) %}
+        {%- if c %}
+        <td class="{{ c.verdict or 'same' }}{{ ' status' if field == 'status' }}" title="{% if c.verdict %}{{ c.verdict }} vs {{ c.base }}{% endif %}{% if c.note %}: {{ c.note | e }}{% endif %}">{{ c.value | fmt }}</td>
+        {%- else %}<td></td>{% endif %}
+        {%- endfor %}
+      </tr>
+      {%- endfor %}
+    {%- endfor %}
+    </tbody>
+  </table>
+  </div>
+  {%- endif %}
+  {%- endfor %}
+  <script>
+    const box = document.getElementById("worse-only");
+    box.addEventListener("change", () => document.body.classList.toggle("worse-only", box.checked));
+  </script>
+{% include "_analytics.html.jinja" %}
+</body>
+</html>

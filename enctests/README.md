@@ -246,6 +246,28 @@ is listed in `testframework/capabilities.py`; add new releases there.
 A skipped wedge is not encoded or compared. Its result says what was missing, e.g.
 `Skipped: needs encoder liboapv`, and the report index counts it under Skipped.
 
+#### Changes between FFmpeg versions
+
+The asserts check whether a result is right. To see what a new FFmpeg version changed, including what no assert
+covers, each run also writes `changes.html` (and `changes.json`) in the results folder, linked from the index. It
+lines up every test's results across the FFmpeg versions in the folder: the result (pass, fail, known, unexpected,
+skipped), the stream tags (`color_range`, `color_space`, `color_primaries`, `color_transfer`, `chroma_location`,
+`colr`), the pixel format, and the measured errors (`white`, `max`, `mean`, `p99`, identity and VMAF/PSNR scores).
+A value that differs from the previous release is flagged as better (closer to the ideal), worse, or changed (a
+tag or pixel format). Development builds are compared with the newest release.
+
+Only runs of the same config file contents are compared: each run records a hash of its config
+(`config_sha256`) and the framework's git commit (`framework_commit`) in the `.otio`, so editing a config or its
+asserts is not mistaken for an FFmpeg change. To compare versions, run the same configs on each, e.g.
+
+```bash
+for v in 6.1.6 7.1.5 8.0.1 9.0; do
+  rez-env encodingguidelines_env ffmpeg-$v -- python -m testframework.main --test-config-dir ./test_configs --source-folder ./sources --force
+done
+```
+
+To regenerate the page from existing results: `python -m testframework.utils.versionChanges results`.
+
 #### Known issues: tracking problems across FFmpeg versions
 
 A wedge that is known to fail on some versions has a `known_issue:` block, with the same `ffmpeg` and `platform`

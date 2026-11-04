@@ -1,5 +1,6 @@
 import os
 import sys
+import hashlib
 from copy import deepcopy
 import time
 import yaml
@@ -27,6 +28,7 @@ from .utils import (
 )
 
 from .utils.outputTemplate import processTemplate, outputSummaryIndex
+from .utils.versionChanges import outputVersionChanges
 from . import ycbcr_compare
 from .encoders.ffmpeg_encoder import CAPABILITIES
 
@@ -985,6 +987,15 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
     enc_meta['results'].update(result)
 
 
+def framework_commit():
+    """The git commit of the test framework, with -dirty if it has uncommitted changes, or unknown."""
+    try:
+        return subprocess.run(["git", "describe", "--always", "--dirty"], cwd=Path(__file__).parent,
+                              capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
 def apply_known_issue(enc_meta, test_config, source_name):
     """
     Mark a result covered by a `known_issue:` block (wedge or test level, see capabilities.py). On an affected
@@ -1289,6 +1300,10 @@ def main():
         # Store results in a timeline, so we can view the results in otioview
         timeline = otio.schema.Timeline(name='aswf-encoding-tests')
         timeline.metadata['config_file'] = test_config.config_file().as_posix()
+        # So results are only compared across FFmpeg versions when they came from the same config and code
+        # (utils/versionChanges.py).
+        timeline.metadata['config_sha256'] = hashlib.sha256(test_config.config_file().read_bytes()).hexdigest()
+        timeline.metadata['framework_commit'] = framework_commit()
         timeline.metadata['test_start'] = time.strftime("%Y-%m-%d %I:%M:%S")
         t = time.time()
         # Run tests
@@ -1306,6 +1321,7 @@ def main():
     
     # Output the index of all the reports in the specified folder.
     outputSummaryIndex(args.results_folder)
+    outputVersionChanges(args.results_folder)
 
 
 if __name__== '__main__':
