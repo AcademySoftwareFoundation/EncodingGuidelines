@@ -200,13 +200,15 @@ Its results are in code values at the encode's bit depth:
 | `color_range`, `color_space`, `color_primaries`, `color_transfer`, `chroma_location` | The stream's tags, from `ffprobe` |
 | `colr` | The MOV/MP4 `colr` atom, e.g. `nclx 1/13/1 tv`, or `none` |
 
-The encode also gets a viewable PNG (converted in numpy), an `-x20diff.png` error image (unsigned, for
-`colorweb.html.jinja`) and an `-errormap.png`: the signed error of each plane side by side, in 10-bit code values,
+The encode also gets a viewable PNG (converted in numpy), an `-x20diff.png` error image (unsigned, not
+used by the report templates) and an `-errormap.png`: the signed error of each plane side by side, in 10-bit code values,
 orange/yellow too high and blue/cyan too low, full colour at `error_map_limit` (default 4). Errors within one code
 value of the encode (rounding) are dim, and edges left out of the comparison are grey. The results also hold
 `error_by_level`, the mean signed error per plane against the ideal level, which shows a gain error as a slope and
 an offset as a shift. The `ycbcr.html.jinja` report template shows both, with the white, max, mean and p99 errors
-and the range tag for each wedge.
+and the range tag for each wedge; see [Reading the Colour Test Reports](ReadingColourReports.html). Each plane's
+map is also written on its own (`-errormap-y.png`, `-errormap-cb.png`, ...), with a copy of the source
+(`<source>-source.png`), for the report's viewer, which lays an error map over the decoded frame.
 
 `assertresults` checks results from the earlier tests with `less`, `greater`, `between` (two values in a list),
 `equal` or `stringmatch` (with `string:`).
@@ -431,10 +433,20 @@ The configuration uses html [jinja](https://palletsprojects.com/p/jinja/) templa
 
 The graphs are generated using the [plotly.express](https://plotly.com/python-api-reference/generated/plotly.express.html#module-plotly.express) library. The parameters in the yaml file are fed directly into the constructor for the graph creation. Currently we are only supporting line graphs and bar graphs, but other graph types should be easy to add.
 
-Currently there are two templates:
+The main templates are:
 
 * basic.html.jinja - which assumes you want three graphs representing encode_time, file-size and encode-quality, along with showing the VMAF parameters from the OTIO file.
-* doctests.html.jinja - which assumes no graphs are needed. This is primarily using the output of the test suite for the docs (see later).
+* ycbcr.html.jinja - for the `ycbcr` comparison: the white, max, mean and p99 errors, error maps and level plots. Also
+  used for the documentation tests (see later), where it adds a Source column linking to the page and line each
+  command came from (on GitHub; set `source_url` in the report config to point elsewhere).
+* identity.html.jinja - for the `identity` comparison: the percentage of each plane identical to the reference wedge,
+  graphs if the config has any, and a thumbnail of each output that is a PNG. With no comparison it just shows the
+  outputs side by side (e.g. `swsscale_tests.yml`).
+* compare.html.jinja - an interactive viewer for comparing encodes side by side, listed after basicvmafimagecompare.html.jinja.
+* index.html.jinja - the index of every report in a results folder, grouped by FFmpeg version and platform.
+
+`ycbcr.html.jinja`, `identity.html.jinja` and `index.html.jinja` share their styles and macros (`_style.css.jinja`,
+`_macros.html.jinja`), and the site links and Google Analytics tag (`_nav.html.jinja`, `_analytics.html.jinja`).
 
 ### Graphing strings
 

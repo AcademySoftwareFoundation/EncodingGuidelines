@@ -209,29 +209,36 @@ def diverging(err, limit, rounding=1.0):
     return np.stack([r, g, b], axis=-1)
 
 
-def write_error_map(errors, masks, path, limit=4.0, rounding=1.0, pool=2):
+def write_rgb(rgb, path, fmt=None):
+    """Write an (h, w, 3) 0-1 image."""
+    import OpenImageIO as oiio
+    spec = oiio.ImageSpec(rgb.shape[1], rgb.shape[0], 3, fmt or oiio.UINT8)
+    buf = oiio.ImageBuf(spec)
+    buf.set_pixels(oiio.ROI(), rgb.astype(np.float32))
+    buf.write(str(path))
+
+
+def write_error_map(errors, masks, path, limit=4.0, rounding=1.0, pool=2, plane_paths=None):
     """The signed error of each plane, side by side, in 10-bit code values (saturating at +-limit).
 
     errors and masks are full resolution, one per plane. Each panel is reduced by pool, keeping the largest
     error in each block (with its sign), so single-pixel errors still show. Edge areas left out of the
-    comparison are dark grey.
+    comparison are dark grey. plane_paths, if given, also gets each panel as its own image (for the viewer,
+    which lays them over the decoded frame).
     """
-    import OpenImageIO as oiio
     panels = []
-    for err, mask in zip(errors, masks):
+    for i, (err, mask) in enumerate(zip(errors, masks)):
         h, w = (err.shape[0] // pool) * pool, (err.shape[1] // pool) * pool
         blocks = err[:h, :w].reshape(h // pool, pool, w // pool, pool).transpose(0, 2, 1, 3).reshape(h // pool, w // pool, -1)
         pick = np.take_along_axis(blocks, np.abs(blocks).argmax(-1)[..., None], -1)[..., 0]
         inside = mask[:h:pool, :w:pool]
         rgb = diverging(pick, limit, rounding)
         rgb[~inside] = 0.22
+        if plane_paths:
+            write_rgb(rgb, plane_paths[i])
         panels.append(rgb)
         panels.append(np.full((rgb.shape[0], 8, 3), 1.0))  # A white gap between panels.
-    out = np.concatenate(panels[:-1], axis=1)
-    spec = oiio.ImageSpec(out.shape[1], out.shape[0], 3, oiio.UINT8)
-    buf = oiio.ImageBuf(spec)
-    buf.set_pixels(oiio.ROI(), out.astype(np.float32))
-    buf.write(str(path))
+    write_rgb(np.concatenate(panels[:-1], axis=1), path)
 
 
 def error_by_level(ideal_plane, err, mask, bits, bins=32):
@@ -249,8 +256,13 @@ def error_by_level(ideal_plane, err, mask, bits, bins=32):
 
 
 def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt709", range_="tv",
-            margin=8, image_path=None, diff_path=None, error_map_path=None, error_map_limit=4.0, log=None):
-    """Compare the first frame of movie with the ideal conversion of source_file. Returns a results dict."""
+            margin=8, image_path=None, diff_path=None, error_map_path=None, error_map_limit=4.0, source_image_path=None,
+            log=None):
+    """Compare the first frame of movie with the ideal conversion of source_file. Returns a results dict.
+
+    error_map_path also gets one image per plane, <stem>-<plane>.png (e.g. -errormap-cb.png), and
+    source_image_path, if given and not already there, a viewable copy of the source.
+    """
     info = probe(ffprobe, movie)
     if not info:
         return {"success": False, "testresult": "Unable to read movie"}
@@ -333,6 +345,15 @@ def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt70
         full = [signed_errors[0]] + [np.repeat(np.repeat(e, sy, 0), sx, 1)[:h, :w] for e in signed_errors[1:]]
         full_masks = [plane_masks[0]] + [np.repeat(np.repeat(m, sy, 0), sx, 1)[:h, :w] for m in plane_masks[1:]]
         # Dim up to one code value of the encode, or one 10-bit code value for 12-bit and above.
-        write_error_map(full, full_masks, error_map_path, error_map_limit, max(1.0, 2.0 ** (10 - bits)))
+        error_map_path = Path(error_map_path)
+        plane_paths = [error_map_path.with_name(f"{error_map_path.stem}-{n}{error_map_path.suffix}") for n in names]
+        write_error_map(full, full_masks, error_map_path, error_map_limit, max(1.0, 2.0 ** (10 - bits)),
+                        plane_paths=plane_paths)
         result["error_map_limit"] = error_map_limit
+    if source_image_path:
+        # The same for every wedge of a source, so written once.
+        if not Path(source_image_path).exists():
+            import OpenImageIO as oiio
+            write_rgb(np.clip(rgb, 0, 1), source_image_path, oiio.UINT16)
+        result["source_image"] = Path(source_image_path).name
     return result

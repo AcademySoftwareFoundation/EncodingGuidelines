@@ -52,5 +52,5 @@ reports:
   description: This is testing different sws_flags options for extracting from YCbCr to RGB.
   directory: swsrgbopts-encode
   name: swsrgbopts-tests
-  templatefile: colorweb.html.jinja
+  templatefile: identity.html.jinja
   title: Ffmpeg YCbCr to RGB SWS-Flags options.

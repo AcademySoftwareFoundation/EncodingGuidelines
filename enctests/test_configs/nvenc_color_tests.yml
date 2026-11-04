@@ -89,5 +89,5 @@ reports:
     title: Linux nvenc Comparison
     description: This is a comparison of different videotoolbox encodes.
     directory: nvenc-color-encode
-    templatefile: basicimagecompare.html.jinja
+    templatefile: identity.html.jinja
 

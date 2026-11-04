@@ -497,7 +497,7 @@ test_fullrange:
       string: nclx 1/13/1 pc
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../Quickstart.md line 254
+  description: Test from ../Quickstart.md line 257
   app: ffmpeg
   wedges:
     wedge0:
@@ -1097,4 +1097,4 @@ reports:
   description: This is testing commands that are in the documentation as a way to
     confirm that all the commands in the documentation produce the desired results.
   directory: docs-encode
-  templatefile: doctests.html.jinja
+  templatefile: ycbcr.html.jinja

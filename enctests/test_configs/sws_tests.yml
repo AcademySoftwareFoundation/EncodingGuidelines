@@ -112,5 +112,5 @@ reports:
   description: This is testing different options of sws_flags encoding to yuv422p10
   directory: sws-encode
   name: sws-tests
-  templatefile: basicimagecompare.html.jinja
+  templatefile: identity.html.jinja
   title: sws_flags encoding to 422

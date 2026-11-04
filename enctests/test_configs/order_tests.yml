@@ -57,5 +57,5 @@ reports:
   description: Testing the ordering of the input parameters.
   directory: ordering
   name: ordering-tests
-  templatefile: basicimagecompare.html.jinja
+  templatefile: identity.html.jinja
   title: Parameter Ordering Tests

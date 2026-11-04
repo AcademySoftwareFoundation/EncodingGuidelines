@@ -975,6 +975,7 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
                 diff_path=Path(distorted.parent, distorted.stem + f"-x20diff.{OUTPUT_STILL_IMAGE_FORMAT}"),
                 error_map_path=Path(distorted.parent, distorted.stem + f"-errormap.{OUTPUT_STILL_IMAGE_FORMAT}"),
                 error_map_limit=comparisontestinfo.get("error_map_limit", 4.0),
+                source_image_path=Path(distorted.parent, f"{source_clip.name}-source.{OUTPUT_STILL_IMAGE_FORMAT}"),
                 log=log_file_object)
         except Exception as e:
             # Report it against this test rather than stopping the whole run.

@@ -1,50 +1,85 @@
 <!DOCTYPE html>
+{#- Index of all the reports in a results folder (outputSummaryIndex), grouped by FFmpeg version and platform. -#}
+{%- macro count(n, cls) -%}
+  {%- if n %}<span class="badge {{ cls }}">{{ n }}</span>{% else %}<span class="zero">0</span>{% endif -%}
+{%- endmacro -%}
+{%- macro duration(s) -%}
+  {%- if s is number -%}{%- if s >= 60 -%}{{ (s // 60) | int }}m {{ "%02d" | format((s % 60) | int) }}s{%- else -%}{{ "%.1f" | format(s) }}s{%- endif -%}
+  {%- else -%}&ndash;{%- endif -%}
+{%- endmacro -%}
+{%- macro totals(reports) -%}
+  {%- set t = namespace(p=0, f=0, k=0, u=0, s=0) -%}
+  {%- for r in reports -%}
+    {%- set t.p = t.p + r.success_tests -%}{%- set t.f = t.f + r.error_tests -%}{%- set t.k = t.k + (r.known_issue_tests or 0) -%}
+    {%- set t.u = t.u + (r.unexpected_pass_tests or 0) -%}{%- set t.s = t.s + (r.skipped_tests or 0) -%}
+  {%- endfor -%}
+  <td>{{ count(t.p, "pass") }}</td><td>{{ count(t.f, "fail") }}</td><td>{{ count(t.k, "known") }}</td>
+  <td>{{ count(t.u, "unexpected") }}</td><td>{{ count(t.s, "skipped") }}</td>
+{%- endmacro -%}
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Index</title>
-  <link rel="stylesheet" href="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/css/just-the-docs-default.css"> 
-  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/vendor/lunr.min.js"></script> 
-  <script type="text/javascript" src="https://academysoftwarefoundation.github.io/EncodingGuidelines/assets/js/just-the-docs.js"></script>
+  <style>
+{% include "_style.css.jinja" %}
+    .zero { color: var(--muted); }
+    td.desc { text-align: left; white-space: normal; color: var(--muted); max-width: 520px; }
+    .controls { margin: 12px 0; color: var(--muted); }
+    body.problems tr.clean { display: none; }
+  </style>
 </head>
-
 <body>
+  {% include "_nav.html.jinja" %}
+  <h1>ORI Encoding Test Report Index</h1>
+  <p>Results by FFmpeg version and platform. <b>known</b>: a failure listed as a known issue for that FFmpeg version.
+    <b>unexpected</b>: a known issue that passed, so it may have been fixed. <b>skipped</b>: the build could not run it
+    (FFmpeg version, encoder or hardware).</p>
 
-<TABLE>
-    <TR><TD><A HREF="http://openreviewinitiative.org/">Open Review Initiative</A></TD>
-    <TD><A HREF="https://academysoftwarefoundation.github.io/EncodingGuidelines/">Encoding Guidelines</A></TD>
-        </TR></TABLE>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>FFmpeg</th><th class="left">Platform</th><th>Reports</th><th>Pass</th><th>Fail</th><th>Known</th><th>Unexpected</th><th>Skipped</th></tr></thead>
+    <tbody>
+    {%- for g in groups %}
+    <tr>
+      <td><a href="#{{ g.id | e }}">{{ g.version | e }}</a></td><td class="left">{{ g.platform | e }}</td>
+      <td>{{ g.reports | length }}</td>{{ totals(g.reports) }}
+    </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+  </div>
 
-<H1>ORI Encoding Test Report Index</H1>
-<table>
-<TR>
-<TH>Test</TH>
-<TH>Description</TH>
-<TH> Platform/App version</TH>
-<TH>Success</TH>
-<TH>Fail</TH>
-<TH>Known issue</TH>
-<TH>Unexpected pass</TH>
-<TH>Skipped</TH>
-<TH>Started</TH>
-<TH>Duration</TH>
-</TR>
+  <label class="controls"><input type="checkbox" id="problems"> Only show reports with failures or unexpected passes</label>
 
-{% for report in results|sort(attribute='title') %}
-<TR>
-<TD><A href="{{ report.relativeurl }}">{{report.title}}</a></TD>
-<TD>{{report.description}}</TD>
-<TD>{{report.platform}} {{report.applicationVersion}}
-<TD align=right>{{report.success_tests}}</TD>
-<TD align=right>{{report.error_tests}}</TD>
-<TD align=right>{{report.known_issue_tests|default(0)}}</TD>
-<TD align=right>{% if report.unexpected_pass_tests %}<b>{{report.unexpected_pass_tests}}</b>{% else %}0{% endif %}</TD>
-<TD align=right>{{report.skipped_tests|default(0)}}</TD>
-<TD >{{report.test_start}}</TD>
-<TD align=right>{{"%.2f"|format(report.test_duration) }}</TD>
-
-</TR>
-  {% endfor %}
-</TABLE>
+  {%- for g in groups %}
+  <h2 id="{{ g.id | e }}">FFmpeg {{ g.version | e }} <span class="muted">{{ g.platform | e }}</span></h2>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Report</th><th class="left">Description</th><th>Pass</th><th>Fail</th><th>Known</th><th>Unexpected</th><th>Skipped</th>
+      <th class="left">Started</th><th>Duration</th>
+    </tr></thead>
+    <tbody>
+    {%- for r in g.reports | sort(attribute="title") %}
+    <tr class="{{ 'clean' if not r.error_tests and not r.unexpected_pass_tests }}">
+      <td><a href="{{ r.relativeurl | e }}">{{ r.title | e }}</a></td>
+      <td class="desc">{{ r.description | e }}</td>
+      <td>{{ count(r.success_tests, "pass") }}</td><td>{{ count(r.error_tests, "fail") }}</td>
+      <td>{{ count(r.known_issue_tests, "known") }}</td><td>{{ count(r.unexpected_pass_tests, "unexpected") }}</td>
+      <td>{{ count(r.skipped_tests, "skipped") }}</td>
+      <td class="left">{{ (r.test_start | string)[:19] | replace("T", " ") }}</td>
+      <td>{{ duration(r.test_duration) }}</td>
+    </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+  </div>
+  {%- endfor %}
+  <script>
+    const box = document.getElementById("problems");
+    box.addEventListener("change", () => document.body.classList.toggle("problems", box.checked));
+  </script>
+{% include "_analytics.html.jinja" %}
 </body>
 </html>

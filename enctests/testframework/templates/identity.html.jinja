@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+{#- Report for the identity comparison (identity_compare in main.py): each wedge against a reference wedge, as the
+    fraction of pixels in each plane that are exactly the same. Also used without a comparison, to show the outputs. -#}
+{%- from "_macros.html.jinja" import status, num -%}
+{%- macro result_status(r) -%}
+  {%- if r.testresult == "Reference Image" -%}reference{%- elif r.average is not defined and r.success is not defined -%}none
+  {%- else -%}{{ status(r) }}{%- endif -%}
+{%- endmacro -%}
+{#- Fraction identical as a percentage; anything short of 100% is marked. -#}
+{%- macro identical(v) -%}
+  {%- if v is number -%}<td class="{{ 'bad' if v < 1 }}">{{ "100%" if v >= 1 else "%.3f%%" | format(v * 100) }}</td>
+  {%- else -%}<td>&ndash;</td>{%- endif -%}
+{%- endmacro -%}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ config.title }}</title>
+  <style>
+{% include "_style.css.jinja" %}
+    .none { background: var(--skipped); }
+    .graphs img { max-width: 100%; width: 700px; }
+    .gallery { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+    .gallery .card { margin: 0; }
+    .gallery img { width: 100%; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  {%- set index_url = "../../../index.html" %}
+  {% include "_nav.html.jinja" %}
+  {%- set top = namespace(compared=false) %}
+  {%- for media_name, test in tests.items() %}{% for r in test.results %}
+    {%- if r.average is defined or r.success is defined %}{% set top.compared = true %}{% endif %}
+  {%- endfor %}{% endfor %}
+  <h1>{{ config.title }}</h1>
+  <p>{{ config.description }}</p>
+  <p class="muted">FFmpeg {{ testinfo.ffmpeg_version }}
+    {%- if testinfo.host_config %} on {{ testinfo.host_config.os }} {{ testinfo.host_config.os_version }} {{ testinfo.host_config.processor }}{% endif %}.
+    {%- if top.compared %}
+    Each wedge is compared with the reference wedge for the same source (the first one run, marked
+    <span class="badge reference">reference</span>) using FFmpeg's <code>identity</code> filter, so this shows which
+    options change the output, not whether the output is right.
+    {%- else %}
+    No comparison is configured; the outputs are shown side by side.
+    {%- endif %}</p>
+  {% if top.compared %}
+  <details>
+    <summary>What the columns mean</summary>
+    <dl class="key">
+      <dt>Result</dt><dd>pass or fail against the config's asserts. <b>reference</b>: the wedge the others are compared
+        with. <b>known</b>: a failure listed as a known issue for this FFmpeg version. <b>unexpected</b>: a known issue
+        that passed. <b>skipped</b>: this build cannot run it. <b>none</b>: the config has no comparison.</dd>
+      <dt>Y / U / V, or R / G / B</dt><dd>The percentage of pixels in each plane that are exactly the same as the
+        reference. Anything below 100% is shown in red.</dd>
+      <dt>Average</dt><dd>The same over all planes.</dd>
+    </dl>
+  </details>
+  {% endif %}
+
+  {% if config.graphs %}
+  <div class="graphs">
+    {% for g in config.graphs %}<img src="{{ config.name }}-{{ g.name }}" alt="{{ g.name }}"/>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% for media_name, test in tests.items() %}
+  {%- set ns = namespace(compared=false, pictures=false, planes=["Y", "U", "V"]) %}
+  {%- for r in test.results %}
+    {%- if r.average is defined or r.success is defined %}{% set ns.compared = true %}{% endif %}
+    {%- if r.output_media is string and r.output_media.endswith(".png") %}{% set ns.pictures = true %}{% endif %}
+    {%- if r.R is defined %}{% set ns.planes = ["R", "G", "B"] %}{% endif %}
+  {%- endfor %}
+  <h2>{{ media_name }}</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Test</th>
+      {%- if ns.compared %}
+      <th title="pass, fail, reference, known issue, unexpected pass or skipped">Result</th>
+      {%- for p in ns.planes %}<th title="Pixels identical to the reference: {{ p }}">{{ p }}</th>{% endfor %}
+      <th title="Pixels identical to the reference, all planes">Average</th>
+      {%- endif %}
+      <th class="left">Arguments</th>
+    </tr></thead>
+    <tbody>
+    {% for r in test.results %}
+    {%- set st = result_status(r) | trim %}
+    <tr>
+      <td><a target="_blank" href="{{ r.testbasename | e }}.log">{{ r.name | e }}</a></td>
+      {%- if ns.compared %}
+      <td><a target="_blank" href="{{ r.testbasename | e }}_tests.log" title="{{ (r.testresult or r.result or '') | e }}"><span class="badge {{ st }}">{{ st }}</span></a></td>
+      {%- if st == "reference" %}<td colspan="4" class="muted">reference</td>
+      {%- else %}{% for p in ns.planes %}{{ identical(r[p]) }}{% endfor %}{{ identical(r.average) }}{%- endif %}
+      {%- endif %}
+      <td class="left"><code>{{ r.encode_arguments | e }}</code></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  {% if ns.pictures %}
+  <div class="gallery">
+    {% for r in test.results if r.output_media is string and r.output_media.endswith(".png") %}
+    <div class="card">
+      <h3>{{ r.name | e }}</h3>
+      <a target="_blank" href="{{ r.output_media | e }}"><img loading="lazy" src="{{ r.output_media | e }}" alt="{{ r.name | e }}"/></a>
+      <details><summary>Command</summary><code>{{ r.command | e }}</code></details>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endfor %}
+{% include "_analytics.html.jinja" %}
+</body>
+</html>

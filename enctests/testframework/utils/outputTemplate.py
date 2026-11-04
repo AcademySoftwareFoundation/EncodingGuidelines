@@ -3,6 +3,7 @@
 # pip install kaleido plotly pandas jinja2
 
 import os
+import re
 import plotly.express as px
 import opentimelineio as otio
 import pandas as pd
@@ -253,12 +254,28 @@ def outputSummaryIndex(output_dir):
                     
                     results['sub_tests'].append(sub_test_data)
 
+                results['version'] = str(results['applicationVersion']).replace("ffmpeg_version_", "")
+                results['group'] = f"{results['version']}-{results['platform']}"
                 test_results.append(results)
 
     template_dir = os.path.join(os.path.dirname(__name__ if __name__ == '__main__' else __file__), "..", "templates")
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir))
 
+    def version_order(report):
+        # Releases newest first, then development builds (N-<commit count>-..., git-<date>-...) newest first.
+        version = report['version']
+        if re.fullmatch(r"\d+(\.\d+)*", version):
+            return (0, [-int(v) for v in (version.split(".") + ["0", "0"])[:3]], report['platform'])
+        numbers = [-int(v) for v in re.findall(r"\d+", version)[:3]]
+        return (1, numbers, report['platform'])
+    test_results.sort(key=version_order)
+    groups = []
+    for report in test_results:
+        if not groups or groups[-1]['id'] != report['group']:
+            groups.append({'id': report['group'], 'version': report['version'], 'platform': report['platform'], 'reports': []})
+        groups[-1]['reports'].append(report)
+
     template = environment.get_template('index.html.jinja')
     htmlreport = Path(output_dir) / "index.html"
     with htmlreport.open("w") as f:
-      f.write(template.render(results=test_results, results_json=json.dumps(test_results)))
+      f.write(template.render(results=test_results, groups=groups, results_json=json.dumps(test_results)))

@@ -101,5 +101,5 @@ reports:
   description: This is testing resizing with ffmpeg, comparing different filter options.
   directory: sws-encode
   name: sws-tests
-  templatefile: basicimagecompare.html.jinja
+  templatefile: identity.html.jinja
   title: Ffmpeg RGB to YUV scale conversion options.

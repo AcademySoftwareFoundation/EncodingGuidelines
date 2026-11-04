@@ -1,0 +1,34 @@
+    {#- Styles shared by the report templates; include inside <style>. -#}
+    :root { --bg: #fff; --fg: #1d1f23; --muted: #646a73; --line: #d8dbe0; --panel: #f5f6f8;
+            --pass: #1e7b3a; --fail: #b3261e; --known: #8a5a00; --unexpected: #6b3fb5; --skipped: #646a73;
+            --reference: #1a5fb4; --y: #1d1f23; --cb: #2b6cd6; --cr: #d0342c; --link: #1a5fb4; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #17181b; --fg: #e6e7ea; --muted: #9aa0a8; --line: #33363c; --panel: #202226;
+              --pass: #5cc27a; --fail: #ff7b72; --known: #e5b54a; --unexpected: #b794f6; --skipped: #9aa0a8;
+              --reference: #4f8fe0; --y: #e6e7ea; --cb: #6ea8ff; --cr: #ff7b72; --link: #9ecbff; }
+    }
+    body { background: var(--bg); color: var(--fg); font: 14px/1.45 system-ui, sans-serif; margin: 0 auto;
+           max-width: 1500px; padding: 16px; }
+    h1 { font-size: 1.6em; margin: 0 0 .3em; } h2 { margin: 1.6em 0 .4em; } h3 { margin: 0 0 .3em; font-size: 1.05em; }
+    p, .muted { color: var(--muted); }
+    code { font: 12px ui-monospace, monospace; }
+    a, a:visited { color: var(--link); }
+    a:hover { text-decoration-thickness: 2px; }
+    .scroll { overflow-x: auto; }
+    table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { border-bottom: 1px solid var(--line); padding: 4px 8px; text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child, th.left, td.left { text-align: left; }
+    thead th { color: var(--muted); font-weight: 600; }
+    .badge { border-radius: 4px; color: #fff; display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 6px; }
+    .pass { background: var(--pass); } .fail { background: var(--fail); } .known { background: var(--known); }
+    .unexpected { background: var(--unexpected); } .skipped { background: var(--skipped); }
+    .reference { background: var(--reference); }
+    .bad { color: var(--fail); font-weight: 600; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin: 12px 0; padding: 12px; }
+    .card .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+    .note { margin: .3em 0; }
+    .nav { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin-bottom: 12px; }
+    details summary { cursor: pointer; color: var(--muted); }
+    th[title] { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+    dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 6px 0 0; font-size: 13px; max-width: 1100px; }
+    dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); }

@@ -35,5 +35,5 @@ reports:
   description: Testing the test framework itself.
   directory: frameworktest-encode
   name: frameworktest-tests
-  templatefile: colorweb.html.jinja
+  templatefile: identity.html.jinja
   title: framework test.

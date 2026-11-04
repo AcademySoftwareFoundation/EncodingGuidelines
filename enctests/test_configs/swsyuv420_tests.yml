@@ -97,5 +97,5 @@ reports:
   description: This is testing different options of sws_flags encoding to yuv420p10
   directory: swsyuv420-encode
   name: sws420-tests
-  templatefile: basicimagecompare.html.jinja
+  templatefile: identity.html.jinja
   title: sws_flags encoding to 420
