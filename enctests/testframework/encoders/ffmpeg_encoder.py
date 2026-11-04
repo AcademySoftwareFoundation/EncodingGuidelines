@@ -12,6 +12,7 @@ import fileseq
 import opentimelineio as otio
 
 from .base import ABCTestEncoder
+from ..stream_metadata import report_env
 from ..capabilities import FFmpegCapabilities, FRAMEWORK_KEYS, implied_requires, merge_requires
 from ..utils import (
     create_media_reference,
@@ -113,6 +114,8 @@ class FFmpegEncoder(ABCTestEncoder):
 
             else:
                 env.update({'LD_LIBRARY_PATH': VMAF_LIB_DIR})
+            # Also write a verbose copy of the log, for the conversions FFmpeg inserts (stream_metadata.py).
+            env = dict(env, **report_env(out_file))
 
             # Time encoding process
             t1 = time.perf_counter()

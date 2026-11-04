@@ -24,9 +24,10 @@
   <p><a href="index.html">&larr; Test index</a></p>
   <h1>Changes between FFmpeg versions</h1>
   <p>Each test's results compared across the FFmpeg versions in this folder: the result (pass or fail), the stream
-    tags, the pixel format and the measured errors. A value is flagged when it differs from the previous release:
+    tags, what is written in the bitstream and container, the pixel format and the measured errors. A value is flagged when it differs from the previous release:
     <span class="badge pass">better</span> closer to the ideal, <span class="badge fail">worse</span> further from it,
-    <span class="badge known">changed</span> neither (a tag, a pixel format, a file size). Development builds are
+    <span class="badge known">changed</span> neither (a tag, a bitstream or container field, a pixel format, a
+    conversion FFmpeg inserted, a library). Development builds are
     compared with the newest release. This shows changes whether or not an assert covers them; each one should end up
     explained, in FFmpegChanges.md, a <code>known_issue</code>, or a bug report.</p>
   <p class="muted">Only runs of the same config file contents are compared, so a change to a config or its asserts is
@@ -53,6 +54,28 @@
     </tbody>
   </table>
   </div>
+
+  {%- if builds %}
+  <h2>Builds</h2>
+  <p class="muted">The external libraries each build was configured with. A change that comes with a different
+    library, or a library missing from one build, is not an FFmpeg change: the <i>encoder_library</i> and
+    <i>decoder</i> rows below show which were used for each encode.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Platform</th><th>Version</th><th class="left">Configured with</th><th class="left">Linked dynamically</th></tr></thead>
+    <tbody>
+    {%- set all_libs = builds | map(attribute="enabled") | sum(start=[]) | unique | sort | list %}
+    {%- for b in builds %}
+    <tr>
+      <td>{{ b.platform }}</td><td>{{ b.version }}</td>
+      <td class="left desc">{% for lib in all_libs %}{% if lib in b.enabled %}{{ lib }}{% else %}<s class="muted" title="Not in this build">{{ lib }}</s>{% endif %}{{ " " if not loop.last }}{% endfor %}</td>
+      <td class="left desc">{% if b.static %}<span class="muted">static build</span>{% else %}{{ b.linked | join(", ") }}{% endif %}</td>
+    </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+  </div>
+  {%- endif %}
 
   <label class="controls"><input type="checkbox" id="worse-only"> Only show rows with something worse</label>
 

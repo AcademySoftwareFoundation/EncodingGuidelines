@@ -30,6 +30,7 @@ from .utils import (
 from .utils.outputTemplate import processTemplate, outputSummaryIndex
 from .utils.versionChanges import outputVersionChanges
 from . import ycbcr_compare
+from .stream_metadata import stream_metadata, build_info
 from .encoders.ffmpeg_encoder import CAPABILITIES
 
 ENCODE_TEST_SUFFIX = '.yml'
@@ -996,6 +997,18 @@ def framework_commit():
         return "unknown"
 
 
+_BUILD_INFO = None
+
+
+def ffmpeg_build_info():
+    """The ffmpeg version line, configure options and linked libraries (stream_metadata.build_info), once per run,
+    so a change in a library can be told from a change in FFmpeg."""
+    global _BUILD_INFO
+    if _BUILD_INFO is None:
+        _BUILD_INFO = build_info(FFMPEG_BIN)
+    return _BUILD_INFO
+
+
 def apply_known_issue(enc_meta, test_config, source_name):
     """
     Mark a result covered by a `known_issue:` block (wedge or test level, see capabilities.py). On an affected
@@ -1188,6 +1201,10 @@ def run_tests(args, config_data, timeline):
                     continue
 
                 print(f"Testing: {distorted.name}")
+                # What FFmpeg wrote, whatever the comparison, so a change shows up in the change report.
+                enc_meta['results'].update(stream_metadata(
+                    FFMPEG_BIN, FFMPEG_BIN.replace("ffmpeg", "ffprobe"), distorted,
+                    Path(distorted.parent, distorted.stem + ".log")))
                 # Send all the log output of the tests to a separate log file.
                 log_file = Path(distorted.parent, distorted.stem + "_tests.log")
                 with open(log_file, "w") as log_file_object:
@@ -1304,6 +1321,7 @@ def main():
         # (utils/versionChanges.py).
         timeline.metadata['config_sha256'] = hashlib.sha256(test_config.config_file().read_bytes()).hexdigest()
         timeline.metadata['framework_commit'] = framework_commit()
+        timeline.metadata.update(ffmpeg_build_info())
         timeline.metadata['test_start'] = time.strftime("%Y-%m-%d %I:%M:%S")
         t = time.time()
         # Run tests

@@ -35,6 +35,16 @@ FIELDS = {
     "color_transfer": (None, None),
     "chroma_location": (None, None),
     "colr": (None, None),
+    # stream_metadata.py: what is in the file itself, and how FFmpeg made it.
+    "profile": (None, None),
+    "bitstream_colour": (None, None),
+    "bitstream_chroma_loc": (None, None),
+    "prores_header": (None, None),
+    "container_chroma_siting": (None, None),
+    "auto_conversions": (None, None),
+    # The libraries used, so a change that comes with one can be told from a change in FFmpeg.
+    "encoder_library": (None, None),
+    "decoder": (None, None),
     "white_error_10bit": (0.01, "abs"),
     "max_error_10bit": (0.01, "abs"),
     "mean_error_10bit": (0.005, "abs"),
@@ -121,8 +131,9 @@ def classify(field, old, new):
 
 def read_results(root):
     """{(platform, config, config sha): {version: {(source, wedge): (kind, values, testresult)}}}, the framework
-    commit of each, and the results without a config hash (from before it was recorded)."""
-    found, commits, legacy = {}, {}, []
+    commit of each, the build of each (platform, version), and the results without a config hash (from before it
+    was recorded)."""
+    found, commits, builds, legacy = {}, {}, {}, []
     for path in sorted(Path(root).rglob("*.otio")):
         if path.name.startswith("."):
             continue
@@ -150,7 +161,18 @@ def read_results(root):
         if wedges:
             found.setdefault((platform, config, sha), {})[version] = wedges
             commits.setdefault((platform, config, sha), {})[version] = data["metadata"].get("framework_commit", "")
-    return found, commits, legacy
+            if data["metadata"].get("ffmpeg_configuration") is not None:
+                builds[(platform, version)] = build_summary(data["metadata"])
+    return found, commits, builds, legacy
+
+
+def build_summary(metadata):
+    """The external libraries a build was configured with, and those it links dynamically (with versions)."""
+    enabled = sorted(set(re.findall(r"--enable-(lib[\w-]+)", metadata.get("ffmpeg_configuration") or "")))
+    linked = [l for l in metadata.get("ffmpeg_libraries") or []
+              if not re.match(r"lib(av|sw|postproc)\w*\.", l)]
+    return {"enabled": enabled, "linked": linked, "static": not any(
+        re.match(r"libav\w*\.", l) for l in metadata.get("ffmpeg_libraries") or [])}
 
 
 def compare_versions(versions, by_version):
@@ -210,7 +232,7 @@ def fmt(value):
 
 def outputVersionChanges(output_dir):
     """Write changes.html and changes.json in output_dir, from all the results under it."""
-    found, commits, legacy = read_results(output_dir)
+    found, commits, builds, legacy = read_results(output_dir)
     sections, summary = [], {}
     for (platform, config, sha), by_version in sorted(found.items()):
         releases = sorted((v for v in by_version if RELEASE.match(v)), key=release_key)
@@ -237,11 +259,16 @@ def outputVersionChanges(output_dir):
     template_dir = Path(__file__).parent.parent / "templates"
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader(str(template_dir)))
     environment.filters["fmt"] = fmt
+    def build_key(item):
+        (platform, version), _ = item
+        dev = not RELEASE.match(version)
+        return (platform, dev, dev_key(version) if dev else release_key(version))
+    builds = [{"platform": p, "version": v, **b} for (p, v), b in sorted(builds.items(), key=build_key)]
     html = environment.get_template("changes.html.jinja").render(sections=sections, pairs=pairs, legacy=len(legacy),
-                                                                 release=RELEASE.match)
+                                                                 builds=builds, release=RELEASE.match)
     Path(output_dir, "changes.html").write_text(html)
     with Path(output_dir, "changes.json").open("w") as f:
-        json.dump({"pairs": pairs, "sections": sections}, f, indent=1, default=str)
+        json.dump({"pairs": pairs, "builds": builds, "sections": sections}, f, indent=1, default=str)
     print("Written out:", Path(output_dir, "changes.html"))
 
 

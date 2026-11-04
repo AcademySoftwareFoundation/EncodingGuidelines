@@ -15,7 +15,9 @@ A test, or a single wedge, can say what it needs with a `requires:` block:
 
 Without a `requires:` block, a wedge's `-c:v` encoder must still be in the build, and hardware encoders
 (`*_nvenc`, `*_videotoolbox`, ...) must pass the trial encode, so most hardware and codec tests need no
-changes.
+changes. The build must also be able to decode what a software encoder writes, as the comparisons decode it:
+AV1 needs `libdav1d` or `libaom-av1`, as FFmpeg's own `av1` decoder only works with hardware. This is checked
+by decoding one trial frame; if the trial encode itself fails, the wedge runs, so a broken encoder still fails.
 
 Version specifiers are `>=`, `>`, `<=`, `<`, `==` and `!=`. `==9.0` matches any 9.0.x. Git builds report no
 release number (`N-124257-g73262c9136`); they are placed after the newest release whose libavutil they include,
@@ -39,6 +41,8 @@ import fnmatch
 import re
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
 DEV = 9999  # patch level given to git builds, so they sort after every release of the same major.minor
 
@@ -154,6 +158,22 @@ class FFmpegCapabilities:
             self._trials[encoder] = result is not None and result.returncode == 0
         return self._trials[encoder]
 
+    def output_decodes(self, encoder):
+        """Whether this build can decode one frame from a software encoder. True if the trial encode fails, so
+        the wedge runs and reports the encoder's own failure."""
+        key = ('decode', encoder)
+        if key not in self._trials:
+            with tempfile.TemporaryDirectory() as folder:
+                trial = Path(folder, 'trial.mkv')
+                encoded = self._run(['-v', 'error', '-f', 'lavfi', '-i', 'testsrc2=s=256x256:r=25', '-frames:v', '1',
+                                     '-c:v', encoder, str(trial)])
+                if encoded is None or encoded.returncode != 0 or not trial.exists():
+                    self._trials[key] = True
+                else:
+                    decoded = self._run(['-v', 'error', '-xerror', '-i', str(trial), '-f', 'null', '-'])
+                    self._trials[key] = decoded is not None and decoded.returncode == 0
+        return self._trials[key]
+
     def unmet(self, requires):
         """The requirements in a `requires:` dict that this build or machine does not meet, as messages."""
         missing = []
@@ -172,6 +192,10 @@ class FFmpegCapabilities:
             for name in requires.get(kind, []):
                 if name not in self._list(kind):
                     missing.append(f'{kind[:-1]} {name}')
+
+        for encoder in requires.get('decodable', []):
+            if encoder in self._list('encoders') and not self.output_decodes(encoder):
+                missing.append(f'a decoder for {encoder} output')
 
         for encoder in requires.get('hardware', []):
             if encoder not in self._list('encoders'):
@@ -213,7 +237,7 @@ def implied_requires(wedge):
         return {}
     if encoder.endswith(HARDWARE_SUFFIXES):
         return {'hardware': [encoder]}
-    return {'encoders': [encoder]}
+    return {'encoders': [encoder], 'decodable': [encoder]}
 
 
 def merge_requires(*blocks):

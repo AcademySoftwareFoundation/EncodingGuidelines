@@ -217,7 +217,11 @@ map is also written on its own (`-errormap-y.png`, `-errormap-cb.png`, ...), wit
 
 A wedge whose `-c:v` encoder is not in the FFmpeg build is skipped, not failed. So is a hardware encoder
 (`*_nvenc`, `*_videotoolbox`, `*_qsv`, `*_vaapi`, ...) that is built in but cannot encode one test frame, for
-example `hevc_nvenc` without an NVIDIA GPU. Anything else a test needs goes in a `requires:` block, either on the
+example `hevc_nvenc` without an NVIDIA GPU. A wedge is also skipped when the build cannot decode what its
+encoder writes, as every comparison decodes the encode: an AV1 encoder needs `libdav1d` or `libaom-av1` in the
+build, because FFmpeg's own `av1` decoder only works with hardware. This is checked by encoding and decoding one
+trial frame; if the trial encode fails, the wedge runs, so a broken encoder is still reported as a failure.
+Anything else a test needs goes in a `requires:` block, either on the
 whole test or on one wedge (a wedge's requirements add to the test's):
 
 ```yaml
@@ -255,6 +259,27 @@ skipped), the stream tags (`color_range`, `color_space`, `color_primaries`, `col
 `colr`), the pixel format, and the measured errors (`white`, `max`, `mean`, `p99`, identity and VMAF/PSNR scores).
 A value that differs from the previous release is flagged as better (closer to the ideal), worse, or changed (a
 tag or pixel format). Development builds are compared with the newest release.
+
+As well as what the comparison measures, every encode records what FFmpeg wrote and how
+(`testframework/stream_metadata.py`), so these changes are flagged too:
+
+| Field | What it is |
+| :--- | :--- |
+| `pix_fmt`, `profile`, `color_*`, `chroma_location` | ffprobe's view of the stream. Some are decoder defaults when nothing is written. |
+| `colr` | The MOV/MP4 `colr` atom, e.g. `nclx 1/1/1 tv`. |
+| `bitstream_colour` | The colour fields in the bitstream itself, read with `-bsf:v trace_headers` (H.264/HEVC VUI, AV1, VP9, APV, MPEG-2), as `primaries/transfer/matrix range`, e.g. `1/1/1 tv`. |
+| `bitstream_chroma_loc` | The chroma location in the bitstream (H.264/HEVC, AV1), or `not written`. |
+| `prores_header` | Primaries/transfer/matrix in the ProRes frame header, which the encoder writes separately from `colr`. |
+| `container_chroma_siting` | The MKV `ChromaSitingHorz`/`Vert` elements, or the MXF descriptor's siting. |
+| `auto_conversions` | Conversions FFmpeg inserted itself that change the colour space or range, e.g. `rgb48be gbr pc -> yuv444p10le bt709 tv`, or `none`. |
+| `encoder_library` | The encoder library's version as it logs it, e.g. `x265 3.6+1-aa7f602f7`. |
+| `decoder` | The decoder FFmpeg picks for the file, with `(fails)` if it cannot decode it. |
+
+`auto_conversions` comes from a verbose copy of the encode log, `<test>.report.log`, which each encode writes by
+setting `FFREPORT`; the command and the ordinary `<test>.log` are unchanged. The `.otio` also records the build:
+the `ffmpeg -version` line, its configure options and, for a dynamically linked build, the libraries it links.
+`changes.html` lists these per version, as a change that comes with a different library (OpenAPV, SVT-AV1, x265
+...) or a library missing from one build is not an FFmpeg change.
 
 Only runs of the same config file contents are compared: each run records a hash of its config
 (`config_sha256`) and the framework's git commit (`framework_commit`) in the `.otio`, so editing a config or its
