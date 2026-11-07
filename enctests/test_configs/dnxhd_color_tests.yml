@@ -9,6 +9,13 @@ test_dnxhd_444:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -32,7 +39,7 @@ test_dnxhd_444:
     dnxhd-yuv444p10le: &basednxhd
       -c:v: dnxhd
       -profile:v: dnxhr_444
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -51,7 +58,7 @@ test_dnxhd_444:
 
     dnxhd-gbrp10:
       << : *basednxhd
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       # RGB is full range; with tv (inherited) FFmpeg 7.1+ makes libswscale do the bit depth change.
       -color_range: pc
       -colorspace: rgb
@@ -59,14 +66,14 @@ test_dnxhd_444:
 
     dnxhd-gbrp10full:
       << : *basednxhd
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -colorspace: rgb
       -pix_fmt: gbrp10le
 
     dnxhd-yuv444full:
       << : *basednxhd
-      -vf: '"zscale=matrix=709:range=full:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       #-colorspace: rgb
       #-pix_fmt: gbrp10le
@@ -80,6 +87,13 @@ test_dnxhd_422:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -104,7 +118,7 @@ test_dnxhd_422:
       -c:v: dnxhd
       -profile:v: dnxhr_hqx
       -b:v: 440m
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

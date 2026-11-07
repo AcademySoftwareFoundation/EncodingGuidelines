@@ -9,6 +9,13 @@ test_rgb:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -32,10 +39,11 @@ test_rgb:
   wedges:
     10bit_h264:
       -c:v: libx264
+      -movflags: +write_colr
       -preset: placebo
       -qp: 0
       -pix_fmt: yuv444p10le
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -44,7 +52,7 @@ test_rgb:
       -c:v: png
       -pix_fmt: rgb48be
       -colorspace: rgb
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -56,7 +64,7 @@ test_rgb:
       -row-mt: 1
       -pix_fmt: gbrp10le
       -colorspace: rgb
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -68,7 +76,7 @@ test_rgb:
       -row-mt: 1
       -pix_fmt: gbrp12le
       -colorspace: rgb
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -83,6 +91,13 @@ test_rgb8:
     # 8bit_mjpeg fails: MJPEG cannot store RGB, so it is converted to full range BT.601 Y'CbCr.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -105,21 +120,23 @@ test_rgb8:
   wedges:
     8bit_h264:
       -c:v: libx264
+      -movflags: +write_colr
       -pix_fmt: yuv444p
       -preset: placebo
       -qp: 0
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
     8bit_libx264rgb:
       -c:v: libx264rgb
+      -movflags: +write_colr
       -pix_fmt: rgb24
       -preset: placebo 
       -qp: 0
       -colorspace: rgb
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -x264-params: "keyint=15:no-deblock=1"
       -color_range: pc
       -color_primaries: bt709
@@ -128,7 +145,7 @@ test_rgb8:
       -c:v: png
       -pix_fmt: rgb24
       -colorspace: rgb
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -137,7 +154,7 @@ test_rgb8:
       -pix_fmt: rgb24
       -colorspace: rgb
       -q:v: 2 
-      -vf: '"scale=in_range=full:out_range=full"'
+      -vf: '"scale=in_range=full:out_range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -147,7 +164,7 @@ test_rgb8:
       -crf: 0
       -pix_fmt: gbrp
       -colorspace: rgb
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -color_primaries: bt709
       -color_trc: bt709
@@ -161,6 +178,13 @@ test_rgb_mov:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -186,7 +210,7 @@ test_rgb_mov:
     10bit_dnxhd:  &base_args2
       -c:v: dnxhd
       -pix_fmt: gbrp10le
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -profile:v: dnxhr_444
       -color_primaries: bt709
       -color_range: pc

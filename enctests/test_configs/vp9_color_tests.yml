@@ -8,6 +8,13 @@ test_vp9_color_444:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -29,7 +36,7 @@ test_vp9_color_444:
       -c:v: libvpx-vp9
       -quality: good
       -crf: 0
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -39,21 +46,21 @@ test_vp9_color_444:
 
     vp9-gbrp:
       << : *basevp9
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: gbrp
       -color_range: pc
       -colorspace: rgb
 
     vp9-gbrp10le:
       << : *basevp9
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: gbrp10le
       -color_range: pc
       -colorspace: rgb
 
     vp9-gbrp12le:
       << : *basevp9
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: gbrp12le
       -color_range: pc
       -colorspace: rgb
@@ -77,6 +84,13 @@ test_vp9_color_420:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -98,7 +112,7 @@ test_vp9_color_420:
       -c:v: libvpx-vp9
       -quality: good
       -crf: 0
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

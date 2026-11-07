@@ -24,7 +24,7 @@ test_nvenc:
           -c:v: libx265
           -pix_fmt: yuv444p
           -crf: 25
-          -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+          -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
           -color_primaries: bt709
           -color_range: tv
           -color_trc: bt709
@@ -34,7 +34,7 @@ test_nvenc:
             -c:v: hevc_nvenc
               #-profile:v: 3
             #-cq: 0
-            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
             -pix_fmt: yuv444p16le
             -color_range: tv
             -colorspace: bt709
@@ -43,7 +43,7 @@ test_nvenc:
 
         h265_nvenc_yuv444p_cq25:
              << : *base_args
-             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
              -cq: 25
         
         # h265_nvenc_yuv420p:
@@ -55,28 +55,28 @@ test_nvenc:
         h265_nvenc_yuv444p16le_p6:
              << : *base_args
              -pix_fmt: yuv444p16le
-             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
              -cq: 25
              -preset: p6
             
         h265_nvenc_yuv444p16le_p7:
              << : *base_args
              -pix_fmt: yuv444p16le
-             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
              -cq: 25
              -preset: p7
             
         h265_nvenc_yuv444p16le_slow:
              << : *base_args
              -pix_fmt: yuv444p16le
-             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
              -cq: 25
              -preset: slow
 
         h265_nvenc_yuv444p16le_medium:
              << : *base_args
              -pix_fmt: yuv444p16le
-             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
              -cq: 25
              -preset: medium
 

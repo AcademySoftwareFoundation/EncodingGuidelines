@@ -9,6 +9,13 @@ test_h265_color:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -33,7 +40,8 @@ test_h265_color:
   wedges:
     yuv444p10lex265: &basex265
       -c:v: libx265
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -movflags: +write_colr
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -47,21 +55,21 @@ test_h265_color:
 
     gbrpx265:
       << : *basex265
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -colorspace: rgb
       -pix_fmt: gbrp
 
     gbrp10x265:
       << : *basex265
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -colorspace: rgb
       -pix_fmt: gbrp10le
 
     gbrp12x265:
       << : *basex265
-      -vf: '"zscale=range=full"'
+      -vf: '"zscale=range=full,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -colorspace: rgb
       -profile:v: main444-12
@@ -69,13 +77,13 @@ test_h265_color:
 
     yuv444p12lefullx265:
       << : *basex265
-      -vf: '"zscale=matrix=709:range=full:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
     
     videotoolbox_h265_bgra:
       << : *basex265
       -c:v: hevc_videotoolbox
-      -vf: '"null"'
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
       -colorspace: rgb
       -profile:v: main
@@ -92,6 +100,13 @@ test_h265_color_420:
     # hevc_videotoolbox (lossy, default quality) sets these; x265 is within 2 / 0.1.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -111,7 +126,8 @@ test_h265_color_420:
   wedges:
     yuv420p10le: &basex265
       -c:v: libx265
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -movflags: +write_colr
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -124,7 +140,7 @@ test_h265_color_420:
 
     yuv420p10le-full:
       << : *basex265
-      -vf: '"zscale=matrix=709:range=full:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: pc
   
     yuv420p:

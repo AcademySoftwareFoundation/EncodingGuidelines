@@ -11,6 +11,13 @@ test_mjpeg_444:
     # set by compression (4:2:2 gives 12-16).
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -29,6 +36,9 @@ test_mjpeg_444:
   suffix: .mov
   wedges:
     mjpeg: &basemjpeg
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
+      # JPEG's matrix is BT.601. Without it the MOV muxer writes no colr, so primaries and transfer are lost.
+      -colorspace: bt470bg
       -c:v: mjpeg
       -q:v: 2
       # JPEG is full range; 6.1 refuses limited-range yuv444p/yuv422p ("Non full-range YUV is non-standard").
@@ -43,7 +53,7 @@ test_mjpeg_444:
 
     mjpeg-yuv444p-libswscale:
       << : *basemjpeg
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: pc
       -color_trc: bt709
@@ -51,7 +61,7 @@ test_mjpeg_444:
 
     mjpeg-yuv444p-libswscale-full:
       << : *basemjpeg
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: pc
       -color_trc: bt709
@@ -68,6 +78,13 @@ test_mjpeg_422:
     # set by compression (4:2:2 gives 12-16).
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -86,6 +103,9 @@ test_mjpeg_422:
   suffix: .mov
   wedges:
     mjpeg-yuv422p: &basemjpeg422
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
+      # JPEG's matrix is BT.601. Without it the MOV muxer writes no colr, so primaries and transfer are lost.
+      -colorspace: bt470bg
       -c:v: mjpeg
       -q:v: 2
       -color_range: pc
@@ -93,7 +113,7 @@ test_mjpeg_422:
 
     mjpeg-yuv422p-libswscale:
       << : *basemjpeg422
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: pc
       -color_trc: bt709
@@ -101,7 +121,7 @@ test_mjpeg_422:
 
     mjpeg-yuv422p-libswscale-full:
       << : *basemjpeg422
-      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709"'
+      -vf: '"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: pc
       -color_trc: bt709

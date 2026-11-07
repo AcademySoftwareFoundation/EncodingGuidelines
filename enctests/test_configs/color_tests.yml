@@ -8,6 +8,13 @@ test_rgb2yuv:
     range: auto
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -33,6 +40,8 @@ test_rgb2yuv:
       -loglevel: verbose
       -strict: -1
       #-sws_flags: spline+accurate_rnd+full_chroma_int+full_chroma_inp
+      # No conversion filter: setparams only sets the primaries and transfer, which -color_* no longer do.
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p10le
       -color_primaries: bt709
       -color_range: tv
@@ -47,7 +56,7 @@ test_rgb2yuv:
     10bit_zscale: &base_args
       -loglevel: verbose
       -strict: -1
-      -vf: '"zscale=m=709:min=709:range=limited"'
+      -vf: '"zscale=m=709:min=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p10le
       -color_primaries: bt709
       -color_range: tv
@@ -55,44 +64,44 @@ test_rgb2yuv:
       -colorspace: bt709
     10bit_colormatrix:
       << : *base_args
-      -vf: '"colormatrix=bt470bg:bt709"'
+      -vf: '"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       known_issue:
         note: "colormatrix after the auto-inserted libswscale conversion: white +3.5, max 10 (10-bit), all versions"
     10bit_colorspace_fast:
       << : *base_args
-      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=1"'
+      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=bt709"'
       known_issue:
         note: "colorspace fast=1 after the auto-inserted libswscale conversion: white +3.5, max 4 (10-bit), all versions"
     10bit_colorspace:
       << : *base_args
-      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=0"'
+      -vf: '"colorspace=bt709:iall=bt601-6-625:fast=0,setparams=color_primaries=bt709:color_trc=bt709"'
       known_issue:
         note: "colorspace treats the source as BT.601 625 and converts its primaries and transfer too: max 81 (10-bit), all versions"
     10bit_libswscale:
       << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       known_issue:
         note: "libswscale RGB to limited range: white +3.5 (10-bit) from 10-bit and 16-bit sources, all versions"
     12bit_libswscale:
       << : *base_args
       -pix_fmt: yuv444p12le   
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       known_issue:
         note: "libswscale RGB to limited range: white +3.5 (10-bit) from 10-bit and 16-bit sources, all versions"
     12bit_zscale:
       << : *base_args
       -pix_fmt: yuv444p12le   
-      -vf: '"zscale=m=709:min=709:range=limited"'
+      -vf: '"zscale=m=709:min=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
     8bit_libswscale_full:
       << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p   
       -color_range: pc
       known_issue:
         note: "libswscale RGB to 8-bit full range: white +2, max 8 (10-bit; 2 8-bit code values), all versions"
     10bit_libswscale_full:
       << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p10le
       -color_range: pc
       known_issue:
@@ -103,7 +112,7 @@ test_rgb2yuv:
         note: "libswscale RGB to full range from 16-bit: within 1 but biased, mean 0.21, white +0.5 (10-bit); exact from the 10-bit bars"
     12bit_libswscale_full:
       << : *base_args
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p12le
       -color_range: pc
       known_issue:
@@ -118,14 +127,14 @@ test_rgb2yuv:
       << : *base_args
       requires:
         ffmpeg: ">=8.1"   # the unstable flag is new in 8.1
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=unstable"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=unstable,setparams=color_primaries=bt709:color_trc=bt709"'
       known_issue:
         note: "flags=unstable to limited range: within 1 but biased, mean 0.22 (chip chart) and 0.12 (bars) (10-bit)"
     8bit_libswscale_full_unstable:
       << : *base_args
       requires:
         ffmpeg: ">=8.1"
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p
       -color_range: pc
       known_issue:
@@ -134,7 +143,7 @@ test_rgb2yuv:
       << : *base_args
       requires:
         ffmpeg: ">=8.1"
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p10le
       -color_range: pc
       known_issue:
@@ -144,7 +153,7 @@ test_rgb2yuv:
       << : *base_args
       requires:
         ffmpeg: ">=8.1"
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709:flags=unstable,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p12le
       -color_range: pc
       known_issue:

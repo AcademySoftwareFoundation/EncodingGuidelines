@@ -6,6 +6,13 @@ test_sws:
   - testtype: identity
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: equal
       value: Y
       equal: 1
@@ -32,7 +39,7 @@ test_sws:
       -strict: -1
       -sws_flags: print_info
       -pix_fmt: yuv420p10le
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -42,16 +49,16 @@ test_sws:
       -sws_flags: area+print_info
     zscale:
       << : *base_args2
-      -vf: '"zscale=m=709:min=709:range=limited"'
+      -vf: '"zscale=m=709:min=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
     zscale_lanczos:
       << : *base_args2
-      -vf: '"zscale=m=709:min=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=m=709:min=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
     zscale_spline16:
       << : *base_args2
-      -vf: '"zscale=m=709:min=709:range=limited:filter=spline16"'
+      -vf: '"zscale=m=709:min=709:range=limited:filter=spline16,setparams=color_primaries=bt709:color_trc=bt709"'
     zscale_spline36:
       << : *base_args2
-      -vf: '"zscale=m=709:min=709:range=limited:filter=spline36"'
+      -vf: '"zscale=m=709:min=709:range=limited:filter=spline36,setparams=color_primaries=bt709:color_trc=bt709"'
     accurate_rnd:
       << : *base_args2
       -sws_flags: accurate_rnd+print_info
@@ -87,10 +94,10 @@ test_sws:
       -sws_flags: accurate_rnd+bicubic+print_info
     filter_neighbor+accurate_rnd:
       << : *base_args2
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=accurate_rnd+neighbor+print_info"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=accurate_rnd+neighbor+print_info,setparams=color_primaries=bt709:color_trc=bt709"'
     filter_spline+accurate_rnd:
       << : *base_args2
-      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=spline+accurate_rnd+print_info"'
+      -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709:flags=spline+accurate_rnd+print_info,setparams=color_primaries=bt709:color_trc=bt709"'
 
 ---
 reports:

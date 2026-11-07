@@ -9,6 +9,13 @@ test_av1_color:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -30,7 +37,7 @@ test_av1_color:
       -crf: 25
       -row-mt: 1
       -cpu-used: 6
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -52,7 +59,7 @@ test_av1_color:
       -crf: 18
       -row-mt: 1 
       -preset: 9
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709

@@ -29,7 +29,7 @@ test_nvenc:
           -c:v: libx265
           -pix_fmt: yuv444p
           -x265-params: lossless=1
-          -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+          -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
           -color_primaries: bt709
           -color_range: tv
           -color_trc: bt709
@@ -48,7 +48,7 @@ test_nvenc:
 
         h265_nvenc_scale:
              << : *base_args
-             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+             -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=bt709"'
         #     -cq: 10
 
         # h264_nvenc_cq20:

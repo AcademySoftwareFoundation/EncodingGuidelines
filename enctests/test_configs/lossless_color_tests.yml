@@ -12,6 +12,13 @@ test_lossless_444:
     range: tv
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: less
       value: max_error_10bit
       less: 1
@@ -27,7 +34,7 @@ test_lossless_444:
   suffix: .mkv
   wedges:
     x264_yuv444p10: &base444
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv444p10le"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv444p10le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv444p10le
       -c:v: libx264
       -qp: 0
@@ -71,6 +78,13 @@ test_lossless_rgb:
   - testtype: ycbcr
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: less
       value: max_error_10bit
       less: 1
@@ -83,12 +97,12 @@ test_lossless_rgb:
   suffix: .mkv
   wedges:
     x264rgb_bgr24:
-      -vf: '"zscale=range=full,format=gbrp"'
+      -vf: '"zscale=range=full,format=gbrp,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: bgr24
       -c:v: libx264rgb
       -qp: 0
     x265_gbrp10: &basergb10
-      -vf: '"zscale=range=full,format=gbrp10le"'
+      -vf: '"zscale=range=full,format=gbrp10le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: gbrp10le
       -c:v: libx265
       -x265-params: lossless=1
@@ -99,12 +113,12 @@ test_lossless_rgb:
       -cpu-used: 8
       -row-mt: 1
     ffv1_gbrp16:
-      -vf: '"zscale=range=full,format=gbrp16le"'
+      -vf: '"zscale=range=full,format=gbrp16le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: gbrp16le
       -c:v: ffv1
       -level: 3
     jpeg2000_rgb48:
-      -vf: '"zscale=range=full,format=gbrp16le"'
+      -vf: '"zscale=range=full,format=gbrp16le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: rgb48le
       -c:v: jpeg2000
       -pred: 1
@@ -118,6 +132,13 @@ test_lossless_subsampled:
     range: tv
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: less
       value: max_error_10bit
       less: 1
@@ -132,7 +153,7 @@ test_lossless_subsampled:
   suffix: .mkv
   wedges:
     x264_yuv420p10: &base420
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv420p10le"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv420p10le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv420p10le
       -c:v: libx264
       -qp: 0
@@ -155,12 +176,12 @@ test_lossless_subsampled:
       -cpu-used: 8
       -row-mt: 1
     ffv1_yuv422p10:
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv422p10le
       -c:v: ffv1
       -level: 3
     utvideo_yuv422p: &base422_8
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv422p
       -c:v: utvideo
     magicyuv_yuv422p:
@@ -176,6 +197,13 @@ test_lossless_mov:
     range: tv
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: less
       value: max_error_10bit
       less: 1
@@ -187,19 +215,19 @@ test_lossless_mov:
   suffix: .mov
   wedges:
     v210_yuv422p10:
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,format=yuv422p10le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: yuv422p10le
       -c:v: v210
     r210_gbrp10:
-      -vf: '"zscale=range=full,format=gbrp10le"'
+      -vf: '"zscale=range=full,format=gbrp10le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: gbrp10le
       -c:v: r210
     png_rgb48:
-      -vf: '"zscale=range=full,format=gbrp16le"'
+      -vf: '"zscale=range=full,format=gbrp16le,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: rgb48be
       -c:v: png
     qtrle_rgb24:
-      -vf: '"zscale=range=full,format=gbrp"'
+      -vf: '"zscale=range=full,format=gbrp,setparams=color_primaries=bt709:color_trc=bt709"'
       -pix_fmt: rgb24
       -c:v: qtrle
 

@@ -9,6 +9,13 @@ test_bitdepth:
     # Limits (10-bit code values): just above the zscale result on FFmpeg 6.0 and 9.0, 2026-10-26.
   - testtype: assertresults
     tests:
+    # Tags: -color_primaries/-color_trc are ignored from FFmpeg 7.1, so the -vf chain ends with setparams.
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: bt709
     - assert: between
       value: white_error_10bit
       between: [-1.5, 1.5]
@@ -28,20 +35,22 @@ test_bitdepth:
   wedges:
     h264:
       -c:v: libx264
+      -movflags: +write_colr
       -preset: placebo
       -qp: 0
       -pix_fmt: yuv420p
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
       -colorspace: bt709
     10bit_h264:
       -c:v: libx264
+      -movflags: +write_colr
       -preset: placebo
       -qp: 0
       -pix_fmt: yuv420p10le
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
@@ -52,7 +61,7 @@ test_bitdepth:
       -crf: 0
       -pix_fmt: yuv420p
       -colorspace: bt709
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: tv
       -color_primaries: bt709
       -color_range: tv
@@ -63,7 +72,7 @@ test_bitdepth:
       -crf: 0
       -pix_fmt: yuv420p10le
       -colorspace: bt709
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_range: tv
       -color_primaries: bt709
       -color_range: tv
@@ -74,7 +83,7 @@ test_bitdepth:
       -crf: 0
       -pix_fmt: yuv420p12le
       -colorspace: bt709
-      -vf: '"zscale=matrix=709:range=limited:filter=lanczos"'
+      -vf: '"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709"'
       -color_primaries: bt709
       -color_range: tv
       -color_trc: bt709
