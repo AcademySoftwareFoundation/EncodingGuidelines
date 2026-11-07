@@ -18,7 +18,8 @@ Fields (each only when it applies; values are strings):
     container_chroma_siting -- MKV ChromaSitingHorz/Vert, e.g. "H left, V half", or the MXF descriptor value.
     auto_conversions     -- conversions FFmpeg inserted itself that change the colour space or range, from the
                             verbose report, e.g. "rgb48be gbr pc -> yuv444p10le bt709 tv", or "none". A change
-                            of pixel format alone (rgb48be -> gbrp16le) is left out.
+                            of pixel format alone (rgb48be -> gbrp16le) is left out. Not recorded for FFmpeg 6.1
+                            and earlier, which do not log the colour space and range.
     encoder_library      -- the encoder library's version, as it logs it, e.g. "x265 3.6+1-aa7f602f7".
     decoder              -- the decoder FFmpeg picks for the file, and "(fails)" if it cannot decode the first
                             frame.
@@ -114,7 +115,12 @@ def prores_header(data):
 
 
 def container_chroma_siting(data, suffix):
+    """The MKV Colour element's chroma siting, or the MXF picture descriptor's. Only the headers are searched (the
+    MKV track header before the first Cluster, the MXF header partition), as the same bytes turn up by chance in
+    the compressed frames."""
     if suffix == ".mkv" or suffix == ".webm":
+        cluster = data.find(b"\x1F\x43\xB6\x75")
+        data = data[:cluster] if cluster > 0 else data[:1 << 16]
         h = re.search(rb"\x55\xB7\x81(.)", data, re.S)
         v = re.search(rb"\x55\xB8\x81(.)", data, re.S)
         if not h and not v:
@@ -122,6 +128,10 @@ def container_chroma_siting(data, suffix):
         return (f"H {MKV_SITING.get(h.group(1)[0], h.group(1)[0]) if h else 'not written'}, "
                 f"V {MKV_SITING_V.get(v.group(1)[0], v.group(1)[0]) if v else 'not written'}")
     if suffix == ".mxf":
+        # The header partition ends where the body partition pack, or the first essence element, starts.
+        ends = [i for i in (data.find(b"\x06\x0E\x2B\x34\x02\x05\x01\x01\x0D\x01\x02\x01\x01\x03", 16),
+                            data.find(b"\x06\x0E\x2B\x34\x01\x02\x01\x01\x0D\x01\x03\x01")) if i > 0]
+        data = data[:min(ends)] if ends else data[:1 << 16]
         m = re.search(rb"\x33\x03\x00\x01(.)", data, re.S)
         return MXF_SITING.get(m.group(1)[0], str(m.group(1)[0])) if m else "not written"
     return None
@@ -182,9 +192,13 @@ def decoder_used(ffmpeg, path):
                    "-f", "null", "-"])
     if result is None:
         return None
-    m = re.search(r"\[dec:([\w-]+) @", result.stderr) or re.search(r"Stream #0:\d+ -> #0:\d+ \(\w+ \(([\w-]+)\)",
-                                                                   result.stderr)
-    name = m.group(1) if m else "unknown"
+    m = re.search(r"\[dec:([\w-]+) @", result.stderr)
+    if m:
+        name = m.group(1)
+    else:
+        # FFmpeg 6.1 and earlier: "Stream #0:0 -> #0:0 (png (native) -> ...)", or "(av1 (libdav1d) -> ...)".
+        m = re.search(r"Stream #0:\d+ -> #0:\d+ \((\w+) \(([\w-]+)\)", result.stderr)
+        name = (m.group(1) if m.group(2) == "native" else m.group(2)) if m else "unknown"
     counts = re.search(r"\(video\): .*?(\d+) frames decoded; (\d+) decode errors", result.stderr)
     if result.returncode != 0 or not counts or counts.group(1) == "0" or counts.group(2) != "0":
         name += " (fails)"
@@ -192,7 +206,10 @@ def decoder_used(ffmpeg, path):
 
 
 def auto_conversions(report_text):
-    """Conversions FFmpeg inserted that change the colour space or range, joined with "; ", or "none"."""
+    """Conversions FFmpeg inserted that change the colour space or range, joined with "; ", or "none". None when
+    the log does not give them (FFmpeg 6.1 and earlier log only the pixel formats)."""
+    if re.search(r"\[auto_scale_\d+ @ [^]]+\] w:\d+ h:\d+ fmt:\S+ sar:", report_text):
+        return None
     found = []
     for m in AUTO_SCALE.finditer(report_text):
         fmt_in, csp_in, range_in, fmt_out, csp_out, range_out = m.groups()
@@ -240,7 +257,9 @@ def stream_metadata(ffmpeg, ffprobe, path, log_file=None):
                 fields["encoder_library"] = library
     report = report_path(path)
     if report.exists():
-        fields["auto_conversions"] = auto_conversions(report.read_text(errors="replace"))
+        conversions = auto_conversions(report.read_text(errors="replace"))
+        if conversions is not None:
+            fields["auto_conversions"] = conversions
     return fields
 
 

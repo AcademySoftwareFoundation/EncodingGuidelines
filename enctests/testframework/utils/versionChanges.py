@@ -45,9 +45,10 @@ FIELDS = {
     # The libraries used, so a change that comes with one can be told from a change in FFmpeg.
     "encoder_library": (None, None),
     "decoder": (None, None),
-    "white_error_10bit": (0.01, "abs"),
+    # Lossy encodes move by a few hundredths between encoder library versions; real changes are much larger.
+    "white_error_10bit": (0.1, "abs"),
     "max_error_10bit": (0.01, "abs"),
-    "mean_error_10bit": (0.005, "abs"),
+    "mean_error_10bit": (0.05, "abs"),
     "p99_error_10bit": (0.01, "abs"),
     "Y": (1e-4, "up"), "U": (1e-4, "up"), "V": (1e-4, "up"),
     "R": (1e-4, "up"), "G": (1e-4, "up"), "B": (1e-4, "up"),
@@ -55,6 +56,10 @@ FIELDS = {
     "vmaf_harmonic_mean": (0.1, "up"),
     "psnr_y_harmonic_mean": (0.05, "up"),
 }
+
+# Shown beside a change, to explain it, but not a change on their own: the libraries differ between builds of
+# the same FFmpeg version.
+CONTEXT = {"encoder_library", "decoder"}
 
 RELEASE = re.compile(r"^\d+(\.\d+)*$")
 
@@ -207,6 +212,7 @@ def compare_versions(versions, by_version):
                                  "base": base[2] if base else None}
                 if verdict:
                     changed = True
+                if verdict and field not in CONTEXT:
                     pair = (base[2], version)
                     pairs.setdefault(pair, {"better": 0, "worse": 0, "changed": 0, "configs": set()})
                     pairs[pair][verdict] += 1
@@ -217,7 +223,7 @@ def compare_versions(versions, by_version):
             if changed:
                 cells[field] = line
         cells.pop("_newest", None)
-        if cells:
+        if any(field not in CONTEXT for field in cells):
             rows.append({"source": source, "wedge": wedge, "fields": cells})
     return rows, pairs
 
