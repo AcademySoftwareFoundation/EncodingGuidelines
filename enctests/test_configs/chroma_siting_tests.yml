@@ -1,0 +1,256 @@
+---
+# Where each converter puts 4:2:2 and 4:2:0 chroma, and what is written about it, per FFmpeg version (the
+# converters of tests/chroma_siting.py). The source is sourceimages/chroma_siting_chart.png. Each result has
+# the measured siting (chroma_siting_measured, chroma_offset_h/_v: 0 co-sited, 0.5 centred) beside what the
+# file says: bitstream_chroma_loc (H.264/HEVC/AV1), container_chroma_siting (MKV, MXF) and ffprobe's
+# chroma_location, which is a decoder default when nothing is written. H.264/HEVC 4:2:0 and professional
+# 4:2:2 should be co-sited horizontally (left); 4:2:0 is centred vertically.
+# Each test asserts co-sited chroma (left), BT.709 limited-range pixels and the primaries tag; the converters
+# that centre chroma are known issues, so a FAIL is a change. Measured on 6.1.6 to 9.1.dev.
+test_siting_h264_420:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: chroma_siting_measured
+      string: left
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+  description: Chroma siting of RGB to 4:2:0 converters, lossless H.264.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_siting_h264_420
+  sources:
+  - ../sourceimages/chroma_siting_chart.png
+  suffix: .mp4
+  wedges:
+    zscale: &h264_420
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
+      -c:v: libx264
+      -qp: 0
+      -movflags: +write_colr
+      -pix_fmt: yuv420p10le
+      -color_range: tv
+      -colorspace: bt709
+    zscale_chromal_center:
+      << : *h264_420
+      -vf: '"zscale=matrix=709:range=limited:chromal=center,setparams=color_primaries=bt709:color_trc=bt709"'
+      known_issue:
+        note: "deliberately centred (chromal=center)"
+    scale:
+      << : *h264_420
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=bt709"'
+      known_issue:
+        note: "libswscale centres chroma by default"
+    scale_chr_pos_full_chroma_inp:
+      # Co-sited horizontally, centred vertically; full_chroma_inp stops libswscale averaging pairs first.
+      << : *h264_420
+      -sws_flags: bicubic+full_chroma_inp
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv:out_h_chr_pos=0:out_v_chr_pos=128,setparams=color_primaries=bt709:color_trc=bt709"'
+    scale_chroma_loc_left:
+      << : *h264_420
+      requires:
+        ffmpeg: ">=7.1"   # out_chroma_loc is new in 7.1
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv:out_chroma_loc=left,setparams=color_primaries=bt709:color_trc=bt709"'
+    auto:
+      # No conversion filter: the auto-inserted libswscale converts.
+      << : *h264_420
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "auto-inserted libswscale centres chroma, and uses BT.601 before 7.1"
+      - note: "auto-inserted libswscale centres chroma by default"
+    auto_chroma_sample_location:
+      << : *h264_420
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
+      -chroma_sample_location: left
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "-chroma_sample_location does not reach the auto-inserted conversion; BT.601 before 7.1"
+      - ffmpeg: "<9.0+dev"
+        note: "-chroma_sample_location does not reach the auto-inserted conversion (negotiated from 9.1, 02abeae2c7)"
+---
+test_siting_h264_422:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: chroma_siting_measured
+      string: left
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+  description: Chroma siting of RGB to 4:2:2 converters, lossless H.264 (4:2:2 has no siting field, and is
+    assumed co-sited).
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_siting_h264_422
+  sources:
+  - ../sourceimages/chroma_siting_chart.png
+  suffix: .mp4
+  wedges:
+    zscale: &h264_422
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
+      -c:v: libx264
+      -qp: 0
+      -movflags: +write_colr
+      -pix_fmt: yuv422p10le
+      -color_range: tv
+      -colorspace: bt709
+    zscale_chromal_center:
+      << : *h264_422
+      -vf: '"zscale=matrix=709:range=limited:chromal=center,setparams=color_primaries=bt709:color_trc=bt709"'
+      known_issue:
+        note: "deliberately centred (chromal=center)"
+    scale:
+      << : *h264_422
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=bt709"'
+      known_issue:
+        note: "libswscale centres chroma by default"
+    scale_chr_pos_full_chroma_inp:
+      << : *h264_422
+      -sws_flags: bicubic+full_chroma_inp
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv:out_h_chr_pos=0,setparams=color_primaries=bt709:color_trc=bt709"'
+    scale_chroma_loc_left:
+      << : *h264_422
+      requires:
+        ffmpeg: ">=7.1"
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv:out_chroma_loc=left,setparams=color_primaries=bt709:color_trc=bt709"'
+    auto:
+      << : *h264_422
+      -vf: '"setparams=color_primaries=bt709:color_trc=bt709"'
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "auto-inserted libswscale centres chroma, and uses BT.601 before 7.1"
+      - note: "auto-inserted libswscale centres chroma by default"
+---
+# zscale (co-sited) into codecs and containers that carry the siting differently.
+test_siting_mov:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: chroma_siting_measured
+      string: left
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+  description: zscale 4:2:2 into MOV (ProRes, DNxHR), which has no siting field.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_siting_mov
+  sources:
+  - ../sourceimages/chroma_siting_chart.png
+  suffix: .mov
+  wedges:
+    prores_422hq: &mov
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
+      -c:v: prores_ks
+      -profile:v: hq
+      -pix_fmt: yuv422p10le
+      -color_range: tv
+      -colorspace: bt709
+    dnxhr_hqx:
+      << : *mov
+      -c:v: dnxhd
+      -profile:v: dnxhr_hqx
+---
+test_siting_mxf:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: chroma_siting_measured
+      string: left
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+  description: zscale 4:2:2 DNxHR into MXF, whose descriptor has a siting field.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_siting_mxf
+  sources:
+  - ../sourceimages/chroma_siting_chart.png
+  suffix: .mxf
+  wedges:
+    dnxhr_hqx:
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
+      -c:v: dnxhd
+      -profile:v: dnxhr_hqx
+      -pix_fmt: yuv422p10le
+      -color_range: tv
+      -colorspace: bt709
+---
+test_siting_mkv:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: chroma_siting_measured
+      string: left
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+  description: zscale 4:2:0 and 4:2:2 into MKV, which has ChromaSitingHorz/Vert elements.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_siting_mkv
+  sources:
+  - ../sourceimages/chroma_siting_chart.png
+  suffix: .mkv
+  wedges:
+    ffv1_420: &mkv
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
+      -c:v: ffv1
+      -level: 3
+      -pix_fmt: yuv420p10le
+      -color_range: tv
+      -colorspace: bt709
+    ffv1_422:
+      << : *mkv
+      -pix_fmt: yuv422p10le
+    x265_420:
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=bt709"'
+      -c:v: libx265
+      -x265-params: lossless=1:log-level=error
+      -pix_fmt: yuv420p10le
+      -color_range: tv
+      -colorspace: bt709
+---
+reports:
+  description: Where each converter puts 4:2:2 and 4:2:0 chroma, measured from the pixels, and what each file says.
+  directory: chroma-siting-encode
+  name: chroma-siting-tests
+  templatefile: ycbcr.html.jinja
+  title: Chroma siting

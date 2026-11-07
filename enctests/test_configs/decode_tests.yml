@@ -1,0 +1,59 @@
+---
+# The decode direction: Y'CbCr to RGB, as `ffmpeg -i movie.mov frame.png` does it, compared with the RGB the
+# Y'CbCr was made from. Each source is a lossless 10-bit 4:4:4 BT.709 encode (limited or full range, or
+# untagged) whose .yml names that RGB image as its reference, so an error here is FFmpeg's decode conversion:
+# the matrix and range it reads from the tags (or assumes without them), and its precision. The results are
+# 16-bit RGB, so errors are in 16-bit code values, with max_error_10bit etc. for comparison.
+# The limits are just above zscale's results (max 1.59, mean 0.34), the same on 6.1.6 to 9.1.dev. libswscale is
+# within them only on the full-range bars; its other results, and the untagged source, are known issues.
+test_decode_rgb:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+  - testtype: assertresults
+    tests:
+    - assert: less
+      value: max_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.5
+  description: Y'CbCr to 16-bit RGB PNG, with the auto-inserted conversion, scale and zscale.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" -frames:v 1 {encoding_args} -y "{outfile}"
+  name: test_decode_rgb
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709.mkv.yml
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709-full.mkv.yml
+  - ../sourceimages/chip-chart-1080-yuv444p10-untagged.mkv.yml
+  - ../sourceimages/smptehdbars_10-yuv444p10-bt709.mkv.yml
+  - ../sourceimages/smptehdbars_10-yuv444p10-bt709-full.mkv.yml
+  suffix: .png
+  wedges:
+    auto:
+      # What most people run: no filter, FFmpeg inserts the conversion.
+      -pix_fmt: rgb48be
+      known_issue: &libswscale_decode
+      - source: "*-untagged"
+        note: "no tags: libswscale assumes BT.601 (max 146, 10-bit)"
+      - source: ["chip-chart-1080-yuv444p10-bt709", "chip-chart-1080-yuv444p10-bt709-full", "smptehdbars_10-yuv444p10-bt709"]
+        note: "libswscale decode: max 4.7-5.3 limited range, 2.25 full range (10-bit); zscale under 1.6"
+    scale:
+      -vf: '"scale,format=rgb48be"'
+      known_issue: *libswscale_decode
+    scale_accurate:
+      -vf: '"scale=flags=accurate_rnd+full_chroma_int,format=rgb48be"'
+      known_issue: *libswscale_decode
+    zscale:
+      # zscale outputs planar RGB; the repack to rgb48be for PNG is lossless.
+      -vf: '"zscale,format=gbrp16le"'
+      -pix_fmt: rgb48be
+      known_issue:
+        source: "*-untagged"
+        note: "zscale will not convert input with no matrix tag (no output)"
+---
+reports:
+  description: Y'CbCr to RGB, as extracting a frame does it, compared with the RGB the Y'CbCr was made from.
+  directory: decode-encode
+  name: decode-tests
+  templatefile: ycbcr.html.jinja
+  title: Decoding Y'CbCr to RGB

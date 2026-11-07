@@ -15,6 +15,9 @@ filter or siting; ``max_error_all`` covers the whole frame. ``p99_error`` is the
 plane): with lossy codecs ``max_error`` is a single pixel set by compression, which this is far less sensitive to. ``white_error`` is the average Y' error over the
 brightest areas: lossy codecs add noise that can hide a white level error in ``max_error``, but not in this.
 
+It also records which matrix and range the pixels match (``pixels_match``), and for 4:2:2 and 4:2:0 where the
+chroma samples actually sit (``chroma_siting_measured``), so both can be checked against the tags.
+
 The ideal conversion matches sourceimages/rp219/validate_reference.py, which is checked against the values
 published in SMPTE RP 219.
 """
@@ -94,6 +97,122 @@ def interior_mask(planes, bits, margin=8, step=4):
             grown |= np.roll(near, shift, axis) | np.roll(near, -shift, axis)
         near = grown
     return ~near
+
+
+def pixels_match(planes, rgb, bits, sxsy, mask):
+    """Which matrix and range the decoded Y'CbCr planes match, e.g. "bt709 tv", whatever the tags say.
+
+    Each candidate's ideal conversion of the source is compared away from edges; the best mean error wins. A
+    matrix or range that another candidate matches as well (a grey source cannot tell matrices apart) is
+    reported as "?", and "none" means nothing came within 8 10-bit code values.
+    """
+    sx, sy = sxsy
+    scores = []
+    for matrix in ("bt709", "bt470bg", "bt2020nc"):
+        for range_ in ("tv", "pc"):
+            ideal = ideal_ycbcr(rgb, bits, matrix, range_)
+            errors = []
+            for i, plane in enumerate(planes):
+                step_y, step_x = (sy, sx) if i else (1, 1)
+                m = mask[::step_y, ::step_x][:plane.shape[0], :plane.shape[1]]
+                diff = np.abs(plane - ideal[i][::step_y, ::step_x][:plane.shape[0], :plane.shape[1]])
+                errors.append(float(diff[m].mean() if m.any() else diff.mean()))
+            scores.append((float(np.mean(errors)) * 2.0 ** (10 - bits), matrix, range_))
+    scores.sort()
+    best, matrix, range_ = scores[0]
+    if best > 8:
+        return "none"
+    close = [s for s in scores[1:] if s[0] <= max(1.2 * best, best + 0.1)]
+    if any(s[1] != matrix for s in close):
+        matrix = "?"
+    if any(s[2] != range_ for s in close):
+        range_ = "?"
+    return f"{matrix} {range_}"
+
+
+def _blur(a, sigma, axis):
+    """Gaussian blur along one axis, edges extended."""
+    r = int(3 * sigma + 1)
+    x = np.arange(-r, r + 1)
+    k = np.exp(-x * x / (2 * sigma * sigma))
+    k /= k.sum()
+    pad = [(0, 0)] * a.ndim
+    pad[axis] = (r, r)
+    a = np.pad(a, pad, mode="edge")
+    n = a.shape[axis] - 2 * r
+    return sum(w * np.take(a, np.arange(i, i + n), axis) for i, w in enumerate(k))
+
+
+def _sample(plane, xs, ys):
+    """plane at columns xs and rows ys (fractional positions), by linear interpolation."""
+    for axis, pos in ((1, xs), (0, ys)):
+        i0 = np.clip(np.floor(pos).astype(int), 0, plane.shape[axis] - 2)
+        w = (pos - i0).reshape([-1 if a == axis else 1 for a in range(2)])
+        plane = np.take(plane, i0, axis) * (1 - w) + np.take(plane, i0 + 1, axis) * w
+    return plane
+
+
+SITING_NAMES = {(0, 0.5): "left", (0.5, 0.5): "center", (0, 0): "topleft", (0.5, 0): "top",
+                (0, 1): "bottomleft", (0.5, 1): "bottom"}
+
+
+def chroma_siting(planes, ideal, bits, sxsy, sigma=2.5, border=24):
+    """Where the subsampled chroma samples sit, measured from the pixels: (offset_h, offset_v, name).
+
+    Offsets are in luma samples from the even luma sample: 0 is co-sited (left/top), 0.5 centred. The ideal
+    full-resolution chroma and the decoded chroma are both blurred to the same width (sigma luma samples), which
+    swamps the converter's own filter, and the decoded samples are matched against the ideal sampled at
+    sx * k + offset, allowing for gain and offset. Measured this way the chroma siting chart gives the same as
+    tests/chroma_siting.py (zscale co-sited, scale centred). An axis with no chroma detail gives None.
+    """
+    sx, sy = sxsy
+    ch, cw = planes[1].shape
+    by, bx = border // sy, border // sx
+    ideal_blurred = [_blur(_blur(p.astype(np.float64), sigma, 0), sigma, 1) for p in ideal[1:]]
+    decoded = [_blur(_blur(p.astype(np.float64), sigma / sx, 1), sigma / sy, 0)[by:-by, bx:-bx].ravel()
+               for p in planes[1:]]
+
+    def detail(axis):
+        # Mean chroma gradient along the axis, in 10-bit code values per luma sample.
+        return max(float(np.abs(np.diff(g, axis=axis)).mean()) for g in ideal_blurred) * 2.0 ** (10 - bits)
+
+    def cost(dx, dy):
+        total = 0.0
+        for g, d in zip(ideal_blurred, decoded):
+            s = _sample(g, sx * np.arange(cw) + dx, sy * np.arange(ch) + dy)[by:-by, bx:-bx].ravel()
+            a = np.stack([s, np.ones_like(s)], 1)
+            coef = np.linalg.lstsq(a, d, rcond=None)[0]
+            total += float(((a @ coef - d) ** 2).mean())
+        return total
+
+    def search(f):
+        # Coarse steps, then a parabola through the best point and its neighbours at finer steps.
+        coarse = np.arange(-1, 1.5 + 1e-9, 0.25)
+        x = coarse[int(np.argmin([f(v) for v in coarse]))]
+        for step in (0.1, 0.03):
+            a, b, c = f(x - step), f(x), f(x + step)
+            den = a - 2 * b + c
+            x = x + (step * 0.5 * (a - c) / den if den > 0 else 0)
+        return x
+
+    use_h, use_v = sx > 1 and detail(1) > 0.01, sy > 1 and detail(0) > 0.01
+    dx, dy = 0.25 * (sx - 1), 0.25 * (sy - 1)
+    for _ in range(2):
+        if use_h:
+            dx = search(lambda v: cost(v, dy))
+        if use_v:
+            dy = search(lambda v: cost(dx, v))
+    offset_h = round(float(dx), 2) if use_h else None
+    offset_v = round(float(dy), 2) if use_v else (0.0 if sy == 1 else None)
+    if offset_h is None or offset_v is None:
+        return offset_h, offset_v, "unmeasured"
+    near = lambda v, options: next((o for o in options if abs(v - o) < 0.15), None)
+    h, v = near(offset_h, (0, 0.5)), near(offset_v, (0, 0.5, 1))
+    if sy == 1:
+        name = {0: "left", 0.5: "center"}.get(h)
+    else:
+        name = SITING_NAMES.get((h, v)) if h is not None and v is not None else None
+    return offset_h, (offset_v if sy > 1 else None), name or f"h {offset_h} v {offset_v}"
 
 
 def probe(ffprobe, path):
@@ -257,7 +376,7 @@ def error_by_level(ideal_plane, err, mask, bits, bins=32):
 
 def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt709", range_="tv",
             margin=8, image_path=None, diff_path=None, error_map_path=None, error_map_limit=4.0, source_image_path=None,
-            log=None):
+            measure_siting=True, log=None):
     """Compare the first frame of movie with the ideal conversion of source_file. Returns a results dict.
 
     error_map_path also gets one image per plane, <stem>-<plane>.png (e.g. -errormap-cb.png), and
@@ -327,6 +446,15 @@ def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt70
         result["white_y_ideal"] = round(float(ideal[0][bright].mean()), 2)
         result["white_error"] = round(result["white_y"] - result["white_y_ideal"], 2)
         result["white_error_10bit"] = round(result["white_error"] * to10, 2)
+    if kind == "ycbcr":
+        result["pixels_match"] = pixels_match(planes, rgb, bits, (sx, sy), mask)
+        if measure_siting and (sx > 1 or sy > 1):
+            offset_h, offset_v, name = chroma_siting(planes, ideal, bits, (sx, sy))
+            result["chroma_siting_measured"] = name
+            if offset_h is not None:
+                result["chroma_offset_h"] = offset_h
+            if offset_v is not None:
+                result["chroma_offset_v"] = offset_v
     for key in ("color_range", "color_space", "color_primaries", "color_transfer", "chroma_location"):
         result[key] = info.get(key, "unknown")
     colr = read_colr(movie)
