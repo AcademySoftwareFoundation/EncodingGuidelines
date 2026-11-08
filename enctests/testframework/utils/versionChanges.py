@@ -47,6 +47,9 @@ FIELDS = {
     "chroma_siting_measured": (None, None),
     "chroma_offset_h": (0.1, None),
     "chroma_offset_v": (0.1, None),
+    "chroma_siting_assumed": (None, None),
+    "chroma_shift_h": (0.1, None),
+    "chroma_shift_v": (0.1, None),
     # The libraries used, so a change that comes with one can be told from a change in FFmpeg.
     "encoder_library": (None, None),
     "decoder": (None, None),

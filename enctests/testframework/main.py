@@ -945,6 +945,8 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
     margin -- pixels either side of an edge left out of max_error (default 8).
     chroma_siting -- false to skip measuring where 4:2:2/4:2:0 chroma sits (about a second per encode).
     The source is the reference, unless its .yml has "reference: <RGB image>" (for JPEG or video sources).
+    A 4:2:2/4:2:0 video source can also give "chroma_siting: <name>", where its chroma really is (left, center,
+    topleft...), so an RGB result records the siting the decoder assumed.
 
     Results (errors are in code values at the decoded bit depth, Y'/Cb/Cr or G/B/R planes):
     max_error, max_error_y/cb/cr (or _g/_b/_r) -- the worst error away from edges.
@@ -957,6 +959,8 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
     chroma_siting_measured, chroma_offset_h/_v   -- where the subsampled chroma sits, measured from the pixels:
                                                     a name as ffprobe's chroma_location (left, center, topleft...)
                                                     and the offsets in luma samples (0 co-sited, 0.5 centred).
+    chroma_siting_assumed, chroma_shift_h/_v     -- RGB from a source with chroma_siting: the siting the decoder
+                                                    assumed, and how far that moved the chroma (0 is right).
     compared_fraction                            -- the fraction of the frame away from edges (0: compared everywhere).
     max_error_10bit, mean_error_10bit, white_error_10bit -- the same in 10-bit code values, for comparing bit depths.
     color_range, color_space, color_primaries, color_transfer, chroma_location -- from ffprobe.
@@ -986,6 +990,8 @@ def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path,
                 error_map_limit=comparisontestinfo.get("error_map_limit", 4.0),
                 source_image_path=Path(distorted.parent, f"{source_clip.name}-source.{OUTPUT_STILL_IMAGE_FORMAT}"),
                 measure_siting=comparisontestinfo.get("chroma_siting", True),
+                source_movie=source_path.as_posix() if source_meta.get('chroma_siting') else None,
+                source_siting=source_meta.get('chroma_siting'),
                 log=log_file_object)
         except Exception as e:
             # Report it against this test rather than stopping the whole run.

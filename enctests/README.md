@@ -200,6 +200,7 @@ Its results are in code values at the encode's bit depth:
 | `colr` | The MOV/MP4 `colr` atom, e.g. `nclx 1/13/1 tv`, or `none` |
 | `pixels_match` | The matrix and range the pixels match, whatever the tags say, e.g. `bt709 tv`. `?` where the source cannot tell (a grey source has no matrix), `none` if nothing is within 8 10-bit code values |
 | `chroma_siting_measured`, `chroma_offset_h`, `chroma_offset_v` | For 4:2:2/4:2:0, where the chroma samples sit, measured from the pixels: a name as `ffprobe` uses (`left`, `center`, `topleft`, ...) and the offsets in luma samples, 0 co-sited, 0.5 centred. It fits a sub-sample shift between the decoded chroma and the ideal, both blurred, so it does not depend on the converter's filter. On `sourceimages/chroma_siting_chart.png` it agrees with `tests/chroma_siting.py` |
+| `chroma_siting_assumed`, `chroma_shift_h`, `chroma_shift_v` | For an RGB result decoded from a 4:2:2/4:2:0 source whose `.yml` gives `chroma_siting:` (where its chroma really is), the siting the decoder assumed and how far that moved the chroma, in luma samples: 0 when it was right, +0.5 when it took co-sited chroma as centred. `source_chroma_location` is the source's tag. See `decode_siting_tests.yml` |
 
 The encode also gets a viewable PNG (converted in numpy), an `-x20diff.png` error image (unsigned, not
 used by the report templates) and an `-errormap.png`: the signed error of each plane side by side, in 10-bit code values,

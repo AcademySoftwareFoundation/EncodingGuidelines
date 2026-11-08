@@ -16,7 +16,9 @@ plane): with lossy codecs ``max_error`` is a single pixel set by compression, wh
 brightest areas: lossy codecs add noise that can hide a white level error in ``max_error``, but not in this.
 
 It also records which matrix and range the pixels match (``pixels_match``), and for 4:2:2 and 4:2:0 where the
-chroma samples actually sit (``chroma_siting_measured``), so both can be checked against the tags.
+chroma samples actually sit (``chroma_siting_measured``), so both can be checked against the tags. In the
+decode direction (RGB from a 4:2:2/4:2:0 source of known siting) it records where the decoder assumed the
+chroma was (``chroma_siting_assumed``) and how far that moved it (``chroma_shift_h``/``_v``).
 
 The ideal conversion matches sourceimages/rp219/validate_reference.py, which is checked against the values
 published in SMPTE RP 219.
@@ -152,6 +154,18 @@ def _sample(plane, xs, ys):
     return plane
 
 
+def _minimise(f, low, high):
+    """The x in low..high where f is least: coarse steps, then a parabola through the best point and its
+    neighbours at finer steps, each move limited to one step (a flat curve would otherwise send it far off)."""
+    coarse = np.arange(low, high + 1e-9, 0.25)
+    x = coarse[int(np.argmin([f(v) for v in coarse]))]
+    for step in (0.1, 0.03):
+        a, b, c = f(x - step), f(x), f(x + step)
+        den = a - 2 * b + c
+        x = x + (float(np.clip(step * 0.5 * (a - c) / den, -step, step)) if den > 0 else 0)
+    return x
+
+
 SITING_NAMES = {(0, 0.5): "left", (0.5, 0.5): "center", (0, 0): "topleft", (0.5, 0): "top",
                 (0, 1): "bottomleft", (0.5, 1): "bottom"}
 
@@ -185,34 +199,82 @@ def chroma_siting(planes, ideal, bits, sxsy, sigma=2.5, border=24):
             total += float(((a @ coef - d) ** 2).mean())
         return total
 
-    def search(f):
-        # Coarse steps, then a parabola through the best point and its neighbours at finer steps.
-        coarse = np.arange(-1, 1.5 + 1e-9, 0.25)
-        x = coarse[int(np.argmin([f(v) for v in coarse]))]
-        for step in (0.1, 0.03):
-            a, b, c = f(x - step), f(x), f(x + step)
-            den = a - 2 * b + c
-            x = x + (step * 0.5 * (a - c) / den if den > 0 else 0)
-        return x
-
     use_h, use_v = sx > 1 and detail(1) > 0.01, sy > 1 and detail(0) > 0.01
     dx, dy = 0.25 * (sx - 1), 0.25 * (sy - 1)
     for _ in range(2):
         if use_h:
-            dx = search(lambda v: cost(v, dy))
+            dx = _minimise(lambda v: cost(v, dy), -1, 1.5)
         if use_v:
-            dy = search(lambda v: cost(dx, v))
+            dy = _minimise(lambda v: cost(dx, v), -1, 1.5)
     offset_h = round(float(dx), 2) if use_h else None
     offset_v = round(float(dy), 2) if use_v else (0.0 if sy == 1 else None)
     if offset_h is None or offset_v is None:
         return offset_h, offset_v, "unmeasured"
+    return offset_h, (offset_v if sy > 1 else None), siting_name(offset_h, offset_v, sy)
+
+
+def siting_name(offset_h, offset_v, sy):
+    """The ffprobe name (left, center, topleft...) for chroma offsets in luma samples, or "h X v Y"."""
     near = lambda v, options: next((o for o in options if abs(v - o) < 0.15), None)
     h, v = near(offset_h, (0, 0.5)), near(offset_v, (0, 0.5, 1))
     if sy == 1:
         name = {0: "left", 0.5: "center"}.get(h)
     else:
         name = SITING_NAMES.get((h, v)) if h is not None and v is not None else None
-    return offset_h, (offset_v if sy > 1 else None), name or f"h {offset_h} v {offset_v}"
+    return name or f"h {offset_h} v {offset_v}"
+
+
+def decode_siting(decoded, rgb, source_siting, sxsy, matrix="bt709", sigma=2.5, border=24):
+    """For RGB decoded from 4:2:2/4:2:0: how far the decode moved the chroma, and the siting it assumed.
+
+    decoded and rgb are R'G'B' (0-1); source_siting is where the source's chroma samples really are, as
+    offsets in luma samples (see chroma_siting). Both images are converted to full-resolution chroma and
+    blurred, and the decoded chroma is matched against the ideal shifted by a sub-sample amount, as in
+    chroma_siting. Returns (shift_h, shift_v, assumed): the shift in luma samples (0 when the decoder assumed
+    the right siting, +0.5 when it took co-sited chroma as centred), and the name of the siting it assumed.
+    An axis that is not subsampled, or has no chroma detail, gives None.
+    """
+    sx, sy = sxsy
+    kr, kb = MATRICES[matrix]
+
+    def chroma(image):
+        r, g, b = image[..., 0], image[..., 1], image[..., 2]
+        y = kr * r + (1 - kr - kb) * g + kb * b
+        return [_blur(_blur(c, sigma, 0), sigma, 1) for c in ((b - y) / (2 * (1 - kb)), (r - y) / (2 * (1 - kr)))]
+
+    ideal, measured = chroma(rgb), [c[border:-border, border:-border].ravel() for c in chroma(decoded)]
+    h, w = decoded.shape[:2]
+
+    def cost(dx, dy):
+        total = 0.0
+        for g, d in zip(ideal, measured):
+            s = _sample(g, np.arange(w) + dx, np.arange(h) + dy)[border:-border, border:-border].ravel()
+            a = np.stack([s, np.ones_like(s)], 1)
+            total += float(((a @ np.linalg.lstsq(a, d, rcond=None)[0] - d) ** 2).mean())
+        return total
+
+    # Detail along each axis, in 10-bit code values per luma sample (as in chroma_siting).
+    use_h = sx > 1 and max(float(np.abs(np.diff(g, axis=1)).mean()) for g in ideal) * 1023 > 0.01
+    use_v = sy > 1 and max(float(np.abs(np.diff(g, axis=0)).mean()) for g in ideal) * 1023 > 0.01
+    dx = dy = 0.0
+    for _ in range(2):
+        if use_h:
+            dx = _minimise(lambda v: cost(v, dy), -1, 1)
+        if use_v:
+            dy = _minimise(lambda v: cost(dx, v), -1, 1)
+    # decoded(x) = ideal(x + d): the chroma moved by -d, so sample k was put at its true position - d.
+    shift_h = round(-float(dx), 2) if use_h else None
+    shift_v = round(-float(dy), 2) if use_v else None
+    if (sx > 1 and shift_h is None) or (sy > 1 and shift_v is None):
+        return shift_h, shift_v, "unmeasured"
+    assumed_h = source_siting[0] + (shift_h or 0)
+    assumed_v = source_siting[1] + (shift_v or 0)
+    return shift_h, shift_v, siting_name(round(assumed_h, 2), round(assumed_v, 2), sy)
+
+
+def siting_offsets(name):
+    """The (offset_h, offset_v) of a chroma location name; 4:2:2 uses only offset_h."""
+    return next(k for k, v in SITING_NAMES.items() if v == name)
 
 
 def probe(ffprobe, path):
@@ -376,11 +438,13 @@ def error_by_level(ideal_plane, err, mask, bits, bins=32):
 
 def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt709", range_="tv",
             margin=8, image_path=None, diff_path=None, error_map_path=None, error_map_limit=4.0, source_image_path=None,
-            measure_siting=True, log=None):
+            measure_siting=True, source_movie=None, source_siting=None, log=None):
     """Compare the first frame of movie with the ideal conversion of source_file. Returns a results dict.
 
     error_map_path also gets one image per plane, <stem>-<plane>.png (e.g. -errormap-cb.png), and
     source_image_path, if given and not already there, a viewable copy of the source.
+    For an RGB result decoded from a 4:2:2/4:2:0 source_movie whose chroma is really at source_siting (a name,
+    e.g. "left"), it also measures how far the decode moved the chroma (decode_siting).
     """
     info = probe(ffprobe, movie)
     if not info:
@@ -455,6 +519,19 @@ def compare(source_file, movie, ffmpeg="ffmpeg", ffprobe="ffprobe", matrix="bt70
                 result["chroma_offset_h"] = offset_h
             if offset_v is not None:
                 result["chroma_offset_v"] = offset_v
+    if kind == "rgb" and measure_siting and source_movie and source_siting:
+        source_info = probe(ffprobe, source_movie)
+        match = YUV_RE.match(source_info.get("pix_fmt", ""))
+        source_sxsy = SUBSAMPLING[match.group(1)] if match else (1, 1)
+        if source_sxsy != (1, 1):
+            decoded = np.stack([planes[2], planes[0], planes[1]], -1) / ((1 << bits) - 1)
+            shift_h, shift_v, assumed = decode_siting(decoded, rgb, siting_offsets(source_siting), source_sxsy)
+            result["source_chroma_location"] = source_info.get("chroma_location", "unknown")
+            result["chroma_siting_assumed"] = assumed
+            if shift_h is not None:
+                result["chroma_shift_h"] = shift_h
+            if shift_v is not None:
+                result["chroma_shift_v"] = shift_v
     for key in ("color_range", "color_space", "color_primaries", "color_transfer", "chroma_location"):
         result[key] = info.get(key, "unknown")
     colr = read_colr(movie)

@@ -20,6 +20,11 @@ Source images for tests.
        smptehdbars_10-yuv444p10-bt709-full.mkv - the same, full and limited range, for the range conversion tests
        (`enctests/test_configs/ycbcr_range_tests.yml`). The command is in each `.yml`. All four match the ideal
        conversion of their reference exactly.
+     * chroma_siting_chart-yuv420p10-{left,center,topleft,untagged}.mkv,
+       chroma_siting_chart-yuv422p10-{left,center,untagged}.mkv - the chroma siting chart as 10-bit BT.709 limited
+       range 4:2:0 and 4:2:2, subsampled in numpy at a known siting and stored as FFV1 in MKV, which carries the
+       chroma location tag; the untagged ones have co-sited (left) chroma. Each `.yml` gives the real siting
+       (`chroma_siting:`). Made by make_chroma_siting_sources.py, for `enctests/test_configs/decode_siting_tests.yml`.
 
 > The `*_yuv420p*`, `*_yuv422p*` comparison images made by `generate.sh` were converted to Y'CbCr and back with
 > libswscale (`scale=in_color_matrix=bt709:out_color_matrix=bt709`). They therefore include any libswscale
@@ -147,3 +152,6 @@ properties), mid grey with four bands of 270 rows:
 
 `tests/chroma_siting.py` converts it with each FFmpeg converter and reports where the chroma ended up; see the
 script for the method.
+
+`make_chroma_siting_sources.py` makes 4:2:2 and 4:2:0 versions of it with known siting (listed above), for
+checking where FFmpeg assumes the chroma is when it converts them back to RGB.
