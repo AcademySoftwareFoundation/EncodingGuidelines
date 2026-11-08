@@ -6,6 +6,7 @@ exclude: ["ICC", "*.yml", "enctests/*/*.mov",
           "enctests/*/*.mov",
           "framerate/*",
           "MarkdownNotes.md",
+          "conan/build*",
           "enctests/sources/hdr_sources/*/*.exr", "enctests/sources/Sintel-trailer-1080p-png",
           "enctests/sources/1080p"]
 
