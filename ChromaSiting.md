@@ -417,23 +417,30 @@ has its own colours, so a uniform band's colour means nothing; only which bands 
 
 The chroma in these files has no true position: the bands show what the player assumes, and which is right
 depends on the label. In 4:2:0, H.264 and HEVC can carry a chroma location in the VUI, so there are deliberately
-tagged copies with the same pixels: `-hevc-topleft.mp4`, `-h264-topleft.mp4` and `-h264-center.mp4`. A player that
-reads the tag should switch to "Down: co-sited" for `topleft`, and to "Across: centred" for `center`.
+tagged copies with the same pixels: `-hevc-topleft.mp4`, `-hevc-center.mp4`, `-h264-topleft.mp4` and
+`-h264-center.mp4`. A player that reads the tag should switch to "Down: co-sited" for `topleft`, and to "Across:
+centred" for `center`. The H.264 files are 8-bit, so that browsers play them; `-h264-10bit.mp4` (High 10, with
+`-topleft` and `-center` copies) and `-hevc-8bit.mp4` separate the codec from the bit depth in a player that
+treats them differently.
 
 Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2:
 
-| Player | HEVC 10-bit, `left` | HEVC, `topleft` | H.264 8-bit, untagged | H.264, `topleft` | H.264, `center` |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Safari 26.6.2 | Correct | Follows the tag | Correct | **Centred both ways** | Follows the tag |
-| Chrome 156 | Correct | Follows the tag | Correct | **Centred both ways** | Follows the tag |
-| Firefox 152 | Correct | **Ignores the tag** | Correct | **Ignores the tag** | **Ignores the tag** |
-| OpenRV 3.1.0 | **Centred across** | **Centred both ways** | **Centred across** | **Centred both ways** | Centred both ways |
-| xStudio, with the 4:2:2 fix | Correct | not tested | **Centred across** | not tested | not tested |
+| Player | HEVC 10-bit, `left` | HEVC 10-bit, `topleft` | H.264 8-bit, untagged | H.264 10-bit, untagged | H.264 8-bit, `topleft` | H.264 8-bit, `center` |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Safari 26.6.2 | Correct | Follows the tag | Correct | Correct | **Centred both ways** | Follows the tag |
+| Chrome 156 | Correct | Follows the tag | Correct | **Centred across** | **Centred both ways** | Follows the tag |
+| Firefox 152 | Correct | **Ignores the tag** | Correct | Correct | **Ignores the tag** | **Ignores the tag** |
+| OpenRV 3.1.0 | **Centred across** | **Centred both ways** | **Centred across** | **Centred across** | **Centred both ways** | Centred both ways |
+| xStudio, with the 4:2:2 fix | Correct | **Ignores the tag** | **Centred across** | Correct | **Ignores the tag** | not tested |
 
-"Correct" is across co-sited and down centred. Safari and Chrome agree on every file, including an H.264 file
-tagged `topleft` coming out centred both ways, which matches neither the tag nor the default; both decode H.264
-and HEVC through macOS, which is the likely common cause, but that is not confirmed. xStudio repeats rows
-(centred down) and, in its 8-bit path, repeats samples across. OpenRV is centred both ways whatever the file says.
+"Correct" is across co-sited and down centred. All of them play 10-bit H.264, but Chrome shows it centred
+across, though it gets 8-bit H.264 right. Otherwise Safari and Chrome agree, including an H.264 file tagged
+`topleft` coming out centred both ways, which matches neither the tag nor the default; both decode H.264 and HEVC
+through macOS, which is the likely common cause, but that is not confirmed. In xStudio it is the bit
+depth, not the codec, that matters: 10-bit H.264 is correct and 8-bit HEVC is centred across. Its shader averages
+neighbouring chroma samples across only in its 10/12-bit path, and repeats rows (centred down) in both; it ignored
+every tag we tried (HEVC `topleft` and `center`, 8-bit H.264 `topleft`, 10-bit H.264 `center`). OpenRV is centred
+both ways whatever the file says.
 
 FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-...`:
 

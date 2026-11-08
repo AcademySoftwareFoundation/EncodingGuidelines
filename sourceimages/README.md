@@ -16,9 +16,10 @@ Source images for tests.
      (one frame), all BT.709 limited range with co-sited chroma. chroma_siting_player_chart_422-labelled-center.mkv
      and -dnxhr-labelled-center.mxf have the same pixels with a label that says centred, to show whether a player
      reads the label. Made by make_chroma_siting_player_chart.py; measured by tests/chroma_siting_player_chart.py.
-   * chroma_siting_player_chart_420.mkv, chroma_siting_player_chart_420-{hevc,hevc-topleft,h264,h264-topleft,
-     h264-center}.mp4 - the 4:2:0 version, which tests across and down separately: FFV1 and HEVC Main 10 (10-bit),
-     8-bit H.264 High; the -topleft and -center copies carry that chroma location in the VUI, to show whether a
+   * chroma_siting_player_chart_420.mkv, chroma_siting_player_chart_420-{hevc,hevc-topleft,hevc-center,hevc-8bit,
+     h264,h264-topleft,h264-center,h264-10bit,h264-10bit-topleft,h264-10bit-center}.mp4 - the 4:2:0 version, which
+     tests across and down separately: FFV1 and HEVC Main 10 (10-bit), 8-bit H.264 High, plus 8-bit HEVC and
+     10-bit H.264 High 10; the -topleft and -center copies carry that chroma location in the VUI, to show whether a
      player reads it. Made by make_chroma_siting_player_chart_420.py; measured with --chart (or --420 --capture).
    * Y'CbCr sources, for checking that commands read the input's own tags (`enctests/test_configs/input_tags_tests.yml`).
      Each `.yml` names the RGB image it should decode to (`reference:`):
