@@ -20,15 +20,28 @@ When an image is converted to 4:2:2 or 4:2:0, there is only one chroma (colour) 
 across, and for 4:2:0 also for every two down. *Chroma siting* (or chroma sample location) is where each of
 those chroma samples sits relative to the luma samples:
 
-* **Co-sited** ("left"): the chroma sample sits on top of the even luma sample. This is what professional 4:2:2
+* **Co-sited**: the chroma sample sits on top of the even luma sample. This is what professional 4:2:2
   (SDI, ProRes, DNxHD/DNxHR) and H.264, HEVC and AV1 4:2:0 expect horizontally.
-* **Centred** ("center"): the chroma sample sits half way between two luma samples. This is the JPEG/MPEG-1
-  convention.
+* **Centred**: the chroma sample sits half way between two luma samples. This is the JPEG/MPEG-1 convention.
 
-Vertically, H.264/HEVC 4:2:0 ("left") puts the chroma half way between two rows, so the usual target for 4:2:0
-is co-sited horizontally and centred vertically. BT.2020 instead defines its 4:2:0 as co-sited in both directions
-("top-left"), and specifications disagree about which to use for UHD and HDR, and even for HD; see
+Vertically, H.264/HEVC 4:2:0 puts the chroma half way between two rows, so the usual target for 4:2:0 is co-sited
+horizontally and centred vertically. BT.2020 instead defines its 4:2:0 as co-sited in both directions, and
+specifications disagree about which to use for UHD and HDR, and even for HD; see
 [What specifications ask for](#what-specifications-ask-for).
+
+**In FFmpeg, and in tools that follow it** (`zscale`, VapourSynth, mpv and others), these positions have names,
+which this page uses too:
+
+| FFmpeg name | Horizontally | Vertically (4:2:0 only) | Typical of |
+| :--- | :--- | :--- | :--- |
+| `left` | co-sited | centred | H.264/HEVC/AV1 4:2:0 (the default), MPEG-2 4:2:0 |
+| `topleft` | co-sited | co-sited | BT.2020 4:2:0 |
+| `center` | centred | centred | JPEG, MPEG-1 |
+
+So in FFmpeg, co-sited is usually called `left`. For 4:2:2, which has a chroma sample on every row, `left` and
+`topleft` are the same position. The names are FFmpeg's: the standards describe the positions in words or numbers
+instead (see [Where this is specified](#where-this-is-specified)). And "left" only describes the horizontal
+position; that it also means vertically centred is FFmpeg's convention, taken from MPEG-2 and H.264.
 
 If the converter puts the chroma in one place and the player assumes another, the colour is shifted half a pixel
 against the detail. It is subtle, a fraction of a pixel on colour edges, but it is systematic, it accumulates
