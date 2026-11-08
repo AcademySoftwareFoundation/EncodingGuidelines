@@ -27,7 +27,8 @@ those chroma samples sits relative to the luma samples:
 
 Vertically, H.264/HEVC 4:2:0 ("left") puts the chroma half way between two rows, so the usual target for 4:2:0
 is co-sited horizontally and centred vertically. BT.2020 instead defines its 4:2:0 as co-sited in both directions
-("top-left"), which is why some UHD/HDR delivery specifications ask for that; check yours.
+("top-left"), and specifications disagree about which to use for UHD and HDR, and even for HD; see
+[What specifications ask for](#what-specifications-ask-for).
 
 If the converter puts the chroma in one place and the player assumes another, the colour is shifted half a pixel
 against the detail. It is subtle, a fraction of a pixel on colour edges, but it is systematic, it accumulates
@@ -45,6 +46,10 @@ over round trips, and in most formats nothing in the file tells the player other
   the result is only approximately co-sited.
 * **In most delivery formats there is nowhere to record the siting**, so the conversion has to match what players
   assume: co-sited. Matroska is the exception.
+* **Reading 4:2:2 or 4:2:0 back to RGB has the same problem in reverse.** `zscale` reads the file's chroma
+  location and assumes co-sited when there is none. libswscale, which is what a plain `ffmpeg -i movie.mov
+  frame.png` uses, assumes centred whatever the file says, up to and including 9.0, so stills from ProRes, DNxHR
+  or H.264 come out with the colour half a pixel to the right. See [Reading back to RGB](#reading-back-to-rgb).
 
 Use `zscale` for the conversion, as in the recommended commands in [FFmpeg Version Changes](FFmpegChanges.html#recommended-commands)
 and [zscale Conversion](EncodeZscale.html), and leave its chroma location at the default.
@@ -150,6 +155,71 @@ defines as the MPEG-2 and H.264 4:2:0 position. For 4:2:2 that is the wrong valu
 literally sees 4:2:0 siting on 4:2:2 material. So for 4:2:2 MXF, leave `zscale`'s chroma location at its default
 (or use `topleft`), which gives 0; do not set it to `left`.
 
+## What specifications ask for {#what-specifications-ask-for}
+
+For 4:2:2 there is no disagreement: it is co-sited. For 4:2:0 the choice is between `left` (H.264/HEVC VUI type
+0, co-sited horizontally and centred vertically) and `topleft` (type 2, co-sited both ways), and the specifications
+do not agree:
+
+| Specification | 4:2:0 siting |
+| :--- | :--- |
+| ITU-T H.264 / H.265, Annex E | `left` (0) when nothing is signalled. H.265 has recommended `topleft` (2) for BT.2020 and BT.2100 video since its 2018 edition, according to [Dolby](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) and 3GPP (we have not checked the ITU text) |
+| [ITU-T H.Sup19](https://www.itu.int/epublications/publication/itu-t-h-suppl-19-2021-04-usage-of-video-signal-type-code-points) / ISO/IEC TR 23091-4, typical values | `left` (0) for SD and HD, `topleft` (2) for UHD with wide colour gamut |
+| [DVB, ETSI TS 101 154](https://www.etsi.org/deliver/etsi_ts/101100_101199/101154/02.09.01_60/ts_101154v020901p.pdf) V2.9.1, clause 5.14.1.5.3 (HEVC) | The siting **shall** be signalled; recommends `left` (0) for progressive BT.709 and `topleft` (2) for progressive BT.2020. (For H.264 it recommends 0.) |
+| [ATSC 3.0, A/341:2024](https://www.atsc.org/wp-content/uploads/2024/04/A341-2024-04-Video-HEVC.pdf), section 6.2.3.2 | **`topleft` (2), required for all progressive video**, including 1080p and 720p BT.709 SDR. `left` (0) for legacy SD and interlaced HD ([Amendment 1](https://www.atsc.org/wp-content/uploads/2022/09/A341-2022-03-Amendment-No-1.pdf), 2022) |
+| [Dolby Vision profiles](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) | Either, but the VUI must say so unless it is `left`. Default `left` (0) for profile 5 ("all commercially produced profile 5 ... bitstreams have used center-left siting"), for the HDR10 base layer of profile 8.1 and for the DVB HLG base layer of 8.4; `topleft` (2) for profile 7 (Ultra HD Blu-ray) and for the ARIB HLG base layer of 8.4 |
+
+Where they disagree:
+
+* **HD:** a 1080p BT.709 HEVC stream for ATSC 3.0 must be `topleft`; the same stream for DVB is recommended to be
+  `left`, which is also what H.264/HEVC readers assume when nothing is signalled.
+* **HDR10 and HLG:** H.265, DVB and ATSC point to `topleft` for BT.2020/BT.2100, but most streaming HDR (Dolby
+  Vision profile 5, and the HDR10 base layer of profile 8.1) is `left`, and Dolby's own default for a DVB HLG base
+  layer is `left` where DVB recommends `topleft`.
+* **Players:** Dolby notes that `topleft` is checked when a Dolby Vision chip is approved, but not when a device
+  is. A player that ignores the VUI treats `topleft` material as `left`, and puts the chroma half a line too
+  low.
+
+The default `zscale` siting (`left`) is right for H.264/HEVC 4:2:0 that does not say otherwise, and for DVB HD.
+For a specification that asks for `topleft`, set it, and the encoder signals it: with `libx265`,
+`zscale=matrix=709:range=limited:chromal=topleft` gave top-left chroma (measured 0.00 horizontally, 0.02
+vertically) and VUI `chroma_sample_loc_type` 2 on FFmpeg 6.1.6 and 9.0.2. For a BT.2020 conversion use the
+matching `matrix` and `primaries`. In 4:2:2 MXF, `topleft` is also the value that gives the correct `ColorSiting`
+(see [DNxHR in MXF](#dnxhr-in-mxf)).
+
+## Reading back to RGB {#reading-back-to-rgb}
+
+When FFmpeg converts 4:2:2 or 4:2:0 to RGB, for example to make review stills from a ProRes or H.264 file, it has
+to decide where the chroma samples are before it can interpolate them. Measured by decoding 4:2:2 and 4:2:0
+versions of the test chart with known siting to 16-bit RGB PNG, with and without a chroma location tag (FFV1 in
+Matroska, which carries the tag through to FFmpeg's decoder). Positions are in luma samples: 0 is co-sited, 0.5
+centred.
+
+| Converter | Tagged `left` or `topleft` | Tagged `center` | No tag (chroma co-sited) |
+| :--- | :--- | :--- | :--- |
+| `zscale` | Correct | Correct | Assumes co-sited: correct |
+| `scale`, or no filter, 6.1 to 9.0 | **Assumes centred: chroma 0.5 to the right** | Correct | **Assumes centred: 0.5 to the right** |
+| `scale`, or no filter, 9.1.dev | Follows the tag (within 0.07) | Correct | **Assumes centred: 0.5 to the right** |
+
+The results were the same on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1 and 9.0.2; the 9.1 development build (N-127508) is
+the only one that differs. `-sws_flags +full_chroma_int` (or `scale=flags=...+full_chroma_int`) makes libswscale
+interpolate the chroma instead of repeating each sample across two pixels, which it otherwise does when converting
+4:2:x to RGB, but it does not change the position it assumes.
+
+So a co-sited file, which is every ProRes, DNxHR and 4:2:2 H.264/HEVC file and most H.264/HEVC 4:2:0, converted
+to RGB without a filter comes out half a pixel off on every released version. With 9.1 that will only be fixed
+for files that carry a chroma location, which in MOV and MP4 is only 4:2:0 H.264/HEVC with a non-default
+location (see [Where chroma siting is recorded](#where-chroma-siting-is-recorded)). Use `zscale`:
+
+```console
+ffmpeg -i input.mov -frames:v 1 -vf "zscale,format=gbrp16le" -pix_fmt rgb48be frame.png
+```
+
+`format=gbrp16le` keeps the conversion in `zscale` (it outputs planar RGB; the repack to `rgb48be` for PNG is
+lossless). `zscale` needs the file's matrix to be tagged; for an untagged file give it with
+`zscale=matrixin=709:rangein=limited`. The matrix and range accuracy of the conversion, and what happens with
+untagged files, are covered in [FFmpeg Version Changes](FFmpegChanges.html#ycbcr-to-rgb).
+
 ## How this was tested
 
 * `sourceimages/chroma_siting_chart.png`, generated by `sourceimages/make_chroma_siting_chart.py` and described
@@ -174,8 +244,12 @@ FFmpeg version with `--label`, then `--summarize` combines the runs into the scr
 setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
 and the OpenImageIO Python bindings (`requirements.txt`).
 
-Not yet covered: the reverse direction. What FFmpeg assumes when reading 4:2:2 or 4:2:0 back to RGB, for example
-making review stills from a ProRes, has not been tested yet.
+The same measurements, and the reverse direction, are also part of the encoding test framework, so they are re-run
+for each FFmpeg version (`enctests/test_configs/chroma_siting_tests.yml` and `decode_siting_tests.yml`). For the
+reverse direction, `sourceimages/make_chroma_siting_sources.py` subsamples the chart in numpy at a known siting
+and stores it as FFV1 in Matroska. The decoded RGB is converted back to full-resolution chroma, and compared with
+the ideal chroma of the chart shifted by a fraction of a pixel; the shift that matches best is how far the
+decoder moved the chroma. Both are blurred first, so the converter's own filter does not affect the result.
 
 ## Where this is specified
 

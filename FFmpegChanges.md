@@ -33,6 +33,9 @@ commands that give the right result on all of them.
 | [libswscale RGB to full-range Y'CbCr is too bright](#libswscale-full-range-80) | 8.0 and later | 10-bit and 12-bit output: luma gain too high, white about 3 code values (10-bit) high. Exact up to 7.1. Use `zscale`. |
 | [libswscale Y'CbCr range conversion was 3 code values out](#libswscale-full-range-80) | 7.1 and earlier | Limited to full and full to limited at 10/12-bit. Fixed in 8.0 by the same change. |
 | [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
+| [libswscale ignores the chroma location when converting to RGB](#ycbcr-to-rgb) | 9.0 and earlier | Stills from co-sited 4:2:2/4:2:0 (ProRes, DNxHR, H.264) come out with the colour half a pixel to the right. Use `zscale`. |
+| [Untagged Y'CbCr is converted to RGB as BT.601](#ycbcr-to-rgb) | All | libswscale assumes BT.601; `zscale` refuses. Give the matrix explicitly. |
+| [Chroma location reaches the filter graph](#chroma-location-91) | 9.1 development builds | `-chroma_sample_location`, and the file's chroma location when decoding, now steer libswscale. Untagged files are still taken as centred. |
 
 ## Recommended commands
 
@@ -114,6 +117,11 @@ Each script measures whichever `ffmpeg` is on the `PATH` (or `FFMPEG_BIN` and `F
 FFmpeg version with `--label`, then `--summarize` combines the runs into the script's `summary.md`. With a rez
 setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
 and the OpenImageIO Python bindings (`requirements.txt`).
+
+The same checks are also in the encoding test framework, which is run on each FFmpeg version (6.1.6, 7.0, 7.1.5,
+8.0.1, 8.1, 9.0.2 and a 9.1 development build so far) and reports what changed between versions:
+`enctests/test_configs/cicp_flags_tests.yml` (the tag recipes), `chroma_siting_tests.yml`, `decode_tests.yml` and
+`decode_siting_tests.yml`. See `enctests/README.md`.
 
 ## `-colorspace` and `-color_range` now drive the conversion (7.1) {#colorspace-flags-71}
 
@@ -364,6 +372,53 @@ as colour tags.
 * Tested on 6.0, 7.1.5, 8.0.1 (decode), and 8.1, 9.0.2 and 9.1-dev (fail).
 * Introduced by FFmpeg commit `44af382979` ("avcodec/pngdec: support reading EXIF profiles"), first in 8.1.
 
+## Converting Y'CbCr to RGB {#ycbcr-to-rgb}
+
+Extracting stills (`ffmpeg -i movie.mov frame.png`) converts Y'CbCr to RGB, and the same libswscale/`zscale`
+differences apply in that direction. Decoding lossless 10-bit BT.709 sources to 16-bit RGB PNG and comparing with
+the RGB they were made from (errors in 10-bit code values, away from edges):
+
+| Source | No filter, or `scale` | `zscale` |
+| :--- | :--- | :--- |
+| BT.709 limited range, chip chart | 5.3 max, 1.3 mean | 1.6 max, 0.3 mean |
+| BT.709 limited range, RP 219 bars | 4.7 max, 1.5 mean | 1.0 max, 0.2 mean |
+| BT.709 full range, chip chart | 2.3 max, 0.4 mean | 1.4 max, 0.3 mean |
+| BT.709 full range, RP 219 bars | 1.4 max, 0.4 mean | 1.0 max, 0.1 mean |
+| Untagged (BT.709 limited range pixels) | **146 max**: converted as BT.601 | No output: `zscale` will not guess the matrix |
+
+* The results were identical on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1, 9.0.2 and a 9.1 development build;
+  `scale=flags=accurate_rnd+full_chroma_int` gave the same as plain `scale`.
+* For an untagged file, say what it is: `zscale=matrixin=709:rangein=limited` gives the same result as for the
+  tagged file.
+* **Chroma siting:** for 4:2:2 and 4:2:0 sources, libswscale also assumes the chroma is centred, whatever the
+  file says, on every release up to 9.0, so co-sited material (ProRes, DNxHR, most H.264/HEVC) comes out with the
+  colour half a pixel to the right. `zscale` follows the file's chroma location and assumes co-sited when there is
+  none. Details in [Chroma Siting](ChromaSiting.html#reading-back-to-rgb).
+
+```console
+ffmpeg -i input.mov -frames:v 1 -vf "zscale,format=gbrp16le" -pix_fmt rgb48be frame.png
+```
+
+`format=gbrp16le` keeps the conversion in `zscale`, which outputs planar RGB; without it FFmpeg may convert with
+libswscale instead. The repack to `rgb48be` for the PNG is lossless.
+
+Tested with `enctests/test_configs/decode_tests.yml` and `decode_siting_tests.yml`.
+
+## Chroma location reaches the filter graph (9.1) {#chroma-location-91}
+
+FFmpeg development builds after 9.0 pass the chroma location through the filter graph, as 7.1 started doing for
+the matrix and range (commits `02abeae2c7`, "fftools/ffmpeg: add chroma location support", and `950fe27d23`,
+"avfilter/vf_scale: convert to the negotiated chroma location"). Measured on N-127508-ga2cfa47aec:
+
+* **Encoding:** with no conversion filter, `-chroma_sample_location left` now makes the inserted conversion
+  co-site the chroma (measured -0.03 of a pixel; 0.5, centred, on 9.0 and earlier). Explicit `scale` without
+  `out_chroma_loc` still centres it.
+* **Decoding to RGB:** libswscale now follows a file's chroma location instead of assuming centred. A file with
+  no chroma location is still taken as centred, so co-sited material that does not say so, which includes all
+  ProRes and DNxHR, is still converted half a pixel off.
+
+This is not in a release yet; recheck when 9.1 is released. `zscale` is unaffected.
+
 ## Relabelling a file
 
 From 7.1 there are three distinct operations, and it helps to keep them separate:
@@ -383,3 +438,10 @@ ffmpeg -i mislabelled.mov \
 
 Before 7.1, `-colorspace` and `-color_range` also relabelled, which is how files ended up tagged BT.709 with
 BT.601 pixels in them.
+
+Do not relabel H.264 in MP4 with the `h264_metadata` bitstream filter alone (for example
+`-c copy -bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1`). It
+rewrites the stream's VUI but not the container's `colr` atom, which keeps the old values (unspecified, in our
+test) even with `-movflags +write_colr`. `ffprobe` reports the new VUI values, so the file looks fixed, but a
+player that reads `colr` still sees the old tags. The same on 6.1.6, 7.1.5, 8.0.1, 8.1, 9.0.2 and 9.1.dev.
+Re-encoding with `setparams`, as above, sets both.
