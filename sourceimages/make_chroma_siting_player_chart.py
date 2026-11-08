@@ -93,16 +93,24 @@ def chart():
         y[r0:r1, LABEL:] = np.where(test, ty, ry)
         cb[r0:r1, LABEL:] = np.where(test, tc[..., 0], rc[..., 0])
         cr[r0:r1, LABEL:] = np.where(test, tc[..., 1], rc[..., 1])
-    # Text in luma only, on the neutral grey of the title band and the label column.
+    y, cb, cr = annotate(y, cb, cr, [
+        "4:2:2 chroma siting: which band is a uniform field?",
+        "H.264, HEVC, ProRes and DNxHD 4:2:2 are co-sited: only the top band should be uniform. "
+        "None uniform: something else (e.g. 4:2:0).",
+        "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
+        "the viewer is scaling: ignore the bands."], [band[:2] for band in BANDS])
+    return [np.clip(p, 4, 1019).astype("<u2") for p in (y, cb[:, 0::2], cr[:, 0::2])]
+
+
+def annotate(y, cb, cr, title, labels):
+    """Add the title band (three lines), the band labels and the scale check, in luma only on a neutral grey, and
+    quantise to 10-bit limited range codes (full resolution; the caller subsamples the chroma)."""
     img = Image.new("L", (W, H), 0)
     d = ImageDraw.Draw(img)
     big, mid, small = (ImageFont.load_default(size=s) for s in (30, 26, 20))
-    d.text((24, 14), "4:2:2 chroma siting: which band is a uniform field?", fill=255, font=big)
-    d.text((24, 58), "H.264, HEVC, ProRes and DNxHD 4:2:2 are co-sited: only the top band should be uniform. "
-                     "None uniform: something else (e.g. 4:2:0).", fill=255, font=small)
-    d.text((24, 86), "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
-                     "the viewer is scaling: ignore the bands.", fill=255, font=small)
-    for k, (label, note, *_) in enumerate(BANDS):
+    for (x, ty), line, font in zip([(24, 14), (24, 58), (24, 86)], title, (big, small, small)):
+        d.text((x, ty), line, fill=255, font=font)
+    for k, (label, note) in enumerate(labels):
         r0 = TOP + k * 2 * BLOCK
         d.text((24, r0 + 90), label, fill=255, font=mid)
         d.text((24, r0 + 126), note, fill=200, font=small)
@@ -116,8 +124,7 @@ def chart():
     xm = (x0 + x1) // 2
     yy, xx = np.mgrid[y0:y1, x0:x1]
     y[y0:y1, x0:x1] = np.where(xx < xm, (yy + xx) % 2, ((yy - y0) // 20 + (xx - xm) // 20) % 2)
-    y, cb, cr = np.round(y * 876 + 64), np.round(cb * 896 + 512), np.round(cr * 896 + 512)
-    return [np.clip(p, 4, 1019).astype("<u2") for p in (y, cb[:, 0::2], cr[:, 0::2])]
+    return np.round(y * 876 + 64), np.round(cb * 896 + 512), np.round(cr * 896 + 512)
 
 
 def main():

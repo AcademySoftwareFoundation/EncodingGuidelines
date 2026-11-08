@@ -1,18 +1,19 @@
 """
-Measure the 4:2:2 chroma siting player chart (sourceimages/make_chroma_siting_player_chart.py), either as decoded
-by FFmpeg or in a screenshot of a player.
+Measure the chroma siting player charts (sourceimages/make_chroma_siting_player_chart.py for 4:2:2,
+make_chroma_siting_player_chart_420.py for 4:2:0), either as decoded by FFmpeg or in a screenshot of a player.
 
 For each band it gives the zoomed-out difference between the test and reference blocks: the Oklab distance
 between their linear-light means (display gamma 2.4). The band near 0 is how the player reconstructs the chroma;
 a wrong band is 0.04 or more. It also gives the scale check (light of the fine checkerboard over the coarse one,
 display gamma 2.2: 1.00 at 100%, lower if the viewer scales) and, for the co-sited band, how many of its test
 blocks match the reference pixel for pixel, left to right, which shows a player that is right on only part of
-the picture.
+the picture. The 4:2:0 chart's bands come in two pairs, across and down; the verdict is the lower of each pair.
 
 FFmpeg decodes (the ffmpeg on the PATH, or FFMPEG_BIN):
     python tests/chroma_siting_player_chart.py
 A screenshot, taken at one image pixel per screen pixel (e.g. screencapture -o -l <window id> shot.png on macOS):
     python tests/chroma_siting_player_chart.py --capture shot.png
+The 4:2:0 chart: --chart sourceimages/chroma_siting_player_chart_420-hevc.mp4, or --420 with --capture.
 """
 import argparse
 import os
@@ -27,6 +28,7 @@ CHART = HERE.parent / "sourceimages" / "chroma_siting_player_chart_422.mkv"
 FFMPEG = os.getenv("FFMPEG_BIN", "ffmpeg")
 W, H = 1920, 1080
 BANDS = ["co-sited", "centred linear", "centred bicubic", "sample repeat"]
+BANDS_420 = ["across co-sited", "across centred", "down centred", "down co-sited"]
 DECODES = {  # name: ffmpeg output arguments; the output is read as 16-bit RGB, packed (rgb48le) or planar (gbrp16le)
     "zscale": ["-vf", "zscale,format=gbrp16le"],
     "no filter, to packed RGB": ["-pix_fmt", "rgb48le"],
@@ -100,14 +102,22 @@ def find_chart(img):
         if g[y].sum() < 900:
             continue
         n, x0 = longest_run(g[y])
-        if n >= 900 and g[y:y + int(110 * n / W), x0 + 4].all():
-            return x0, y, n / W
+        s = n / W
+        if n >= 900 and g[y:y + int(110 * s), x0 + 4].all():
+            # Confirm with the scale check's coarse checkerboard (20-pixel cells from x 1730, y 10 of the chart):
+            # the cell centres alternate black and white whatever the scale.
+            def cell(i, j):
+                cy, cx = int(y + (20 + 20 * j) * s), int(x0 + (1740 + 20 * i) * s)
+                return img[cy, cx].mean() if cy < img.shape[0] and cx < img.shape[1] else 0.5
+            if all(abs(cell(i, j) - (i + j) % 2) < 0.2 for i in range(8) for j in range(5)):
+                return x0, y, s
     raise SystemExit("chart not found: is the whole title band visible?")
 
 
-def report(name, values, extra=""):
-    best = int(np.argmin(values))
-    cells = "  ".join(f"{b} {v:.3f}{' <' if i == best else '  '}" for i, (b, v) in enumerate(zip(BANDS, values)))
+def report(name, values, extra="", c420=False):
+    names = BANDS_420 if c420 else BANDS
+    best = [int(np.argmin(values[:2])), 2 + int(np.argmin(values[2:]))] if c420 else [int(np.argmin(values))]
+    cells = "  ".join(f"{b} {v:.3f}{' <' if i in best else '  '}" for i, (b, v) in enumerate(zip(names, values)))
     print(f"{name:32s} {cells}{extra}")
 
 
@@ -115,14 +125,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--capture", type=Path, nargs="*", help="Screenshots of a player showing the chart")
     parser.add_argument("--chart", type=Path, default=CHART, help="Chart file to decode with FFmpeg")
+    parser.add_argument("--420", dest="c420", action="store_true", help="The screenshots show the 4:2:0 chart")
     args = parser.parse_args()
+    c420 = args.c420 or "_420" in args.chart.name
     if args.capture:
         for path in args.capture:
             img = np.asarray(Image.open(path).convert("RGB")).astype(float) / 255
             left, top, s = find_chart(img)
             check = scale_check(img, left, top, s)
-            report(path.name, bands(img, left, top, s), f"  scale {s:.3f}, scale check {check:.2f}")
-            if abs(s - 1) < 0.01:
+            report(path.name, bands(img, left, top, s), f"  scale {s:.3f}, scale check {check:.2f}", c420)
+            if abs(s - 1) < 0.01 and not c420:
                 print(" " * 33 + "co-sited band, test blocks left to right: " +
                       " ".join("ok" if ok else "x" for ok in cosited_blocks(img, int(left), int(top))))
         return
@@ -135,7 +147,7 @@ def main():
         else:
             g, b, r = px.reshape(3, H, W)
             img = np.stack([r, g, b], -1)
-        report(name, bands(img))
+        report(name, bands(img), c420=c420)
 
 
 if __name__ == "__main__":

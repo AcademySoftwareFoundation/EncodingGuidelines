@@ -64,8 +64,9 @@ over round trips, and in most formats nothing in the file tells the player other
   frame.png` uses, assumes centred whatever the file says, up to and including 9.0, so stills from ProRes, DNxHR
   or H.264 come out with the colour half a pixel to the right. See [Reading back to RGB](#reading-back-to-rgb).
 * **Players disagree too**, and a test chart shows which way each one goes when you look at it from a distance:
-  of those we tried, only xStudio (with a fix) and Safari for HEVC/H.264 got 4:2:2 right throughout. See
-  [Checking a player by eye](#checking-a-player).
+  of those we tried, only xStudio (with a fix) and Safari for HEVC/H.264 got 4:2:2 right throughout. For
+  ordinary H.264/HEVC 4:2:0, Safari, Chrome and Firefox were right and OpenRV was not, and no player besides
+  FFmpeg followed a chroma location tag reliably. See [Checking a player by eye](#checking-a-player).
 
 Use `zscale` for the conversion, as in the recommended commands in [FFmpeg Version Changes](FFmpegChanges.html#recommended-commands)
 and [zscale Conversion](EncodeZscale.html), and leave its chroma location at the default.
@@ -246,7 +247,8 @@ script. For those there is a chart you look at instead: `sourceimages/chroma_sit
 deliberately mislabelled files (see [Does the player read the label?](#reading-the-label)). They are made by
 `sourceimages/make_chroma_siting_player_chart.py`. The chroma in every file is co-sited, and the encodes keep the
 pattern intact (`zscale` decodes all of them exactly), so a wrong band is the player, not the file. Do not
-re-encode them: heavier compression blurs the one-pixel stripes.
+re-encode them: heavier compression blurs the one-pixel stripes. For 4:2:0 there is a second chart, which tests
+across and down separately; see [The 4:2:0 chart](#chart-420).
 
 ### Reading the chart
 
@@ -379,6 +381,68 @@ FFmpeg writes 6 ("vertical midpoint", a 4:2:0 value) for 4:2:2 frames tagged `le
 What a browser draws into a `<canvas>` (`drawImage`) is not what it shows on screen: Safari's canvas was correct
 for ProRes and Chrome's was wrong for HEVC, the reverse of the screen. So a page that reads the video back cannot
 measure a browser; use screenshots, or your eyes.
+
+### The 4:2:0 chart {#chart-420}
+
+4:2:0 halves the chroma down as well as across, and the two can be wrong independently, so its chart has two
+pairs of bands. It is `sourceimages/chroma_siting_player_chart_420-hevc.mp4` (HEVC Main 10, which browsers play)
+and `-h264.mp4` (8-bit H.264 High, the most common delivery format), with a lossless FFV1 copy in
+`chroma_siting_player_chart_420.mkv`, made by `sourceimages/make_chroma_siting_player_chart_420.py`. Read it the
+same way (exactly 100%, the same scale check, from a distance), but expect two uniform bands, one per pair:
+
+| Band | Uniform when the player treats the chroma as | Right for |
+| :--- | :--- | :--- |
+| Across: co-sited | co-sited across | H.264, HEVC, AV1 and BT.2020 4:2:0 |
+| Across: centred | centred across (also sample repeat) | JPEG, MPEG-1 |
+| Down: centred ("left") | centred down | H.264, HEVC and AV1 by default (FFmpeg's `left`) |
+| Down: co-sited ("topleft") | co-sited down | BT.2020, and files tagged `topleft` |
+
+So an ordinary H.264 or HEVC file should give "Across: co-sited" and "Down: centred". From a distance, decoded by
+`zscale` (left, correct) and by libswscale on 9.0 (right, centred both ways):
+
+| `zscale`: across co-sited, down centred | libswscale: across centred, down centred |
+| :--- | :--- |
+| ![The 4:2:0 chart from a distance, decoded with zscale](static/chroma-siting/player_chart_420_distance_zscale.png) | ![The 4:2:0 chart from a distance, decoded with libswscale](static/chroma-siting/player_chart_420_distance_libswscale.png) |
+
+**How it works.** There is no direction in which 4:2:0 holds a reference block exactly, so each band compares a
+striped pattern with its mirror image instead. The stripes run one way only (vertical stripes test across,
+horizontal ones test down), so the other direction does not matter. If the mirror passes through a chroma sample,
+any player that treats the samples as co-sited, with any symmetric filter, rebuilds the mirrored block as the
+exact mirror image of the original: the two contain the same pixels and the band is uniform. A player that thinks
+the samples are centred pairs luma and chroma differently in the two blocks, and the checkerboard shows. Mirrored
+between two pixels instead, it is the other way round. The right band matches exactly whatever the filter, and
+the colours were chosen so the wrong one differs by at least 0.065 (Oklab, linear light), all in gamut. Each band
+has its own colours, so a uniform band's colour means nothing; only which bands are uniform does. Unlike the
+4:2:2 chart, it does not tell linear from bicubic; it only answers where the player thinks the samples are.
+
+The chroma in these files has no true position: the bands show what the player assumes, and which is right
+depends on the label. In 4:2:0, H.264 and HEVC can carry a chroma location in the VUI, so there are deliberately
+tagged copies with the same pixels: `-hevc-topleft.mp4`, `-h264-topleft.mp4` and `-h264-center.mp4`. A player that
+reads the tag should switch to "Down: co-sited" for `topleft`, and to "Across: centred" for `center`.
+
+Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2:
+
+| Player | HEVC 10-bit, `left` | HEVC, `topleft` | H.264 8-bit, untagged | H.264, `topleft` | H.264, `center` |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Safari 26.6.2 | Correct | Follows the tag | Correct | **Centred both ways** | Follows the tag |
+| Chrome 156 | Correct | Follows the tag | Correct | **Centred both ways** | Follows the tag |
+| Firefox 152 | Correct | **Ignores the tag** | Correct | **Ignores the tag** | **Ignores the tag** |
+| OpenRV 3.1.0 | **Centred across** | **Centred both ways** | **Centred across** | **Centred both ways** | Centred both ways |
+| xStudio, with the 4:2:2 fix | Correct | not tested | **Centred across** | not tested | not tested |
+
+"Correct" is across co-sited and down centred. Safari and Chrome agree on every file, including an H.264 file
+tagged `topleft` coming out centred both ways, which matches neither the tag nor the default; both decode H.264
+and HEVC through macOS, which is the likely common cause, but that is not confirmed. xStudio repeats rows
+(centred down) and, in its 8-bit path, repeats samples across. OpenRV is centred both ways whatever the file says.
+
+FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-...`:
+
+| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
+| :--- | :--- | :--- |
+| `zscale` | Follows the tag (`left`, `topleft`, `center`) | Follows the tag |
+| No filter, to planar RGB | **Centred both ways**, whatever the tag | Follows the tag |
+| No filter, to packed RGB (PNG) | **Centred both ways**, whatever the tag | **Centred both ways**, whatever the tag (the finest detail; see [How it works](#how-it-works)) |
+| `scale=flags=...+full_chroma_int` | **Centred both ways** | Follows the tag |
 
 ## How this was tested
 
