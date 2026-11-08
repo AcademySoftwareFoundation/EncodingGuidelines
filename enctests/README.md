@@ -7,8 +7,6 @@ has_children: true
 
 # ORI Encoding Test Framework
 
--*WORK IN PROGRESS*-
-
 ## Goals
 
 Create a framework for testing and comparing encoded media through various encoders
