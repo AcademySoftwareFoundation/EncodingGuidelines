@@ -248,7 +248,40 @@ deliberately mislabelled files (see [Does the player read the label?](#reading-t
 `sourceimages/make_chroma_siting_player_chart.py`. The chroma in every file is co-sited, and the encodes keep the
 pattern intact (`zscale` decodes all of them exactly), so a wrong band is the player, not the file. Do not
 re-encode them: heavier compression blurs the one-pixel stripes. For 4:2:0 there is a second chart, which tests
-across and down separately; see [The 4:2:0 chart](#chart-420).
+across and down separately; see [The 4:2:0 chart](#chart-420). To look at the pixels themselves, see [Checking the pixels](#pixel-chart).
+
+### Quick guide: what should I see? {#quick-guide}
+
+There are two kinds of chart. The **player charts** are full HD: you look at them from a distance, and a whole band
+changes appearance. The **pixel charts** are 64x64: you zoom in and look at single pixels. Start with a player chart;
+use a pixel chart to confirm the result or to show someone exactly what is wrong.
+
+| Chart | Open | Correct | Not correct |
+| :--- | :--- | :--- | :--- |
+| 4:2:2 player chart | `chroma_siting_player_chart_422-prores.mov` or `-hevc.mp4` | Only the top band, "Co-sited", is a flat field. The other three are still checkerboards | A different band is flat: the player assumes that instead. None flat: it is doing something else. The top band changes part way across: part of the picture is wrong (xStudio 1.4.0) |
+| 4:2:0 player chart | `chroma_siting_player_chart_420-h264.mp4` or `-hevc.mp4` | Two bands are flat: "Across: co-sited" and "Down: centred". The other two are checkerboards | "Across: centred" is flat instead of "Across: co-sited": the colour is half a pixel to the right (OpenRV, xStudio 8-bit). "Down: co-sited" is flat instead of "Down: centred": the player assumes `topleft` |
+| 4:2:2 pixel chart | `chroma_siting_pixel_chart_422-10bit.mkv` | One strong column of colour directly under each long tick, with a fainter column either side | The colour is off to the right of the tick: two strong columns starting at the tick (centred, or sample repeat) |
+| 4:2:0 pixel chart | `chroma_siting_pixel_chart_420-10bit.mkv` | Across, as for 4:2:2. Down, two equally strong rows: the row of the long tick on the left and the row below it | The colour is off to the right of the top ruler's tick. Centred on the left ruler's tick row: the player assumes `topleft` |
+
+The same pattern is correct for all the H.264, HEVC and AV1 files with no chroma location tag. The tagged 4:2:0 files
+change the answer on purpose: `-topleft` should make "Across: co-sited" and "Down: co-sited" flat, and `-center` should
+make "Across: centred" and "Down: centred" flat, if the player reads the tag ([details](#chart-420)).
+
+Three things catch people out:
+
+* **Player charts only work at exactly 100%**, viewed from a distance. Their scale check patch, top right, should have
+  two halves equally bright from a distance. If not, ignore the bands.
+* **The colour of a flat band means nothing.** Each band has its own colours; only whether it is flat matters.
+* **Pixel charts work at any zoom**, but in OpenRV stay on the default Linear filter. Flip against the matching
+  `-reference.mkv` in the same player to compare, and judge where the colour is centred, not how blocky it looks.
+
+Zoomed in on one cell of a pixel chart, with lines through the long ticks. In 4:2:0 the correct colour is centred on
+the vertical line and straddles the row below the horizontal line:
+
+![What correct and wrong look like on the pixel charts](static/chroma-siting/pixel_chart_guide.png)
+
+A wrong result means fine colour detail sits half a pixel to the right of the luma, or is softer than it should be.
+It is the player, not the file: these charts decode exactly in `zscale`.
 
 ### Reading the chart
 
@@ -450,6 +483,70 @@ FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/ch
 | No filter, to planar RGB | **Centred both ways**, whatever the tag | Follows the tag |
 | No filter, to packed RGB (PNG) | **Centred both ways**, whatever the tag | **Centred both ways**, whatever the tag (the finest detail; see [How it works](#how-it-works)) |
 | `scale=flags=...+full_chroma_int` | **Centred both ways** | Follows the tag |
+
+### Checking the pixels {#pixel-chart}
+
+The charts above depend on display gamma and the eye. To check their answer directly, or to show that a particular
+player is wrong, there are also tiny 64x64 charts to zoom in on. In each, the luma is flat grey and single chroma
+samples are raised, so the only thing that can spread the colour is the player's chroma reconstruction:
+
+| The player assumes | Weight of the sample in the columns tick-1, tick, tick+1, tick+2 | The colour is centred |
+| :--- | :--- | :--- |
+| Co-sited, interpolated | .5, 1, .5, 0 | **on the tick** |
+| Centred, linear | .25, .75, .75, .25 | between the tick and the next column |
+| Sample repeat | 0, 1, 1, 0 | between the tick and the next column |
+
+The long ticks in the luma rulers mark the column (and, in 4:2:0, the row) of the raised sample; the short ones mark
+every chroma site. There are three cells across, so a fault in only part of the picture shows. For 4:2:0 the same
+reading applies down the picture against the left ruler, where the `left` default is centred *between* the tick and
+the next row.
+
+Open the test file and its reference in the same player and flip between them at the same zoom. The reference is
+4:4:4, so the player has no chroma to reconstruct, and it goes through the same view transform. These are the
+references, enlarged:
+
+| 4:2:2: one assumption per row | 4:2:0: across by column, down by row |
+| :--- | :--- |
+| ![The 4:2:2 reference: co-sited, centred linear and sample repeat](static/chroma-siting/pixel_chart_422_reference.png) | ![The 4:2:0 reference: three assumptions across, by three down](static/chroma-siting/pixel_chart_420_reference.png) |
+
+Most of each reference shows what wrong players do. Only the top row of the 4:2:2 reference and the top-left square of
+the 4:2:0 reference are correct for H.264, HEVC, ProRes and DNxHD/DNxHR. A correct player makes every cell of the test
+file look like that:
+
+| 4:2:2: what a correct player shows | 4:2:0: what a correct player shows |
+| :--- | :--- |
+| ![Every 4:2:2 cell co-sited: three columns wide, the brightest on the tick](static/chroma-siting/pixel_chart_422_correct.png) | ![All nine 4:2:0 cells co-sited across and centred down](static/chroma-siting/pixel_chart_420_correct.png) |
+
+These are the exact pixels, enlarged without smoothing. They match the test files decoded with `zscale` to within about
+1 code value in 10 bits (FFmpeg 8.1 and 9.0.2), or about one 8-bit code for the 8-bit files.
+
+The files are in `sourceimages/`, lossless FFV1 in Matroska, so they are for desktop players and not browsers:
+`chroma_siting_pixel_chart_422-10bit.mkv`, `_422-8bit.mkv`, `_420-10bit.mkv`, `_420-8bit.mkv`, and
+`_422-reference.mkv`, `_420-reference.mkv`.
+
+How a player zooms matters:
+
+* **xStudio** computes each image pixel in its shader, so any zoom shows the real values. Trust the screen, not the
+  pixel probe: the probe is separate code, and did not have the half-width bug that the screen did.
+* **OpenRV** applies its filter setting (`n` toggles it) to the chroma planes as well as the luma. Under Linear, the
+  default, a zoomed view is smooth, but the peak of the colour is where the chroma is. Under Nearest the chroma
+  becomes sample repeat across, which is not what RV shows at normal playback, although the colour is still centred
+  half a pixel to the right. Down the picture, 8-bit 4:2:0 is repeated too, but 10-bit 4:2:0 stays blended, so the two
+  look different (OpenRV 3.1.0). Check the chroma position, not the pixel shapes, or use Linear.
+
+Measured on macOS 26 (Apple M2) from window screenshots, sampled at the centre of each image pixel, with
+`tests/chroma_siting_pixel_chart.py --capture`; FFmpeg is 8.1:
+
+| Player or conversion | 4:2:2 10-bit | 4:2:2 8-bit | 4:2:0 10-bit | 4:2:0 8-bit |
+| :--- | :--- | :--- | :--- | :--- |
+| `zscale` | Co-sited | Co-sited | Co-sited across, centred down | Co-sited across, centred down |
+| OpenRV 3.1.0 (Linear) | **Centred** | **Centred** | **Centred both ways** | **Centred both ways** |
+| xStudio, with the 4:2:2 fix | Co-sited | **Sample repeat** | Co-sited across, repeat down | **Repeat both ways** |
+| xStudio 1.4.0 | **Co-sited at x=16, mixed at 32, repeat at 48** | **Sample repeat** | **Across as for 4:2:2**, repeat down | **Repeat both ways** |
+
+Wherever a larger chart covers the same case the two agree, so each confirms the other (the 4:2:2 chart has no
+8-bit version, so 8-bit 4:2:2 is only measured here). "Repeat down" puts the 4:2:0
+chroma in the right place for H.264 and HEVC (centred between the rows) but without interpolating it.
 
 ## How this was tested
 

@@ -21,6 +21,9 @@ Source images for tests.
      tests across and down separately: FFV1 and HEVC Main 10 (10-bit), 8-bit H.264 High, plus 8-bit HEVC and
      10-bit H.264 High 10; the -topleft and -center copies carry that chroma location in the VUI, to show whether a
      player reads it. Made by make_chroma_siting_player_chart_420.py; measured with --chart (or --420 --capture).
+   * chroma_siting_pixel_chart_{422,420}-{10bit,8bit,reference}.mkv - tiny 64x64 FFV1 charts to zoom in on: flat grey
+     luma with single raised chroma samples and luma rulers, and 4:4:4 references holding the expected pixels. Made
+     by make_chroma_siting_pixel_chart.py; measured by tests/chroma_siting_pixel_chart.py.
    * Y'CbCr sources, for checking that commands read the input's own tags (`enctests/test_configs/input_tags_tests.yml`).
      Each `.yml` names the RGB image it should decode to (`reference:`):
      * chip-chart-1080-420.jpg - JPEG (full range BT.601, 4:2:0, quality 95) of chip-chart-1080-noicc.png, written by
