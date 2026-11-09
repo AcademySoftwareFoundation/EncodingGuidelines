@@ -1,7 +1,7 @@
 """
 Generate the chroma siting pixel charts: tiny frames to zoom in on, which show directly what a player does with
 one chroma sample. They are the cross-check for the player charts (make_chroma_siting_player_chart.py and _420.py),
-whose answer depends on display gamma. See ChromaSiting.md, "Checking the pixels".
+whose answer depends on display gamma. See ChromaSitingTests.md, "Checking the pixels".
 
 A 64x64 frame of flat grey luma with a 3x3 grid of cells. In each cell a single chroma sample is raised, always at
 a position that 4:2:2 or 4:2:0 stores: column 16, 32 or 48 (and, in 4:2:0, the chroma row stored for luma rows 16, 32

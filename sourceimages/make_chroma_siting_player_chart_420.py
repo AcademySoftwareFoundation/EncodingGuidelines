@@ -1,6 +1,6 @@
 """
 Generate the 4:2:0 chroma siting player chart: a test you look at, zoomed out, to see where a player puts 4:2:0
-chroma, across and down. See ChromaSiting.md, "Checking a player by eye".
+chroma, across and down. See ChromaSitingTests.md.
 
 4:2:0 halves the chroma both ways, so unlike the 4:2:2 chart there is no direction in which a reference block is
 held exactly. Instead each band compares a striped pattern with its mirror image. The stripes run one way only

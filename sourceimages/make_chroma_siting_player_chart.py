@@ -1,6 +1,6 @@
 """
 Generate the 4:2:2 chroma siting player chart: a test you look at, zoomed out, to see where a player puts 4:2:2
-chroma. See ChromaSiting.md, "Checking a player by eye".
+chroma. See ChromaSitingTests.md.
 
 Four bands, each a checkerboard of 120x120 blocks. Test blocks have vertical stripes with a four-pixel cycle,
 the chroma samples X and Z on the even (co-sited) columns. How a player fills in the odd columns depends on where
