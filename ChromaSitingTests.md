@@ -361,7 +361,8 @@ file look like that:
 | ![Every 4:2:2 cell co-sited: three columns wide, the brightest on the tick](static/chroma-siting/pixel_chart_422_correct.png) | ![All nine 4:2:0 cells co-sited across and centred down](static/chroma-siting/pixel_chart_420_correct.png) |
 
 These are the exact pixels, enlarged without smoothing. They match the test files decoded with `zscale` to within about
-1 code value in 10 bits (FFmpeg 8.1 and 9.0.2), or about one 8-bit code for the 8-bit files.
+1 code value in 10 bits, or about one 8-bit code for the 8-bit files (FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and the 9.1
+development build, N-127508).
 
 The files are in `sourceimages/`, lossless FFV1 in Matroska, so they are for desktop players and not browsers:
 `chroma_siting_pixel_chart_422-10bit.mkv`, `_422-8bit.mkv`, `_420-10bit.mkv`, `_420-8bit.mkv`, and
@@ -377,18 +378,24 @@ How a player zooms matters:
   half a pixel to the right. Down the picture, 8-bit 4:2:0 is repeated too, but 10-bit 4:2:0 stays blended, so the two
   look different (OpenRV 3.1.0). Check the chroma position, not the pixel shapes, or use Linear.
 
-Measured on macOS 26 (Apple M2) from window screenshots, sampled at the centre of each image pixel, with
-`tests/chroma_siting_pixel_chart.py --capture`; FFmpeg is 8.1:
+Players were measured on macOS 26 (Apple M2) from window screenshots, sampled at the centre of each image pixel, with
+`tests/chroma_siting_pixel_chart.py --capture`. FFmpeg was measured by the same script on 6.1.6, 7.1.5, 8.1, 9.0.2 and
+the 9.1 development build (N-127508); the results are the same on all of them except where a row says so:
 
 | Player or conversion | 4:2:2 10-bit | 4:2:2 8-bit | 4:2:0 10-bit | 4:2:0 8-bit |
 | :--- | :--- | :--- | :--- | :--- |
 | `zscale` | Co-sited | Co-sited | Co-sited across, centred down | Co-sited across, centred down |
+| No filter, to planar RGB, up to 9.0.2 | **Centred** | **Centred** | **Centred both ways** | **Centred both ways** |
+| No filter, to planar RGB, 9.1.dev (the files are tagged `left`) | Co-sited | Co-sited | Co-sited across, centred down | Co-sited across, centred down |
+| No filter, to packed RGB | **Sample repeat** (see below for 9.1.dev) | **Sample repeat** | **Repeat across**, centred down (see below for 9.1.dev) | **Repeat both ways** |
 | OpenRV 3.1.0 (Linear) | **Centred** | **Centred** | **Centred both ways** | **Centred both ways** |
 | xStudio, with the 4:2:2 fix | Co-sited | **Sample repeat** | Co-sited across, repeat down | **Repeat both ways** |
 | xStudio 1.4.0 | **Co-sited at x=16, mixed at 32, repeat at 48** | **Sample repeat** | **Across as for 4:2:2**, repeat down | **Repeat both ways** |
 
 Wherever a larger chart covers the same case the two agree, so each confirms the other (the 4:2:2 chart has no
-8-bit version, so 8-bit 4:2:2 is only measured here). "Repeat down" puts the 4:2:0
+8-bit version, so 8-bit 4:2:2 is only measured here). 10-bit to packed RGB is the exception on 9.1.dev: sample repeat
+is still the nearest of the patterns this chart models, but it is a poor match, and the 4:2:2 player chart reads that
+conversion as centred bicubic. "Repeat down" puts the 4:2:0
 chroma in the right place for H.264 and HEVC (centred between the rows) but without interpolating it.
 
 ## How this was tested
