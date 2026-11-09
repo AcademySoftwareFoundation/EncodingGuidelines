@@ -24,13 +24,15 @@ it.
 Writes 10-bit BT.709 limited range 4:2:2. The chroma is always co-sited; where the container can say so, it is
 labelled co-sited, and two files carry a wrong label on purpose, to show whether a player reads the label:
 
-  chroma_siting_player_chart_422.mkv                       FFV1, lossless, labelled left (co-sited)
+  chroma_siting_player_chart_422-lossless.mkv              FFV1, lossless, labelled left (co-sited)
   chroma_siting_player_chart_422-labelled-center.mkv       the same pixels, labelled center
   chroma_siting_player_chart_422-prores.mov                ProRes 422 HQ, one frame (MOV has no label)
   chroma_siting_player_chart_422-hevc.mp4                  HEVC Main 4:2:2 10, CRF 4, 2 s (plays in browsers)
   chroma_siting_player_chart_422-h264.mp4                  H.264 High 4:4:4 Predictive, lossless 4:2:2, 2 s
   chroma_siting_player_chart_422-dnxhr.mxf                 DNxHR HQX, OP1a, one frame, ColorSiting 0 (co-sited)
   chroma_siting_player_chart_422-dnxhr-labelled-center.mxf the same file with ColorSiting 1 (horizontal mid-point)
+
+(The .mkv names must not end in a digit: xStudio would read one as a single frame of a sequence.)
 
 A player that ignores the label shows the same band for both files of a pair; one that reads it shows a centred
 band for the "labelled-center" file. FFmpeg cannot write ColorSiting 1 (it maps center to 3, a 4:2:0 value), so
@@ -139,7 +141,7 @@ def main():
         loop = ["-stream_loop", "49"]           # 2 s for the formats that compress a static frame to nothing
         mp4 = ["-movflags", "+write_colr", "-chroma_sample_location", "left"]
         jobs = [
-            (src + ["-i", raw, "-c:v", "ffv1", "-chroma_sample_location", "left"], ".mkv"),
+            (src + ["-i", raw, "-c:v", "ffv1", "-chroma_sample_location", "left"], "-lossless.mkv"),
             (src + ["-i", raw, "-c:v", "ffv1", "-chroma_sample_location", "center"], "-labelled-center.mkv"),
             (src + ["-i", raw, "-c:v", "prores_ks", "-profile:v", "3", "-vendor", "apl0"], "-prores.mov"),
             (src + loop + ["-i", raw, "-c:v", "libx265", "-crf", "4", "-tag:v", "hvc1",

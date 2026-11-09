@@ -25,7 +25,7 @@ Writes 10-bit (and 8-bit H.264) BT.709 limited range 4:2:0. The chroma has no tr
 what the player assumes, and which is right depends on the label. The files say left (the H.264/HEVC default),
 and some say topleft or center on purpose, to show whether a player reads the label:
 
-  chroma_siting_player_chart_420.mkv              FFV1, lossless, 10-bit, labelled left
+  chroma_siting_player_chart_420-lossless.mkv     FFV1, lossless, 10-bit, labelled left
   chroma_siting_player_chart_420-hevc.mp4         HEVC Main 10, CRF 4, 2 s, VUI left (plays in browsers)
   chroma_siting_player_chart_420-hevc-topleft.mp4 the same, VUI topleft
   chroma_siting_player_chart_420-h264.mp4         H.264 High, 8-bit, CRF 1, 2 s, no VUI location (= left)
@@ -34,6 +34,8 @@ and some say topleft or center on purpose, to show whether a player reads the la
   chroma_siting_player_chart_420-hevc-center.mp4  HEVC Main 10, VUI center
   chroma_siting_player_chart_420-hevc-8bit.mp4    HEVC Main, 8-bit, VUI left
   chroma_siting_player_chart_420-h264-10bit.mp4   H.264 High 10, no VUI location (plus -topleft and -center copies)
+
+(The .mkv names must not end in a digit: xStudio would read one as a single frame of a sequence.)
 
 The 8-bit HEVC and 10-bit H.264 files separate the codec from the bit depth in a player that differs between
 them.
@@ -112,7 +114,7 @@ def main():
         h264 = ["-c:v", "libx264", "-profile:v", "high", "-crf", "1", "-movflags", "+write_colr"]
         h264_10 = ["-c:v", "libx264", "-profile:v", "high10", "-crf", "1", "-movflags", "+write_colr"]
         jobs = [
-            (src + ["-i", raw, "-c:v", "ffv1", "-chroma_sample_location", "left"], ".mkv"),
+            (src + ["-i", raw, "-c:v", "ffv1", "-chroma_sample_location", "left"], "-lossless.mkv"),
             (src + loop + ["-i", raw] + hevc + ["-chroma_sample_location", "left"], "-hevc.mp4"),
             (src + loop + ["-i", raw] + hevc + ["-chroma_sample_location", "topleft"], "-hevc-topleft.mp4"),
             (src8 + loop + ["-i", raw8] + h264, "-h264.mp4"),

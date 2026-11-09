@@ -25,7 +25,7 @@ did, and how it was measured. If you only want to check a player, start with the
 Players and browsers make the same choice when they display 4:2:2, and most of them cannot be measured from a
 script. For those there is a chart you look at instead: `sourceimages/chroma_siting_player_chart_422-prores.mov`
 (ProRes 422 HQ), `-hevc.mp4` (HEVC 4:2:2 10-bit, which browsers play), `-h264.mp4` (lossless H.264 4:2:2
-10-bit) and `-dnxhr.mxf` (DNxHR HQX), with a lossless FFV1 copy in `chroma_siting_player_chart_422.mkv`, and two
+10-bit) and `-dnxhr.mxf` (DNxHR HQX), with a lossless FFV1 copy in `chroma_siting_player_chart_422-lossless.mkv`, and two
 deliberately mislabelled files (see [Does the player read the label?](#reading-the-label)). They are made by
 `sourceimages/make_chroma_siting_player_chart.py`. The chroma in every file is co-sited, and the encodes keep the
 pattern intact (`zscale` decodes all of them exactly), so a wrong band is the player, not the file. Do not
@@ -140,7 +140,7 @@ which is what the table above shows. Matroska and MXF can record it (see
 [Where chroma siting is recorded](ChromaSiting.html#where-chroma-siting-is-recorded)). To see whether a player reads that label,
 there is a second copy of each with the same co-sited pixels and a label that says centred:
 
-* `chroma_siting_player_chart_422.mkv` is labelled `left` (co-sited); `-labelled-center.mkv` is labelled `center`.
+* `chroma_siting_player_chart_422-lossless.mkv` is labelled `left` (co-sited); `-labelled-center.mkv` is labelled `center`.
 * `-dnxhr.mxf` has `ColorSiting` 0 (co-sited); `-dnxhr-labelled-center.mxf` has `ColorSiting` 1 (horizontal
   mid-point, ST 377-1's value for centred 4:2:2). FFmpeg cannot write 1 (it writes 3 for `center`, a 4:2:0
   value), so the generator patches that byte.
@@ -169,7 +169,7 @@ measure a browser; use screenshots, or your eyes.
 4:2:0 halves the chroma down as well as across, and the two can be wrong independently, so its chart has two
 pairs of bands. It is `sourceimages/chroma_siting_player_chart_420-hevc.mp4` (HEVC Main 10, which browsers play)
 and `-h264.mp4` (8-bit H.264 High, the most common delivery format), with a lossless FFV1 copy in
-`chroma_siting_player_chart_420.mkv`, made by `sourceimages/make_chroma_siting_player_chart_420.py`. Read it the
+`chroma_siting_player_chart_420-lossless.mkv`, made by `sourceimages/make_chroma_siting_player_chart_420.py`. Read it the
 same way (exactly 100%, the same scale check, from a distance), but expect two uniform bands, one per pair:
 
 | Band | Uniform when the player treats the chroma as | Right for |

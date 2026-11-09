@@ -24,7 +24,7 @@ import numpy as np
 from PIL import Image
 
 HERE = Path(__file__).resolve().parent
-CHART = HERE.parent / "sourceimages" / "chroma_siting_player_chart_422.mkv"
+CHART = HERE.parent / "sourceimages" / "chroma_siting_player_chart_422-lossless.mkv"
 FFMPEG = os.getenv("FFMPEG_BIN", "ffmpeg")
 W, H = 1920, 1080
 BANDS = ["co-sited", "centred linear", "centred bicubic", "sample repeat"]
