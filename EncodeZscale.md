@@ -86,7 +86,7 @@ ends up in the file:
 | :--- | :--- | :--- |
 | Matrix, range | Always (`matrix=`, `range=`) | |
 | Primaries, transfer | Only when converted: give both the input and the output, e.g. `primariesin=709:primaries=709:transferin=iec61966-2-1:transfer=iec61966-2-1` | `setparams` |
-| Chroma location | Only when `chromal=` is set | Left unset, which is what you want for 4:2:2 MXF; see [Chroma Siting](ChromaSiting.html#dnxhr-in-mxf) |
+| Chroma location | Only when `chromal=` is set | Left unset, which is what you want for 4:2:2 MXF; see [Chroma Siting Tests](ChromaSitingTests.html#dnxhr-in-mxf) |
 
 So this is equivalent to the recommended command, without `setparams` (tested on 6.0 and 9.0, ProRes):
 
