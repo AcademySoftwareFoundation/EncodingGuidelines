@@ -208,7 +208,7 @@ It is the player, not the file: these charts decode exactly in `zscale`.
 Measured on macOS 26 (Apple M2), at one image pixel per screen pixel. The [test page](ChromaSitingTests.html) has the
 results per codec and FFmpeg version, and how the charts work.
 
-| Player or conversion | 4:2:2 | Ordinary H.264/HEVC 4:2:0 | Reads the chroma location tag? |
+| Player or conversion | 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | Ordinary H.264/HEVC 4:2:0,<br>should be `left`: co-sited across, centred down ([H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default) | Reads the chroma location tag? |
 | :--- | :--- | :--- | :--- |
 | `zscale` | Correct | Correct | Yes |
 | libswscale, up to 9.0 | **Centred, or sample repeat** | **Centred both ways** | No |

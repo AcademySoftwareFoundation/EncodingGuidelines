@@ -25,7 +25,7 @@ work, what each player and FFmpeg version did, and how it was measured. If you o
 Converting RGB to 4:2:2 and 4:2:0. Positions are in luma samples: 0 is co-sited, 0.5 is centred. The results
 were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and a 9.1 development build, except where noted.
 
-| Converter | 4:2:2 | 4:2:0 (horizontal / vertical) | Correct? |
+| Converter | 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | 4:2:0 (horizontal / vertical),<br>should be co-sited / centred ([H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default) | Correct? |
 | :--- | :--- | :--- | :--- |
 | `zscale` (default) | co-sited | co-sited / centred | Yes |
 | `zscale=...:chromal=center` | centred | centred / centred | Only for formats that want centred chroma |
@@ -102,7 +102,7 @@ versions of the test chart with known siting to 16-bit RGB PNG, with and without
 Matroska, which carries the tag through to FFmpeg's decoder). Positions are in luma samples: 0 is co-sited, 0.5
 centred.
 
-| Converter | Tagged `left` or `topleft` | Tagged `center` | No tag (chroma co-sited) |
+| Converter | Tagged `left` or `topleft`,<br>should follow the tag | Tagged `center`,<br>should follow the tag | No tag (chroma co-sited),<br>should assume co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) |
 | :--- | :--- | :--- | :--- |
 | `zscale` | Correct | Correct | Assumes co-sited: correct |
 | `scale`, or no filter, 6.1 to 9.0 | **Assumes centred: chroma 0.5 to the right** | Correct | **Assumes centred: 0.5 to the right** |
@@ -184,7 +184,7 @@ decode test in [Reading back to RGB](#reading-back-results), which blurs before 
 Measured on macOS 26 (Apple M2), from window screenshots at 1:1 (`screencapture -o -l`), with
 `tests/chroma_siting_player_chart.py --capture`; Safari, OpenRV and xStudio were also checked by eye.
 
-| Player | ProRes 422 HQ | HEVC 4:2:2 | H.264 4:2:2 |
+| Player | ProRes 422 HQ,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | HEVC 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | H.264 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) |
 | :--- | :--- | :--- | :--- |
 | Safari 26.6.2 | **None uniform**: nearest sample, see below | Co-sited (correct) | Co-sited (correct) |
 | Chrome 156 | Does not play | Co-sited (correct) | **Centred, linear** |
@@ -299,9 +299,11 @@ centred" for `center`. The H.264 files are 8-bit, so that browsers play them; `-
 `-topleft` and `-center` copies) and `-hevc-8bit.mp4` separate the codec from the bit depth in a player that
 treats them differently.
 
-Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2:
+Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2. Each file should be shown as its tag
+says, and an untagged file as `left`, the [H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default. `left` is co-sited across and centred down,
+`topleft` co-sited both ways, `center` centred both ways:
 
-| Player | HEVC 10-bit, `left` | HEVC 10-bit, `topleft` | H.264 8-bit, untagged | H.264 10-bit, untagged | H.264 8-bit, `topleft` | H.264 8-bit, `center` |
+| Player | HEVC 10-bit, `left`,<br>should be `left` | HEVC 10-bit, `topleft`,<br>should be `topleft` | H.264 8-bit, untagged,<br>should be `left` | H.264 10-bit, untagged,<br>should be `left` | H.264 8-bit, `topleft`,<br>should be `topleft` | H.264 8-bit, `center`,<br>should be `center` |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Safari 26.6.2 | Correct | Follows the tag | Correct | Correct | **Centred both ways** | Follows the tag |
 | Chrome 156 | Correct | Follows the tag | Correct | **Centred across** | **Centred both ways** | Follows the tag |
@@ -309,7 +311,7 @@ Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2:
 | OpenRV 3.1.0 | **Centred across** | **Centred both ways** | **Centred across** | **Centred across** | **Centred both ways** | Centred both ways |
 | xStudio, with the 4:2:2 fix | Correct | **Ignores the tag** | **Centred across** | Correct | **Ignores the tag** | not tested |
 
-"Correct" is across co-sited and down centred. All of them play 10-bit H.264, but Chrome shows it centred
+All of them play 10-bit H.264, but Chrome shows it centred
 across, though it gets 8-bit H.264 right. Otherwise Safari and Chrome agree, including an H.264 file tagged
 `topleft` coming out centred both ways, which matches neither the tag nor the default; both decode H.264 and HEVC
 through macOS, which is the likely common cause, but that is not confirmed. In xStudio it is the bit
