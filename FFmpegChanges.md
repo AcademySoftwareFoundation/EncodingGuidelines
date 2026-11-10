@@ -91,8 +91,10 @@ get the matrix right, but the conversion is then done by libswscale, which puts 
 from a 10-bit or 16-bit source (see [below](#libswscale-white-level-for-high-bit-depth-input)). The explicit
 `zscale` is what makes it accurate, on every version.
 
-For H.264 or HEVC in an MP4, also add `-movflags +write_colr`; otherwise the MP4 muxer writes no `colr` atom and
-the tags only exist in the video stream.
+The MOV and MP4 muxers write the `colr` atom by default when the primaries, transfer and matrix are all set, so
+`-movflags +write_colr` is not needed (measured on 6.1.6, 7.1.5 and 9.0.2). It was needed up to FFmpeg 4.3: the
+default changed in 4.4 (commit `c5b20cfe19`). The flag now only forces a `colr` atom when some of the values are
+unspecified.
 
 ## How these were tested
 
@@ -336,7 +338,7 @@ ffmpeg -i hdr_pq.tif \
   -c:v libx265 -crf 18 -pix_fmt yuv420p10le \
   -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=2000,50" \
   -color_range tv -colorspace bt2020nc -color_primaries bt2020 -color_trc smpte2084 \
-  -movflags +faststart+write_colr -tag:v hvc1 output_hdr10.mp4
+  -movflags +faststart -tag:v hvc1 output_hdr10.mp4
 ```
 
 As with the SDR command, the `-color_*` flags are redundant here; this shorter form gave the same results on
@@ -347,7 +349,7 @@ ffmpeg -i hdr_pq.tif \
   -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
   -c:v libx265 -crf 18 -pix_fmt yuv420p10le \
   -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=2000,50" \
-  -movflags +faststart+write_colr -tag:v hvc1 output_hdr10.mp4
+  -movflags +faststart -tag:v hvc1 output_hdr10.mp4
 ```
 
 * `colorprim`, `transfer` and `colormatrix` are no longer needed in `-x265-params`: `libx265` fills them in from

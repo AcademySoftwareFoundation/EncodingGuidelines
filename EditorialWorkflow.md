@@ -33,8 +33,7 @@ E.g.
 ffmpeg -r 24 -start_number <STARTFRAME> -i inputfile.%04d.png \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -frames:v 100 -c:v libx264 -preset slow -pix_fmt yuv420p \
-        -timecode <STARTFRAMETIMECODE> \
-        -movflags +write_colr outputfile.mp4
+        -timecode <STARTFRAMETIMECODE> outputfile.mp4
 ```
 
 There are three approaches for what to use for the timecode:

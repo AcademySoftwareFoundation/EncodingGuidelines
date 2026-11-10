@@ -74,7 +74,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 
         -pix_fmt yuv420p10le -crf 18 -preset 5  -svtav1-params tune=0 \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
-        -movflags +write_colr -y outputfile.mp4
+        -y outputfile.mp4
 ```
 
 | --- | --- |
@@ -125,7 +125,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1
         -pix_fmt yuv420p10le -cpu-used 6 -crf 20 -row-mt 1 \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
-        -movflags +write_colr -y outputfile.mp4
+        -y outputfile.mp4
 ```
 
 | --- | --- |

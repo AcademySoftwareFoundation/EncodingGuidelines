@@ -263,7 +263,6 @@ test_libsvtav1:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +write_colr
 ---
 test_mjpeg:
   name: test_mjpeg
@@ -389,7 +388,7 @@ test_quickstart:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +faststart+write_colr
+      -movflags: +faststart
 ---
 test_proresquickstart:
   name: test_proresquickstart
@@ -511,7 +510,6 @@ test_fullrange:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +write_colr
 ---
 test_vp9:
   name: test_vp9
@@ -560,7 +558,6 @@ test_vp9:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +write_colr
 ---
 test_movgama:
   name: test_movgama
@@ -649,7 +646,7 @@ test_h265:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +faststart+write_colr
+      -movflags: +faststart
 ---
 test_proresks:
   name: test_proresks
@@ -727,7 +724,7 @@ test_prores_videotoolbox:
   encoding_template: 'ffmpeg {input_args} -i {source} -frames:v {duration} {encoding_args}
     -y {outfile} '
   suffix: .mov
-  description: Test from ../EncodeProres.md line 158
+  description: Test from ../EncodeProres.md line 173
   app: ffmpeg
   wedges:
     wedge0:
@@ -784,7 +781,7 @@ test_h264:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +faststart+write_colr
+      -movflags: +faststart
 ---
 test_vp9_rgb:
   name: test_vp9_rgb
@@ -866,7 +863,6 @@ test_colormatch_zscale:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +write_colr
 ---
 test_colormatch_libswscale:
   name: test_colormatch_libswscale
@@ -886,7 +882,7 @@ test_colormatch_libswscale:
       less: 5
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 141
+  description: Test from ../ColorPreservation.md line 140
   app: ffmpeg
   wedges:
     wedge0:
@@ -900,7 +896,6 @@ test_colormatch_libswscale:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +write_colr
 ---
 test_colormatch_colorspace:
   name: test_colormatch_colorspace
@@ -920,7 +915,7 @@ test_colormatch_colorspace:
       less: 5
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 181
+  description: Test from ../ColorPreservation.md line 179
   app: ffmpeg
   wedges:
     wedge0:
@@ -934,7 +929,6 @@ test_colormatch_colorspace:
       -colorspace: bt709
       -color_primaries: bt709
       -color_trc: iec61966-2-1
-      -movflags: +write_colr
 ---
 test_colormatch_raw:
   name: test_colormatch_raw
@@ -951,7 +945,7 @@ test_colormatch_raw:
       - 12
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 220
+  description: Test from ../ColorPreservation.md line 217
   app: ffmpeg
   wedges:
     wedge0:

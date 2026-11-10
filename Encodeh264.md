@@ -69,7 +69,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
         -pix_fmt yuv420p10le -crf 18 -preset slow \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-        -movflags +faststart+write_colr -y outputfile.mp4
+        -movflags +faststart -y outputfile.mp4
 ```
 
 | Flag | Description |
@@ -79,7 +79,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
 | **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ) |
 | **-qscale:v 9** | Generic quality scale flag: [https://www.ffmpeg.org/ffmpeg.html#toc-Main-options](https://www.ffmpeg.org/ffmpeg.html#toc-Main-options). This is typically used for fixed-quality encoding in some codecs, but CRF is preferred for H.264. |
 | **-tune film** | See below. |
-| **-movflags +faststart+write_colr** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. `write_colr` writes the colour tags into the MP4 `colr` atom as well as the video stream. |
+| **-movflags +faststart** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 | **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
 
 ### Tune Parameter
@@ -130,8 +130,7 @@ Setting `-pix_fmt` to 10-bit or high-chroma formats usually auto-selects the app
 Uses the Apple hardware encoder. Ideal for fast proxies and web review on Apple Silicon.
 
 ```console
-ffmpeg -i input.mov -c:v h264_videotoolbox -profile:v high -pix_fmt yuv420p -b:v 10M \
-    -movflags +write_colr output.mp4
+ffmpeg -i input.mov -c:v h264_videotoolbox -profile:v high -pix_fmt yuv420p -b:v 10M output.mp4
 ```
 
 #### NVIDIA NVENC
@@ -139,8 +138,7 @@ ffmpeg -i input.mov -c:v h264_videotoolbox -profile:v high -pix_fmt yuv420p -b:v
 Uses NVIDIA's dedicated hardware encoder (available on Windows/Linux).
 
 ```console
-ffmpeg -i input.mov -c:v h264_nvenc -preset slow -rc vbr -cq 19 -pix_fmt yuv420p \
-    -movflags +write_colr output.mp4
+ffmpeg -i input.mov -c:v h264_nvenc -preset slow -rc vbr -cq 19 -pix_fmt yuv420p output.mp4
 ```
 
 ### Lossless Encoding
@@ -150,6 +148,5 @@ To achieve mathematically lossless encoding with `libx264`, use `-qp 0`. `-crf 0
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
     -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
-    -c:v libx264 -qp 0 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 \
-    -movflags +write_colr output_lossless.mp4
+    -c:v libx264 -qp 0 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 output_lossless.mp4
 ```

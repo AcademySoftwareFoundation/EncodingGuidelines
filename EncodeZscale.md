@@ -67,7 +67,6 @@ ffmpeg -i input.%06d.dpx \
   [below](#what-zscale-tags)).
 * `-pix_fmt` sets the output format; `zscale` converts straight to it. Use the codec's own format (for example
   `yuv422p10le` for ProRes 422 or DNxHR HQX, `yuv420p10le` for H.264/HEVC).
-* For H.264 or HEVC in an MP4, add `-movflags +write_colr`.
 
 The four `-color_*` flags (`-color_range tv -colorspace bt709 -color_primaries bt709 -color_trc ...`) are not
 needed with this filter chain, but are harmless if you prefer to keep them; see

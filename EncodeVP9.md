@@ -69,7 +69,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
    -pix_fmt yuv420p10le -crf 22 -cpu-used 2 -row-mt 1 -quality good -b:v 0\
    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1  \
-     -movflags +write_colr -y outputfile.mp4
+     -y outputfile.mp4
 ```
 
 ## Recommended Flags

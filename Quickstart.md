@@ -57,7 +57,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -frames:v 100 -c:v libx264 -preset slower -crf 18 \
         -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-        -movflags +faststart+write_colr outputfile.mp4
+        -movflags +faststart outputfile.mp4
 ```
 
 {: .note }
@@ -79,7 +79,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
 | **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow. |
 | **-pix_fmt yuv420p10le** | use yuv420 10-bit video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le |
 | **-color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1** | The colour tags for the file: limited range (64-940 at 10-bit), BT.709 matrix, BT.709 primaries and the sRGB transfer function. The filter chain already sets all four (see below), so these are not needed, but they are harmless. Do not rely on them alone: before FFmpeg 7.1 they do not change the conversion, and from 7.1 `-color_primaries` and `-color_trc` are ignored. See [FFmpeg Version Changes](FFmpegChanges.html). |
-| **-movflags +faststart+write_colr** | `faststart` re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. `write_colr` writes the colour tags into the MP4 `colr` atom as well as the H.264 stream; without it the MP4 muxer leaves them out. |
+| **-movflags +faststart** | `faststart` re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 
 **-vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"** converts the RGB images to Y'CbCr with the zscale filter, then labels the result:
 
@@ -259,8 +259,7 @@ comparisontest:
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
     -pix_fmt yuv420p -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -c:v libx264 -t 5 -qscale:v 1 \
-    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-    -movflags +write_colr ./greyramp-fulltv/radialgrad-full.mp4
+    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 
 We have seen the full range encoding work across all browsers, and a number of players including RV.

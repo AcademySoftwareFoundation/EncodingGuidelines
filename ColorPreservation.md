@@ -99,7 +99,6 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -pix_fmt yuv444p10le -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-   -movflags +write_colr \
    ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
 
@@ -145,7 +144,6 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-   -movflags +write_colr \
    ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
 ```
 
@@ -184,7 +182,6 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
    -pix_fmt yuv444p10le -vf "colorspace=bt709:iall=bt601-6-625:fast=1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-   -movflags +write_colr \
    ./chip-chart-yuvconvert/spline444colorspace.mp4
 ```
 
