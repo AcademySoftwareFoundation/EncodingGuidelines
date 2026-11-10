@@ -74,16 +74,34 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
 | dnxhr_lb | Low Bandwidth | 1 | YUV 4:2:2 (yuv422p) | 8 | 22:1 |
 | dnxhr_sq | Standard Quality | 2 | YUV 4:2:2  (yuv422p) | 8 | 7:1 |
 | dnxhr_hq | High Quality | 3 | YUV 4:2:2  (yuv422p) | 8 | 4.5:1 |
-| dnxhr_hqx | High Quality | 4 | YUV 4:2:2  (yuv422p, yuv422p10) | 12 (*) | 5.5: 1 |
+| dnxhr_hqx | High Quality, 10-bit | 4 | YUV 4:2:2  (yuv422p10) | 12 (*) | 5.5:1 |
 | dnxhr_444 | DNxHR 4:4:4 | 5 | YUV 4:4:4 or RGB  (yuv444p10, gbrp10) | 12 (*) | 4.5:1 |
 
 There really are not any significant flags to be used, since the quality is adjusted automatically to fit the compression ratio. Similarly the bit-rate flag has no impact on this. For more Bit-rate control, see the [DNxHD settings](#dnxhd-profiles) below.
 
 (*) The 12-bit depth is what the codec can support, but does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
 
+### DNxHR resolutions
+
+The DNxHR profiles accept any frame size from 256x120 upwards, and the bit-rate scales with the frame size. Tested
+on FFmpeg 9.0.2:
+
+* Sizes from 256x120 to 8192x4320 encoded with `dnxhr_hq`, including non-standard sizes such as 2048x858 and
+  1998x1080; the other four profiles were checked at 4096x2160.
+* Anything narrower than 256 or shorter than 120 is rejected: "Input dimensions too small, input must be at least
+  256x120".
+* We did not find an upper limit in the encoder: 16384x8640 ran out of memory rather than being refused.
+* The width and height do not have to be even: 1921x1081 encoded and decoded at that size in FFmpeg, in 4:2:2 and
+  4:4:4. We have not checked whether other applications (Avid, Resolve) accept odd sizes, so even dimensions are the
+  safer choice for delivery.
+
+This is the difference from DNxHD, which only accepts four frame sizes; see [DNxHD Profiles](#dnxhd-profiles).
+
 NOTE, we have sometimes seen incompatibility issues with DNxHD Quicktimes not being read by Black Magic devices (e.g. the HyperDeck Studio), so there may be cases where you will need to use Resolve or Adobe Media Encoder to create compatible media.
 
 ## ffmpeg RGB support
+
+The `dnxhr_444` profile can also store RGB directly (`gbrp10le`), with no Y'CbCr conversion:
 
 <!---
 name: test_dnxhd_rgb
@@ -123,11 +141,11 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
 {: .warning }
 This is currently under development, use at your own risk.
 
-There are two types of MXF files, Op-atom and OP1a. Op-atom is designed for a single piece of media, whether its audio or video, so a clip with both would be split into two sections. OP1a is a streaming format, where the audio and video streams are interleaved (see [MXF](https://web.archive.org/web/20121119151859/http://www.avid.com/static/resources/common/documents/mxf.pdf)).
+There are two types of MXF files, Op-atom and OP1a. Op-atom is designed for a single piece of media, whether it's audio or video, so a clip with both would be split into two sections. OP1a is a streaming format, where the audio and video streams are interleaved (see [MXF](https://web.archive.org/web/20121119151859/http://www.avid.com/static/resources/common/documents/mxf.pdf)).
 
 ### OP1a MXF
 
-This is appropriate for deliveries where this only a video component, not a mixed format.
+This is appropriate for deliveries where there is only a video component, not a mixed format.
 
 <!---
 name: test_dnxhd_op1a_mxf
@@ -168,11 +186,11 @@ ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -frames:v 100 \
     outputfile.mxf
 ```
 
-These can be imported directly into the AVID, although it will need to do some unpacking. For the fastest import you probably want to use OpAtom (see below). If you want to import with a reel-name, using the AAF wrapper (see below) is the recommended approach.
+These can be imported directly into the AVID, although it will need to do some unpacking. For the fastest import you probably want to use OpAtom (see below). If you want to import with a reel-name, wrapping the file in an AAF (see [AAF Creation](EditorialWorkflow.html#aaf-creation)) is the recommended approach.
 
 ### Op-Atom MXF
 
-AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but its now integrated into ffmpeg. This worked for a single piece of media (i.e. just video, or audio, not both).
+AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but it's now integrated into ffmpeg. This works for a single piece of media (i.e. just video, or audio, not both).
 
 <!---
 name: test_dnxhd_opatom_mxf
@@ -214,7 +232,7 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
        outputfile.mxf
  ```
 
-Typically you will want "MY CLIP" to match the outputfile, but its not necessary. Also note, that if you want a reel-name to also be on the clip that you will need to wrap the MXF file in an AAF (See below) to get the extra metadata imported.
+Typically you will want "MY CLIP" to match the outputfile, but it's not necessary. Also note, that if you want a reel-name to also be on the clip that you will need to wrap the MXF file in an AAF (see [AAF Creation](EditorialWorkflow.html#aaf-creation)) to get the extra metadata imported.
 
  See [https://johnwarburton.net/blog/?p=50731](https://johnwarburton.net/blog/?p=50731)
 
@@ -222,7 +240,14 @@ Typically you will want "MY CLIP" to match the outputfile, but its not necessary
 
 ## DNxHD Profiles
 
-For example below is an example of DNxHD at 175Mbps at yuv422p10 at resolution 1920x1080.
+Without a `dnxhr_*` profile, the encoder writes DNxHD, which is chosen by bit-rate (`-b:v`) and only exists for four
+frame sizes: 1920x1080, 1440x1080, 1280x720 and 960x720. The frame size, bit-rate and pixel format have to match one
+of the rows in the table below exactly. Anything else, including a missing `-b:v`, stops with "video parameters
+incompatible with DNxHD" followed by the list of combinations your build accepts (FFmpeg 9.0.2: 2048x1080 and
+3840x2160 at 175M were rejected, as was 1920x1080 at 100M). For any other frame size use DNxHR; see
+[DNxHR resolutions](#dnxhr-resolutions).
+
+Below is an example of DNxHD at 175Mbps at yuv422p10 at resolution 1920x1080.
 
 <!---
 name: test_dnxhd_profile
@@ -268,12 +293,12 @@ Other combinations of resolution, bitrate and format are:
 | 1920x1080p | 185M | yuv422p10 | 25 |
 | 1920x1080p | 365M | yuv422p10 | 50 |
 | 1920x1080p | 440M | yuv422p10 | 59.94, 60 |
-| 1920x1080p | 115M | yuv422p | 23.97, 24 |
+| 1920x1080p | 115M | yuv422p | 23.98, 24 |
 | 1920x1080p | 120M | yuv422p | 25 |
 | 1920x1080p | 145M | yuv422p | 29.97, 50 |
 | 1920x1080p | 240M | yuv422p | 50 |
 | 1920x1080p | 290M | yuv422p | 59.94, 60 |
-| 1920x1080p | 175M | yuv422p | 23.97, 24 |
+| 1920x1080p | 175M | yuv422p | 23.98, 24 |
 | 1920x1080p | 185M | yuv422p | 25 |
 | 1920x1080p | 220M | yuv422p | 29.97 |
 | 1920x1080p | 365M | yuv422p | 50 |
@@ -286,22 +311,22 @@ Other combinations of resolution, bitrate and format are:
 | 1920x1080i | 220M | yuv422p | 29.97 |
 | 1440x1080i | 120M | yuv422p | 25 |
 | 1440x1080i | 145M | yuv422p | 29.97 |
-| 1280x720p | 90M | yuv422p10 | 23.97, 24, 25 |
+| 1280x720p | 90M | yuv422p10 | 23.98, 24, 25 |
 | 1280x720p | 180M | yuv422p10 | 50, 59.94, 60 |
 | 1280x720p | 220M | yuv422p10 | 59.94, 60 |
-| 1280x720p | 90M | yuv422p | 23.97, 24, 25 |
+| 1280x720p | 90M | yuv422p | 23.98, 24, 25 |
 | 1280x720p | 110M | yuv422p | 29.97 |
 | 1280x720p | 180M | yuv422p | 50 |
 | 1280x720p | 220M | yuv422p | 59.94, 60 |
-| 1280x720p | 60M | yuv422p | 23.97, 24, 25 |
+| 1280x720p | 60M | yuv422p | 23.98, 24, 25 |
 | 1280x720p | 75M | yuv422p | 29.97 |
 | 1280x720p | 120M | yuv422p | 50 |
 | 1280x720p | 145M | yuv422p | 59.94, 60 |
-| 1920x1080p | 36M | yuv422p | 23.97, 24, 25 |
+| 1920x1080p | 36M | yuv422p | 23.98, 24, 25 |
 | 1920x1080p | 45M | yuv422p | 29.97 |
 | 1920x1080p | 75M | yuv422p | 50 |
 | 1920x1080p | 90M | yuv422p | 59.94, 60 |
-| 1920x1080p | 350M | yuv444p10, gbrp10 | 23.97, 24 |
+| 1920x1080p | 350M | yuv444p10, gbrp10 | 23.98, 24 |
 | 1920x1080p | 390M | yuv444p10, gbrp10 | 25 |
 | 1920x1080p | 440M | yuv444p10, gbrp10 | 29.97 |
 | 1920x1080p | 730M | yuv444p10, gbrp10 | 50 |
