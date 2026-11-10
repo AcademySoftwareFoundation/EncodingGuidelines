@@ -93,6 +93,29 @@ Lines on **even** columns look the same for all three, which is why this is easy
 
 ![Single-pixel lines on even columns, after converting to 4:2:2 and back](static/chroma-siting/reconstruction_even.png)
 
+### Over repeated round trips {#round-trips}
+
+The error is small once, but it adds up: material is often converted to Y'CbCr and back several times, for example
+rendered, reviewed, graded and delivered. Here a small image goes through 1, 5 and 10 round trips of RGB to 4:2:2
+10-bit and back, all with `zscale`, so the siting is the only difference. On the left the encoder writes co-sited
+chroma and the player assumes co-sited. On the right the encoder writes centred chroma, as libswscale does, and the
+player still assumes co-sited, as players do for 4:2:2:
+
+![Coloured text and lines after 1, 5 and 10 round trips to 4:2:2: with the right siting the colour softens but stays on the detail; with the wrong siting it slides to the left of the text and lines, further each time](static/chroma-siting/generations.png)
+
+| Round trips | Colour moved left, right siting | Colour moved left, wrong siting |
+| :--- | ---: | ---: |
+| 1 | 0.04 px | 0.54 px |
+| 5 | 0.03 px | 2.51 px |
+| 10 | 0.02 px | 4.00 px |
+
+Some softening is unavoidable with 4:2:2 either way: every round trip loses a little colour detail. With the wrong
+siting the colour also moves about half a pixel to the left each time, and after a few round trips it is visibly
+off the detail. A smooth gradient, by contrast, hardly changes, because shifting it by half a pixel changes almost
+nothing. Siting errors show on sharp colour edges, fine coloured lines and coloured text. Made with
+`tests/chroma_siting_generations.py`; the results were identical on FFmpeg 6.1.6, 9.0.2 and a 9.1 development
+build (zoomed 3 times with nearest neighbour).
+
 ## Where chroma siting is recorded
 
 In most formats there is nowhere to say where the chroma is ([each codec and container](ChromaSitingTests.html#recorded-details)):
