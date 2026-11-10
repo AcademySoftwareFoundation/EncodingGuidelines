@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 262" width="780" height="262" role="img" aria-labelledby="t d">
+  <title id="t">Chroma sample positions</title>
+  <desc id="d">Four 2 by 2 blocks of luma samples. left: the chroma sample is on the left column, half way between the two rows. topleft: on the top-left luma sample. center: in the middle of the four. 4:2:2 co-sited: on the left luma sample of each row, one chroma sample per row.</desc>
+  <style>
+    .bg { fill: #1f1e24; }
+    .luma { fill: #a3a3ab; }
+    .box { fill: none; stroke: #5d5c66; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .chroma { stroke: #ff9a3c; stroke-width: 4; stroke-linecap: round; }
+    .ring { fill: none; stroke: #ff9a3c; stroke-width: 2.5; }
+    .name { fill: #f0f0f2; font: 600 17px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; }
+    .sub { fill: #b8b8c0; font: 13px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; text-anchor: middle; }
+    .key { fill: #d0d0d6; font: 13px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+  </style>
+  <defs>
+    <g id="lumablock">
+      <circle class="luma" cx="55" cy="72" r="9"/>
+      <circle class="luma" cx="125" cy="72" r="9"/>
+      <circle class="luma" cx="55" cy="142" r="9"/>
+      <circle class="luma" cx="125" cy="142" r="9"/>
+    </g>
+    <g id="c">
+      <line class="chroma" x1="-9" y1="-9" x2="9" y2="9"/>
+      <line class="chroma" x1="-9" y1="9" x2="9" y2="-9"/>
+      <circle class="ring" r="15"/>
+    </g>
+  </defs>
+  <rect class="bg" width="780" height="262" rx="8"/>
+
+  <!-- left -->
+  <g transform="translate(20,0)">
+    <text class="name" x="90" y="30">left</text>
+    <rect class="box" x="30" y="47" width="120" height="120" rx="4"/>
+    <use href="#lumablock"/>
+    <use href="#c" x="55" y="107"/>
+    <text class="sub" x="90" y="192">H.264 / HEVC / AV1</text>
+    <text class="sub" x="90" y="209">4:2:0 default</text>
+  </g>
+
+  <!-- topleft -->
+  <g transform="translate(210,0)">
+    <text class="name" x="90" y="30">topleft</text>
+    <rect class="box" x="30" y="47" width="120" height="120" rx="4"/>
+    <use href="#lumablock"/>
+    <use href="#c" x="55" y="72"/>
+    <text class="sub" x="90" y="192">BT.2020 4:2:0</text>
+  </g>
+
+  <!-- center -->
+  <g transform="translate(400,0)">
+    <text class="name" x="90" y="30">center</text>
+    <rect class="box" x="30" y="47" width="120" height="120" rx="4"/>
+    <use href="#lumablock"/>
+    <use href="#c" x="90" y="107"/>
+    <text class="sub" x="90" y="192">JPEG, MPEG-1 4:2:0</text>
+  </g>
+
+  <!-- 4:2:2 -->
+  <g transform="translate(590,0)">
+    <text class="name" x="90" y="30">4:2:2</text>
+    <rect class="box" x="30" y="50" width="120" height="44" rx="4"/>
+    <rect class="box" x="30" y="120" width="120" height="44" rx="4"/>
+    <use href="#lumablock"/>
+    <use href="#c" x="55" y="72"/>
+    <use href="#c" x="55" y="142"/>
+    <text class="sub" x="90" y="192">co-sited:</text>
+    <text class="sub" x="90" y="209">ProRes, DNxHR, SDI</text>
+  </g>
+
+  <!-- key -->
+  <g transform="translate(20,238)">
+    <circle class="luma" cx="10" cy="0" r="7"/>
+    <text class="key" x="24" y="5">luma (Y′) sample</text>
+    <g transform="translate(170,0) scale(0.7)"><use href="#c"/></g>
+    <text class="key" x="190" y="5">chroma (Cb, Cr) sample</text>
+    <rect class="box" x="370" y="-8" width="22" height="16" rx="3"/>
+    <text class="key" x="402" y="5">luma samples sharing one chroma sample</text>
+  </g>
+</svg>

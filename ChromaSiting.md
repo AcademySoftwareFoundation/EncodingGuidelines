@@ -38,6 +38,8 @@ which this page uses too:
 | `topleft` | co-sited | co-sited | BT.2020 4:2:0 |
 | `center` | centred | centred | JPEG, MPEG-1 |
 
+![Where the chroma sample sits in each 2x2 block of luma samples: left, on the left column half way between the two rows; topleft, on the top-left luma sample; center, in the middle of the four; 4:2:2, on the left luma sample of each row](static/chroma-siting/siting_positions.svg)
+
 So in FFmpeg, co-sited is usually called `left`. For 4:2:2, which has a chroma sample on every row, `left` and
 `topleft` are the same position. The names are FFmpeg's: the standards describe the positions in words or numbers
 instead (see [Where this is specified](ChromaSitingTests.html#where-this-is-specified)). And "left" only describes the horizontal
