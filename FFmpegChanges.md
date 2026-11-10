@@ -25,6 +25,7 @@ commands that give the right result on all of them.
 | Change | Versions | What it means |
 | :--- | :--- | :--- |
 | [`-colorspace` and `-color_range` drive the RGB to Y'CbCr conversion](#colorspace-flags-71) | 7.1 and later | A plain encode tagged `-colorspace bt709` is now converted with BT.709 instead of BT.601. On a tagged source, `-colorspace` now converts the pixels rather than retagging them. |
+| [`-colorspace` and `-color_range` convert, they no longer relabel](#relabelling-a-file) | 7.1 and later | Transcoding a tagged Y'CbCr file with them changes the pixels. To fix a wrong tag, use `setparams`. |
 | [`-color_primaries` and `-color_trc` are ignored](#primaries-trc-flags-71) | 7.1 and later | The flags are silently dropped. Use `setparams` to set primaries and transfer. |
 | [ProRes writes its colour tags from the frame, not the flags](#prores-colour-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
 | [`-x265-params` colour settings only tag the HEVC stream](#hdr-and--x265-params) | All | They do not change the conversion. Without `-colorspace` or a conversion filter, the pixels are BT.601 in a file tagged BT.2020. |
@@ -153,8 +154,8 @@ Two consequences:
   16-bit source, so use `zscale` as in the recommended commands.
 * **On a source that is already Y'CbCr, `-colorspace` now converts.** Before 7.1, transcoding a BT.709 file with
   `-colorspace bt2020nc` just relabelled it, leaving BT.709 pixels tagged as BT.2020. From 7.1 the pixels are
-  re-matrixed to BT.2020, and the file still decodes to the
-  same RGB. Neither is a retag. To change the label without touching the pixels, use `setparams`; see
+  re-matrixed to BT.2020, and the file still decodes to the same RGB (measured on 6.1.6, 7.0, 7.1.5, 9.0.2 and
+  9.1.dev; `-color_range` behaves the same way). Neither is a retag. To change the label without touching the pixels, use `setparams`; see
   [Relabelling a file](#relabelling-a-file).
 
 The inserted `scale` uses libswscale's defaults (bicubic, no `accurate_rnd`). `-sws_flags` still applies to it.
@@ -455,7 +456,18 @@ ffmpeg -i mislabelled.mov \
 ```
 
 Before 7.1, `-colorspace` and `-color_range` also relabelled, which is how files ended up tagged BT.709 with
-BT.601 pixels in them.
+BT.601 pixels in them. From 7.1 they convert, even when the source is already Y'CbCr and tagged. Transcoding a
+10-bit BT.709 limited-range FFV1 file to FFV1, and comparing the decoded pixels with the source's:
+
+| Command line | 6.1.6, 7.0 | 7.1.5, 9.0.2, 9.1.dev |
+| :--- | :--- | :--- |
+| `-colorspace bt2020nc` | Tagged BT.2020, pixels unchanged | **Re-matrixed to BT.2020** (up to 44 codes different) |
+| `-color_range pc` | Tagged full range, pixels unchanged | **Expanded to full range** (Y' 103–877 became 45–947) |
+| `-vf setparams=colorspace=bt2020nc` | Tagged BT.2020, pixels unchanged | Tagged BT.2020, pixels unchanged |
+
+The 7.1+ conversions are done by an inserted libswscale `scale`, so on 7.1.5 they differ from 9.0.2 by a code or
+two (see [libswscale full-range conversions](#libswscale-full-range-80)). A converted file still decodes to the same
+picture, so the mistake is easy to miss; what changes is the data, and a later relabel of it is then wrong.
 
 Do not relabel H.264 in MP4 with the `h264_metadata` bitstream filter alone (for example
 `-c copy -bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1`). It

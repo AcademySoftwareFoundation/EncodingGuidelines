@@ -19,6 +19,11 @@ the `-colorspace` flag sets the matrix it converts with, but the conversion is d
 described below. Either way, we recommend converting explicitly with the zscale filter; see
 [FFmpeg Version Changes](FFmpegChanges.html) for what changed in 7.1.
 
+From 7.1, keep three things apart: the `-pix_fmt`, `-colorspace` and `-color_range` flags *convert* to what they
+ask for, filters such as `zscale` *transform* the pixels and set the tags, and `setparams` *relabels* without
+touching the pixels. So `-colorspace` on a file that is already Y'CbCr changes its pixels rather than fixing its
+tag; to fix a wrong tag, use `setparams`. See [Relabelling a file](FFmpegChanges.html#relabelling-a-file).
+
 Separately, all the video formats typically do not use the full numeric range [0-255] but instead the Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (the standard for web playback). This fortunately is something you can change, [see TV vs. Full range](Quickstart.html#tv-vs-full-range-). below. The other option is to use higher bit depth, e.g. 10-bit or 12 bit for formats such as [ProRes](EncodeProres.html).
 
 Even if you are sticking to 8-bits encodes, if your source media is able to have a higher bit-depth (e.g. you are able to write out 16-bit PNG's to do the encode) it will help with the accuracy of the RGB to YUV conversion. Use zscale for it: libswscale's errors are larger with 10-bit and 16-bit sources (see below).

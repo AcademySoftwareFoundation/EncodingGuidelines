@@ -343,6 +343,22 @@ To run the default tests, simply run the app like below
 python -m testframework.main --source-folder /path/to/sources/ --encoded-folder /path/to/save/the/encoded/files/
 ```
 
+#### Environment variables
+
+| Variable | Default | Purpose |
+| :--- | :--- | :--- |
+| `FFMPEG_BIN` | `ffmpeg` (`ffmpeg.exe` on Windows) | The `ffmpeg` binary to test. |
+| `IDIFF_BIN` | `idiff` (`idiff.exe` on Windows) | OpenImageIO's `idiff`, for `idiff` comparison tests. |
+| `VMAF_MODEL_DIR` | `/usr/share/vmaf` | Folder with the VMAF model JSON files. With Homebrew on macOS, use `/opt/homebrew/share/libvmaf/model/`. |
+| `ENCODE_TIMEOUT` | `1800` | Seconds an encode may run before it is killed. |
+
+An encode that runs past `ENCODE_TIMEOUT` is killed, and "killed after N seconds" goes to the console and the
+test's log. The killed encode then fails like any other encode that leaves no usable file, and the run carries on.
+The timeout exists because some FFmpeg builds can loop forever on a bad input: a PNG with a broken EXIF chunk once
+held up a full run for 9 hours (see
+[PNGs with bad EXIF data](../FFmpegChanges.html#png-exif-81)). If a slow encoder on a long source needs more time,
+raise the limit, for example `ENCODE_TIMEOUT=7200`.
+
 ### Results
 
 The results are stored in an "*.otio" file. Each source clip contains a media reference
