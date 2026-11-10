@@ -80,21 +80,36 @@ Options that can be used include:
 | -vendor apl0 | tricks the codec into believing its from an Apple codec. |
 | -alpha_bits 16 | Allows you to specify how many bits to use for the alpha channel (default 16) |
 
-Using this with the usual color space flags, seems to work well with the exception of ffmpeg itself is unable to read a ProRes file, and convert it to a still frame. It needs the flags:`-vf scale=in_color_matrix=bt709:out_color_matrix=bt709` added to the command to ensure the right input colorspace is recognized, e.g.:
+To extract a still from a ProRes file, convert it with `zscale`:
 
 ```console
-ffmpeg -i INPUTFILE.mov -compression_level 10 -pred mixed -pix_fmt rgba64be \
-   -sws_flags spline+accurate_rnd+full_chroma_int -frames:v 1 \
-   -vf scale=in_color_matrix=bt709:out_color_matrix=bt709 OUTPUTFILE.png
+ffmpeg -i INPUTFILE.mov -frames:v 1 -vf "zscale,format=gbrp16le" -pix_fmt rgb48be OUTPUTFILE.png
 ```
 
-However, other encoders seem to be recognized correctly, so there is clearly some metadata missing. I did try using the prores_metadata filter to try adding some additional parameters, but it didn't seem to help.
+Decoding ProRes to 16-bit PNG and comparing with the RGB it was made from (errors in 10-bit code values, away from
+edges; `prores_ks` at `-qscale:v 1`, tagged BT.709):
+
+| Conversion | 422 HQ | 4444 |
+| :--- | :--- | :--- |
+| No filter | 12.3 max, 1.26 mean | 7.8 max, 1.27 mean |
+| `scale=in_color_matrix=bt709:out_color_matrix=bt709`, with `-sws_flags spline+accurate_rnd+full_chroma_int` | 19.6 max, 1.27 mean | 7.8 max, 1.27 mean |
+| `zscale,format=gbrp16le` | 5.5 max, 0.35 mean | 4.1 max, 0.35 mean |
+
+The results were identical on 6.1.6, 7.0, 7.1.5, 8.1, 9.0.2 and a 9.1 development build. Telling `scale` the matrix gains nothing for a tagged file, and libswscale also
+puts the chroma of 4:2:2 ProRes in the wrong place ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)).
+
+`zscale` needs the file to say what its matrix is, and gives no output for a file with no tags. You can add them to
+an existing ProRes file without re-encoding:
 
 ```console
-ffmpeg -i ./chip-chart-yuvconvert/basicnclc.mov -c copy \
+ffmpeg -i INPUTFILE.mov -c copy \
    -bsf:v prores_metadata=color_primaries=bt709:color_trc=bt709:colorspace=bt709 \
-   chip-chart-yuvconvert/basicnclcmetadata.mov
+   OUTPUTFILE.mov
 ```
+
+`zscale` then accepts the file (tested on 6.1.6, 7.1.5 and 9.0.2; of those, only 9.0.2's `ffprobe` shows the new
+tags). This only changes the label, so use it only if the pixels really are BT.709: an encode with no colour settings
+and no conversion filter is converted as BT.601.
 
 ### Prores_ks profile
 

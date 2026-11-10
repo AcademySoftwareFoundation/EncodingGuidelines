@@ -21,8 +21,8 @@ This is the workhorse encoder for web review, its well supported by ffmpeg, and 
 There are several h264 encoders available:
 
 * [x264](#x264) - the videolan h264 open source library.
-* [h264_nvenc](#h264_nvenc) - the nvidia hardware encoder.
-* [videotoolbox_h264](#videotoolbox_h264) - MacOS only apple h264 encoder.
+* [h264_nvenc](#nvidia-nvenc) - the nvidia hardware encoder.
+* [videotoolbox_h264](#macos-videotoolbox) - MacOS only apple h264 encoder.
 
 ## x264
 
@@ -130,7 +130,8 @@ Setting `-pix_fmt` to 10-bit or high-chroma formats usually auto-selects the app
 Uses the Apple hardware encoder. Ideal for fast proxies and web review on Apple Silicon.
 
 ```console
-ffmpeg -i input.mov -c:v h264_videotoolbox -profile:v high -pix_fmt yuv420p -b:v 10M output.mp4
+ffmpeg -i input.mov -c:v h264_videotoolbox -profile:v high -pix_fmt yuv420p -b:v 10M \
+    -movflags +write_colr output.mp4
 ```
 
 #### NVIDIA NVENC
@@ -138,13 +139,17 @@ ffmpeg -i input.mov -c:v h264_videotoolbox -profile:v high -pix_fmt yuv420p -b:v
 Uses NVIDIA's dedicated hardware encoder (available on Windows/Linux).
 
 ```console
-ffmpeg -i input.mov -c:v h264_nvenc -preset slow -rc vbr -cq 19 -pix_fmt yuv420p output.mp4
+ffmpeg -i input.mov -c:v h264_nvenc -preset slow -rc vbr -cq 19 -pix_fmt yuv420p \
+    -movflags +write_colr output.mp4
 ```
 
 ### Lossless Encoding
 
-To achieve mathematically lossless encoding with `libx264`, use `-crf 0` or `-qp 0`. Note that lossless files can be extremely large and may not play back in standard web browsers.
+To achieve mathematically lossless encoding with `libx264`, use `-qp 0`. `-crf 0` is not lossless at 10-bit: it gave errors of up to 94 code values where `-qp 0` was exact (FFmpeg 6.1.6, 7.1.5 and 9.0.2). Only the encode is lossless; the RGB to Y'CbCr conversion before it still rounds. Lossless files can be extremely large and may not play back in standard web browsers.
 
 ```console
-ffmpeg -i input.exr -c:v libx264 -crf 0 -pix_fmt yuv444p output_lossless.mp4
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+    -c:v libx264 -qp 0 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 \
+    -movflags +write_colr output_lossless.mp4
 ```

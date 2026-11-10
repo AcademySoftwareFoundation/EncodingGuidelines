@@ -77,6 +77,11 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 
 ## RGB Comparisons
 
+These are the settings behind the graphs below, kept as a record of that comparison. Do not copy them: from
+FFmpeg 7.1 `-color_primaries` and `-color_trc` are ignored, so the files have no primaries or transfer (measured with
+the same flags and filter on `libx265` `gbrp10le`: tagged on 6.1.6 and 7.0, untagged on 7.1.5, 8.1, 9.0.2 and a 9.1
+development build). Set them with `setparams`, as in the [VP9 example](#vp9-rgb-encoding).
+
 | *label* | *Codec Params* |
 | --- | --- |
 | 8_bit_libx264rgb | -c:v libx264rgb -color_primaries bt709 -color_range pc -color_trc bt709 -colorspace rgb -crf 18 -pix_fmt rgb24 -preset slow -vf "scale=in_range=full:out_range=full" -x264-params keyint=15:no-deblock=1 |

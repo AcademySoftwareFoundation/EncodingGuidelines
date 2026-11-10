@@ -100,6 +100,6 @@ for proc in processes:
 
 createCompareHtml(outputpath=rootpath+"/compare.html", 
 					listimages=listimages,
-					introduction="<H1>Comparing YUV conversion approaches.</H1><p> This is comparing different ways to do the YUV conversion. We are doing it in both 420p and 444p since 444p is a fairer binary image comparison. The takeaway should be to use the libswscale filter. The code to generate these files is <a href='../%s'>here</a>. </p>" % os.path.basename(__file__),
+					introduction="<H1>Comparing YUV conversion approaches.</H1><p> This is comparing different ways to do the YUV conversion. We are doing it in both 420p and 444p since 444p is a fairer binary image comparison. The takeaway should be to use the zscale filter. The code to generate these files is <a href='../%s'>here</a>. </p>" % os.path.basename(__file__),
 					videohtml = ' width=960 ')
 

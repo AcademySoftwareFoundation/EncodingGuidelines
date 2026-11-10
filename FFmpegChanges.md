@@ -32,6 +32,7 @@ commands that give the right result on all of them.
 | [libswscale puts limited-range white too high for high-bit-depth input](#libswscale-white-level-for-high-bit-depth-input) | All, including 9.0 | 10-bit RGB to 10-bit Y'CbCr puts 100% white at 943 instead of 940. Use `zscale`. `scale=...:flags=unstable` (8.1 and later) fixes 4:4:4 only. |
 | [libswscale RGB to full-range Y'CbCr is too bright](#libswscale-full-range-80) | 8.0 and later | 10-bit and 12-bit output: luma gain too high, white about 3 code values (10-bit) high. Exact up to 7.1. Use `zscale`. |
 | [libswscale Y'CbCr range conversion was 3 code values out](#libswscale-full-range-80) | 7.1 and earlier | Limited to full and full to limited at 10/12-bit. Fixed in 8.0 by the same change. |
+| [Half-float EXRs decode as half-float, and converting them clamps](#exr-half-float-80) | 8.0 and later | Asking for 32-bit float through libswscale limits the image to 0.0 - 1.0. Use `zscale`. |
 | [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
 | [libswscale ignores the chroma location when converting to RGB](#ycbcr-to-rgb) | 9.0 and earlier | Stills from co-sited 4:2:2/4:2:0 (ProRes, DNxHR, H.264) come out with the colour half a pixel to the right. Use `zscale`. |
 | [Untagged Y'CbCr is converted to RGB as BT.601](#ycbcr-to-rgb) | All | libswscale assumes BT.601; `zscale` refuses. Give the matrix explicitly. |
@@ -288,6 +289,21 @@ Errors against the ideal BT.709 conversion of the SMPTE bars, in 10-bit code val
 Tested on 6.1.6, 7.1.5, 8.0.1, 8.1 (git build), 9.0.2 and the development branch (N-127508). The tests that
 measure this are `color_tests.yml` and `ycbcr_range_tests.yml` in `enctests/test_configs`; they mark the
 libswscale results as known issues, so a run on a new version reports whether they have been fixed.
+
+## Half-float EXRs decode as half-float (8.0) {#exr-half-float-80}
+
+FFmpeg 8.0 stopped converting half-float EXRs to 32-bit float in the decoder (commit `0e917389fe`), so they now
+decode as `gbrpf16le`. 32-bit float EXRs are still `gbrpf32le`. Measured with an EXR holding -2.0 to 300.0, on 6.1.6, 7.0,
+7.1.5, 8.0.1, 8.1, 9.0.2 and a 9.1 development build:
+
+* **From 8.0, asking for 32-bit float clamps.** `-pix_fmt gbrpf32le` now needs a conversion, libswscale does it, and
+  the values are limited to 0.0 - 1.0 (-2.0 becomes 0, 300.0 becomes 1). The same command on 7.1.5 and earlier keeps them.
+  `format=gbrpf32le` in a filter graph does the same.
+* **`scale` clamps floating point on every version**, for both half-float and 32-bit float EXRs.
+* **`zscale` keeps the full range on every version.** `zscale,format=gbrpf32le` is the safe way to get 32-bit float.
+  To read the true values from 8.0 on, use `-pix_fmt gbrpf16le`.
+* **The `ocio` filter** keeps the full range with a float `format` (8.1, 9.0.2 and the 9.1 development build, the builds
+  here that have it), unless `format=gbrpf32le` comes before it. See [FFmpeg OCIO](FfmpegOcio.html#working-with-exr-files-and-ffmpeg).
 
 ## HDR and `-x265-params` {#hdr-and--x265-params}
 
