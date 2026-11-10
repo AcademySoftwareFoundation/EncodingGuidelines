@@ -64,8 +64,6 @@ Note, you can also specify the OCIO config file as a "config" parameter; otherwi
 
 This example demonstrates how to convert an ACEScg EXR image sequence to a 10-bit HDR10 (PQ) QuickTime movie.
 
-This is converting from a ACEScg image sequence to a HDR PQ quicktime.
-
 ```console
 ffmpeg -y -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%04d.exr -c:v libx265 -pix_fmt yuv422p10le -threads 0 -vf "ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc -tag:v hvc1  \
     -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" OUTPUTFILE.mov
@@ -74,8 +72,6 @@ ffmpeg -y -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%04d.exr -c:v
 ## Converting an HDR movie back to ACEScg EXRs
 
 To demonstrate converting from an HDR movie back to ACEScg, we first create a high-quality (lossless 12-bit 4:4:4) HDR movie:
-
-To test converting from an HDR movie, we are going to create an HDR movie first:
 
 ```console
 ffmpeg -y -framerate 24 -start_number 6100 -i <INPUTFILE>.%05d.exr -c:v libx265 -pix_fmt yuv444p12le -vf "ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc -tag:v hvc1      -x265-params "lossless=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" sparks_lossless_h265.mov
@@ -91,9 +87,9 @@ ffmpeg -y -i sparks_lossless_h265.mov -threads 0 -vf "zscale=filter=lanczos,form
 
 `zscale` converts the Y'CbCr to floating point RGB before the OCIO filter, reading the matrix and range from the file's tags. The earlier version of this command left that conversion to libswscale and put `scale` after the OCIO filter, where it clamps the scene-linear values. Converting a lossless 12-bit PQ movie of an ACEScg frame back (9.0 and 9.1-dev), the median error against the original EXR went from 1.0% to 0.12%, and the brightest value kept from 299 to 707 (the source peaks at 2100; the 1000 nit display transform cannot carry all of it).
 
-So while this will limit the max luminance to 1000 nits, it will give you a wide gamut with an higher dynamic range that you can convert back into a linear range which will be hugely superior to rec709 or Display P3. Obviously this is not as good as using the original EXR files, but it is certainly an improvement over rec709, giving you the ability to change the exposure
+So while this will limit the max luminance to 1000 nits, it will give you a wide gamut with a higher dynamic range that you can convert back into a linear range which will be hugely superior to rec709 or Display P3. Obviously this is not as good as using the original EXR files, but it is certainly an improvement over rec709, giving you the ability to change the exposure.
 
-If your viewer supported HDR, this shows that you could internally convert it to ACEScg, so that any test color correction you might be doing in the viewer would be fairly representative of what it would be like if you were reading from an openEXR frame. Obviously the best results would be to use the EXR frames, but its certainly an improvement over rec709.
+If your viewer supported HDR, this shows that you could internally convert it to ACEScg, so that any test color correction you might be doing in the viewer would be fairly representative of what it would be like if you were reading from an openEXR frame. 
 
 ## Converting from HDR (Rec.2100) image sequence to ACEScg
 
@@ -118,7 +114,7 @@ ffmpeg -y -i INPUT_REC2100.%04d.exr -vf "ocio=input=ACEScg:display=Rec.2100-PQ -
 
 ## Working with EXR files and FFmpeg
 
-FFmpeg has its own implementation of libOpenEXR support, and this can lead to some differences in how it handles EXR files. For example, some of the newer features (such as HTJ2K compression) may not be supported. Also floating point may not be supported in all filters, so you should test your pipelines to ensure that they are working as expected. Things to watch out for include:
+FFmpeg has its own EXR reader and writer rather than using the OpenEXR library, and this can lead to some differences in how it handles EXR files. For example, some of the newer features (such as HTJ2K compression) may not be supported. Also floating point may not be supported in all filters, so you should test your pipelines to ensure that they are working as expected. Things to watch out for include:
 
 * **`scale` clamps floating point.** Whatever float format it is given, `scale` limits the values to 0.0 - 1.0: a half-float EXR holding -2.0 to 300.0 comes out as 0.0 to 1.0, so every highlight above 1.0 is lost. Converting to 32-bit float first does **not** help. `zscale` keeps the full range for both half-float and 32-bit float (FFmpeg 6.1.6 to a 9.1 development build), so use it to resize.
 * **From FFmpeg 8.0, converting half-float to 32-bit float clamps too.** Half-float EXRs now decode as `gbrpf16le` (`gbrpf32le` up to 7.1), so `-pix_fmt gbrpf32le` or `format=gbrpf32le` goes through libswscale, with the same clamp. Use `zscale,format=gbrpf32le` when you need 32-bit float, and `-pix_fmt gbrpf16le` to read the true values. The `ocio` filter itself is fine with a float `format` (values kept on 8.1, 9.0.2 and a 9.1 development build), as long as you do not put `format=gbrpf32le` in front of it. See [FFmpeg Version Changes](FFmpegChanges.html#exr-half-float-80).
@@ -196,7 +192,7 @@ This does require opencolorio to be installed on the system, and be found by pkg
 
 If not, you may want to refer to the docker container build files in the [docker](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/docker) directory. In particular the [rocky-ffmpeg-8.1](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/docker/rocky-ffmpeg-8.1) directory. There is also a conan recipe in the [conan](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/conan) directory that can be used to build ffmpeg with OCIO support on macOS, linux and windows.
 
-We do also want to flag a patch that didnt make it into the ffmpeg 8.1 release - <https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/21799>. This reworks how the OCIO filter negotiates pixel formats with the filters around it. On the 8.1 release the format parameter is applied too late in negotiation, so downstream filters such as `zscale` can be handed the wrong pixel format, and chains that put a resize *before* the OCIO filter fail to resolve formats at all:
+We do also want to flag a patch that didn't make it into the ffmpeg 8.1 release - <https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/21799>. This reworks how the OCIO filter negotiates pixel formats with the filters around it. On the 8.1 release the format parameter is applied too late in negotiation, so downstream filters such as `zscale` can be handed the wrong pixel format, and chains that put a resize *before* the OCIO filter fail to resolve formats at all:
 
 ```console
 The following filters could not choose their formats: Parsed_ocio_1
@@ -224,7 +220,7 @@ For some simple timing tests, we are comparing oiiotool using --parallel-frames 
 | ffmpeg with 6 threads | 23.74 | |
 | ffmpeg with 8 threads | 37.75 | |
 
-We recommend leaving it with the default of 0 threads (i.e. dont specify anything). It is worth noting that OCIO using the CPU is not super fast (although clearly faster than the alternative), we will explore using vulkan to accelerate this in the future.
+We recommend leaving it with the default of 0 threads (i.e. don't specify anything). It is worth noting that OCIO using the CPU is not super fast (although clearly faster than the alternative), we will explore using vulkan to accelerate this in the future.
 
 ## Slate and burn-in generation
 
@@ -236,7 +232,7 @@ For an extreme example of building a slate and burn-in, see the following exampl
 | :---: | :---: |
 | <img src="sourceimages/netflix_sparks_slate.jpg" width="80%" alt="Example slate"> | <img src="sourceimages/frame-burn-in.jpg" width="80%" alt="Example burn-ins"> |
 
-this is storing the filter in a separate file, to make it more stable.
+This stores the filter in a separate file, to make it more stable.
 
 ```console
 ffmpeg -y \
@@ -252,7 +248,7 @@ ffmpeg -y \
  * Did something else." \
     -metadata artist="Test Vendor" \
     -metadata shot_types="2d comp" \
-    -metadata submit_for="richs128" \
+    -metadata submit_for="jsmith" \
     -metadata scope_of_work="Unknown" \
     -metadata shot_description="This is the shots description." \
     -metadata episode="101" \
@@ -265,7 +261,7 @@ ffmpeg -y \
     -metadata shot="SH010" \
     -metadata version="v001" \
     -metadata frame_range="1001-1024" \
-    -metadata source_filename="/Users/sam/git/ffmpeg-dailies/tests/data/complex_paths/shots/SH010/v001/SH010_v001.#.exr" \
+    -metadata source_filename="tests/data/complex_paths/shots/SH010/v001/SH010_v001.#.exr" \
     -metadata first_frame="1001" \
     -metadata last_frame="1024" \
     -metadata source_frame_rate="24" \
@@ -292,8 +288,8 @@ Measured on 9.0 with lossless H.264 in place of `-crf 18`: the main video matche
 
 The filterfile.txt is as follows:
 
-[!IMPORTANT]
-FFmpeg's filtergraph script parser does not support `#` comments or line breaks inside a filter chain. The following example includes comments for documentation purposes; these **must** be removed in the actual file.
+{: .important }
+> FFmpeg's filtergraph script parser does not support `#` comments or line breaks inside a filter chain. The following example includes comments for documentation purposes; these **must** be removed in the actual file.
 
 ```
 # Split source for thumbnail extraction
@@ -327,7 +323,7 @@ FFmpeg's filtergraph script parser does not support `#` comments or line breaks 
     drawtext=text='1':x=(1363+546-tw):y=622:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc', 
     drawtext=text='1':x=(1362+547-tw):y=666:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc', 
     drawtext=text='rec709 with show lut':x=(1331+576-tw):y=737:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc', 
-    drawtext=text='richs128':x=930:y=36:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc', 
+    drawtext=text='jsmith':x=930:y=36:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc', 
     drawtext=text='Unknown':x=199:y=428:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc', 
     drawtext=text='This is the shots description.':x=195:y=312:fontcolor=white:fontsize=30:fontfile='/System/Library/Fonts/Helvetica.ttc'[slate_out];
 

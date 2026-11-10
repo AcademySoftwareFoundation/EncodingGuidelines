@@ -77,7 +77,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
 | **[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range. There is an obsolete alias flag `-vframes` which will be retired. |
 | **-c:v libx264** | use the h264 encoding library (libx264) |
 | **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow. |
-| **-pix_fmt yuv420p10le** | use yuv420 10-bit video format, which is typical for web playback. If you want a better quality for RV or other desktop tools use -pix_fmt yuv444p10le |
+| **-pix_fmt yuv420p10le** | 4:2:0 10-bit. 10-bit avoids most of the banding of 8-bit at a similar file size. Safari, Chrome and Firefox played 10-bit H.264 in our tests on macOS; other platforms have not been retested, so if a file has to play everywhere use `-pix_fmt yuv420p` (8-bit). See [H264 Bitdepth](Encodeh264.html#h264-bitdepth). For better quality in RV or other desktop tools use `-pix_fmt yuv444p10le`. |
 | **-color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1** | The colour tags for the file: limited range (64-940 at 10-bit), BT.709 matrix, BT.709 primaries and the sRGB transfer function. The filter chain already sets all four (see below), so these are not needed, but they are harmless. Do not rely on them alone: before FFmpeg 7.1 they do not change the conversion, and from 7.1 `-color_primaries` and `-color_trc` are ignored. See [FFmpeg Version Changes](FFmpegChanges.html). |
 | **-movflags +faststart** | `faststart` re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 
@@ -105,7 +105,7 @@ For more details see:
 
 ## ProRes 422 encoding with ffmpeg
 
-Unlike h264 and DnXHD, Prores is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
+Unlike h264 and DNxHD, ProRes is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
 
 <!---
 name: test_proresquickstart
@@ -139,7 +139,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 | Flag | Description |
 | --- | --- |
 | **-vf "zscale=...,setparams=..."** | Convert to BT.709 Y'CbCr and tag it, as for [H.264 above](#h264-encoding-from-an-image-sequence-for-web-review). ProRes takes its colour tags from the frames, so no `-color_*` flags are needed. |
-| **-profile:v 3** | Prores profile |
+| **-profile:v 3** | ProRes 422 HQ; see the [profile list](EncodeProres.html#prores_ks-profile) |
 | **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
 | **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the Quicktime |
@@ -151,7 +151,7 @@ For more details see:
 
 ## ProRes 4444 encoding with ffmpeg
 
-As above, but using 4444 (i.e. a color value for each pixel + an alpha)
+As above, but using the 4444 profile, which keeps a colour value for every pixel (4:4:4). The profile can also carry an alpha channel; for that use `-pix_fmt yuva444p10le`.
 
 <!---
 name: test_prores444
@@ -159,7 +159,6 @@ sources:
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
    - testtype: ycbcr
-     # ProRes 4444 decodes at 12-bit, so these are 12-bit code values.
      # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
@@ -187,7 +186,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 | --------- | ----------- |
 | **-profile:v 4444** | Prores profile for 4444 |
 | **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
-| **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4444 |
+| **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4:4:4 (`yuva444p10le` to include alpha) |
 
 For more details see:
 
@@ -196,7 +195,7 @@ For more details see:
 
 ## TV vs. Full range. <a name="tvfull"></a>
 
-All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (the standard for web playback).
+All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (still the most widely supported for web playback).
 
 This reduction in range, especially in 8-bit, can lead to visible "banding" or quantization artifacts in smooth gradients (like skies or shadows).
 
@@ -258,7 +257,7 @@ comparisontest:
 ```console
 ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
     -pix_fmt yuv420p -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
-    -c:v libx264 -t 5 -qscale:v 1 \
+    -c:v libx264 -t 5 -crf 18 \
     -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
 ```
 

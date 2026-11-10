@@ -16,14 +16,14 @@ parent: Codec Comparisons
 {:toc}
 </details>
 
-There are four ProRes encoders, Prores, Prores_ks, Prores_aw and prores_videotoolbox, which is a hardware based MacOS M1 encoder/decoder (ffmpeg version 5 or higher).
+There are four ProRes encoders, `prores`, `prores_ks`, `prores_aw` and `prores_videotoolbox`, which is a hardware based MacOS M1 encoder/decoder (ffmpeg version 5 or higher).
 
-If you are doing lighting or compositing reviews the recommendation is to use Prores_ks with -profile:v 3. If you are able we would recommend using [OpenAPV](https://academysoftwarefoundation.github.io/EncodingGuidelines/EncodeOpenAPV.html) or prores_videotoolbox over prores_ks, and look at a 444 10-bit or 12-bit encode, since they both give a superior result.
+If you are doing lighting or compositing reviews the recommendation is to use Prores_ks with -profile:v 3. If you are able we would recommend using [OpenAPV](EncodeOpenAPV.html) or prores_videotoolbox over prores_ks, and look at a 444 10-bit or 12-bit encode, since they both give a superior result.
 
 The two encoders we are reviewing are:
 
 * [Prores_ks](#prores_ks)
-* [videotoolbox_prores](#videotoolbox_prores) - only available on MacOS.
+* [prores_videotoolbox](#videotoolbox_prores) - only available on MacOS.
 
 ## Prores_ks
 
@@ -121,8 +121,8 @@ Profile values can be one of:
 | lt | 1 | 4:2:2 | 102Mbps | Light |
 | standard | 2 | 4:2:2 | 147Mbps | Standard |
 | hq | 3 | 4:2:2 | 220Mbps | High Quality 10-bit |
-| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathematically lossless alpha. |
-| 4444xq | 5 | 4:4:4:4 | 500MBps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |
+| 4444 | 4 | 4:4:4:4 | 330Mbps | High quality mastering format, can support both RGB and Y'CbCr. Also supports a 16-bit mathematically lossless alpha. |
+| 4444xq | 5 | 4:4:4:4 | 500Mbps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |
 
 See [https://support.apple.com/en-us/HT202410](https://support.apple.com/en-us/HT202410)
 
@@ -139,7 +139,7 @@ To help pick appropriate values with the -qscale:v , we have run the [Test Frame
 | ![](enctests/reference-results/prores-qscale-tests-filesize.png) This is showing qscale values against file size. |
 | ![](enctests/reference-results/prores-qscale-tests-vmaf_harmonic_mean.png) This is showing qscale values against VMAF harmonic mean (quality)|
 
-## videotoolbox_prores
+## prores_videotoolbox {#videotoolbox_prores}
 
 If you are on a MacOS M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to ProRes using:
 
@@ -188,7 +188,7 @@ The `format=yuv422p10le` after `zscale` matters: `prores_videotoolbox` takes a s
 
 ### Prores_videotoolbox profile
 
-Similar to prores_ks, with the exception of xq. Profile values can be one of:
+Similar to prores_ks, except that the XQ profile is called `xq` rather than `4444xq`. Profile values can be one of:
 
 | Profile | Number | Chroma | Data Rate HD @ 29.97 | Description |
 | :---------- | :----------- | :----------- | :----------- | :----------- |
@@ -196,5 +196,5 @@ Similar to prores_ks, with the exception of xq. Profile values can be one of:
 | lt | 1 | 4:2:2 | 102Mbps | Light |
 | standard | 2 | 4:2:2 | 147Mbps | Standard |
 | hq | 3 | 4:2:2 | 220Mbps | High Quality 10-bit |
-| 4444 | 4 | 4:4:4:4 | 300Mbps | High quality mastering format, can support both RGB and Y'CrCb. Also supports a 16-bit mathematically lossless alpha. |
-| xq | 5 | 4:4:4:4 | 500MBps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |
+| 4444 | 4 | 4:4:4:4 | 330Mbps | High quality mastering format, can support both RGB and Y'CbCr. Also supports a 16-bit mathematically lossless alpha. |
+| xq | 5 | 4:4:4:4 | 500Mbps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. |

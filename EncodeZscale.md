@@ -29,7 +29,7 @@ our tests it was the only one that was correct by default:
 
 See [FFmpeg Version Changes](FFmpegChanges.html#libswscale-white-level-for-high-bit-depth-input),
 [Chroma Siting](ChromaSiting.html) and [FFmpeg OCIO Filter](FfmpegOcio.html) for the measurements. libswscale is
-still useful for resizing, and when `zscale` is not available; see [Ffmpeg Scaling Options](EncodeSwsScale.html).
+still useful for resizing, and when `zscale` is not available; see [FFmpeg Scaling Options](EncodeSwsScale.html).
 
 ## Availability
 
@@ -171,8 +171,10 @@ run with `-v verbose` and look for `auto_scale` lines: anything other than a pla
 
 ### Decoding untagged Y'CbCr
 
-`zscale=matrixin=709` on Y'CbCr that carries no colour tags (for example raw `.yuv`) can fail with
-`no path between colorspaces`. Tag the frames with `setparams` first, then let `zscale` convert:
+`zscale` on its own gives no output for Y'CbCr that carries no colour tags (for example raw `.yuv`): it reports
+`no path between colorspaces`. Either give the input options, as in [Sources without tags](#sources-without-tags)
+(`zscale=matrixin=709:rangein=limited,format=gbrp16le` converted raw 10-bit 4:2:2 on 6.1.6, 8.1 and 9.0.2), or tag
+the frames with `setparams` first and let `zscale` convert:
 
 ```console
 -vf "setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709,zscale=range=full:chromalin=left,format=gbrp16le"

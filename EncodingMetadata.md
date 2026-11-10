@@ -7,19 +7,28 @@ parent: Encoding Overview
 
 # Adding Metadata
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 The more metadata we can store with the movie files, the better, there is nothing worse than losing a sidecar file that contains critical information. If the reviewer is loading the original file, then it should be easy with OpenRV to view the associated metadata.
 
 OpenRV was modified to show any arbitrary metadata in movie files see PR - <https://github.com/AcademySoftwareFoundation/OpenRV/pull/504>
 
 We cover how to add metadata to
 
-* [MXF](#mxf)
 * [MKV](#mkv)
+* [MXF](#mxf)
 * [MP4/MOV](#mp4mov)
 
 We also suggest a list of [common metadata attributes](#common-metadata-values-for-vfx) that would be useful in VFX movie containers.
 
-Its also worth looking at [Editorial Workflow](EditorialWorkflow.html) for information about adding timecode, which can help with frame numbers.
+It's also worth looking at [Editorial Workflow](EditorialWorkflow.html) for information about adding timecode, which can help with frame numbers.
 
 ## Querying metadata with ffprobe
 
@@ -46,7 +55,7 @@ ffmpeg can add some custom metadata to MXF files, but with important limitations
 
 * Standard metadata fields (like material_package_name) can be set and will persist in the output MXF file.  
 * Arbitrary custom metadata fields (such as project, artist, etc.) specified with -metadata key=value will not generally be written into the MXF file in a way that survives a subsequent ffprobe or ffmpeg read—except for a specific workaround.  
-* Workaround: If you use the comment_prefix for your custom metadata keys (e.g., -metadata comment_project="TEST PROJECT"), ffmpeg will write these as user comments in the MXF file. This method requires at least ffmpeg 4.2 and works for the mxf and mxf_opatom formats, but not for mxf_d10[1](https://stackoverflow.com/questions/69185798/how-can-i-add-custom-metadata-to-an-mxf-using-ffmpeg)10\.
+* Workaround: If you use the comment_prefix for your custom metadata keys (e.g., -metadata comment_project="TEST PROJECT"), ffmpeg will write these as user comments in the MXF file. This method requires at least ffmpeg 4.2 and works for the mxf and mxf_opatom formats, but not for mxf_d10 (see [this Stack Overflow answer](https://stackoverflow.com/questions/69185798/how-can-i-add-custom-metadata-to-an-mxf-using-ffmpeg)).
 
 Other metadata strings used include:
 
@@ -57,8 +66,8 @@ Other metadata strings used include:
 Example Command
 
 ```console
-ffmpeg -i input.mp4 -metadata comment_project\="Test Project" -metadata comment_artist\="Artist" 
-            -metadata material_package_name\="Test Clip" -f mxf output.mxf
+ffmpeg -i input.mp4 -metadata comment_project="Test Project" -metadata comment_artist="Artist" \
+            -metadata material_package_name="Test Clip" -f mxf output.mxf
 ```
 
 ### MP4/mov
@@ -102,8 +111,8 @@ Below are suggestions for common metadata fields:
 | first_frame, last_frame | int | Encoding to movie files typically loses the start frame, making it a pain to identify which frame you are looking at. We could look at doing this with timecode, but sometimes you want both timecode and a frame number. | |
 | source_filename | string | Something to track where the encoded media came from. | |
 | source_id | string | Unique ID from vendor creating content. - This could be using: [https://proto.school/content-addressing/04](https://proto.school/content-addressing/04) | |
-| source_frame_rate | float | If you are reviewing a proxy, but still want to remap back to the source frame, knowing the source frame rate is required (DO WE NEED THIS AND LAST FRAME?) – useful for high-frame rate media, e.g. 120 fps - (MIGHT MAKE SENSE AS A STRING TO HANDLE 59.94 better?) | |
-| image_active_area | xMin, yMin, xMax, yMax | The bounding box of the picture location within the image. This is used in cases where the image is a re-processed version of the source frame, e..g. where a 2.35 aspect ratio picture has been padded to HD (perhaps time-code is burnt in, etc), this would allow any annotations to be always defined relative to the source frames, so would be able to be correctly overlayed on top. | |
+| source_frame_rate | float | If you are reviewing a proxy, but still want to remap back to the source frame, knowing the source frame rate is required Useful for high-frame rate media, e.g. 120 fps. Open questions: whether this is needed as well as the last frame, and whether a string would handle rates such as 59.94 better. | |
+| image_active_area | xMin, yMin, xMax, yMax | The bounding box of the picture location within the image. This is used in cases where the image is a re-processed version of the source frame, e.g. where a 2.35 aspect ratio picture has been padded to HD (perhaps time-code is burnt in, etc), this would allow any annotations to be always defined relative to the source frames, so would be able to be correctly overlayed on top. | |
 | watermarking | String | Document what sort of watermarking has been applied? - invisible, burnin? | |
 | slate_length | Int | Duration of slate length (0 if no slate). | |
 | display_type | Enum | Stereo left/right Stereo top/bottom  Long/Lat VR mono Long/Lat VR Stereo top/bottom NOTE: This should be based on existing standards, e.g. [https://github.com/google/spatial-media/tree/master/spatialmedia](https://github.com/google/spatial-media/tree/master/spatialmedia) | |

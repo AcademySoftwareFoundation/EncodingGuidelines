@@ -7,6 +7,15 @@ parent: Encoding Overview
 
 # SWS_Flags
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 As mentioned previously, **we recommend doing any image resizing outside of ffmpeg**, especially if your sources are OpenEXR and you are going to do a colorspace conversion, prior to encoding, this will ensure that the filtering is done in linear space, which will produce less artifacts. However the scaling algorithms can still get called when remapping chroma from 4:4:4 to 4:2:2 (or 4:2:0). For more information on chroma subsampling, see [frame.io: chroma -subsampling guide](https://workflow.frame.io/guide/chroma-subsampling).
 
 There are two scaling libraries that can be used in ffmpeg, libswscale, and zscale. This guide is mainly focusing on the additional options of the libswscale library.
@@ -21,13 +30,13 @@ There are two scaling libraries that can be used in ffmpeg, libswscale, and zsca
 
 Converting full-range RGB white to limited-range Y'CbCr from a 10-bit or 16-bit source, `scale` puts white above the value the specification calls for, at every output bit depth (8-bit sources are not affected; see [FFmpeg Version Changes](FFmpegChanges.html#libswscale-white-level-for-high-bit-depth-input)):
 
-| Bit depth | scale (libswscale) | zscale | BT.709 specification |
+| Output bit depth (16-bit source) | scale (libswscale) | zscale | BT.709 specification |
 | :--- | :--- | :--- | :--- |
 | 8-bit | 236 | 235 | 235 |
 | 10-bit | 943 | 940 | 940 |
 | 12-bit | 3774 | 3760 | 3760 |
 
-The error is one-sided and affects luma only, growing with brightness — black is correct, and chroma is unaffected. It is a gain error rather than rounding noise: libswscale derives the scale factor as a ratio of full scale rather than as the bit-shifted narrow-range span, plus a rounding step. `zscale` matches the specification exactly.
+The error is one-sided and largest in luma, growing with brightness — black is correct. The chroma gain is slightly too high as well (up to 2 code values at 10-bit; see [RGB to YCbCr Conversion](ColorPreservation.html#zscale-filter)). It is a gain error rather than rounding noise: libswscale derives the scale factor as a ratio of full scale rather than as the bit-shifted narrow-range span, plus a rounding step. `zscale` matches the specification exactly.
 
 The same bias appears in the other direction. Converting limited-range Y'CbCr white (Y=940 at 10-bit) back to 16-bit RGB gives 65283 with `scale`, where the specification calls for 65535. `zscale` gives 65472, the remaining difference being how the 10-bit value is expanded to 16 bits rather than an error in the conversion.
 
@@ -36,7 +45,7 @@ This is worth knowing rather than alarming. One code value at 8-bit is below the
 ### What is and is not affected
 
 - **Affected**: any conversion that produces limited range. That includes `out_range=tv`, and it includes leaving the range unset, because FFmpeg defaults to limited range for Y'CbCr output.
-- **Not affected**: `in_range=full:out_range=full`. With no narrow-range squeeze there is no bias, and `scale` returns the correct value.
+- **Full range depends on the version**: RGB to full-range Y'CbCr (`out_range=full`) was exact up to FFmpeg 7.1, but from 8.0 it is about 3 code values too bright at 10-bit; see [FFmpeg Version Changes](FFmpegChanges.html#libswscale-full-range-80).
 - **Not a workaround**: the `unstable` flag ("allow experimental new code") corrects the range scaling, but only for 4:4:4 formats. For 4:2:2 and 4:2:0 — which is what most delivery formats use — it makes no difference. Note it has to be set on the filter itself, as `scale=…:flags=unstable`; passing it as the global `-sws_flags unstable` has no effect on this.
 
 ### Recommended replacement
@@ -79,36 +88,36 @@ For converting from 4:2:2 or 4:2:0 to RGB (or another Y’CbCr) we recommend usi
 -sws_flags spline+full_chroma_int+accurate_rnd
 ```
 
-When converting to 4:2:2 or 4:2:0. This appears to convert with no artifacts, all the other scaling options have artifacts of some form.
+This appears to convert with no artifacts; all the other scaling options have artifacts of some form. In our measurements, though, these flags did not make the Y'CbCr to RGB conversion more accurate (for 4:2:2 ProRes they were worse than no flags; see [ProRes](EncodeProres.html#prores_ks)), and libswscale assumes the chroma is centred whatever the flags. `zscale` is the better choice for this direction too; see [Reading back to RGB](ChromaSiting.html#reading-back-to-rgb).
 
-Note, you could also be safe in simply enabling flags all the time, since they rarely will do much harm, an example of this is:
+Note, you could also simply enable the flags all the time, since they rarely do much harm, especially if you have already done any resizing outside of ffmpeg:
 
 ```console
 -sws_flags spline+full_chroma_int+accurate_rnd+full_chroma_inp
 ```
 
-Especially if you already have done any resolution scaling outside of ffmpeg, are not harmful, and for Y’CbCr conversion to RGB would be beneficial.
-
 ### SWS_Flags options
 
-The main flag that is defined is the scaling algorithm, (see later), but you can combine it with another of other flags.
+The main flag that is defined is the scaling algorithm, (see later), but you can combine it with a number of other flags.
 
 E.g.
 
 ```console
--sws_flags=lanczos+accurate_rnd+full_chroma_int:sws_dither=none:param0=5
+-vf "scale=flags=lanczos+accurate_rnd+full_chroma_int:sws_dither=none:param0=5"
 ```
 
 Picks the lanczos filter, with a param0=5 which sets the filter size to 5 rather than default 3, turning off the dither, and enabling the accurate_rnd and full_chroma_int flags. NOTE, this is just an example of what you can do, not what we recommend doing.
 
 Flags that can be used with the filters, include:
 
-| accurate_rnd | allows more accurate rounding. This avoids using some [MMX optimizations](https://stackoverflow.com/questions/70893502/why-does-ffmpeg-output-slightly-different-rgb-values-when-converting-to-gbrp-and)  that might introduce rounding errors. In practice its unlikely to kick in, but it doesn't hurt. This only occurs if the source is 4:2:0 or 4:2:2, and the destination is RGB, articularly if you are dithering the result. The other case is if you are converting from one Y’CbCr format to another (e.g. 4:2:0 to 4:2:2). NOTE, we have yet to find a case where this currently makes a difference, it's possible it was important for earlier versions of ffmpeg, but with more recent versions (ffmpeg >= 5.x) it seems to have little impact. |
+| Flag | Description |
+| --- | --- |
+| accurate_rnd | allows more accurate rounding. This avoids using some [MMX optimizations](https://stackoverflow.com/questions/70893502/why-does-ffmpeg-output-slightly-different-rgb-values-when-converting-to-gbrp-and)  that might introduce rounding errors. In practice its unlikely to kick in, but it doesn't hurt. This only occurs if the source is 4:2:0 or 4:2:2, and the destination is RGB, particularly if you are dithering the result. The other case is if you are converting from one Y’CbCr format to another (e.g. 4:2:0 to 4:2:2). NOTE, we have yet to find a case where this currently makes a difference, it's possible it was important for earlier versions of ffmpeg, but with more recent versions (ffmpeg >= 5.x) it seems to have little impact. |
 | full_chroma_int | Full Chroma Interpolation - is used for internal processing when rescaling. It enables the use of full Y’CbCr 4:4:4 for internal processing. This means the chroma plane is upsampled using actual scaling conversions before the Y’CbCr-to-RGB conversion is initiated. This can potentially deliver higher visual quality at a relatively small speed penalty. This does nothing for the RGB to Y’CbCr conversion, but does for the [YCbCr to RGB conversion](https://github.com/FFmpeg/FFmpeg/blob/08e97dae205d10806a0360bfc62f654d629dda93/libswscale/output.c#L2847), or between Y’CbCr formats. |
 | full_chroma_inp | Full Chroma Input - This forces the scaler to use the full resolution input for the chroma calculation. Without it, for RGB input converted to 4:2:2 or 4:2:0, libswscale averages each pair of pixels into one chroma value before filtering, which throws away the chroma siting: a line on an even column and one on the following odd column give identical chroma. **It matters for RGB input**, contrary to earlier versions of this page, and `full_chroma_int` does not do the same thing. Together with `out_chroma_loc=left` it is needed for co-sited chroma from `scale`; see [Chroma Siting](ChromaSiting.html). |
 | print_info | Outputs additional debug info for the scaler. |
-| Bitexact | disabled SIMD operations that don’t generate exactly the same output as C, this ends up being quite similar to accurate_rnd. |
-| sws_dither | Allows you to set (or disable) the dithering algorithm. By default it is set to “auto”, which will use the bayer algorithm unless the “full_chroma_int” flag is enabled, in which case it will use the “ed” (error diffusion) algorithm. This is due to the bayer algorithm not supporting the full_chroma_int flag. You can also disable it with “none”. It is recommended to leave it enabled, to help with the RGB to Y’CbCr rounding errors, particularly in 8-bit. (see [utils.c - initFilter line 1423](https://github.com/FFmpeg/FFmpeg/blob/a87a52ed0b561dc231e707ee94299561631085ee/libswscale/utils.c#L1423) |
+| bitexact | disables SIMD operations that don’t generate exactly the same output as C, this ends up being quite similar to accurate_rnd. |
+| sws_dither | Allows you to set (or disable) the dithering algorithm. By default it is set to “auto”, which will use the bayer algorithm unless the “full_chroma_int” flag is enabled, in which case it will use the “ed” (error diffusion) algorithm. This is due to the bayer algorithm not supporting the full_chroma_int flag. You can also disable it with “none”. It is recommended to leave it enabled, to help with the RGB to Y’CbCr rounding errors, particularly in 8-bit. (see [utils.c - initFilter line 1423](https://github.com/FFmpeg/FFmpeg/blob/a87a52ed0b561dc231e707ee94299561631085ee/libswscale/utils.c#L1423)) |
 
 ## Deeper dive
 
@@ -116,7 +125,7 @@ Below we dig into when the different flags should be used for different occasion
 
 ### Converting from RGB to Y’CbCr 422
 
-In the testing (See link), for most cases, there is minimal difference between the swscale algorithm options for RGB to 422 conversion. Any of the bicubic, lanczos scalers will produce an identical result.
+In our testing, for most cases, there is minimal difference between the swscale algorithm options for RGB to 422 conversion. Any of the bicubic, lanczos scalers will produce an identical result.
 
 E.g.
 
@@ -136,9 +145,7 @@ The one test pattern that creates errors for both of the scalers is the smpteHDb
 
 ### Converting from RGB to Y’CbCr 420
 
-In the testing (See link), Unlike for the conversion to 422, since you are now sampling over a slightly bigger area, there is a bigger difference between the different filtering algorithms. We are recommending:
-
-E.g.
+Unlike for the conversion to 422, since you are now sampling over a slightly bigger area, there is a bigger difference between the different filtering algorithms. With libswscale we would use:
 
 ```console
 -sws_flags accurate_rnd+lanczos+print_info -pix_fmt yuv420p10le -vf "scale=out_color_matrix=bt709:out_range=tv"
@@ -156,7 +163,7 @@ As with 4:2:2, the chroma resampling is a close call and the range conversion is
 
 If you are converting files from Y’CbCr, e.g. from Prores to MXF (or h264), particularly from 4:2:0 or 4:2:2, many of the above options are theoretically more important.
 
-Additionally you should be aware of chroma siting ([chroma_sample_location](http://trac.ffmpeg.org/wiki/Scaling#Chromasamplelocation)). When converting to 4:2:2 or 4:2:0, libswscale centres the chroma by default, where professional 4:2:2 and H.264/HEVC 4:2:0 expect it co-sited; see [Chroma Siting](ChromaSiting.html) for measurements and fixes. What FFmpeg assumes when converting 4:2:0 or 4:2:2 back to RGB has not been tested yet.
+Additionally you should be aware of chroma siting ([chroma_sample_location](http://trac.ffmpeg.org/wiki/Scaling#Chromasamplelocation)). When converting to 4:2:2 or 4:2:0, libswscale centres the chroma by default, where professional 4:2:2 and H.264/HEVC 4:2:0 expect it co-sited; see [Chroma Siting](ChromaSiting.html) for measurements and fixes. Converting 4:2:0 or 4:2:2 back to RGB, libswscale assumes the chroma is centred whatever the file says, on every release up to 9.0; see [Reading back to RGB](ChromaSiting.html#reading-back-to-rgb).
 
 ## Scaling algorithms
 

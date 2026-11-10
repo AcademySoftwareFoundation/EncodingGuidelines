@@ -7,7 +7,7 @@ parent: Test Output
 
 # Bit Depth Analysis
 
-Sometimes its useful to know what the actual dynamic range of a particular combination of codec, profile and pixel format is, since it may not necessarily be what you think. i.e. you think you are getting 10-bits (i.e. 1024 values) when in fact you could be getting quite a bit less.
+Sometimes it's useful to know what the actual dynamic range of a particular combination of codec, profile and pixel format is, since it may not necessarily be what you think. i.e. you think you are getting 10-bits (i.e. 1024 values) when in fact you could be getting quite a bit less.
 
 This work is inspired by [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth).
 
@@ -19,14 +19,14 @@ For example for the prores_ks codec we would run:
 ffmpeg -y -r 24 -f lavfi -i nullsrc=s=720x480,format=yuv444p10le -frames:v 1024 -vf geq=N:512:512 -c:v prores_ks -profile:v 4444xq ./colors-prores_ks_10_4444xq.mov
 ```
 
-We then read the resulting movie file, to see if the luminance that we expect.
+We then read the resulting movie file, to see if the luminance is what we expect.
 
 The columns are defined as:
 
 * Test Name - which codec we are testing.
 * Bit Depth - What bit-depth the codec is being evaluated to (which determines how many unique values to test to).
 * Unique values - How many resulting values are unique, but may not be exactly the same value.
-* STDDEV > 0.0001 - Standard deviation of the frame is > 0.0001 which means what should be a flat color, isnt.
+* STDDEV > 0.0001 - Standard deviation of the frame is > 0.0001 which means what should be a flat color, isn't.
 * Off by 1 - The color is a flat color, but is "off by 1" (i.e. what should be 3 is 4), again not ideal.
 * Other invalid - is a flat color, but is some other value than expected.
 
@@ -48,9 +48,9 @@ Note, the one thing the ColorlabMD test does that this does not currently do is 
 
 Tests - prores_ks_10_4444xq, prores_ks_10_proxy, prores_ks_10_hq
 
-It shows that the FFmpeg_ks encoder is only encoding to the legal 10-bit range (i.e. 877 values), which is pretty much what we expect.
+It shows that the prores_ks encoder is only encoding to the legal 10-bit range (i.e. 877 values), which is pretty much what we expect.
 
-The tests [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) tests seem a little unfair on prores_ks, which clearly defines itself as a 10-bit codec, and I suspect that the apple encoding is setting full range values which Prores (in this case) is not.
+The [ColorlabMD Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) tests seem a little unfair on prores_ks, which clearly defines itself as a 10-bit codec, and we suspect that the apple encoding is setting full range values which Prores (in this case) is not.
 
 Note, Prores_ks will read 12 bit files, just not generate them.
 

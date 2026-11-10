@@ -7,6 +7,15 @@ parent: Codec Comparisons
 
 # AV1
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 AV1 is an open-source and royalty free codec developed by the [Alliance for Open Media](https://en.wikipedia.org/wiki/Alliance_for_Open_Media) (AOMedia), a non-profit industry consortium. It can be 50% higher efficiency than h264.
 
 The royalty free and open-source features of the codec make it extremely interesting to the VFX community, however most of the codecs are significantly slower than h264, which may be a major hurdle for adoption. Having said that, they are actively being developed, so this could change at some point.
@@ -20,7 +29,7 @@ AV1 has browser support in:
 * Firefox
 * Opera
 
-the main missing one is Safari. Apple has now joined the AOM group, and we are starting to see AV1 hardware support in their latest hardware, but currently safari does still not support it.
+Safari plays AV1 only on Apple devices that have an AV1 hardware decoder; on older hardware it does not play.
 
 Outside of the web browser, AV1 support is pretty much limited to Houdini, ffmpeg and VLC.
 
@@ -35,7 +44,7 @@ There are three encoders available via ffmpeg:
 ## Libsvtav1
 
 [SVT-AV1](https://gitlab.com/AOMediaCodec/SVT-AV1) was originally developed by Intel with Netflix. In 2022 it was adopted by AOMedia as the basis of future development for AV1.
-It has a more limited support for pix-formats currently only supporting: yuv420p yuv420p10le
+It has more limited support for pixel formats.
 
 Supported pixel formats: yuv420p yuv420p10le
 
@@ -73,12 +82,13 @@ comparisontest:
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libsvtav1 \
         -pix_fmt yuv420p10le -crf 18 -preset 5  -svtav1-params tune=0 \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
-        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         -y outputfile.mp4
 ```
 
+| Flag | Description |
 | --- | --- |
-| **-crf 18** | This is the constant rate factor, controlling the default quality in the range 0-63. By default this is set to 50, which is a little on the low quality side, using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison-for-libsvtav1) below. |
+| **-crf 18** | This is the constant rate factor, controlling the default quality in the range 0-63. By default this is set to 35 (SVT-AV1 as built with FFmpeg 6.1 to 9.0), which is a little on the low quality side, using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison-for-libsvtav1) below. |
 | **-preset 5** | Help with a trade-off between encoding speed and compression efficiency. Supported preset range in the 0-13. See below for comparisons |
 
 See also:
@@ -102,7 +112,7 @@ To help pick appropriate values with the CRF flag, we have run the [Test Framewo
 | ![](enctests/reference-results/av1-preset-test-vmaf_harmonic_mean.png) This is showing preset values against VMAF harmonic mean |
 | ![](enctests/reference-results/av1-preset-test-psnr_y_harmonic_mean.png) This is showing preset values against PSNR harmonic mean |
 
-These graphs are with a CRF of 15 for four different media clips, its showing that the preset values are affecting the amount of compression, but not affecting the quality of the result, at the expense of the encoding time (at least up to preset 9).
+These graphs are with a CRF of 15 for four different media clips, it shows that the preset values are affecting the amount of compression, but not affecting the quality of the result, at the expense of the encoding time (at least up to preset 9).
 
 See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/CommonQuestions.md)
 
@@ -124,16 +134,17 @@ Example encoding:
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libaom-av1  \
         -pix_fmt yuv420p10le -cpu-used 6 -crf 20 -row-mt 1 \
         -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
-        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1\
+        -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
         -y outputfile.mp4
 ```
 
+| Flag | Description |
 | --- | --- |
 | -cpu-used 6 | This sets how efficient the compression will be. The default is 1, changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy.  Values above 6 are reset to 6 unless real-time encoding is enabled. See below for comparison. |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 | -usage allintra | Encodes for all intra-frames  |
 | -arnr-strength | This decreases the amount of noise reduction you get, setting it to 1 helps preserve grain, and some noisy pictures |
-| -aom-params: tune-content=film | There is a tune parameter, but it just seems to make the picture grainy, and is not recommended |
+| -aom-params tune-content=film | There is a tune parameter, but it just seems to make the picture grainy, and is not recommended |
 
 Libaom has an aggressive denoiser, which can be pretty good for animated media, but can be a problem for live-action, particularly if there is noisy content, such as water or particles. CRF needs to be lowered to counter this, which does affect encoding speed.
 
@@ -161,4 +172,4 @@ See Also - note these are all guides for AOMENC (the AOM encoder that is part of
 Supported pixel formats:
 yuv420p yuvj420p yuv420p10le yuv420p12le yuv422p yuvj422p yuv422p10le yuv422p12le yuv444p yuvj444p yuv444p10le yuv444p12le
 
-There is no CRF flag, so you use the -qp flag, the recommended starting point is about 100. However, we have been unable to get an substantial speed improvement over AOM.
+There is no CRF flag, so you use the -qp flag, the recommended starting point is about 100. However, we have been unable to get a substantial speed improvement over AOM.

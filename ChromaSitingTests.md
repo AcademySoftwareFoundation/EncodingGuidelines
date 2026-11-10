@@ -39,7 +39,7 @@ were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and a 9.1 development build, exc
 a line on an even column and a line on the following odd column give exactly the same chroma. libswscale does
 this for RGB input unless `full_chroma_inp` is set, whatever position it is asked for, which is why asking for
 co-sited without that flag only gets to within 0.05 of a pixel. Note that this contradicts older advice
-(including earlier versions of [Ffmpeg Scaling Options](EncodeSwsScale.html)) that `full_chroma_inp` does nothing
+(including earlier versions of [FFmpeg Scaling Options](EncodeSwsScale.html)) that `full_chroma_inp` does nothing
 for RGB input.
 
 The last row is a change that is coming: in FFmpeg development builds after 9.0, `-chroma_sample_location` is

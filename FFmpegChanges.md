@@ -254,7 +254,7 @@ This has not changed in any version from 6.0 to 9.0:
 * `zscale` was exact for every combination we tested: 8-, 10- and 16-bit RGB to 8-, 10- and 12-bit Y'CbCr, in
   4:4:4, 4:2:2 and 4:2:0.
 
-See [Ffmpeg Scaling Options](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) for
+See [FFmpeg Scaling Options](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) for
 more on the cause.
 
 ## libswscale full-range conversions changed in 8.0 {#libswscale-full-range-80}
@@ -281,7 +281,7 @@ Errors against the ideal BT.709 conversion of the SMPTE bars, in 10-bit code val
   8-bit output is affected less: the largest error went from 1 to 2 (8-bit) code values.
 * **Y'CbCr range conversion, 7.1 and earlier:** white was 3 to 4 code values out in both directions. From 8.0 it
   is close to `zscale`, though limited to full at 10-bit still has a mean error about twice `zscale`'s.
-* **Limited-range RGB to Y'CbCr** (the usual case) is unchanged; see
+* **RGB to limited-range Y'CbCr** (the usual case) is unchanged; see
   [above](#libswscale-white-level-for-high-bit-depth-input).
 * `flags=unstable` (libswscale's new conversion code, 8.1 and later) gets close to `zscale` in all of these. We
   tested 4:4:4 only. On the development branch after 9.0, some format pairs (e.g. 10-bit RGB to 12-bit Y'CbCr) log

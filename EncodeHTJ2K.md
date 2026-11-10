@@ -7,6 +7,15 @@ parent: Codec Comparisons
 
 # HTJ2K - High Throughput JPEG 2000
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 HTJ2K is an extremely interesting extension of the JPEG-2000 standard that is widely used in digital cinema, which promises significantly faster encoding and decoding for a small hit to compression efficiency.
 
 The key advantages of HTJ2K include:
@@ -84,15 +93,17 @@ The advantage of using OIIO over ojph_compress are:
 Creating HTJ2K files can be done on the command line with oiiotool, e.g.:
 
 ```console
-oiiotool -t STARTFRAME-ENDFRAME --parallel-frames -i INPUTFRAMESEQ.%05d.tif \
+oiiotool --frames STARTFRAME-ENDFRAME --parallel-frames -i INPUTFRAMESEQ.%05d.tif \
      --compression htj2k --attrib jph:qstep 0.001 -o OUTPUTFRAMESEQ.%05d.j2c
 ```
 
 Without the jph:qstep flag, lossless mode is used, which is typically quite a bit smaller than many other compression schemes, but not typically small enough for reviews.
 
-| *–attrib jph:qstep 0.0001* | Interval size used to quantize wavelet coefficients. There is a rough mapping between this and the meaningful bit-depth of the resulting picture, qstep \= 2^(- bit-depth)   If this is not defined, lossless compression is used. (See below). |
-| *–attrib jph:block_size 64,64* | The older JPEG2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
-| *–attrib jph:prog_order RPCL* | (see [below](#progression-order)). |
+| Flag | Description |
+| --- | --- |
+| `--attrib jph:qstep 0.001` | Interval size used to quantize wavelet coefficients. There is a rough mapping between this and the meaningful bit-depth of the resulting picture, qstep \= 2^(- bit-depth)   If this is not defined, lossless compression is used. (See below). |
+| `--attrib jph:block_size 64,64` | The older JPEG2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
+| `--attrib jph:prog_order RPCL` | (see [below](#progression-order)). |
 
 While JPEG2000 can support YCbCr this openimageio implementation assumes that we are only generating RGB results.
 
@@ -127,10 +138,10 @@ So we probably want something close to or below 0.001 as a starting value for 10
 
 As an alternative to setting the qstep, with the [https://github.com/osamu620/OpenHTJ2K](https://github.com/osamu620/OpenHTJ2K) encoder you also have the option of setting the quality with a [QFactor](https://ds.jpeg.org/documents/jpeg2000/wg1n100430-098-COM-Guideline_on_controlling_JPEG_2000_image_quality_using_a_single_parameter.pdf) flag. This is closer to the Jpeg 0-100 quality flag. It is also a little more refined than setting qstep allowing it to use different qsteps for different sub-bands of the image.
 
-In testing it with OpenHTJ2K and it does feel nicer than the fractional qstep. However, for our needs we typically would want something between 99 and 100.
+In testing with OpenHTJ2K it does feel nicer than the fractional qstep. However, for our needs we typically would want something between 99 and 100.
 
 | ![](enctests/reference-results/htj2k-qfactor-test-encode_time.png)  This is showing QFactor values against encoding time. |
-| ![](enctests/reference-results/htj2k-qfactor-filesize.png) This is showing QFactor values against file size. |
+| ![](enctests/reference-results/htj2k-qfactor-test-filesize.png) This is showing QFactor values against file size. |
 | ![](enctests/reference-results/htj2k-qfactor-test-vmaf_harmonic_mean.png) This is showing QFactor values against VMAF harmonic mean |
 | ![](enctests/reference-results/htj2k-qfactor-test-psnr_y_harmonic_mean.png) This is showing QFactor values against psnr y harmonic mean |
 

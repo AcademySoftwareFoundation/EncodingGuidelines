@@ -11,7 +11,7 @@ This project is from the [ASWF Open Review Initiative](https://openreviewinitiat
 This is not the site for general encoding, although you may find answers here, we will likely opt for a simple one-size fits all solution over file-size efficiency.
 We welcome suggestions and improvements.
 
-The main confluence page for this for now is [here](https://lf-aswf.atlassian.net/wiki/spaces/PRWG/pages/11274685/Movie+Compression+with+ffmpeg+for+media+review.)
+The original Confluence page for this work is [Movie Compression with ffmpeg for media review](https://lf-aswf.atlassian.net/wiki/spaces/PRWG/pages/11274685/Movie+Compression+with+ffmpeg+for+media+review).
 
 {: .highlight }
 We recommend usage of [VP9](EncodeVP9.html) and [AV1](EncodeAv1.html) over h264 and h265 where possible to encourage the usage of patent-free codecs, for more information on this see the white-paper [Next-gen codecs for VFX Community](https://docs.google.com/document/d/1EJ7Q_HhjL0ELNdjz5AgnPrraUvy7XCo52LL08WxgjtA/edit#heading=h.9rkn78tjmq48).  
@@ -25,42 +25,42 @@ An example of why this is important is to compare:
 <table>
 <TR><TD style='padding-top:0px; padding-bottom: 0px' >Original PNG Image</TD><TD style='padding-top:0px; padding-bottom: 0px'><IMG src="sourceimages/original-png.png" style='height:70px'/></TD><TD style='padding-top:0px; padding-bottom: 0px'></td></TR>
 <TR><TD style='padding-top:0px; padding-bottom: 0px'>Default ffmpeg conversion</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/default-ffmpeg.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> NOTE color shift compared to original</TD></TR>
-<TR><TD style='padding-top:0px; padding-bottom: 0px'>Using the libavscale library</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/libswscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
+<TR><TD style='padding-top:0px; padding-bottom: 0px'>Converting explicitly to BT.709</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/libswscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
 </table>
 
-You can see the default ffmpeg conversion introduces a dramatic color shift that if you use the right flags, you can match the original. See [Color space conversion](ColorPreservation.html#Color-space-conversion) for more details on this.
+You can see the default ffmpeg conversion introduces a dramatic color shift that if you use the right flags, you can match the original. See [RGB to YCbCr Conversion](ColorPreservation.html) for more details on this.
 
 1. [Acknowledgements](#Acknowledgements)
 2. [Encoding Cheat Sheet](Quickstart.html)
-3. [Encoding Overview](Encoding.html#Encoding-Overview)
-4. [Color space conversion](ColorPreservation.html#Color-space-conversion)
-5. [Media Encoding with ffmpeg](ColorPreservation.html#encodestart)
-    1. [Frame sequence specification](FfmpegInputs.html)
-    2. [RGB to YCrCb Conversion](ColorPreservation.html#yuv)
-    3. [TV vs. Full range.](ColorPreservation.html#tvfull)
-    4. [RGB encode](RGBEncoding.html)
-    5. [Useful Ffmpeg Filters.](OtherFfmpegArgs.html)
-    6. [zscale Conversion](EncodeZscale.html)
-    7. [Chroma Siting](ChromaSiting.html)
-    8. [HDR Encoding](enctests/HDR_Encoding.html)
-    9. [Adding Timecode and Editorial Workflow](EditorialWorkflow.html)
-    10. [Adding Metadata](EncodingMetadata.html)
-6. [Codec Comparisons](Encoding.html#encode)
-    1. [h264](Encodeh264.html)
-    2. [ProRes](EncodeProres.html)
-    3. [AV1](EncodeAv1.html)
-    4. [HEVC/H.265](EncodeHevc.html)
-    5. [MJPEG](EncodeMJPEG.html)
-    6. [VP8](EncodeVP8.html)
-    7. [VP9](EncodeVP9.html)
-    8. [DNxHD](EncodeDNXHD.html)
+3. [Encoding Overview](EncodingOverview.html)
+    1. [Color space conversion](EncodingOverview.html#Color-space-conversion)
+    2. [Frame sequence specification](FfmpegInputs.html)
+    3. [RGB to YCbCr Conversion](ColorPreservation.html)
+    4. [TV vs. Full range](Quickstart.html#tvfull)
+    5. [Adding Timecode and Editorial Workflow](EditorialWorkflow.html)
+    6. [Web Color Preservation](WebColorPreservation.html)
+    7. [FFmpeg OCIO Filter](FfmpegOcio.html)
+    8. [Useful FFmpeg Filters](OtherFfmpegArgs.html)
+    9. [FFmpeg Scaling Options](EncodeSwsScale.html)
+    10. [zscale Conversion](EncodeZscale.html)
+    11. [Chroma Siting](ChromaSiting.html)
+    12. [RGB Encoding](RGBEncoding.html)
+    13. [HDR Encoding](enctests/HDR_Encoding.html)
+    14. [Adding Metadata](EncodingMetadata.html)
+4. [Codec Comparisons](Encoding.html)
+    1. [H.264](Encodeh264.html)
+    2. [HEVC/H.265](EncodeHevc.html)
+    3. [ProRes](EncodeProres.html)
+    4. [DNxHD](EncodeDNXHD.html)
+    5. [AV1](EncodeAv1.html)
+    6. [VP9](EncodeVP9.html)
+    7. [JPEG2000 - HTJ2K](EncodeHTJ2K.html)
+    8. [MJPEG](EncodeMJPEG.html)
     9. [OpenAPV](EncodeOpenAPV.html)
-    10. [JPEG2000 - HTJ2K](EncodeHTJ2K.html)
-7. [Metadata NCLC/NCLX](ColorPreservation.html#nclc)
-    1. [Gamut - colorprimaries](ColorPreservation.html#gamut)
-    2. [Color Range](ColorPreservation.html#range)
-8. [Web Review](ColorPreservation.html#webreview)
-9. [FFmpeg Version Changes](FFmpegChanges.html)
+    10. [VP8](EncodeVP8.html)
+5. [Test Output](Testresults.html)
+6. [Test Framework](enctests/README.html)
+7. [FFmpeg Version Changes](FFmpegChanges.html)
 
 ### Acknowledgements  <a name="Acknowledgements"></a>
 

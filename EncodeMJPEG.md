@@ -55,8 +55,9 @@ encode writes limited range pixels into a file tagged full range. From 7.1 it is
 
 ## Recommended Flags
 
+| Flag | Description |
 | --- | --- |
-| **-qscale:v 2** | This is the compression factor, which goes from 2 to 31 where 2 is the best quality. See alternative approach for better encoding. |
+| **-qscale:v 2** | This is the compression factor, which goes from 2 to 31 where 2 is the best quality. See the [alternative approach](#alternative-approach) for higher quality. |
 
 ### qscale:v Comparison
 
@@ -82,7 +83,7 @@ ffmpeg -f image2 -r 24 -i JPEGFILES.%05d.jpg -vcodec copy outputfile.mov
 ```
 
 This gives you more fine grain control over the quality setting, although it gives you less control over the jpeg compression, since it will always be YUV420, where you do get more control with ffmpeg.
-Its actually hard to get an exact mapping between the ffmpeg -qscale setting and the jpeg quality. The highest ffmpeg setting is 2, and that roughly maps to a jpeg quality setting of 86%.
+It's actually hard to get an exact mapping between the ffmpeg -qscale setting and the jpeg quality. The highest ffmpeg setting is 2, and that roughly maps to a jpeg quality setting of 86%.
 So if you require higher quality than 86% then use this approach. Settings below 95% do produce artifacts, so this is the recommended approach if you *have* to do this, a 10-bit encoder would be better though.
 
 Below shows a comparison of jpeg compression to filesize for a HD sized image sequence of 200 frames.

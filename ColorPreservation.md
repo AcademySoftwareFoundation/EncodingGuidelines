@@ -6,9 +6,16 @@ parent: Encoding Overview
 
 ---
 
-
-
 # RGB to YCbCr Conversion <a name="yuv"></a>
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically YCbCr). Do be aware that a number of codecs do support native RGB encoding (including h264, hevc, vp9, av1), but they are not typically supported in web browsers.
 
@@ -24,13 +31,13 @@ ask for, filters such as `zscale` *transform* the pixels and set the tags, and `
 touching the pixels. So `-colorspace` on a file that is already Y'CbCr changes its pixels rather than fixing its
 tag; to fix a wrong tag, use `setparams`. See [Relabelling a file](FFmpegChanges.html#relabelling-a-file).
 
-Separately, all the video formats typically do not use the full numeric range [0-255] but instead the Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (the standard for web playback). This fortunately is something you can change, [see TV vs. Full range](Quickstart.html#tv-vs-full-range-). below. The other option is to use higher bit depth, e.g. 10-bit or 12 bit for formats such as [ProRes](EncodeProres.html).
+Separately, all the video formats typically do not use the full numeric range [0-255] but instead the Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (still the most widely supported for web playback). This fortunately is something you can change, see [TV vs. Full range](Quickstart.html#tvfull). The other option is to use higher bit depth, e.g. 10-bit or 12 bit for formats such as [ProRes](EncodeProres.html).
 
 Even if you are sticking to 8-bits encodes, if your source media is able to have a higher bit-depth (e.g. you are able to write out 16-bit PNG's to do the encode) it will help with the accuracy of the RGB to YUV conversion. Use zscale for it: libswscale's errors are larger with 10-bit and 16-bit sources (see below).
 
 For more information, see: [https://trac.ffmpeg.org/wiki/colorspace](https://trac.ffmpeg.org/wiki/colorspace)
 
-For examples comparing these see: [here](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/chip-chart-yuvconvert/compare.html)
+For examples comparing these see the [conversion comparison page](tests/chip-chart-yuvconvert/compare.html).
 
 ## Comparison
 

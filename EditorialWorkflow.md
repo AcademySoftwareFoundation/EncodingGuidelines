@@ -47,16 +47,16 @@ There are three approaches for what to use for the timecode:
 It's extremely common to use a start frame of 1001 for a shot at the beginning of production, rather than frame 0. The three big reasons for this are:
 
 1. Frames are automatically padded to 4 digits (which is really common for VFX work).
-2. If you do need to add additional frames to the head of the shot, either because editorial requests it, then there is plenty of wiggle room without requiring moving animation (which can be problematic if multiple departments are involved).
+2. If you do need to add additional frames to the head of the shot, for example because editorial requests it, there is plenty of wiggle room without requiring moving animation (which can be problematic if multiple departments are involved).
 3. It's easy for simulation to have ‘pre-roll’ time without going into negative frames.
 
 It's also common for VFX shows to deliver handles on the animation, e.g. if 8 frames of handle are expected to be provided to the VFX provider, then the first frame of animation would be frame 1009. Similarly it's common to have a slate as the first frame, so assuming frame 1001 is the first frame of the handles, 1000 would be the slate.
 
-By remapping the frame number to a timecode number, e.g. frame 1001 to 00:00:41:07 if later the editor decided that the first frame of the delivery was going to be 1009 (i.e. TC 00:00:42:01) you would have an issue if no timecode existed on the clip, since they would have some versions of the clip where the frame number is 1001, and some that are 1009 (which is why burn-in frame numbers are so important). By adding the timecode, its possible to automate the process, dropping in different versions of the clip (whether the start frame is 1001 or 1009) it should conform correctly.
+By remapping the frame number to a timecode number, e.g. frame 1001 to 00:00:41:17, if later the editor decided that the first frame of the delivery was going to be 1009 (i.e. TC 00:00:42:01) you would have an issue if no timecode existed on the clip, since they would have some versions of the clip where the frame number is 1001, and some that are 1009 (which is why burn-in frame numbers are so important). By adding the timecode, its possible to automate the process, dropping in different versions of the clip (whether the start frame is 1001 or 1009) it should conform correctly.
 
 Converting the frame number to timecode can be done using OTIO:
 
-```console
+```python
 import opentimelineio as otio
 start_frame = 1001
 frame_rate = 24.0
@@ -236,7 +236,7 @@ for filename in sys.argv[1:]:
     # mob.import_audio_essence("sample.wav", edit_rate) #Modify if you have audio too.
 ```
 
-In this simplistic example, I'm overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py).
+In this simplistic example, we are overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py).
 
 ## See Also
 
