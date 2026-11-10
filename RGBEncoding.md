@@ -12,8 +12,8 @@ You do not *have* to encode into YCbCr, there are a number of codecs that suppor
 It does lower the compression efficiency a little, but eliminates any concern that the YCbCr conversion is affecting the imagery.
 
 | Codec Family | ffmpeg codec | Bit depth |  pix_fmt | Web Support |
-| ------------ | ------------ | ------------ | ------------ |
-| [h264](Encodeh264.html) | libx264rgb | 8 |  | no |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+| [h264](Encodeh264.html) | libx264rgb | 8 | rgb | no |
 | [HEVC/H265](EncodeHevc.html) | libx265 | 8 10 12 | rgb rgb-10 rgb-12 | All browsers |
 | [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | rgb rgb-10 rgb-12 | All browsers |
 | [VP9](EncodeVP9.html) | libvpx-vp9 | 8 10 12 | rgb rgb-10 rgb-12 | All Browsers |
@@ -31,7 +31,12 @@ Using the encoder:
 -c:v libx264rgb
 ```
 
-Has no support in web browsers, but there is limited support in players such as RV. This is pretty obsolete, you can do something now similarly with libx264.
+Has no support in web browsers, but there is limited support in players such as RV.
+
+The x264 library can encode RGB, but FFmpeg only offers it through the separate `libx264rgb` encoder (`bgr0`, `bgr24`
+or `rgb24` in, stored as `gbrp`). `-c:v libx264` has no RGB pixel formats: asking it for `-pix_fmt rgb24` or `gbrp`
+does not fail, it logs "Incompatible pixel format ... auto-selecting format 'yuv444p'" and writes Y'CbCr 4:4:4 instead.
+Tested on FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and a 9.1 development build.
 
 ## mjpeg RGB Encoding
 
@@ -99,5 +104,5 @@ development build). Set them with `setparams`, as in the [VP9 example](#vp9-rgb-
 
 For more details see:
 
-* [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)
+* [Comparing full-range vs. tv range](tests/greyramp-fulltv/compare.html)
 * [TV vs. full range](Quickstart.html#tvfull)
