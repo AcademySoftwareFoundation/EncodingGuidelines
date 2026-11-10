@@ -8,7 +8,9 @@ exclude: ["ICC", "*.yml", "enctests/*/*.mov",
           "MarkdownNotes.md",
           "conan/build*",
           "enctests/sources/hdr_sources/*/*.exr", "enctests/sources/Sintel-trailer-1080p-png",
-          "enctests/sources/1080p"]
+          "enctests/sources/1080p",
+          "sourceimages/*.y4m", "sourceimages/*.dpx", "sourceimages/*.mxf",
+          "sourceimages/rp219/*.dpx"]
 
 url: "https://academysoftwarefoundation.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 # logo: https://www.aswf.io/wp-content/uploads/sites/69/2022/11/ExternalLink_openreviewinitiative-stacked-color.svg
