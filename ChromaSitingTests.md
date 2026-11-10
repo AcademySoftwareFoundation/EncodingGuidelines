@@ -2,7 +2,7 @@
 layout: default
 title: Chroma Siting Tests
 nav_order: 5.85
-parent: Encoding Overview
+parent: Test Output
 ---
 
 # Chroma Siting Tests
