@@ -138,9 +138,6 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
 
 ## AVID friendly MXF
 
-{: .warning }
-This is currently under development, use at your own risk.
-
 There are two types of MXF files, Op-atom and OP1a. Op-atom is designed for a single piece of media, whether it's audio or video, so a clip with both would be split into two sections. OP1a is a streaming format, where the audio and video streams are interleaved (see [MXF](https://web.archive.org/web/20121119151859/http://www.avid.com/static/resources/common/documents/mxf.pdf)).
 
 ### OP1a MXF
