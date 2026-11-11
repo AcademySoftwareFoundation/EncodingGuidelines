@@ -60,7 +60,7 @@ the bicubic filter's ringing.
 
 ## What each format records {#recorded-details}
 
-What FFmpeg 9.0 writes, for frames that carry a chroma location:
+What FFmpeg 9.0 writes, for frames that carry a chroma location (VP9 measured on 6.1.6 and 9.0.2, the same on both):
 
 | Codec | Field | 4:2:0 | 4:2:2 |
 | :--- | :--- | :--- | :--- |
@@ -68,14 +68,14 @@ What FFmpeg 9.0 writes, for frames that carry a chroma location:
 | HEVC (`libx265`) | VUI, as H.264 (4:2:0 only) | Written | No field |
 | AV1 (`libsvtav1`) | `chroma_sample_position` (4:2:0 only) | `left` and `topleft` written; AV1 has no value for centred | No field |
 | AV1 (`libaom-av1`) | as above | Always written as unknown: FFmpeg's `libaom` wrapper does not pass it on | No field |
-| VP9 | None (not tested: no `libvpx` in our builds) | | |
+| VP9 (`libvpx-vp9`) | None in the bitstream. In MP4 the `vpcC` box's `chromaSubsampling` (see the MOV / MP4 row below) | MP4: `left` written as 0 (vertical), anything else, including `center` and no location, as 1 (co-located, i.e. `topleft`): centred chroma is mislabelled | MP4: 2, no siting |
 | ProRes, DNxHD/DNxHR | None | | Assumed co-sited |
 
 | Container | Field | Behaviour |
 | :--- | :--- | :--- |
 | Matroska / WebM | `ChromaSitingHorz`, `ChromaSitingVert` | Written for every codec and subsampling, and read back by FFmpeg. The only container here that records siting for every codec and FFmpeg reads back. |
 | MXF | `ColorSiting` | Written, but not read back by FFmpeg. With no location on the frames, 4:2:2 is written as 0 (co-sited). FFmpeg maps `left` to 6 and `center` to 3 whatever the subsampling, which are ST 377-1's 4:2:0 values; for 4:2:2 the matching values would be 0 and 1. |
-| MOV / MP4 | None | Only what the codec stream itself carries. |
+| MOV / MP4 | None, except VP9's `vpcC` | Only what the codec stream itself carries, apart from VP9 in MP4 (above). FFmpeg does not read `vpcC` back: `ffprobe` shows `unspecified`. |
 
 ### DNxHR in MXF
 

@@ -42,12 +42,26 @@ comparisontest:
      - assert: less
        value: max_error_10bit
        less: 16
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclc 1/13/5
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 \
-   -c:v mjpeg -qscale:v 2  outputfile.mov
-
+   -vf "setparams=color_primaries=bt709:color_trc=iec61966-2-1" -colorspace bt470bg \
+   -c:v mjpeg -qscale:v 2 outputfile.mov
 ```
+
+`setparams` sets the primaries and transfer function, and `-colorspace bt470bg` states the BT.601 matrix that MJPEG
+uses anyway; it does not change the pixels. Both are needed for the MOV to get a `colr` atom: without `-colorspace`
+the muxer leaves out the primaries and transfer as well, and without `setparams` the file has neither (tested on
+6.1.6, 7.1.5 and 9.0.2). The JPEG data itself always says full range BT.601.
 
 Leave `-pix_fmt` off, as above, or use a `yuvj` format such as `-pix_fmt yuvj444p`. Both give correct full range
 files on 6.1.6, 7.0, 7.1.5, 8.1, 9.0.2 and a 9.1 development build. On 7.0 and earlier, a plain `-pix_fmt yuv444p` does not encode, and adding `-color_range pc` to make it

@@ -285,64 +285,35 @@ ffmpeg -y -r 24 -i inputfile.%04d.png -frames:v 100 \
       outputfile.mov
 ```
 
-Other combinations of resolution, bitrate and format are:
+Other combinations of resolution, bitrate and format are below. They are the list FFmpeg prints (9.0.2), grouped
+by Avid compression ID (CID), with the bytes per frame from `libavcodec/dnxhddata.c`.
 
-| Resolution | Bit Rate | Pix Format | Frame Rates |
-| :---------- | -----------: | :----------- | :----------- |
-| 1920x1080p | 175M | yuv422p10 | 23.98, 24 |
-| 1920x1080p | 185M | yuv422p10 | 25 |
-| 1920x1080p | 365M | yuv422p10 | 50 |
-| 1920x1080p | 440M | yuv422p10 | 59.94, 60 |
-| 1920x1080p | 115M | yuv422p | 23.98, 24 |
-| 1920x1080p | 120M | yuv422p | 25 |
-| 1920x1080p | 145M | yuv422p | 29.97, 50 |
-| 1920x1080p | 240M | yuv422p | 50 |
-| 1920x1080p | 290M | yuv422p | 59.94, 60 |
-| 1920x1080p | 175M | yuv422p | 23.98, 24 |
-| 1920x1080p | 185M | yuv422p | 25 |
-| 1920x1080p | 220M | yuv422p | 29.97 |
-| 1920x1080p | 365M | yuv422p | 50 |
-| 1920x1080p | 440M | yuv422p | 59.94, 60 |
-| 1920x1080i | 185M | yuv422p10 | 25 |
-| 1920x1080i | 220M | yuv422p10 | 29.97 |
-| 1920x1080i | 120M | yuv422p | 25 |
-| 1920x1080i | 145M | yuv422p | 29.97 |
-| 1920x1080i | 185M | yuv422p | 25 |
-| 1920x1080i | 220M | yuv422p | 29.97 |
-| 1440x1080i | 120M | yuv422p | 25 |
-| 1440x1080i | 145M | yuv422p | 29.97 |
-| 1280x720p | 90M | yuv422p10 | 23.98, 24, 25 |
-| 1280x720p | 180M | yuv422p10 | 50, 59.94, 60 |
-| 1280x720p | 220M | yuv422p10 | 59.94, 60 |
-| 1280x720p | 90M | yuv422p | 23.98, 24, 25 |
-| 1280x720p | 110M | yuv422p | 29.97 |
-| 1280x720p | 180M | yuv422p | 50 |
-| 1280x720p | 220M | yuv422p | 59.94, 60 |
-| 1280x720p | 60M | yuv422p | 23.98, 24, 25 |
-| 1280x720p | 75M | yuv422p | 29.97 |
-| 1280x720p | 120M | yuv422p | 50 |
-| 1280x720p | 145M | yuv422p | 59.94, 60 |
-| 1920x1080p | 36M | yuv422p | 23.98, 24, 25 |
-| 1920x1080p | 45M | yuv422p | 29.97 |
-| 1920x1080p | 75M | yuv422p | 50 |
-| 1920x1080p | 90M | yuv422p | 59.94, 60 |
-| 1920x1080p | 350M | yuv444p10, gbrp10 | 23.98, 24 |
-| 1920x1080p | 390M | yuv444p10, gbrp10 | 25 |
-| 1920x1080p | 440M | yuv444p10, gbrp10 | 29.97 |
-| 1920x1080p | 730M | yuv444p10, gbrp10 | 50 |
-| 1920x1080p | 880M | yuv444p10, gbrp10 | 59.94, 60 |
-| 960x720p | 42M | yuv422p | |
-| 960x720p | 60M | yuv422p | |
-| 960x720p | 75M | yuv422p | |
-| 960x720p | 115M | yuv422p | |
-| 1440x1080p | 63M | yuv422p | |
-| 1440x1080p | 84M | yuv422p | |
-| 1440x1080p | 100M | yuv422p | |
-| 1440x1080p | 110M | yuv422p | |
-| 1440x1080i | 80M | yuv422p | |
-| 1440x1080i | 90M | yuv422p | |
-| 1440x1080i | 100M | yuv422p | |
-| 1440x1080i | 110M | yuv422p | |
+Each variant writes a fixed number of bytes per frame, and `-b:v` only chooses the variant: FFmpeg does not check the
+frame rate. The real data rate is the frame size times your frame rate, so `-b:v 185M` at 24 fps gives 176 Mb/s,
+and `-b:v 145M` at 50 fps gives 242 Mb/s (measured, 9.0.2). The frame rates are the ones each `-b:v` value is named
+after (bytes per frame times frame rate). The 960x720 and 1440x1080 values do not line up with standard frame rates,
+so they are left blank.
+
+| Resolution | CID | Pix Format | Bytes per frame | `-b:v` (frame rate) |
+| :--- | :--- | :--- | ---: | :--- |
+| 1920x1080p | 1235 | yuv422p10 | 917504 | 175M (23.98, 24), 185M (25), 365M (50), 440M (59.94, 60) |
+| 1920x1080p | 1238 | yuv422p | 917504 | 175M (23.98, 24), 185M (25), 220M (29.97), 365M (50), 440M (59.94, 60) |
+| 1920x1080p | 1237 | yuv422p | 606208 | 115M (23.98, 24), 120M (25), 145M (29.97), 240M (50), 290M (59.94, 60) |
+| 1920x1080p | 1253 | yuv422p | 188416 | 36M (23.98, 24, 25), 45M (29.97), 75M (50), 90M (59.94, 60) |
+| 1920x1080p | 1256 | yuv444p10, gbrp10 | 1835008 | 350M (23.98, 24), 390M (25), 440M (29.97), 730M (50), 880M (59.94, 60) |
+| 1920x1080i | 1241 | yuv422p10 | 917504 | 185M (25), 220M (29.97) |
+| 1920x1080i | 1243 | yuv422p | 917504 | 185M (25), 220M (29.97) |
+| 1920x1080i | 1242 | yuv422p | 606208 | 120M (25), 145M (29.97) |
+| 1440x1080i | 1244 | yuv422p | 606208 | 120M (25), 145M (29.97) |
+| 1280x720p | 1250 | yuv422p10 | 458752 | 90M (23.98, 24, 25), 180M (50), 220M (59.94, 60) |
+| 1280x720p | 1251 | yuv422p | 458752 | 90M (23.98, 24, 25), 110M (29.97), 180M (50), 220M (59.94, 60) |
+| 1280x720p | 1252 | yuv422p | 303104 | 60M (23.98, 24, 25), 75M (29.97), 120M (50), 145M (59.94, 60) |
+| 960x720p | 1258 | yuv422p | 212992 | 42M, 60M, 75M, 115M |
+| 1440x1080p | 1259 | yuv422p | 417792 | 63M, 84M, 100M, 110M |
+| 1440x1080i | 1260 | yuv422p | 835584 | 80M, 90M, 100M, 110M (FFmpeg marks this one experimental: add `-strict experimental`) |
+
+FFmpeg has no 10-bit 1920x1080p variant at 29.97 (`-b:v 220M` with `yuv422p10` is rejected); use 8-bit or DNxHR.
+The interlaced (`i`) variants are only chosen with `-flags +ildct`.
 
 ## See Also
 

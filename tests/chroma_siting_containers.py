@@ -39,6 +39,8 @@ CODECS = {  # name: (encoder args, chroma formats, containers, encoder name)
              ["mp4", "mkv", "mov"], "libx265"),
     "av1-svt": (["-c:v", "libsvtav1", "-preset", "12"], ["420"], ["mp4", "mkv"], "libsvtav1"),
     "av1-aom": (["-c:v", "libaom-av1", "-cpu-used", "8", "-crf", "30"], ["420", "422"], ["mp4", "mkv"], "libaom-av1"),
+    "vp9": (["-c:v", "libvpx-vp9", "-lossless", "1", "-deadline", "realtime", "-cpu-used", "8"], ["420", "422"],
+            ["mp4", "mkv", "webm"], "libvpx-vp9"),
     "prores": (["-c:v", "prores_ks", "-profile:v", "3"], ["422"], ["mov", "mkv", "mxf"], "prores_ks"),
     "dnxhr": (["-c:v", "dnxhd", "-profile:v", "dnxhr_hqx"], ["422"], ["mov", "mkv", "mxf"], "dnxhd"),
 }
@@ -46,6 +48,8 @@ LOCATIONS = {"420": ["left", "center", "topleft"], "422": ["left", "center"]}
 H264_LOC = {0: "left", 1: "center", 2: "topleft", 3: "top", 4: "bottomleft", 5: "bottom"}
 AV1_LOC = {0: "unknown", 1: "vertical (= left)", 2: "colocated (= topleft)"}
 MKV_SITING = {0: "unspecified", 1: "left/top", 2: "half"}
+VPCC_SUBSAMPLING = {0: "0 (4:2:0 vertical = left)", 1: "1 (4:2:0 co-located = topleft)", 2: "2 (4:2:2)",
+                    3: "3 (4:4:4)"}
 # SMPTE ST 377-1 ColorSiting.
 MXF_SITING = {0: "0 co-sited", 1: "1 horizontal midpoint", 2: "2 three tap", 3: "3 quincunx", 4: "4 Rec.601",
               5: "5 line alternating", 6: "6 vertical midpoint", 255: "255 unknown"}
@@ -71,6 +75,8 @@ def bitstream_field(path):
     m = re.search(r"chroma_sample_position\s+\S+\s*=\s*(\d)", trace)
     if m:
         return AV1_LOC.get(int(m.group(1)))
+    if re.search(r"frame_marker|profile_low_bit", trace):
+        return "no field (VP9 has none)"
     if re.search(r"seq_profile|subsampling_x", trace):
         return "no field (not 4:2:0)"
     return "no field"
@@ -78,13 +84,16 @@ def bitstream_field(path):
 
 def container_field(path, ext):
     data = Path(path).read_bytes()
-    if ext == "mkv":
+    if ext in ("mkv", "webm"):
         h = re.search(rb"\x55\xB7\x81(.)", data, re.S)
         v = re.search(rb"\x55\xB8\x81(.)", data, re.S)
         return (f"H {MKV_SITING.get(h.group(1)[0]) if h else 'not written'}, "
                 f"V {MKV_SITING.get(v.group(1)[0]) if v else 'not written'}")
     if ext == "mxf":
         return mxf_siting(data)
+    i = data.find(b"vpcC")  # VP9 in MP4: chromaSubsampling in the codec configuration box
+    if i >= 0:
+        return f"vpcC chromaSubsampling {VPCC_SUBSAMPLING.get((data[i + 10] >> 1) & 7)}"
     return "no field"
 
 

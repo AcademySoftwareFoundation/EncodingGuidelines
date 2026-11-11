@@ -1,6 +1,6 @@
 # Chroma siting in codecs and containers (9.0)
 
-FFmpeg build: `n9.0.1-6-g9d4ca21220b`.
+FFmpeg build: `9.0.2`.
 
 ## Where chroma siting is recorded
 
@@ -38,11 +38,11 @@ Frames carry the chroma location in the first column (set with `zscale ... chrom
 | hevc | 4:2:2 | mp4 | center | not written | no field | unspecified |
 | hevc | 4:2:2 | mkv | center | not written | H half, V half | center |
 | hevc | 4:2:2 | mov | center | not written | no field | unspecified |
-| av1-svt | 4:2:0 | mp4 | left | vertical (= left) | no field | unspecified |
+| av1-svt | 4:2:0 | mp4 | left | vertical (= left) | no field | left |
 | av1-svt | 4:2:0 | mkv | left | vertical (= left) | H left/top, V half | left |
 | av1-svt | 4:2:0 | mp4 | center | unknown | no field | unspecified |
 | av1-svt | 4:2:0 | mkv | center | unknown | H half, V half | center |
-| av1-svt | 4:2:0 | mp4 | topleft | colocated (= topleft) | no field | unspecified |
+| av1-svt | 4:2:0 | mp4 | topleft | colocated (= topleft) | no field | topleft |
 | av1-svt | 4:2:0 | mkv | topleft | colocated (= topleft) | H left/top, V left/top | topleft |
 | av1-aom | 4:2:0 | mp4 | left | unknown | no field | unspecified |
 | av1-aom | 4:2:0 | mkv | left | unknown | H left/top, V half | left |
@@ -54,6 +54,21 @@ Frames carry the chroma location in the first column (set with `zscale ... chrom
 | av1-aom | 4:2:2 | mkv | left | no field (not 4:2:0) | H left/top, V half | left |
 | av1-aom | 4:2:2 | mp4 | center | no field (not 4:2:0) | no field | unspecified |
 | av1-aom | 4:2:2 | mkv | center | no field (not 4:2:0) | H half, V half | center |
+| vp9 | 4:2:0 | mp4 | left | no field (VP9 has none) | vpcC chromaSubsampling 0 (4:2:0 vertical = left) | unspecified |
+| vp9 | 4:2:0 | mkv | left | no field (VP9 has none) | H left/top, V half | left |
+| vp9 | 4:2:0 | webm | left | no field (VP9 has none) | H left/top, V half | left |
+| vp9 | 4:2:0 | mp4 | center | no field (VP9 has none) | vpcC chromaSubsampling 1 (4:2:0 co-located = topleft) | unspecified |
+| vp9 | 4:2:0 | mkv | center | no field (VP9 has none) | H half, V half | center |
+| vp9 | 4:2:0 | webm | center | no field (VP9 has none) | H half, V half | center |
+| vp9 | 4:2:0 | mp4 | topleft | no field (VP9 has none) | vpcC chromaSubsampling 1 (4:2:0 co-located = topleft) | unspecified |
+| vp9 | 4:2:0 | mkv | topleft | no field (VP9 has none) | H left/top, V left/top | topleft |
+| vp9 | 4:2:0 | webm | topleft | no field (VP9 has none) | H left/top, V left/top | topleft |
+| vp9 | 4:2:2 | mp4 | left | no field (VP9 has none) | vpcC chromaSubsampling 2 (4:2:2) | unspecified |
+| vp9 | 4:2:2 | mkv | left | no field (VP9 has none) | H left/top, V half | left |
+| vp9 | 4:2:2 | webm | left | no field (VP9 has none) | H left/top, V half | left |
+| vp9 | 4:2:2 | mp4 | center | no field (VP9 has none) | vpcC chromaSubsampling 2 (4:2:2) | unspecified |
+| vp9 | 4:2:2 | mkv | center | no field (VP9 has none) | H half, V half | center |
+| vp9 | 4:2:2 | webm | center | no field (VP9 has none) | H half, V half | center |
 | prores | 4:2:2 | mov | left | no field | no field | unspecified |
 | prores | 4:2:2 | mkv | left | no field | H left/top, V half | left |
 | prores | 4:2:2 | mxf | left | no field | 6 vertical midpoint | unspecified |

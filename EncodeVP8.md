@@ -74,7 +74,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 \
 | -b:v 200M | Unlike with h264, and vp9 you need to set the bit rate, but you can set it to a high number, and this is the max it would be. |
 | -speed 4 | It sets how efficient the compression will be. Unless you are using -quality best.  |
 
-It's possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the -g flag), since the default is 240 frames.
+It's possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the `-g` flag): by default libvpx puts a keyframe every 128 frames (FFmpeg 6.1.6 and 9.0.2).
 
 ### CRF Comparison
 

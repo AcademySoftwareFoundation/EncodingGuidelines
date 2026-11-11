@@ -92,7 +92,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 | -cpu-used 2 | It sets how efficient the compression will be. The default is 1 (FFmpeg 9.0), changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy. (See below). |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 
-It's possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the -g flag), since the default is 240 frames. Unlike h264 and h265 VP9 does behave strangely with GOP values less than 10, the closer you get to 1, the longer the encoding takes and the larger the file (which is not true for other codecs).
+It's possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the `-g` flag): by default libvpx puts a keyframe every 128 frames (FFmpeg 6.1.6 and 9.0.2). Unlike h264 and h265 VP9 does behave strangely with GOP values less than 10, the closer you get to 1, the longer the encoding takes and the larger the file (which is not true for other codecs).
 
 ### CRF Comparison
 
