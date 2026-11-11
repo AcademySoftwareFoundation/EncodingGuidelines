@@ -5,7 +5,7 @@ nav_order: 5.6
 parent: Encoding Overview
 ---
 
-# SWS_Flags
+# FFmpeg Scaling Options
 
 <details open markdown="block">
   <summary>

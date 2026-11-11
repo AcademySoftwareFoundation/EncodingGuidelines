@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Web Color Preservation
+title: Color Metadata and Web Color Preservation
 nav_order: 5.3
 parent: Encoding Overview
 ---

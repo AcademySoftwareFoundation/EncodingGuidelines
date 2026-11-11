@@ -38,7 +38,7 @@ You can see the default ffmpeg conversion introduces a dramatic color shift that
     3. [RGB to YCbCr Conversion](ColorPreservation.html)
     4. [TV vs. Full range](ColorPreservation.html#tvfull)
     5. [Adding Timecode and Editorial Workflow](EditorialWorkflow.html)
-    6. [Web Color Preservation](WebColorPreservation.html)
+    6. [Color Metadata and Web Color Preservation](WebColorPreservation.html)
     7. [FFmpeg OCIO Filter](FfmpegOcio.html)
     8. [Useful FFmpeg Filters](OtherFfmpegArgs.html)
     9. [FFmpeg Scaling Options](EncodeSwsScale.html)

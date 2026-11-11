@@ -5,7 +5,7 @@ nav_order: 5.7
 parent: Encoding Overview
 ---
 
-# FFmpeg zscale Options
+# zscale Conversion
 
 <details open markdown="block">
   <summary>

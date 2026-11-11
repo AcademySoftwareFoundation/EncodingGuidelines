@@ -6,7 +6,7 @@ has_children: true
 
 ---
 
-# Media Encoding with ffmpeg  <a name="encodestart"></a>
+# Encoding Overview <a name="encodestart"></a>
 
 <details open markdown="block">
   <summary>
