@@ -6,6 +6,15 @@ parent: Codec Comparisons
 ---
 # OpenAPV
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 ## Overview
 
 [OpenAPV](https://github.com/AcademySoftwareFoundation/openapv) provides professional grade visually lossless video suitable as a raw video format, designed and developed by Samsung. It is free and open source and this implementation was contributed by Samsung to the ASWF.

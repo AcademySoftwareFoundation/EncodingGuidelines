@@ -7,6 +7,15 @@ parent: Encoding Overview
 
 # RGB Encoding <a name="rgbencode"></a>
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 You do not *have* to encode into YCbCr, there are a number of codecs that support RGB directly.
 
 It does lower the compression efficiency a little, but eliminates any concern that the YCbCr conversion is affecting the imagery.

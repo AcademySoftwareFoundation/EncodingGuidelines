@@ -7,6 +7,15 @@ parent: Codec Comparisons
 
 # VP8
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 VP8 is an open-source and royalty free codec developed by [On2 Technologies](<https://en.wikipedia.org/wiki/VP8>) (later bought by Google) and now maintained as part of the [WebM Project](https://www.webmproject.org/). It will only encode to 8-bit 4:2:0 using the webm container. It is possible to get a similar quality to h264, but not typically at the same compression ratio. It is recommended that you consider [VP9](EncodeVP9.html) which is a considerably better codec. VP8 does support an alpha channel (via the yuva420p pixfmt).
 
 General ffmpeg info on VP8 is [here](https://trac.ffmpeg.org/wiki/Encode/VP8), and on the encoder in general [https://www.webmproject.org/docs/encoder-parameters/](https://www.webmproject.org/docs/encoder-parameters/).

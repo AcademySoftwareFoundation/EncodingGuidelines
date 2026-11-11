@@ -83,7 +83,7 @@ ojph_compress -i INPUTFRAME.0001.tif -o OUTPUTFRAME.0001.j2c -qstep 0.001
 
 ### OpenImageIO HTJ2K
 
-[OpenImageIO](https://openimageio.readthedocs.io/en/latest/oiiotool.html) has been updated to support HTJ2K, using the OpenJPH library. OpenJPH does need to be already built and pkg-config needs to be able to find it. Currently it is merged with the main branch, but there is not a release for it (should be later this year).  
+[OpenImageIO](https://openimageio.readthedocs.io/en/latest/oiiotool.html) has been updated to support HTJ2K, using the OpenJPH library. OpenJPH does need to be already built and pkg-config needs to be able to find it.  
 The advantage of using OIIO over ojph_compress are:
 
 * Colorspace conversion rather than requiring an additional step.  
@@ -130,9 +130,9 @@ Below are some charts showing how different qstep values affect, encode time, fi
 | ![](enctests/reference-results/htj2k-qstep-test-vmaf_harmonic_mean.png) This is showing Qstep values against VMAF harmonic mean |
 | ![](enctests/reference-results/htj2k-qstep-test-psnr_y_harmonic_mean.png) This is showing Qstep values against PSNR |
 
-NOTE - qstep default = 1/(2^bit-depth) so default for above 8-bit 0.00390625, 10-bit image would be 0.000976562 and 12-bits it would need to be 0.000244. So you really want to have at least a value of .002 or less.
+NOTE - qstep maps roughly to 1/(2^bit-depth): 0.0039 for 8-bit, 0.00098 for 10-bit and 0.00024 for 12-bit.
 
-So we probably want something close to or below 0.001 as a starting value for 10-bit data or at least between 0.001 and 0.003.
+So for 10-bit data, start at about 0.001; values up to 0.003 give smaller files at some loss of quality.
 
 ## QFactor
 

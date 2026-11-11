@@ -74,11 +74,9 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
 
 | Flag | Description |
 | --- | --- |
-| **-crf 18** | This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where lower values are higher quality (`-crf 0` is not lossless at 10-bit; see [Lossless Encoding](#lossless-encoding)). By default this is set to 23, which is a little on the low quality side; using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison) below. |
-| **-qp 23** | Quantization Parameter - it is recommended that you do not use this, in preference to -crf above (see: [https://slhck.info/video/2017/03/01/rate-control.html](https://slhck.info/video/2017/03/01/rate-control.html) ) |
-| **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ) |
-| **-qscale:v 9** | Generic quality scale flag: [https://www.ffmpeg.org/ffmpeg.html#toc-Main-options](https://www.ffmpeg.org/ffmpeg.html#toc-Main-options). This is typically used for fixed-quality encoding in some codecs, but CRF is preferred for H.264. |
-| **-tune film** | See below. |
+| **-crf 18** | This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where lower values are higher quality (`-crf 0` is not lossless at 10-bit; see [Lossless Encoding](#lossless-encoding)). By default this is set to 23, which is a little on the low quality side; using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison) below. Use `-crf` rather than a fixed quantiser (`-qp`), except for lossless encoding (see: [https://slhck.info/video/2017/03/01/rate-control.html](https://slhck.info/video/2017/03/01/rate-control.html) ). |
+| **-pix_fmt yuv420p10le** | 10-bit 4:2:0; see [H264 Bitdepth](#h264-bitdepth). |
+| **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ); see the [preset comparison](#libx264-preset-comparisons) below. |
 | **-movflags +faststart** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 | **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
 

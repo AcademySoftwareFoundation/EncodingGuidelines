@@ -57,11 +57,8 @@ ffmpeg -i input.%06d.dpx \
 * **`zscale=matrix=709:range=limited`** does the RGB to Y'CbCr conversion. Without an explicit
   conversion, 7.0 and earlier convert with BT.601. `zscale` was exact in all our tests; see
   [below](#libswscale-white-level-for-high-bit-depth-input) for why we do not use `scale`. `zscale` also sets the
-  matrix and range on its output frames, which is what tags them. `filter=lanczos` sets the resampling filter used for the 4:2:2/4:2:0 chroma (and for any resize). zscale's
-  default, `bilinear`, gives softer chroma: on 4:2:0 test charts it left 99th percentile edge errors of 61 code
-  values against 46 with `lanczos`. On 4:2:2 the two were within a code value or so on average, with `bilinear`
-  very slightly cleaner on hard-edged graphics. The filter makes no difference to the colour accuracy inside flat
-  areas, or to the chroma siting.
+  matrix and range on its output frames, which is what tags them. `filter=lanczos` gives sharper 4:2:0 chroma than
+  zscale's default `bilinear`; see [zscale Conversion](EncodeZscale.html#recommended-commands).
 * **`setparams=color_primaries=bt709:color_trc=iec61966-2-1`** sets primaries and transfer on the frames. This is
   the only way to set them on 7.1 and later.
 * **The four `-color_*` flags** turned out to be redundant with this filter chain on every version we tested,

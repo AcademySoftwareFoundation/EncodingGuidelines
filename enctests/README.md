@@ -7,6 +7,15 @@ has_children: true
 
 # ORI Encoding Test Framework
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 ## Goals
 
 Create a framework for testing and comparing encoded media through various encoders
@@ -139,7 +148,7 @@ test_colorspace_yuv420p:
     description: variations of colorspace yuv420p
     app: ffmpeg
     suffix: .mov
-    encoding_template: 'ffmpeg {input_args} -i "{source}" -vframes {duration} {encoding_args} -y "{outfile}"'
+    encoding_template: 'ffmpeg {input_args} -i "{source}" -frames:v {duration} {encoding_args} -y "{outfile}"'
     sources:
       - sources/Sintel-trailer-1080p-png/1080p/sintel_trailer_2k_%04d.png.yml
     wedges:
@@ -331,9 +340,6 @@ shows as a failure.
 
 A wedge that merges another (`<< : *anchor`) also inherits its `known_issue:`; set `known_issue: []` in a wedge
 that should not have it (see `cicp_flags_tests.yml`).
-
-An encode that runs longer than `ENCODE_TIMEOUT` seconds (environment variable, default 1800) is stopped and
-fails.
 
 ### Run the tests
 
@@ -534,43 +540,4 @@ The main templates are:
 
 ### Graphing strings
 
-The above example is a fairly straightforward line graph, suitable where you are comparing numeric values to file-size, encode-time and encode-quality. To compare strings we recommend using bar-graphs, e.g.:
-
-```yaml
-reports:
-    graphs:
-    - args:
-        color: -preset
-        height: 400
-        barmode: group
-        x: media
-        y: vmaf_harmonic_mean
-        range_y:  
-            - 90
-            - 100
-      name: vmaf_harmonic_mean.png
-      type: bar
-    - args:
-        color: -preset
-        height: 400
-        x: media
-        barmode: group
-        y: encode_time
-      name: encode_time.png
-      type: bar
-    - args:
-        color: -preset
-        height: 400
-        x: media
-        barmode: group
-        y: filesize
-      name: filesize.png
-      type: bar
-    name: h264-test
-    title: H264 Preset Comparison
-    description: This is a comparison of different Preset values for h264 encoding, with CRF = 18.
-    directory: h264-encode
-    templatefile: basic.html.jinja
-```
-
-This example creates bar-graphs based on the `-preset` flag.
+The example above compares strings (the `-preset` values), so it uses bar graphs (`type: bar`), grouped by the `-preset` flag. Where the wedges vary a number, such as `-crf`, a line graph (`type: line`) of that value against file size, encode time and quality is usually clearer.

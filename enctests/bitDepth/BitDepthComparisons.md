@@ -7,6 +7,15 @@ parent: Test Output
 
 # Bit Depth Analysis
 
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 Sometimes it's useful to know what the actual dynamic range of a particular combination of codec, profile and pixel format is, since it may not necessarily be what you think. i.e. you think you are getting 10-bits (i.e. 1024 values) when in fact you could be getting quite a bit less.
 
 This work is inspired by [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth).
