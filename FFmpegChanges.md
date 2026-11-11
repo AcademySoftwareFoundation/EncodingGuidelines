@@ -176,8 +176,10 @@ The same applies when transcoding: a tagged source keeps its own primaries and t
 
 `setparams` sets the values on the frames, so it works on every version and every codec. For H.264 only, the
 `h264_metadata` bitstream filter (`-bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=13`) also
-sets them, but only in the H.264 stream: the MP4 `colr` atom keeps the unspecified values, so the two disagree,
-and on 8.1 and 9.0 `ffprobe` reported the unspecified ones.
+sets them, but only in the H.264 stream, not in the MP4 `colr` atom. Encoding with only the matrix set, the muxer
+writes no `colr` at all, so the stream is the only place the values are; `ffprobe` shows them (6.1.6, 8.1 and
+9.0.2). Use `setparams`, so the container gets them too. For using the filter to relabel an existing file, see
+[Relabelling a file](#relabelling-a-file).
 
 ## Some encoders only accept limited range (7.1) {#limited-range-encoders-71}
 
@@ -468,7 +470,15 @@ picture, so the mistake is easy to miss; what changes is the data, and a later r
 
 Do not relabel H.264 in MP4 with the `h264_metadata` bitstream filter alone (for example
 `-c copy -bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1`). It
-rewrites the stream's VUI but not the container's `colr` atom, which keeps the old values (unspecified, in our
-test) even with `-movflags +write_colr`. `ffprobe` reports the new VUI values, so the file looks fixed, but a
-player that reads `colr` still sees the old tags. The same on 6.1.6, 7.1.5, 8.0.1, 8.1, 9.0.2 and 9.1.dev.
-Re-encoding with `setparams`, as above, sets both.
+rewrites the stream's VUI but not the container's `colr` atom:
+
+* If the source has a `colr` atom, it is copied with the old values, so the stream and the container disagree.
+  What `ffprobe` shows depends on the version: for the stream, 6.1.6 to 8.0.1 show the new VUI values and 8.1
+  and later show the old `colr` values; the decoded frames (`-show_frames`) have the new values on every version.
+  Changing only the transfer function of a BT.709 file to sRGB, 8.1 and later report it as unchanged.
+* If the source has no `colr` atom (it is only written when primaries, transfer and matrix are all set), the
+  output has none either, and `ffprobe` shows the new values. With `-movflags +write_colr` the muxer writes one
+  with the old values (unspecified).
+
+Wherever there is a `colr` atom, a player that reads it sees the old tags. Tested on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1, 9.0.2 and
+9.1.dev. Re-encoding with `setparams`, as above, sets both.
