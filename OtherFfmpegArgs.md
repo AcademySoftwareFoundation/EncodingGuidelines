@@ -109,27 +109,67 @@ Re-pack an existing stereo movie into a different format
 
 ### SMPTE HD bars
 
-Creates a [SMPTE HD colorbars](https://en.wikipedia.org/wiki/SMPTE_color_bars) image. NOTE, this is actually created in YUV space, and only for 8-bit Y'CbCr.
+Creates a [SMPTE HD colorbars](https://en.wikipedia.org/wiki/SMPTE_color_bars) image. The `smptehdbars` source
+draws the bars directly as 8-bit Y'CbCr, limited range, with BT.709 values (75% yellow is Y' 168). It does not tag
+them correctly: 6.1.6 tags the matrix as BT.709 but sets no primaries or transfer, and from 7.0 it tags the matrix
+as BT.601 (`bt470bg`), so anything that converts the frames to RGB uses the wrong matrix (75% yellow comes out as
+188,203,6 instead of 191,191,0). This looks like a bug: the filter compares its instance name, not the filter name,
+with `smptehdbars`. Colour flags before `-i` (`-colorspace bt709 -f lavfi -i smptehdbars...`) change neither the
+pixels nor the matrix tag. Add `setparams` to the source instead, as in all the commands below (tested on 6.1.6,
+7.1.5 and 9.0.2).
 
-ffmpeg does have a built-in SMPTE color bars, however by default, it does not create it in the right colorspace, so you do need to specify the color primaries, colorspace and colortrc to make it behave correctly.
-Also note, these are 8-bit only.
+For accurate bars, use the [vapoursynth-colorbars](https://github.com/ifb/vapoursynth-colorbars) plugin for
+[VapourSynth](https://www.vapoursynth.com/) instead. It uses the 10-bit and 12-bit Y'CbCr values tabulated in
+SMPTE RP 219-2 directly, rather than calculating them, and can also make ITU-R BT.2111 HLG and PQ bars, NTSC and
+PAL bars, and sizes from 720p to 8K. A script such as `bars.vpy`:
 
-This is an h264 output yuv422p
+```python
+import vapoursynth as vs
+from vapoursynth import core
 
-```console
-ffmpeg -re -color_primaries bt709 -colorspace bt709 -color_range tv -color_trc bt709 -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -c:v h264 -crf 10  smptehdbars-h264.mov
+core.std.LoadPlugin("/path/to/libcolorbars.dylib")  # .so on Linux, .dll on Windows
+c = core.colorbars.ColorBars(resolution=3, format=vs.YUV444P10)  # 1920x1080, 10-bit 4:4:4
+c.set_output()
 ```
 
-This is a 8-bit 444 raw encode.
+piped into FFmpeg, with `setparams` to tag it:
 
 ```console
-ffmpeg -re -color_primaries bt709 -colorspace bt709 -color_range tv -color_trc bt709 -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1,format=yuv444p -c:v v408 smptehdbars-v408.mov
+vspipe -c y4m bars.vpy - | ffmpeg -i - \
+    -vf "setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709" \
+    -c:v ffv1 -level 3 smptehdbars-10bit.mkv
 ```
 
-This is a PNG output, warning this would only be to the legal range, so the [pluge](https://en.wikipedia.org/wiki/Picture_line-up_generation_equipment) would be zeroed out:
+The test framework's references in
+[sourceimages/rp219](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/tree/main/sourceimages/rp219)
+were made this way, and the
+[sourceimages README](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/sourceimages/README.md)
+gives the options used and how they were validated. You can use those files directly if 1920x1080 10-bit or
+12-bit BT.709 is what you need.
+
+H.264, 8-bit 4:2:0:
 
 ```console
-ffmpeg -color_primaries bt709 -colorspace bt709 -color_trc bt709 -re -f lavfi -i smptehdbars=duration=1:size=1920x1080:rate=1 -frames:v 1  smptehdbars.png
+ffmpeg -f lavfi -i "smptehdbars=duration=1:size=1920x1080:rate=1,setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709" \
+    -c:v libx264 -crf 10 smptehdbars-h264.mov
+```
+
+Uncompressed 8-bit 4:4:4 (FFmpeg 9.0 and later; the `v408` encoder was removed in 9.0, so on earlier versions use
+`-c:v v408` instead of `-c:v rawvideo -pix_fmt uyva`; both write the same `v408` file):
+
+```console
+ffmpeg -f lavfi -i "smptehdbars=duration=1:size=1920x1080:rate=1,setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709" \
+    -frames:v 1 -c:v rawvideo -pix_fmt uyva smptehdbars-v408.mov
+```
+
+PNG, converted to RGB with `zscale`. The bars are limited range, so the
+[pluge](https://en.wikipedia.org/wiki/Picture_line-up_generation_equipment) below black is clipped to 0. Use
+`format=gbrp`, not `rgb24`: zscale cannot output `rgb24`, and FFmpeg 8.0 and earlier then convert with libswscale,
+which gives 189 instead of 191 for the 75% bars.
+
+```console
+ffmpeg -f lavfi -i "smptehdbars=duration=1:size=1920x1080:rate=1,setparams=colorspace=bt709:range=tv:color_primaries=bt709:color_trc=bt709" \
+    -frames:v 1 -vf "zscale,format=gbrp" smptehdbars.png
 ```
 
 ### Zoneplate
