@@ -23,7 +23,7 @@ If you are doing lighting or compositing reviews the recommendation is to use Pr
 The two encoders we are reviewing are:
 
 * [Prores_ks](#prores_ks)
-* [prores_videotoolbox](#videotoolbox_prores) - only available on MacOS.
+* [prores_videotoolbox](#prores_videotoolbox) - only available on MacOS.
 
 ## Prores_ks
 
@@ -76,7 +76,7 @@ Options that can be used include:
 
 | --- | --- |
 | -profile:v 4444xq | Which prores encoding profile to use, see below |
-| -qscale:v 3 | between values of 1-4, 0 being the same as specifying no qscale |
+| -qscale:v 3 | A fixed quantiser for the whole frame, 1 (highest quality) to 64; above 64 the encoder stops with "too large quantiser, maximum is 64". 0, or leaving it out, uses the profile's rate control instead (see below). |
 | -vendor apl0 | tricks the codec into believing its from an Apple codec. |
 | -alpha_bits 16 | Allows you to specify how many bits to use for the alpha channel (default 16) |
 
@@ -133,13 +133,33 @@ To compare them:
 
 ### Prores_ks -qscale:v comparison
 
+Without `-qscale:v`, `prores_ks` aims at a data rate set by the profile, and picks a quantiser for each slice (for
+422 HQ and above it starts in the range 1-6, and goes higher only where a slice would not otherwise fit). With
+`-qscale:v N` it uses quantiser N everywhere and ignores the profile's data rate, so the profile then only chooses
+the quantisation matrix and what the file says it is. N is 1 to 64, and higher values are coarser.
+
+Single 1920x1080 frames from two of the Chimera clips, with the data rate as it would be at 24 fps and the PSNR of
+Y' (FFmpeg 9.0.2; 6.1.6 gave the same):
+
+| `-qscale:v` | 422 HQ, data rate | 422 HQ, PSNR Y' | 4444, data rate | 4444, PSNR Y' |
+| :--- | ---: | ---: | ---: | ---: |
+| not set | 186 Mb/s | 54.0 - 54.2 dB | 278 Mb/s | 57.2 dB |
+| 1 | 368 - 398 Mb/s | 64.8 dB | 431 - 464 Mb/s | 64.5 dB |
+| 2 | 237 - 266 Mb/s | 59.4 - 59.6 dB | 272 - 301 Mb/s | 59.3 - 59.4 dB |
+| 4 | 132 - 164 Mb/s | 54.5 - 54.8 dB | 154 - 183 Mb/s | 54.4 - 54.7 dB |
+| 9 | 65 - 90 Mb/s | 49.9 - 50.2 dB | 75 - 98 Mb/s | 49.8 - 50.1 dB |
+| 13 | 48 - 71 Mb/s | 47.9 - 48.1 dB | 54 - 77 Mb/s | 47.9 - 48.1 dB |
+
+So for 422 HQ, leaving `-qscale:v` out is roughly equivalent to `-qscale:v 4`, but with a steady data rate.
+`-qscale:v 9` is well below the HQ data rate, closer to ProRes 422 LT.
+
 To help pick appropriate values with the -qscale:v , we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
 
 | ![](enctests/reference-results/prores-qscale-tests-encode_time.png)  This is showing qscale values against encoding time. |
 | ![](enctests/reference-results/prores-qscale-tests-filesize.png) This is showing qscale values against file size. |
 | ![](enctests/reference-results/prores-qscale-tests-vmaf_harmonic_mean.png) This is showing qscale values against VMAF harmonic mean (quality)|
 
-## prores_videotoolbox {#videotoolbox_prores}
+## prores_videotoolbox {#prores_videotoolbox}
 
 If you are on a MacOS M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to ProRes using:
 

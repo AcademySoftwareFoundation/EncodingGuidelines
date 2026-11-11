@@ -31,7 +31,7 @@ ask for, filters such as `zscale` *transform* the pixels and set the tags, and `
 touching the pixels. So `-colorspace` on a file that is already Y'CbCr changes its pixels rather than fixing its
 tag; to fix a wrong tag, use `setparams`. See [Relabelling a file](FFmpegChanges.html#relabelling-a-file).
 
-Separately, all the video formats typically do not use the full numeric range [0-255] but instead the Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (still the most widely supported for web playback). This fortunately is something you can change, see [TV vs. Full range](Quickstart.html#tvfull). The other option is to use higher bit depth, e.g. 10-bit or 12 bit for formats such as [ProRes](EncodeProres.html).
+Separately, Y'CbCr video normally uses limited range (16-235 for Y' at 8-bit), which can cause banding at 8-bit. Encoding at 10-bit avoids this; see [TV vs. Full range](#tvfull).
 
 Even if you are sticking to 8-bits encodes, if your source media is able to have a higher bit-depth (e.g. you are able to write out 16-bit PNG's to do the encode) it will help with the accuracy of the RGB to YUV conversion. Use zscale for it: libswscale's errors are larger with 10-bit and 16-bit sources (see below).
 
@@ -234,3 +234,82 @@ ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
     ./chip-chart-yuvconvert/spline444colormatrix2.mp4
 ```
+
+## TV vs. Full range {#tvfull}
+
+Y'CbCr video normally uses limited range (also called TV or legal range) rather than the full numeric range. At
+8-bit, Y' runs from 16 to 235 and Cb and Cr from 16 to 240, with 128 as neutral; at 10-bit, Y' runs from 64 to 940
+and Cb and Cr from 64 to 960, with 512 as neutral. Full range (also called PC range) uses every code value.
+
+At 8-bit, limited range leaves only 219 levels for luminance, which can show as banding in smooth gradients such as
+skies or shadows. At 10-bit there are 876, which is usually enough to remove the banding while staying in limited
+range:
+
+| Bit Depth | Range | Banding Risk | Notes |
+| :--- | :--- | :--- | :--- |
+| **8-bit** | **Limited (TV)** | **High** | Most prone to banding in gradients. |
+| **8-bit** | **Full (PC)** | **Medium** | Better, but not always supported by hardware players. |
+| **10-bit** | **Limited (TV)** | **Low** | Preferred for review. For browser support of 10-bit H.264, see [H264 Bitdepth](Encodeh264.html#h264-bitdepth). |
+
+{: .important }
+We recommend 10-bit limited range over 8-bit full range. The file size is comparable, if not a little smaller than
+8-bit, and it removes most of the quantisation problems seen at 8-bit. Whichever you use, check playback on your
+target players (e.g. browsers, VLC, RV, QuickTime Player).
+
+If you have to stay at 8-bit, you can encode full range by setting the output range in the zscale filter:
+
+```console
+-vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
+```
+
+zscale tags the frames as full range. Also add `-color_range pc`: from FFmpeg 7.1, many encoders (including FFV1,
+ProRes and DNxHR) only accept limited range, and without it `ffmpeg` silently converts the frames back to limited
+range. `libx264` and `libx265` accept full range either way. See
+[Some encoders only accept limited range](FFmpegChanges.html#limited-range-encoders-71).
+
+A full example encode would look like:
+
+<!---
+name: test_fullrange
+sources: 
+- sourceimages/radialgrad.png.yml
+comparisontest:
+   - testtype: ycbcr
+     range: pc
+     # Limits (10-bit code values): just above the result of this command, FFmpeg 6.0 and 9.0, 2026-10-26.
+   - testtype: assertresults
+     tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
+     - assert: less
+       value: p99_error_10bit
+       less: 6
+     - assert: less
+       value: mean_error_10bit
+       less: 1.3
+     - assert: less
+       value: max_error_10bit
+       less: 12
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 pc
+-->
+```console
+ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
+    -pix_fmt yuv420p -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+    -c:v libx264 -t 5 -crf 18 \
+    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
+```
+
+We have seen the full range encoding work across all browsers, and a number of players including RV.
+
+For more details see:
+
+* [Comparing full-range vs. tv range](tests/greyramp-fulltv/compare.html)

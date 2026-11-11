@@ -314,7 +314,7 @@ HDR encodes often set the colour description through the encoder's own options, 
 
 ```console
 ffmpeg -i hdr_pq.tif -c:v libx265 -pix_fmt yuv420p10le \
-  -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:master-display=...:max-cll=2000,50" \
+  -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:master-display=...:max-cll=1000,400" \
   -tag:v hvc1 output.mp4
 ```
 
@@ -337,7 +337,7 @@ The same pattern as the SDR commands works for HDR. On every version:
 ffmpeg -i hdr_pq.tif \
   -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
   -c:v libx265 -crf 18 -pix_fmt yuv420p10le \
-  -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=2000,50" \
+  -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
   -color_range tv -colorspace bt2020nc -color_primaries bt2020 -color_trc smpte2084 \
   -movflags +faststart -tag:v hvc1 output_hdr10.mp4
 ```
@@ -349,7 +349,7 @@ As with the SDR command, the `-color_*` flags are redundant here; this shorter f
 ffmpeg -i hdr_pq.tif \
   -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
   -c:v libx265 -crf 18 -pix_fmt yuv420p10le \
-  -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=2000,50" \
+  -x265-params "master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
   -movflags +faststart -tag:v hvc1 output_hdr10.mp4
 ```
 

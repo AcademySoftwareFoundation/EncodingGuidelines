@@ -103,9 +103,9 @@ For more details see:
 * [YUV Conversion](ColorPreservation.html#yuv)
 * [Browser color issues](WebColorPreservation.html)
 
-## ProRes 422 encoding with ffmpeg
+## ProRes 422 encoding with FFmpeg
 
-Unlike h264 and DNxHD, ProRes is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one.
+Unlike h264 and DNxHD, ProRes is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one. If you are running on MacOS we would recommend using [prores_videotoolbox](EncodeProres.html#prores_videotoolbox) which is using the official Apple ProRes library and is hardware accelerated.
 
 <!---
 name: test_proresquickstart
@@ -133,14 +133,13 @@ comparisontest:
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
     -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -pix_fmt yuv422p10le -frames:v 100 \
-    -c:v prores_ks -profile:v 3 -qscale:v 9 -vendor apl0 outputfile.mov
+    -c:v prores_ks -profile:v 3 -vendor apl0 outputfile.mov
 ```
 
 | Flag | Description |
 | --- | --- |
 | **-vf "zscale=...,setparams=..."** | Convert to BT.709 Y'CbCr and tag it, as for [H.264 above](#h264-encoding-from-an-image-sequence-for-web-review). ProRes takes its colour tags from the frames, so no `-color_*` flags are needed. |
 | **-profile:v 3** | ProRes 422 HQ; see the [profile list](EncodeProres.html#prores_ks-profile) |
-| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
 | **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the Quicktime |
 
@@ -149,7 +148,7 @@ For more details see:
 * [Prores](EncodeProres.html)
 * [YUV Conversion](ColorPreservation.html#yuv)
 
-## ProRes 4444 encoding with ffmpeg
+## ProRes 4444 encoding with FFmpeg
 
 As above, but using the 4444 profile, which keeps a colour value for every pixel (4:4:4). The profile can also carry an alpha channel; for that use `-pix_fmt yuva444p10le`.
 
@@ -179,95 +178,15 @@ comparisontest:
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
     -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -pix_fmt yuv444p10le -frames:v 100 \
-    -c:v prores_ks -profile:v 4444 -qscale:v 9 -vendor apl0 outputfile.mov
+    -c:v prores_ks -profile:v 4444 -vendor apl0 outputfile.mov
 ```
 
 | Flag | Description |
 | --------- | ----------- |
 | **-profile:v 4444** | Prores profile for 4444 |
-| **-qscale:v 9** | Controls the output quality, lower numbers higher quality and larger file-size. [See comparison graph](EncodeProres.html#prores_ks--qscalev-comparison) |
 | **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4:4:4 (`yuva444p10le` to include alpha) |
 
 For more details see:
 
 * [Prores](EncodeProres.html)
 * [YUV Conversion](ColorPreservation.html#yuv)
-
-## TV vs. Full range. <a name="tvfull"></a>
-
-All the video formats typically do not use the full numeric range but instead the R', B', G' and Y' (luminance) channel have a nominal range of [16..235]  and the CB and CR channels have a nominal range of [16..240] with 128 as the neutral value. This frequently results in quantization artifacts for 8-bit encoding (still the most widely supported for web playback).
-
-This reduction in range, especially in 8-bit, can lead to visible "banding" or quantization artifacts in smooth gradients (like skies or shadows).
-
-### Quantization and Bit-Depth
-
-When encoding in 8-bit, only 219 levels are available for luminance (16–235). In 10-bit, this increases to 876 levels (64–940). This extra precision is often enough to eliminate banding even when using "legal" range.
-
-| Bit Depth | Range Type | Banding Risk | Notes |
-| :--- | :--- | :--- | :--- |
-| **8-bit** | **TV (Legal)** | **High** | Most prone to banding in gradients. |
-| **8-bit** | **Full (PC)** | **Medium** | Better, but not always supported by hardware players. |
-| **10-bit** | **TV (Legal)** | **Low** | Preferred for professional review; supported by modern browsers and players. |
-
-You can encode full range by setting the output range in the zscale filter:
-
-```console
--vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
-```
-
-zscale tags the frames as full range. Also add `-color_range pc`: from FFmpeg 7.1, many encoders (including FFV1,
-ProRes and DNxHR) only accept limited range, and without it `ffmpeg` silently converts the frames back to limited
-range. `libx264` and `libx265` accept full range either way. See
-[Some encoders only accept limited range](FFmpegChanges.html#limited-range-encoders-71).
-
-A full example encode would look like:
-
-<!---
-name: test_fullrange
-sources: 
-- sourceimages/radialgrad.png.yml
-comparisontest:
-   - testtype: ycbcr
-     range: pc
-     # Limits (10-bit code values): just above the result of this command, FFmpeg 6.0 and 9.0, 2026-10-26.
-   - testtype: assertresults
-     tests:
-     - assert: between
-       value: white_error_10bit
-       between: [-1.5, 1.5]
-     - assert: less
-       value: p99_error_10bit
-       less: 6
-     - assert: less
-       value: mean_error_10bit
-       less: 1.3
-     - assert: less
-       value: max_error_10bit
-       less: 12
-     - assert: stringmatch
-       value: color_primaries
-       string: bt709
-     - assert: stringmatch
-       value: color_transfer
-       string: iec61966-2-1
-     - assert: stringmatch
-       value: colr
-       string: nclx 1/13/1 pc
--->
-```console
-ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
-    -pix_fmt yuv420p -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
-    -c:v libx264 -t 5 -crf 18 \
-    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
-```
-
-We have seen the full range encoding work across all browsers, and a number of players including RV.
-
-{: .important }
-Its worth noting however, that with the increasing support for 10-bit or more encoding, that its really preferable to use 10-bit legal range, rather than stick with 8-bit at all. The file size can be comparable if not a little smaller than 8-bit, and you will more likely eliminate many of the quantizing issues that you will see at 8-bit.
-
-While 10-bit TV range is generally well-supported, always verify playback on your target hardware and software players (e.g., VLC, RV, QuickTime Player) to ensure consistent color representation.
-
-For more details see:
-
-* [Comparing full-range vs. tv range](https://academysoftwarefoundation.github.io/EncodingGuidelines/tests/greyramp-fulltv/compare.html)

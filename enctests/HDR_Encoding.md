@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 6
+nav_order: 6.5
 title: HDR Encoding
 parent: Encoding Overview
 ---
@@ -112,10 +112,10 @@ ffmpeg  \
 | \-c:v libx265 | Use the h265 encoder |
 | \-tag:v hvc1 | Tag the file to enable playback with QuickTime Player |
 | \-vf "zscale=matrix=2020\_ncl:range=limited:filter=lanczos,setparams=color\_primaries=bt2020:color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [zscale Conversion](../EncodeZscale.html). |
-| \-color\_range tv | Set the source range to be tv range. |
+| \-color\_range tv | Set the output range to be tv (limited) range. |
 | \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
 | \-color\_primaries bt2020 | Use the bt2020 color primaries |
-| \-colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
+| \-colorspace bt2020nc | Tagging the YCbCr as being encoded using the BT-2020 non-constant luminance. |
 | \-pix\_fmt yuv444p10le | YCbCr 444, although 422 in many cases is also fine. |
 
 In many cases this may be sufficient, particularly if you are using the ACES transforms that closely map to the maximum luminance of the review monitor (e.g. the 1000 nit view-transforms). It depends on how much the monitor can take advantage of the master-display parameters (see below).
@@ -213,16 +213,16 @@ master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,
 
 Reminder, this does NOT need to match the colorspace/primaries of the overall encoding container, you should not use this unless you actually Master the content on a rec2020 display. Using the P3 monitor values (or whatever display you are using) gives a clue to the display that it should not be using values outside of that gamut, this ensures that you get the colors that the creators expect. The problem is that this does assume quite a bit of the hardware interpreting these values, so in many cases it may be best to limit the source content as much as possible to a P3 gamut (or less).
 
-##### Max-cll/MaxFALL
+#### Max-cll/MaxFALL
 
 The [max-cll](https://x265.readthedocs.io/en/stable/cli.html#cmdoption-max-cll) parameter in h265 is actually two parameters:
 
 * Maximum content light level (MaxCLL) \- this is the luminance of the brightest pixel (in Nits) of the entire video stream.  
-* Maximum frame average light level (MaxFALL) \- this is the average luminance of the entire video stream (in Nits).
+* Maximum frame average light level (MaxFALL) \- this is the highest frame-average luminance in the video stream (in Nits): the average is taken over each frame, and the value is that of the brightest frame.
 
 These are defined by the [Consumer Electronics Association 861.3 spec](https://manuals.plus/m/daba89fd26a25086fa5fbb4855bca4cf77e76cfecbf8bd748a139fcbdc220332.pdf).
 
-Tools such as Resolve, provide ways to calculate these values see [here](https://www.youtube.com/watch?v=1HJi_ZP079w), but its not uncommon to use "typical" values, e.g. "1000,400". i.e. 1000 nit max brightness, 400 average brightness. Although if you really don't know, you can use 0,0 to mean unknown.
+Tools such as Resolve, provide ways to calculate these values see [here](https://www.youtube.com/watch?v=1HJi_ZP079w), but its not uncommon to use "typical" values, e.g. "1000,400". i.e. 1000 nit max brightness, 400 nit for the brightest frame's average. Although if you really don't know, you can use 0,0 to mean unknown.
 
 ### SVT-AV1
 
@@ -231,8 +231,8 @@ SVT-AV1 encoder also has command line parameters that need to be passed in:
 ```console
 ffmpeg \
     -i input.mp4 \
-    -c:v libsvtav1 -pix_fmt yuv420p10le \   
-    -svtav1-params "preset=6:crf=28:enable-hdr=1:color-primaries=9:transfer-characteristics=16:matrix-coefficients=9:mastering-display=G(0.265,0.69)B(0.15,0.06)R(0.68,0.32)WP(0.3127,0.329)L(1000,0.0001):content-light=1000,400" \ 
+    -c:v libsvtav1 -pix_fmt yuv420p10le \
+    -svtav1-params "preset=6:crf=28:enable-hdr=1:color-primaries=9:transfer-characteristics=16:matrix-coefficients=9:mastering-display=G(0.265,0.69)B(0.15,0.06)R(0.68,0.32)WP(0.3127,0.329)L(1000,0.0001):content-light=1000,400" \
     output.mov
  ```
 
@@ -273,7 +273,7 @@ We take advantage of ACES to do the initial conversion to an intermediate format
 # Assuming we are using OCIO 2.1 or higher
 export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
-      ---ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
+      --ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 ```
 
 | --- | --- |
@@ -327,11 +327,11 @@ ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 #### Encode media definition
 
 | --- | --- |
-| -color_range tv | Set the source range to be tv range. |
+| -color_range tv | Set the output range to be tv (limited) range. |
 | -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
 | -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| -pix_fmt yuv444p10le | YUV 444 10-bit output
+| -colorspace bt2020nc | Tagging the YCbCr as being encoded using the BT-2020 non-constant luminance. |
+| -pix_fmt yuv444p10le | YUV 444 10-bit output |
 
 #### X265 parameters
 
@@ -347,7 +347,7 @@ and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#h
 ### cICP/mDCV/cLLI in PNG
 
 PNG files have transferable parameters for video encoding in two formats:  
-[cICP](https://w3c.github.io/png/#cICP-chunk) which has the color primaries, transfer function and matrix coefficients based on the [ITU-T-H.273](https://w3c.github.io/png/#bib-itu-t-h.273)\] spec. Further exploration is needed to see if these parameters are correctly read into ffmpeg, which potentially may reduce some of the crazy flags needed.
+[cICP](https://w3c.github.io/png/#cICP-chunk) which has the color primaries, transfer function and matrix coefficients based on the [ITU-T-H.273](https://w3c.github.io/png/#bib-itu-t-h.273) spec. FFmpeg 9.0 reads the `cICP` chunk as the frame's colour tags (6.0 does not); see [Sources without tags](../EncodeZscale.html#sources-without-tags).
 
 Similarly for HDR, the Mastering display color volume can be defined with the [mDCV](https://w3c.github.io/png/#mDCV-chunk) and [cLLI](https://w3c.github.io/png/#cLLI-chunk) metadata chunks in PNG.
 
@@ -363,7 +363,7 @@ Further Reading:
 * [HDR Color Bars \- BT.2111](https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2111-3-202505-I!!PDF-E.pdf)  
 * [YouTube HDR Creators Guide](https://docs.google.com/document/u/1/d/1OHGOE4Ihv6SKazfiub_DP1lJbR9PdMMPOQYxPJQAES4/pub#h.3v06o2et6qxw)  
 * [MovieLabs \- HDR/WCG Metadata encoding best practice](https://movielabs.com/md/practices/color/ManifestPractices_HDR_v1.0.pdf)  
-* [Recommendations for Verifying HDR Subjective Testing WorkflowsRecommendations for Verifying HDR Subjective Testing Workflows](https://arxiv.org/pdf/2305.11858)
+* [Recommendations for Verifying HDR Subjective Testing Workflows](https://arxiv.org/pdf/2305.11858)
 * [ITU-T Rec.H Sup.19 \- Usage of video signal code points](https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-H.Sup19-201910-S!!PDF-E&type=items)
 
 I would like to thank Zach Lewis, Doug Walker, Michael De Caria and Vibhoothi for their help in creating this document.  

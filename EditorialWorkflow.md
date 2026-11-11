@@ -38,11 +38,11 @@ ffmpeg -r 24 -start_number <STARTFRAME> -i inputfile.%04d.png \
 
 There are three approaches for what to use for the timecode:
 
-* [Convert the start frame number](#start-frame-as-timecode) to the related timecode.
-* Use the timecode from the [original plate](#start-frame-as-original-plate-timecode)
-* A "fixed" timecode for all deliverables
+1. [Convert the start frame number](#start-frame-as-timecode) to the related timecode.
+2. Use the timecode from the [original plate](#start-frame-as-original-plate-timecode)
+3. A "fixed" timecode for all deliverables (Same as 2, but with constant timecode)
 
-## Start Frame as Timecode
+### Start Frame as Timecode
 
 It's extremely common to use a start frame of 1001 for a shot at the beginning of production, rather than frame 0. The three big reasons for this are:
 
@@ -63,7 +63,7 @@ frame_rate = 24.0
 timecode = otio.opentime.RationalTime(start_frame, rate=frame_rate).to_timecode()
 ```
 
-## Start Frame as Original Plate Timecode
+### Start Frame as Original Plate Timecode
 
 Another scenario is that the client is delivering a single clip, that your facility is adding media to, and for a similar reason to the above, it would be helpful if the timecode of the media that you return to the client, contains the same timecode as the delivered media.
 
