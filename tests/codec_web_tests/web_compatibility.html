@@ -117,17 +117,17 @@ h2, .text-beta, #toctitle {
     <table>
         <TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
         <TR>
-        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><div class="fallback-text" style="display:flex;color:inherit">libx264 has no 12-bit</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         </TR><TR>
-        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><div class="fallback-text" style="display:flex;color:inherit">libx264 has no 12-bit</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         </TR><TR>
-        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
+        <td><div class="video-container"><div class="fallback-text" style="display:flex;color:inherit">libx264 has no 12-bit</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
         <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
@@ -141,7 +141,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     containers.forEach(container => {
         const video = container.querySelector('video');
-        
+        if (!video) return;  // cells with a note instead of a video
+
         video.addEventListener('error', function() {
             container.classList.add('error');
         });
