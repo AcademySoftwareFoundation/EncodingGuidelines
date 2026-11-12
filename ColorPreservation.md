@@ -312,4 +312,4 @@ We have seen the full range encoding work across all browsers, and a number of p
 
 For more details see:
 
-* [Comparing full-range vs. tv range](tests/greyramp-fulltv/compare.html)
+* [Comparing full range vs. limited (TV) range vs. dithering](tests/greyramp-fulltv/compare.html)

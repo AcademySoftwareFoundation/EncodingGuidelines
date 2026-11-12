@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Y'CbCr Conversion Compare</title>
+<title>Encoding Compare</title>
 <style>
 :root {
   --bg: #27262b;
@@ -72,11 +72,13 @@ select {
 .viewer { position: relative; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   background: var(--stage); }
 .stage { overflow: auto; position: relative; }
-.stage.zoomed { height: 72vh; }
+.stage.zoomed { max-height: 72vh; }
 .canvas { position: relative; margin: 0 auto; touch-action: none; user-select: none; }
-.canvas img, .canvas canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+.canvas img, .canvas canvas, .canvas video { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
   pointer-events: none; -webkit-user-drag: none; user-select: none; }
-.canvas.px img, .canvas.px canvas { image-rendering: pixelated; }
+.canvas.px img, .canvas.px canvas, .canvas.px video { image-rendering: pixelated; }
+.inactive { display: none !important; }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
 .canvas.wipe { cursor: ew-resize; }
 .canvas.toggle { cursor: pointer; }
 .divider { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid #fff;
@@ -164,10 +166,8 @@ a { color: var(--accent); }
 </head>
 <body>
 <main>
-  <h1>Comparing RGB to Y'CbCr conversions</h1>
-  <p class="lede">Each result is an RGB image converted to Y'CbCr by <code>ffmpeg</code>, encoded losslessly, then decoded
-    back the same way for all of them. Pick two results, <b>A</b> and <b>B</b>, and wipe or flip between them.
-    Errors are against the source, in 10-bit code values.</p>
+  <h1 id="title"></h1>
+  <p class="lede" id="lede"></p>
 
   <div class="toolbar" role="toolbar" aria-label="Comparison controls">
     <div class="group"><span class="lbl">Image</span><div class="seg" id="srcSeg"></div></div>
@@ -176,6 +176,10 @@ a { color: var(--accent); }
       <button class="btn" id="swap" title="Swap A and B (X)" aria-label="Swap A and B">⇄</button>
       <span class="side b">B</span><select id="selB" aria-label="Result B"></select>
     </div>
+    <div class="group hidden" id="showGrp"><span class="lbl">Show</span><div class="seg" id="showSeg">
+      <button data-show="measured" title="The files decoded by zscale, as measured">Measured</button>
+      <button data-show="browser" title="The video files, played by this browser">Your browser</button>
+    </div></div>
     <div class="group"><span class="lbl">View</span><div class="seg" id="modeSeg">
       <button data-mode="wipe" title="Wipe (W)">Wipe</button>
       <button data-mode="toggle" title="Toggle (Space)">Toggle</button>
@@ -203,7 +207,9 @@ a { color: var(--accent); }
     <div class="stage" id="stage">
       <div class="canvas" id="canvas">
         <img id="imgA" alt="" draggable="false">
+        <video id="vidA" class="inactive" muted loop playsinline preload="auto"></video>
         <img id="imgB" alt="" draggable="false">
+        <video id="vidB" class="inactive" muted loop playsinline preload="auto"></video>
         <canvas id="diff" class="hidden"></canvas>
         <div class="divider" id="divider"></div>
         <div class="marker hidden" id="marker"></div>
@@ -222,9 +228,7 @@ a { color: var(--accent); }
   </div>
 
   <h2 class="section">All results</h2>
-  <p class="note" style="margin:0 0 6px">Error against the source in 10-bit code values. <b>White</b> is how far the
-    source's 100% white lands from its specification value in the file (Y′ 940, or 1023 at full range): libswscale puts
-    it too high from 10-bit and higher sources.
+  <p class="note" style="margin:0 0 6px"><span id="tableNote"></span>
     Pick a row as <span class="side a">A</span> or <span class="side b">B</span>.</p>
   <div class="tablewrap"><table id="results"></table></div>
 
@@ -237,14 +241,19 @@ const DATA = /*DATA*/null;
 
 const $ = (id) => document.getElementById(id);
 const state = { src: DATA.sources[0].id, a: DATA.defaults.a, b: DATA.defaults.b, mode: "wipe", zoom: 0,
-                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null };
+                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null, show: "measured" };
 let flickerTimer = null;
 
 const item = (id) => DATA.items[id];
 const srcInfo = () => DATA.sources.find((s) => s.id === state.src);
 const imageFor = (id) => (id === "source" ? srcInfo().image : item(id).results[state.src].image);
-const fmt = (v, d) => (v === null || v === undefined ? "–" : (d === 2 ? v.toFixed(2) : v.toFixed(1)));
-const fmtSigned = (v) => (v === null || v === undefined ? "–" : (v > 0 ? "+" : "") + v.toFixed(1));
+const fmtStat = (v, st) => {
+  if (v === null || v === undefined) return "–";
+  const s = v.toFixed(st.digits ?? 1);
+  return st.signed && v > 0 ? "+" + s : s;
+};
+const warnStat = (v, st) => st.warn !== undefined && v !== null && v !== undefined && Math.abs(v) >= st.warn;
+const browserView = () => DATA.videos && state.show === "browser";
 
 function readHash() {
   const h = new URLSearchParams(location.hash.slice(1));
@@ -252,9 +261,11 @@ function readHash() {
   for (const k of ["a", "b"]) if (h.get(k) && (h.get(k) === "source" || DATA.items[h.get(k)])) state[k] = h.get(k);
   if (["wipe", "toggle", "diff"].includes(h.get("mode"))) state.mode = h.get("mode");
   if (h.get("zoom") && [0, 1, 2, 4, 8].includes(+h.get("zoom"))) state.zoom = +h.get("zoom");
+  if (DATA.videos && h.get("show") === "browser") state.show = "browser";
 }
 function writeHash() {
   const h = new URLSearchParams({ src: state.src, a: state.a, b: state.b, mode: state.mode, zoom: state.zoom });
+  if (DATA.videos) h.set("show", state.show);
   try { history.replaceState(null, "", "#" + h.toString()); } catch (e) { /* sandboxed */ }
 }
 
@@ -268,7 +279,7 @@ function buildControls() {
     seg.appendChild(b);
   }
   for (const sel of [$("selA"), $("selB")]) {
-    const o = document.createElement("option"); o.value = "source"; o.textContent = "Source (original RGB)";
+    const o = document.createElement("option"); o.value = "source"; o.textContent = DATA.sourceOption || "Source (original RGB)";
     sel.appendChild(o);
     for (const g of DATA.groups) {
       const og = document.createElement("optgroup"); og.label = g.label;
@@ -287,6 +298,10 @@ function buildControls() {
   $("zoomSeg").onclick = (e) => { const z = e.target.dataset.zoom; if (z !== undefined) setZoom(+z); };
   $("gainSeg").onclick = (e) => { const g = e.target.dataset.gain; if (g) { state.gain = +g; render(); } };
   $("flicker").onchange = (e) => { state.flicker = e.target.checked; setFlicker(); };
+  if (DATA.videos) {
+    $("showGrp").classList.remove("hidden");
+    $("showSeg").onclick = (e) => { const s = e.target.dataset.show; if (s) setShow(s); };
+  }
 
   const pr = $("presets");
   for (const p of DATA.presets) {
@@ -296,8 +311,15 @@ function buildControls() {
   }
 }
 
+function setShow(s) {
+  state.show = s;
+  if (browserView()) { if (state.mode === "diff") state.mode = "wipe"; if (state.probe) setProbe(false); }
+  render();
+}
+
 function applyPreset(p) {
   Object.assign(state, { src: p.src, a: p.a, b: p.b, mode: p.mode || "wipe", pos: 0.5, shown: "a" });
+  if (DATA.videos) state.show = p.show || "measured";
   state.flicker = false; $("flicker").checked = false; setFlicker();
   render();
   setZoom(p.zoom || 0, p.focus);
@@ -407,9 +429,10 @@ function loadPlanes(file) {
 }
 function planeInfo(id) {
   const s = srcInfo();
-  if (id === "source") return { file: s.planes, chroma: "444", range: "limited", label: "Ideal BT.709" };
+  if (id === "source") return { file: s.planes, chroma: "444", range: "limited", bits: s.idealBits || 10, rgb: false,
+                                label: s.idealLabel || "BT.709, limited" };
   const it = item(id);
-  return { file: it.results[state.src].planes, chroma: it.chroma, range: it.range, label: it.label };
+  return { file: it.results[state.src].planes, ...it.layout, label: it.label };
 }
 function pixelAt(e) {
   const r = $("canvas").getBoundingClientRect(), { w, h } = naturalSize();
@@ -417,8 +440,10 @@ function pixelAt(e) {
            y: Math.min(h - 1, Math.max(0, Math.floor((e.clientY - r.top) / r.height * h))) };
 }
 function sample(planes, info, x, y) {
-  const { w, h } = naturalSize(), cw = info.chroma === "422" ? w / 2 : w, cx = info.chroma === "422" ? x >> 1 : x;
-  return { y: planes[y * w + x], cb: planes[w * h + y * cw + cx], cr: planes[w * h + cw * h + y * cw + cx], cx };
+  const { w, h } = naturalSize();
+  const sx = info.chroma === "444" ? 1 : 2, sy = info.chroma === "420" ? 2 : 1;
+  const cw = w / sx, ch = h / sy, cx = Math.floor(x / sx), cy = Math.floor(y / sy);
+  return { y: planes[y * w + x], cb: planes[w * h + cy * cw + cx], cr: planes[w * h + cw * ch + cy * cw + cx] };
 }
 let probeToken = 0, lastProbeEvent = null;
 async function probeAt(e) {
@@ -426,8 +451,9 @@ async function probeAt(e) {
   const ev = lastProbeEvent; if (!ev) return;
   const token = ++probeToken, panel = $("probe");
   const px = state.pin || pixelAt(ev);
-  const sides = [["a", state.a], ["b", state.b]];
-  if (state.a !== "source" && state.b !== "source") sides.push(["ideal", "source"]);
+  const sides = [["a", state.a], ["b", state.b]].filter(([, id]) => id !== "source" || srcInfo().planes);
+  if (state.a !== "source" && state.b !== "source" && srcInfo().planes) sides.push(["ideal", "source"]);
+  if (!sides.length) { panel.classList.add("hidden"); return; }
   try {
     const infos = sides.map(([, id]) => planeInfo(id));
     const data = await Promise.all(infos.map((i) => loadPlanes(i.file)));
@@ -437,19 +463,26 @@ async function probeAt(e) {
     sides.forEach(([side, id], k) => {
       const v = vals[k], info = infos[k];
       const badge = side === "ideal" ? `<span class="note">ideal</span>` : `<span class="side ${side}">${side.toUpperCase()}</span>`;
-      rows += `<tr><td class="l">${badge}</td><td>${v.y}</td><td>${v.cb}</td><td>${v.cr}</td><td class="l note">${esc(side === "ideal" ? "BT.709, limited" : info.label)}${info.range === "full" ? " (full range)" : ""}</td></tr>`;
+      const ch = info.rgb ? ["R ", "G ", "B "] : ["", "", ""];
+      const desc = `${info.rgb ? "RGB" : (info.range === "full" ? "full range" : "limited")}, ${info.bits}-bit`;
+      rows += `<tr><td class="l">${badge}</td><td>${ch[0]}${v.y}</td><td>${ch[1]}${v.cb}</td><td>${ch[2]}${v.cr}</td><td class="l note">${esc(info.label)}${side === "ideal" ? "" : " · " + desc}</td></tr>`;
     });
-    const d = (k) => vals[1][k] - vals[0][k], sg = (n) => (n > 0 ? "+" : "") + n;
-    rows += `<tr><td class="l note">B − A</td><td>${sg(d("y"))}</td><td>${sg(d("cb"))}</td><td>${sg(d("cr"))}</td><td></td></tr>`;
+    if (sides.length >= 2 && infos[0].rgb === infos[1].rgb && infos[0].bits === infos[1].bits) {
+      const d = (k) => vals[1][k] - vals[0][k], sg = (n) => (n > 0 ? "+" : "") + n;
+      rows += `<tr><td class="l note">B − A</td><td>${sg(d("y"))}</td><td>${sg(d("cb"))}</td><td>${sg(d("cr"))}</td><td></td></tr>`;
+    }
     const notes = [];
     if (infos.some((i) => i.chroma === "422")) notes.push(`4:2:2: Cb and Cr are chroma sample ${px.x >> 1} of the row, ${px.x % 2 ? "shared with the column to the left" : "co-sited with this column"}.`);
-    if (infos.some((i) => i.range === "full")) notes.push("Full range: black 0, white 1023. Limited: black 64, white 940.");
-    panel.innerHTML = `<div class="t">${state.pin ? '<span class="pin">● pinned</span> ' : ""}x ${px.x}, y ${px.y} · ${esc(srcInfo().label)} · 10-bit codes</div>
+    if (infos.some((i) => i.chroma === "420")) notes.push(`4:2:0: Cb and Cr are shared by the 2×2 block at x ${px.x & ~1}, y ${px.y & ~1}.`);
+    const lim = [...new Set(infos.filter((i) => !i.rgb).map((i) => i.bits))].map((b) => b === 8 ? "8-bit limited: black 16, white 235; full: 0 to 255" : `${b}-bit limited: black 64, white 940; full: 0 to 1023`);
+    if (infos.some((i) => i.range === "full") || infos.some((i) => i.rgb)) notes.push(...lim);
+    panel.innerHTML = `<div class="t">${state.pin ? '<span class="pin">● pinned</span> ' : ""}x ${px.x}, y ${px.y} · ${esc(srcInfo().label)} · code values as stored</div>
       <table><tr><th></th><th>Y′</th><th>Cb</th><th>Cr</th><th></th></tr>${rows}</table>
       ${notes.map((n) => `<div class="n">${n}</div>`).join("")}
       <div class="n">${state.pin ? "Click the image to unpin." : "Click to pin this pixel."}</div>`;
   } catch (err) {
     panel.innerHTML = `<div class="n">The probe reads the stored Y′CbCr files, which needs the page to be served over http(s), not opened as a file.</div>`;
+    if (token !== probeToken) return;
   }
   panel.classList.remove("hidden");
   positionProbe(ev, px);
@@ -492,21 +525,24 @@ let diffToken = 0;
    1/errSteps of a 10-bit code. A − B = errA − errB, so the difference is accurate to that step, not to the 8-bit
    display images. The source itself has no error map (zero error). */
 const errFor = (id) => (id === "source" ? null : item(id).results[state.src].err);
+// Without error maps (pages measured in 8-bit codes), Difference uses the 8-bit display images throughout.
+const hasMaps = () => [state.a, state.b].every((id) => id === "source" || errFor(id));
 function setBlend(on) {
   $("imgB").style.mixBlendMode = on ? "difference" : "";
   $("canvas").style.filter = on ? `brightness(${state.gain})` : "";
 }
 function gainHint() {
-  const g = state.gain, one = Math.min(100, g * 100 / 1023), white = Math.ceil(1023 / g);
-  return `|A − B| × ${g}: a difference of one 10-bit code shows as ${one < 10 ? one.toFixed(1) : one.toFixed(0)}% grey` +
+  const U = DATA.unitMax, g = state.gain, one = Math.min(100, g * 100 / U), white = Math.ceil(U / g);
+  return `|A − B| × ${g}: a difference of one ${DATA.unitName} shows as ${one < 10 ? one.toFixed(1) : one.toFixed(0)}% grey` +
     (white > 1 ? `, ${white} codes or more as white.` : ", and any difference as white.");
 }
 async function renderDiff() {
   const token = ++diffToken;
   const cv = $("diff"), steps = DATA.errSteps;
-  const toOut = state.gain * 255 / 1023;           // 10-bit codes to display level
+  const toOut = state.gain * 255 / DATA.unitMax;   // code values to display level
   try {
-    const files = [errFor(state.a), errFor(state.b), imageFor(state.a), imageFor(state.b)];
+    const maps = hasMaps();
+    const files = [maps && errFor(state.a), maps && errFor(state.b), imageFor(state.a), imageFor(state.b)];
     const imgs = await Promise.all(files.map((f) => (f ? loadImage(f) : null)));
     if (token !== diffToken) return;
     const { w, h } = naturalSize();
@@ -519,8 +555,8 @@ async function renderDiff() {
       for (let c = 0; c < 3; c++) {
         const va = ea ? ea[i + c] : 128, vb = eb ? eb[i + c] : 128;
         // Error maps hold about +-32 codes; beyond that, use the 8-bit display images (fine for large differences).
-        const d = (va === 0 || va === 255 || vb === 0 || vb === 255)
-          ? (pa[i + c] - pb[i + c]) * 1023 / 255
+        const d = (!maps || va === 0 || va === 255 || vb === 0 || vb === 255)
+          ? (pa[i + c] - pb[i + c]) * DATA.unitMax / 255
           : (va - vb) / steps;
         o[i + c] = Math.min(255, Math.abs(d) * toOut);
       }
@@ -528,14 +564,14 @@ async function renderDiff() {
     }
     ctx.putImageData(out, 0, 0);
     setBlend(false); cv.classList.remove("hidden"); $("imgA").classList.add("hidden"); $("imgB").classList.add("hidden");
-    $("hint").textContent = gainHint() + " Black is identical.";
+    $("hint").textContent = gainHint() + (maps ? "" : " From the 8-bit display images.") + " Black is identical.";
   } catch (e) {
     if (token !== diffToken) return;
     // Opened as a file: the browser will not let the page read pixels, so blend the 8-bit display images instead.
     cv.classList.add("hidden"); $("imgA").classList.remove("hidden"); $("imgB").classList.remove("hidden");
     $("imgB").style.visibility = "visible"; $("imgB").style.clipPath = "none";
     setBlend(true);
-    $("hint").textContent = gainHint() + " Approximate: opened as a file, so this uses the 8-bit display images (one step is 4 codes); serve the page over http for the exact difference.";
+    $("hint").textContent = gainHint() + " Approximate: opened as a file, so this uses the 8-bit display images; serve the page over http for the exact difference.";
   }
 }
 
@@ -547,18 +583,28 @@ function renderControls() {
   for (const b of $("gainSeg").children) b.setAttribute("aria-pressed", +b.dataset.gain === state.gain);
   $("selA").value = state.a; $("selB").value = state.b;
   $("gainGrp").classList.toggle("hidden", state.mode !== "diff");
+  if (DATA.videos) {
+    for (const b of $("showSeg").children) b.setAttribute("aria-pressed", b.dataset.show === state.show);
+    $("modeSeg").querySelector('[data-mode="diff"]').disabled = browserView();
+    $("probeBtn").disabled = browserView();
+  }
   $("flickerGrp").classList.toggle("hidden", state.mode === "diff");
 }
 
 function labelOf(id) { return id === "source" ? "Source" : item(id).label; }
 
+function sideEl(side) {
+  const S = side.toUpperCase();
+  return browserView() && state[side] !== "source" ? $("vid" + S) : $("img" + S);
+}
 function renderView() {
-  const c = $("canvas"), ia = $("imgA"), ib = $("imgB"), dv = $("divider"), cv = $("diff");
+  const c = $("canvas"), ia = sideEl("a"), ib = sideEl("b"), dv = $("divider"), cv = $("diff");
+  for (const el of [$("imgA"), $("imgB"), $("vidA"), $("vidB")]) el.classList.toggle("inactive", el !== ia && el !== ib);
   c.classList.toggle("wipe", state.mode === "wipe");
   c.classList.toggle("toggle", state.mode === "toggle");
   const bA = $("badgeA"), bB = $("badgeB");
-  bA.lastElementChild.textContent = labelOf(state.a);
-  bB.lastElementChild.textContent = labelOf(state.b);
+  bA.lastElementChild.textContent = labelOf(state.a) + videoNote("a");
+  bB.lastElementChild.textContent = labelOf(state.b) + videoNote("b");
   bA.classList.remove("dim", "center", "hidden"); bB.classList.remove("dim", "center", "hidden");
   if (state.mode !== "diff") { setBlend(false); cv.classList.add("hidden"); ia.classList.remove("hidden"); ib.classList.remove("hidden"); }
   if (state.mode === "wipe") {
@@ -580,11 +626,8 @@ function renderView() {
 
 function statBlock(r) {
   if (!r) return `<p class="note">The source image: the reference every result is measured against.</p>`;
-  return `<div class="stats">
-    <div class="stat"><span class="k">Mean</span><span class="v">${fmt(r.mean, 2)}</span></div>
-    <div class="stat"><span class="k">99th pct</span><span class="v">${fmt(r.p99)}</span></div>
-    <div class="stat"><span class="k">Max</span><span class="v">${fmt(r.max)}</span></div>
-    <div class="stat" title="Y′ of 100% white minus 940 (1023 at full range)"><span class="k">White Y′</span><span class="v">${fmtSigned(r.white)}</span></div></div>`;
+  return `<div class="stats">` + DATA.stats.map((st) =>
+    `<div class="stat" title="${esc(st.title || "")}"><span class="k">${esc(st.label)}</span><span class="v">${fmtStat(r[st.key], st)}</span></div>`).join("") + `</div>`;
 }
 function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
@@ -592,40 +635,47 @@ function renderCard(el, side, id) {
   const s = srcInfo();
   if (id === "source") {
     el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>Source</h2>
-      <div class="sub">${esc(s.label)} · ${esc(s.description)}</div>${statBlock(null)}`;
+      <div class="sub">${esc(s.label)} · ${esc(s.description)}</div>${statBlock(null)}
+      ${s.cambi !== undefined && s.cambi !== null ? `<p class="note">Banding (CAMBI) of the source itself: <b>${s.cambi.toFixed(1)}</b>. An 8-bit source can already band before it is encoded.</p>` : ""}`;
     return;
   }
   const it = item(id), r = it.results[state.src];
   el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>${esc(it.label)}</h2>
-    <div class="sub">${esc(it.group)} · ${esc(s.label)} · error in 10-bit code values</div>
+    <div class="sub">${esc(it.group)} · ${esc(s.label)} · error in ${esc(DATA.unit)}</div>
     ${statBlock(r)}
     <p>${esc(it.description)}</p>
     <code class="flags">${esc(it.flags || "(no colour options)")}</code>
+    ${browserView() ? `<p class="note">Shown: <code>${esc(r.video)}</code>, played by this browser${videoNote(side)}.</p>` : ""}
     <details><summary>Full commands</summary><pre>${esc(r.encode)}</pre><pre>${esc(r.decode)}</pre></details>`;
 }
 
 function buildTable() {
   const t = $("results");
   const srcs = DATA.sources;
-  let h = `<thead><tr><th class="l" rowspan="2"></th><th class="l" rowspan="2">Conversion</th>`;
-  for (const s of srcs) h += `<th colspan="4" class="colgrp" style="text-align:center">${esc(s.label)}</th>`;
+  const stats = DATA.stats, rank = DATA.rankKey || "mean";
+  let h = `<thead><tr><th class="l" rowspan="2"></th><th class="l" rowspan="2">${esc(DATA.rowLabel || "Conversion")}</th>`;
+  for (const s of srcs) h += `<th colspan="${stats.length}" class="colgrp" style="text-align:center">${esc(s.label)}</th>`;
   h += `</tr><tr>`;
-  for (const s of srcs) h += `<th class="colgrp">Mean</th><th>99th</th><th>Max</th><th>White</th>`;
+  for (const s of srcs) h += stats.map((st, k) => `<th class="${k ? "" : "colgrp"}" title="${esc(st.title || "")}">${esc(st.short || st.label)}</th>`).join("");
   h += `</tr></thead><tbody>`;
   for (const g of DATA.groups) {
-    h += `<tr class="grp"><td colspan="${2 + 4 * srcs.length}">${esc(g.label)}</td></tr>`;
+    h += `<tr class="grp"><td colspan="${2 + stats.length * srcs.length}">${esc(g.label)}</td></tr>`;
     const best = {};
     for (const s of srcs) {
-      const means = g.items.map((id) => item(id).results[s.id].mean);
-      best[s.id] = { min: Math.min(...means), max: Math.max(...means) };
+      const vals = g.items.map((id) => item(id).results[s.id][rank]);
+      best[s.id] = { min: Math.min(...vals), max: Math.max(...vals) };
     }
     for (const id of g.items) {
       const it = item(id);
       h += `<tr class="row" data-id="${id}"><td class="pick"><button class="pa" data-side="a" aria-label="Set A to ${esc(it.label)}">A</button><button class="pb" data-side="b" aria-label="Set B to ${esc(it.label)}">B</button></td><td class="l">${esc(it.label)}</td>`;
       for (const s of srcs) {
         const r = it.results[s.id];
-        const cls = r.mean === best[s.id].min ? "best" : (r.mean === best[s.id].max ? "worst" : "");
-        h += `<td class="colgrp ${cls}">${fmt(r.mean, 2)}</td><td>${fmt(r.p99)}</td><td>${fmt(r.max)}</td><td class="${r.white !== null && Math.abs(r.white) >= 1 ? 'warn' : ''}">${fmtSigned(r.white)}</td>`;
+        h += stats.map((st, k) => {
+          let cls = k ? "" : "colgrp";
+          if (st.key === rank && g.items.length > 1) cls += r[rank] === best[s.id].min ? " best" : (r[rank] === best[s.id].max ? " worst" : "");
+          if (warnStat(r[st.key], st)) cls += " warn";
+          return `<td class="${cls}">${fmtStat(r[st.key], st)}</td>`;
+        }).join("");
       }
       h += `</tr>`;
     }
@@ -649,6 +699,7 @@ function render() {
   const s = srcInfo();
   $("imgA").src = imageFor(state.a); $("imgA").alt = `A: ${labelOf(state.a)}, ${s.label}`;
   $("imgB").src = imageFor(state.b); $("imgB").alt = `B: ${labelOf(state.b)}, ${s.label}`;
+  if (browserView()) for (const side of ["a", "b"]) loadVideo(side);
   layout(); renderControls(); renderView();
   renderCard($("cardA"), "a", state.a); renderCard($("cardB"), "b", state.b);
   markTable(); writeHash();
@@ -675,7 +726,33 @@ document.addEventListener("keydown", (e) => {
 });
 window.addEventListener("resize", () => { if (state.zoom === 0) layout(); });
 
+/* ---------- Videos (Your browser) ---------- */
+const videoState = { a: "", b: "" };
+function videoNote(side) {
+  if (!browserView() || state[side] === "source") return "";
+  return videoState[side] === "fail" ? " · this browser cannot play it" : "";
+}
+function loadVideo(side) {
+  const S = side.toUpperCase(), v = $("vid" + S), id = state[side];
+  if (id === "source") return;
+  const src = item(id).results[state.src].video;
+  if (v.dataset.src === src) return;
+  v.dataset.src = src; videoState[side] = "loading";
+  v.onloadeddata = () => { videoState[side] = "ok"; v.play().catch(() => {}); };
+  v.onerror = () => { videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]); };
+  v.src = src; v.load();
+  setTimeout(() => {
+    if (v.dataset.src === src && videoState[side] === "loading" && v.readyState < 2) {
+      videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]);
+    }
+  }, 4000);
+}
+
 /* ---------- Start ---------- */
+document.title = DATA.pageTitle || document.title;
+$("title").textContent = DATA.title;
+$("lede").innerHTML = DATA.lede;
+$("tableNote").innerHTML = DATA.tableNote || "";
 $("footer").innerHTML = DATA.footer;
 readHash();
 buildControls(); buildTable(); bindCanvas();

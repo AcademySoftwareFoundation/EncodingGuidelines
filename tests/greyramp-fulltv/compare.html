@@ -1,231 +1,2074 @@
-
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
-      <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-  <style>
-  a:link {
-        color:rgb(150, 150, 255);
-   }
-     a:visited {
-        color:rgb(120, 120, 255);
-   }
-  .grid tbody tr td { cursor: grab }
-  .ui-button {margin: 5px; border-radius: 8px}
-  </style>
-  <script>
-$(document).ready(function(){
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encoding Compare</title>
+<style>
+:root {
+  --bg: #27262b;
+  --surface: #302d36;
+  --surface-2: #3a3741;
+  --border: #44434d;
+  --text: #e6e1e8;
+  --muted: #a9a3b0;
+  --accent: #2c84fa;
+  --a: #f2a33a;
+  --b: #4ea1ff;
+  --good: #5fd08a;
+  --bad: #ff6b6b;
+  --stage: #141317;
+  --radius: 6px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+main { max-width: 1600px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 1.35rem; margin: 0 0 4px; font-weight: 650; }
+.lede { margin: 0 0 12px; color: var(--muted); max-width: 72ch; }
+.lede b { color: var(--text); font-weight: 600; }
 
+/* Toolbar */
+.toolbar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  padding: 10px 12px; margin: 0 -4px 10px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.group { display: flex; align-items: center; gap: 6px; }
+.group > .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.seg button {
+  background: var(--surface); color: var(--text); border: 0; padding: 5px 10px; font: inherit; cursor: pointer;
+  border-left: 1px solid var(--border);
+}
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.seg button:focus-visible, select:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+select {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 5px 8px; font: inherit; max-width: 260px;
+}
+.side { font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center;
+  font-size: 12px; color: #111; }
+.side.a { background: var(--a); }
+.side.b { background: var(--b); }
+.btn {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 5px 9px; font: inherit; cursor: pointer;
+}
+.btn:hover, .seg button:hover:not([aria-pressed="true"]) { background: var(--surface-2); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 0 0 10px; color: var(--muted); }
+.presets .btn { font-size: 13px; padding: 3px 9px; }
+.hidden { display: none !important; }
 
-        $("#buttonnone").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#none" ).show();
-           }
-        );
+/* Viewer */
+.viewer { position: relative; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  background: var(--stage); }
+.stage { overflow: auto; position: relative; }
+.stage.zoomed { max-height: 72vh; }
+.canvas { position: relative; margin: 0 auto; touch-action: none; user-select: none; }
+.canvas img, .canvas canvas, .canvas video { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  pointer-events: none; -webkit-user-drag: none; user-select: none; }
+.canvas.px img, .canvas.px canvas, .canvas.px video { image-rendering: pixelated; }
+.inactive { display: none !important; }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
+.canvas.wipe { cursor: ew-resize; }
+.canvas.toggle { cursor: pointer; }
+.divider { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.5); pointer-events: none; }
+.divider::after { content: "◀ ▶"; position: absolute; top: 50%; left: -22px; width: 44px; transform: translateY(-50%);
+  background: #fff; color: #111; border-radius: 12px; font-size: 11px; text-align: center; padding: 2px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.badge { position: absolute; top: 8px; z-index: 2; padding: 3px 9px 3px 4px; border-radius: 14px; font-size: 13px;
+  background: rgba(20,19,23,.82); border: 1px solid var(--border); display: flex; gap: 6px; align-items: center;
+  max-width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.badge.a { left: 8px; } .badge.b { right: 8px; }
+.badge.dim { opacity: .35; }
+.badge.center { left: 50%; right: auto; transform: translateX(-50%); max-width: 80%; }
+.statusbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 6px 10px;
+  font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); background: var(--surface); }
+kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); border-bottom-width: 2px;
+  border-radius: 4px; padding: 0 4px; background: var(--bg); color: var(--text); }
+.note { color: var(--muted); font-size: 12px; }
 
-        $("#buttongreyramppng").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#greyramppng" ).show();
-           }
-        );
+/* Cards */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 20px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
+  min-width: 0; }
+.card h2 { font-size: 1rem; margin: 0 0 2px; display: flex; gap: 8px; align-items: center; }
+.card .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 9px;
+  min-width: 78px; }
+.stat .k { display: block; font-size: 11px; color: var(--muted); }
+.stat .v { font-family: var(--mono); font-size: 15px; font-variant-numeric: tabular-nums; }
+.card p { margin: 6px 0; }
+code, pre { font-family: var(--mono); font-size: 12px; }
+.flags { display: block; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 6px 8px; white-space: pre-wrap; word-break: break-all; }
+details { margin-top: 6px; }
+summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+details pre { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px;
+  white-space: pre-wrap; word-break: break-all; margin: 6px 0 0; }
 
-        $("#buttongreytv").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#greytv" ).show();
-           }
-        );
+/* Results table */
+h2.section { font-size: 1.1rem; margin: 8px 0 4px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+th { background: var(--surface); font-weight: 600; font-size: 12px; color: var(--muted); }
+th.l, td.l { text-align: left; }
+tr.grp td { background: var(--surface-2); font-weight: 600; text-align: left; color: var(--text); }
+tbody tr.row:hover { background: var(--surface); }
+tr.isA td:first-child { box-shadow: inset 3px 0 0 var(--a); }
+tr.isB td:first-child { box-shadow: inset 3px 0 0 var(--b); }
+tr.isA.isB td:first-child { box-shadow: inset 3px 0 0 var(--a), inset 6px 0 0 var(--b); }
+td.pick { white-space: nowrap; text-align: left; }
+td.pick button { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 50%;
+  width: 22px; height: 22px; font-size: 11px; font-weight: 700; cursor: pointer; padding: 0; margin-right: 3px; }
+tr.isA td.pick button.pa { background: var(--a); color: #111; border-color: var(--a); }
+tr.isB td.pick button.pb { background: var(--b); color: #111; border-color: var(--b); }
+td.best { color: var(--good); }
+td.worst { color: var(--bad); }
+td.warn { color: var(--a); }
+.colgrp { border-left: 1px solid var(--border); }
+.probe { position: fixed; z-index: 20; pointer-events: none; background: rgba(20,19,23,.94); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5); min-width: 250px; }
+.probe table { width: auto; font-family: var(--mono); font-size: 12px; }
+.probe th, .probe td { padding: 2px 6px; border: 0; background: none; }
+.probe th { color: var(--muted); font-weight: 500; }
+.probe .t { color: var(--muted); margin-bottom: 4px; font-family: var(--mono); }
+.probe .n { color: var(--muted); margin-top: 4px; max-width: 300px; white-space: normal; }
+.probe td.l { text-align: left; font-family: system-ui, sans-serif; }
+.probe .pin { color: var(--a); }
+.marker { position: absolute; pointer-events: none; border: 1px solid #fff; outline: 1px solid #000; z-index: 3; }
+.canvas.probing { cursor: crosshair; }
+footer { margin: 18px 0 8px; color: var(--muted); font-size: 12px; max-width: 90ch; }
+footer p { margin: 4px 0; }
+a { color: var(--accent); }
 
-        $("#buttongreyfull").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#greyfull" ).show();
-           }
-        );
-
-        $("#buttonnone").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#none" ).show();
-           }
-        );
-
-        $("#buttonradialgradpng").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradpng" ).show();
-           }
-        );
-
-        $("#buttonradialgradtv").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradtv" ).show();
-           }
-        );
-
-        $("#buttonradialgradfull").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradfull" ).show();
-           }
-        );
-
-        $("#buttonradialgradfullj").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradfullj" ).show();
-           }
-        );
-
-        $("#buttonradialgradfull0").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradfull0" ).show();
-           }
-        );
-
-        $("#buttonradialgradfull444").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradfull444" ).show();
-           }
-        );
-
-        $("#buttonradialgradtv10").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradtv10" ).show();
-           }
-        );
-
-        $("#buttonradialgradrgb").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#radialgradrgb" ).show();
-           }
-        );
-
-        $("#buttonnone").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#none" ).show();
-           }
-        );
-
-        $("#buttonmarcieraw").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#marcieraw" ).show();
-           }
-        );
-
-        $("#buttonmarcietv").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#marcietv" ).show();
-           }
-        );
-
-        $("#buttonmarciefull").click( function()
-           {
-             $( ".videogroup" ).hide();
-			 $( "#marciefull" ).show();
-           }
-        );
-
-		$( ".videogroup" ).hide();
-		$( "#greyramppng" ).show();
-});
-    </script>
-
+@media (max-width: 760px) {
+  main { padding: 10px; }
+  .cards { grid-template-columns: 1fr; }
+  .toolbar { position: static; }
+  select { max-width: 100%; }
+  .group.ab { flex-wrap: wrap; }
+}
+</style>
 </head>
+<body>
+<main>
+  <h1 id="title"></h1>
+  <p class="lede" id="lede"></p>
 
-<body style="background-color:#27262b; color:rgb(200,200,200)">
+  <div class="toolbar" role="toolbar" aria-label="Comparison controls">
+    <div class="group"><span class="lbl">Image</span><div class="seg" id="srcSeg"></div></div>
+    <div class="group ab">
+      <span class="side a">A</span><select id="selA" aria-label="Result A"></select>
+      <button class="btn" id="swap" title="Swap A and B (X)" aria-label="Swap A and B">⇄</button>
+      <span class="side b">B</span><select id="selB" aria-label="Result B"></select>
+    </div>
+    <div class="group hidden" id="showGrp"><span class="lbl">Show</span><div class="seg" id="showSeg">
+      <button data-show="measured" title="The files decoded by zscale, as measured">Measured</button>
+      <button data-show="browser" title="The video files, played by this browser">Your browser</button>
+    </div></div>
+    <div class="group"><span class="lbl">View</span><div class="seg" id="modeSeg">
+      <button data-mode="wipe" title="Wipe (W)">Wipe</button>
+      <button data-mode="toggle" title="Toggle (Space)">Toggle</button>
+      <button data-mode="diff" title="Difference (D)">Difference</button>
+    </div></div>
+    <div class="group" id="flickerGrp"><label class="note"><input type="checkbox" id="flicker"> Flicker</label></div>
+    <div class="group hidden" id="gainGrp"><span class="lbl" title="|A − B| is multiplied by this before it is shown">Gain</span><div class="seg" id="gainSeg">
+      <button data-gain="1">×1</button><button data-gain="4">×4</button><button data-gain="16">×16</button><button data-gain="64">×64</button><button data-gain="256">×256</button>
+    </div></div>
+    <div class="group"><span class="lbl">Zoom</span><div class="seg" id="zoomSeg">
+      <button data-zoom="0" title="Fit (0)">Fit</button>
+      <button data-zoom="1" title="One image pixel per screen pixel (1)">1:1</button>
+      <button data-zoom="2" title="(2)">2×</button>
+      <button data-zoom="4" title="(4)">4×</button>
+      <button data-zoom="8" title="(8)">8×</button>
+    </div></div>
+    <div class="group"><div class="seg"><button id="probeBtn" title="Show the stored Y′CbCr values under the cursor; click to pin (P)">Probe</button></div></div>
+  </div>
 
-<H1>Full range vs TV Range</H1><p> Comparing full range encoding vs. tv range, but also yuv420p vs. yuvj420p. We believe that this is well supported on web browsers, and dont see a downside to it. There may be cases where other applications do not read it. The code to generate these files is <a href='../icctest-fulltv.py'>here</a>. Full screen view is <a href='/EncodingGuidelines/tests/greyramp-fulltv/compare.html'>here</a></p>
+  <div class="presets" id="presets"><span>Try:</span></div>
 
-    <div data-role="page" data-theme='a'>
-
-      <div data-role="content"><TABLE><TR><TD width='100' align='center' valign="top">
-
-        <div ><B>Test-1: Greyramp</B></div><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreyramppng" data-role="button">Source png file</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreytv" data-role="button">Normal encode</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttongreyfull" data-role="button">Full range encoding.</button><BR/>
-
-        <div ><B>Test-2: Radial gradent</B></div><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradpng" data-role="button">Source png file</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradtv" data-role="button">Normal encode</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull" data-role="button">Full range encoding.</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfullj" data-role="button">Alternate full range encoding</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull0" data-role="button">Using full range without color_range flag</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradfull444" data-role="button">Full range with yuv444 (chrome only)</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradtv10" data-role="button">10-bit encoding, tv-range (chrome only)</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonradialgradrgb" data-role="button">This is using RGB encoding</button><BR/>
-
-        <div ><B>Test-3: Marcie</B></div><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonmarcieraw" data-role="button">Source png file</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonmarcietv" data-role="button">Normal encoding</button><BR/>
-
-        <button class="ui-button ui-widget ui-corner-all" id="buttonmarciefull" data-role="button">Full Range</button><BR/>
-</div></TD><TD align='left' valign='top'>
-<div id="none" class="videogroup"><h2>Test-1: Greyramp</h2><p></p><p></p></div>
-
-<div id="greyramppng" class="videogroup"><h2>Source png file</h2><img   width=920  src='.././greyramp-fulltv/greyscale-raw.png'/><p></p><p></p></div>
-
-<div id="greytv" class="videogroup"><h2>Normal encode</h2><video  width=920  ><source src='greyscale-tv.mp4' type='video/mp4'/></video><p>Using the PNG greyramp, with the normal "TV" out range of 16-235, and using yuv420p encoding. </p><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/greyscale-tv.mp4</p></div>
-
-<div id="greyfull" class="videogroup"><h2>Full range encoding.</h2><video  width=920  ><source src='greyscale-full.mp4' type='video/mp4'/></video><p>Greyramp encoded using out_range=full yuv420p encoding, here we also set color_range=2 to let the decoder know to process it correctly.</p><p>ffmpeg -y -loop 1 -i  ./greyramp-fulltv/greyscale-raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/greyscale-full.mp4</p></div>
-
-<div id="none" class="videogroup"><h2>Test-2: Radial gradent</h2><p></p><p></p></div>
-
-<div id="radialgradpng" class="videogroup"><h2>Source png file</h2><img   width=920  src='../../sourceimages/radialgrad.png'/><p>This is a less forgiving test image</p><p></p></div>
-
-<div id="radialgradtv" class="videogroup"><h2>Normal encode</h2><video  width=920  ><source src='radialgrad-tv.mp4' type='video/mp4'/></video><p>Using the radial gradent with normal yuv420p encoding and yuv420p.</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-tv.mp4</p></div>
-
-<div id="radialgradfull" class="videogroup"><h2>Full range encoding.</h2><video  width=920  ><source src='radialgrad-full.mp4' type='video/mp4'/></video><p>Using the full range yuv420p encoding with color_range=2</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4</p></div>
-
-<div id="radialgradfullj" class="videogroup"><h2>Alternate full range encoding</h2><video  width=920  ><source src='radialgrad-fullj.mp4' type='video/mp4'/></video><p>This is an older alternative to full-range encoding, that ffmpeg is currently deprecating. </p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuvj420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-fullj.mp4</p></div>
-
-<div id="radialgradfull0" class="videogroup"><h2>Using full range without color_range flag</h2><video  width=920  ><source src='radialgrad-full0.mp4' type='video/mp4'/></video><p>This is what happens if you specify full range without the color_range flag (color_range=0). DONT DO THIS!</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range unknown -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full0.mp4</p></div>
-
-<div id="radialgradfull444" class="videogroup"><h2>Full range with yuv444 (chrome only)</h2><video  width=920  ><source src='radialgrad-full444.mp4' type='video/mp4'/></video><p>This is testing yuv444p but still 8-bit, this will only work on chrome.</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/radialgrad.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv444p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full444.mp4</p></div>
-
-<div id="radialgradtv10" class="videogroup"><h2>10-bit encoding, tv-range (chrome only)</h2><video  width=920  ><source src='radialgrad-raw-10bit.mp4' type='video/mp4'/></video><p>This is testing 10-bit encoding, yuv444p10le</p><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264 -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" -pix_fmt yuv444p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf "colorspace=bt709:iall=bt601-6-625:fast=1" ./greyramp-fulltv/radialgrad-raw-10bit.mp4</p></div>
-
-<div id="radialgradrgb" class="videogroup"><h2>This is using RGB encoding</h2><video  width=920  ><source src='radialgrad-raw-rgb.mp4' type='video/mp4'/></video><p>libx264rgb 8-bit mp4 (not supported)</p><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264rgb -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" ./greyramp-fulltv/radialgrad-raw-rgb.mp4</p></div>
-
-<div id="none" class="videogroup"><h2>Test-3: Marcie</h2><p></p><p></p></div>
-
-<div id="marcieraw" class="videogroup"><h2>Source png file</h2><img   width=920  src='../../sourceimages/Digital_LAD_raw.png'/><p></p><p>ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png  -c:v libx264rgb -t 5 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" ./greyramp-fulltv/radialgrad-raw-rgb.mp4</p></div>
-
-<div id="marcietv" class="videogroup"><h2>Normal encoding</h2><video  width=920  ><source src='marcie-tv.mp4' type='video/mp4'/></video><p>marcie out_range=tv -pix_fmt yuv420p 16-235 range</p><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/marcie-tv.mp4</p></div>
-
-<div id="marciefull" class="videogroup"><h2>Full Range</h2><video  width=920  ><source src='marcie-full.mp4' type='video/mp4'/></video><p></p><p>ffmpeg -y -loop 1 -i  ../sourceimages/Digital_LAD_raw.png  -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709" -c:v libx264  -t 5 -pix_fmt yuv420p -qscale:v 1  -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/marcie-full.mp4</p></div>
-
-      </TD></TR></TABLE>
+  <div class="viewer" id="viewer">
+    <div class="badge a" id="badgeA"><span class="side a">A</span><span></span></div>
+    <div class="badge b" id="badgeB"><span class="side b">B</span><span></span></div>
+    <div class="stage" id="stage">
+      <div class="canvas" id="canvas">
+        <img id="imgA" alt="" draggable="false">
+        <video id="vidA" class="inactive" muted loop playsinline preload="auto"></video>
+        <img id="imgB" alt="" draggable="false">
+        <video id="vidB" class="inactive" muted loop playsinline preload="auto"></video>
+        <canvas id="diff" class="hidden"></canvas>
+        <div class="divider" id="divider"></div>
+        <div class="marker hidden" id="marker"></div>
       </div>
+    </div>
+    <div class="statusbar">
+      <span id="hint"></span>
+      <span><kbd>Space</kbd> flip · <kbd>W</kbd> wipe · <kbd>D</kbd> difference · <kbd>X</kbd> swap ·
+        <kbd>←</kbd><kbd>→</kbd> move wipe · <kbd>0</kbd><kbd>1</kbd><kbd>2</kbd><kbd>4</kbd><kbd>8</kbd> zoom · <kbd>P</kbd> probe</span>
+    </div>
+  </div>
 
-   </div>
+  <div class="cards">
+    <section class="card" id="cardA" aria-label="Result A"></section>
+    <section class="card" id="cardB" aria-label="Result B"></section>
+  </div>
+
+  <h2 class="section">All results</h2>
+  <p class="note" style="margin:0 0 6px"><span id="tableNote"></span>
+    Pick a row as <span class="side a">A</span> or <span class="side b">B</span>.</p>
+  <div class="tablewrap"><table id="results"></table></div>
+
+  <div class="probe hidden" id="probe" role="status" aria-live="polite"></div>
+  <footer id="footer"></footer>
+</main>
+
+<script>
+const DATA = {
+ "pageTitle": "Range and Dither Compare",
+ "title": "Full range vs. limited (TV) range vs. dithering",
+ "lede": "The same images encoded for web review at limited range (Y\u2032 16 to 235) and at full range (0 to 255), each of zscale's dither modes, and some alternatives. <b>Measured</b> shows each file decoded by <code>zscale</code>, reading the range from the file, with errors against the source in 8-bit code values. <b>Your browser</b> plays the actual video files, which is the real test of whether a browser handles full range.",
+ "tableNote": "Error against the source in 8-bit code values (lossy encodes, -crf 18). <b>White</b> is how far 100% white lands from its specification value in the file. <b>Levels</b> is how many different Y\u2032 values the file uses: on the 8-bit grey ramp, limited range cannot keep all 256. <b>CAMBI</b> is Netflix's banding index (0 is none); each source's own score is on its card. Dither raises the plain error slightly and lowers the banding.",
+ "unit": "8-bit code values",
+ "unitName": "8-bit code",
+ "unitMax": 255,
+ "stats": [
+  {
+   "key": "mean",
+   "label": "Mean",
+   "short": "Mean",
+   "digits": 2
+  },
+  {
+   "key": "p99",
+   "label": "99th pct",
+   "short": "99th",
+   "digits": 1
+  },
+  {
+   "key": "max",
+   "label": "Max",
+   "short": "Max",
+   "digits": 1
+  },
+  {
+   "key": "white",
+   "label": "White Y\u2032",
+   "short": "White",
+   "digits": 1,
+   "signed": true,
+   "warn": 1,
+   "title": "Y\u2032 of the source's 100% white as stored, minus its specification value (235 limited, 255 full; 940 and 1023 at 10-bit)"
+  },
+  {
+   "key": "cambi",
+   "label": "Banding (CAMBI)",
+   "short": "CAMBI",
+   "digits": 1,
+   "title": "Netflix's CAMBI banding index (libvmaf), on the file alone: 0 is no banding, higher is more visible banding. Compare with the source's own score on its card."
+  },
+  {
+   "key": "levels",
+   "label": "Y\u2032 levels",
+   "short": "Levels",
+   "digits": 0,
+   "title": "How many different Y\u2032 values (G for RGB) the file uses. The 256-step grey ramp can use at most 220 in 8-bit limited range."
+  }
+ ],
+ "rankKey": "mean",
+ "groups": [
+  {
+   "label": "8-bit 4:2:0 limited range: zscale dither (plays in every browser)",
+   "items": [
+    "tv",
+    "tv_ordered",
+    "tv_random",
+    "tv_error_diffusion"
+   ]
+  },
+  {
+   "label": "8-bit 4:2:0 full range (plays in every browser)",
+   "items": [
+    "full",
+    "fullj",
+    "fulluntagged"
+   ]
+  },
+  {
+   "label": "10-bit 4:2:0 limited range: zscale dither (H.264 High 10)",
+   "items": [
+    "tv10",
+    "tv10_ordered",
+    "tv10_random",
+    "tv10_error_diffusion"
+   ]
+  },
+  {
+   "label": "Others (check which browsers play them)",
+   "items": [
+    "full444",
+    "rgb"
+   ]
+  }
+ ],
+ "items": {
+  "tv": {
+   "label": "Limited range (normal), dither=none",
+   "group": "8-bit 4:2:0 limited range: zscale dither (plays in every browser)",
+   "description": "The usual encode: Y\u2032 from 16 to 235, with zscale's default (no dither). A 256-step source has to fit into 220 steps, so some neighbouring values merge (look at Y\u2032 levels on the grey ramp).",
+   "flags": "-pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv.png",
+     "err": null,
+     "planes": "greyscale-tv.yuv.z",
+     "video": "greyscale-tv.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv.mp4",
+     "decode": "ffmpeg -i greyscale-tv.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.29,
+     "p99": 0.58,
+     "max": 0.58,
+     "white": 0.0,
+     "levels": 220,
+     "cambi": 13.01
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv.png",
+     "err": null,
+     "planes": "greyramp16-tv.yuv.z",
+     "video": "greyramp16-tv.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv.mp4",
+     "decode": "ffmpeg -i greyramp16-tv.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.308,
+     "p99": 0.79,
+     "max": 0.83,
+     "white": 0.0,
+     "levels": 220,
+     "cambi": 13.48
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv.png",
+     "err": null,
+     "planes": "radialgrad-tv.yuv.z",
+     "video": "radialgrad-tv.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv.mp4",
+     "decode": "ffmpeg -i radialgrad-tv.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.517,
+     "p99": 1.75,
+     "max": 3.92,
+     "white": null,
+     "levels": 57,
+     "cambi": 21.99
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv.png",
+     "err": null,
+     "planes": "radialgrad16-tv.yuv.z",
+     "video": "radialgrad16-tv.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.471,
+     "p99": 1.55,
+     "max": 4.08,
+     "white": null,
+     "levels": 57,
+     "cambi": 22.35
+    },
+    "marcie": {
+     "image": "marcie-tv.png",
+     "err": null,
+     "planes": "marcie-tv.yuv.z",
+     "video": "marcie-tv.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv.mp4",
+     "decode": "ffmpeg -i marcie-tv.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.239,
+     "p99": 11.85,
+     "max": 46.04,
+     "white": null,
+     "levels": 215,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv_ordered": {
+   "label": "8-bit limited, dither=ordered",
+   "group": "8-bit 4:2:0 limited range: zscale dither (plays in every browser)",
+   "description": "As the dither=none encode, with zscale's ordered dither: an ordered (Bayer) pattern, which spreads the rounding error in a fixed, fine grid. The encode (-crf 18) may smooth some of the dither away.",
+   "flags": "-pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv_ordered.png",
+     "err": null,
+     "planes": "greyscale-tv_ordered.yuv.z",
+     "video": "greyscale-tv_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv_ordered.mp4",
+     "decode": "ffmpeg -i greyscale-tv_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.377,
+     "p99": 1.05,
+     "max": 2.07,
+     "white": 0.0,
+     "levels": 220,
+     "cambi": 5.26
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv_ordered.png",
+     "err": null,
+     "planes": "greyramp16-tv_ordered.yuv.z",
+     "video": "greyramp16-tv_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv_ordered.mp4",
+     "decode": "ffmpeg -i greyramp16-tv_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.38,
+     "p99": 1.04,
+     "max": 2.18,
+     "white": -0.01,
+     "levels": 221,
+     "cambi": 3.29
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv_ordered.png",
+     "err": null,
+     "planes": "radialgrad-tv_ordered.yuv.z",
+     "video": "radialgrad-tv_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv_ordered.mp4",
+     "decode": "ffmpeg -i radialgrad-tv_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.587,
+     "p99": 2.03,
+     "max": 4.12,
+     "white": null,
+     "levels": 58,
+     "cambi": 8.21
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv_ordered.png",
+     "err": null,
+     "planes": "radialgrad16-tv_ordered.yuv.z",
+     "video": "radialgrad16-tv_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv_ordered.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.534,
+     "p99": 1.82,
+     "max": 4.08,
+     "white": null,
+     "levels": 58,
+     "cambi": 7.75
+    },
+    "marcie": {
+     "image": "marcie-tv_ordered.png",
+     "err": null,
+     "planes": "marcie-tv_ordered.yuv.z",
+     "video": "marcie-tv_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv_ordered.mp4",
+     "decode": "ffmpeg -i marcie-tv_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.25,
+     "p99": 11.94,
+     "max": 49.16,
+     "white": null,
+     "levels": 216,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv_random": {
+   "label": "8-bit limited, dither=random",
+   "group": "8-bit 4:2:0 limited range: zscale dither (plays in every browser)",
+   "description": "As the dither=none encode, with zscale's random dither: random noise, which hides banding but adds grain. The encode (-crf 18) may smooth some of the dither away.",
+   "flags": "-pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv_random.png",
+     "err": null,
+     "planes": "greyscale-tv_random.yuv.z",
+     "video": "greyscale-tv_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv_random.mp4",
+     "decode": "ffmpeg -i greyscale-tv_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.361,
+     "p99": 1.04,
+     "max": 2.12,
+     "white": 0.0,
+     "levels": 220,
+     "cambi": 5.28
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv_random.png",
+     "err": null,
+     "planes": "greyramp16-tv_random.yuv.z",
+     "video": "greyramp16-tv_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv_random.mp4",
+     "decode": "ffmpeg -i greyramp16-tv_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.37,
+     "p99": 1.11,
+     "max": 2.05,
+     "white": -0.03,
+     "levels": 221,
+     "cambi": 6.56
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv_random.png",
+     "err": null,
+     "planes": "radialgrad-tv_random.yuv.z",
+     "video": "radialgrad-tv_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv_random.mp4",
+     "decode": "ffmpeg -i radialgrad-tv_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.622,
+     "p99": 2.19,
+     "max": 5.2,
+     "white": null,
+     "levels": 56,
+     "cambi": 3.43
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv_random.png",
+     "err": null,
+     "planes": "radialgrad16-tv_random.yuv.z",
+     "video": "radialgrad16-tv_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv_random.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.573,
+     "p99": 2.02,
+     "max": 4.08,
+     "white": null,
+     "levels": 58,
+     "cambi": 5.61
+    },
+    "marcie": {
+     "image": "marcie-tv_random.png",
+     "err": null,
+     "planes": "marcie-tv_random.yuv.z",
+     "video": "marcie-tv_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv_random.mp4",
+     "decode": "ffmpeg -i marcie-tv_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.252,
+     "p99": 11.94,
+     "max": 47.42,
+     "white": null,
+     "levels": 217,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv_error_diffusion": {
+   "label": "8-bit limited, dither=error_diffusion",
+   "group": "8-bit 4:2:0 limited range: zscale dither (plays in every browser)",
+   "description": "As the dither=none encode, with zscale's error_diffusion dither: error diffusion, which carries each pixel's rounding error to its neighbours. The encode (-crf 18) may smooth some of the dither away.",
+   "flags": "-pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv_error_diffusion.png",
+     "err": null,
+     "planes": "greyscale-tv_error_diffusion.yuv.z",
+     "video": "greyscale-tv_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv_error_diffusion.mp4",
+     "decode": "ffmpeg -i greyscale-tv_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.359,
+     "p99": 1.02,
+     "max": 2.14,
+     "white": 0.0,
+     "levels": 220,
+     "cambi": 7.9
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv_error_diffusion.png",
+     "err": null,
+     "planes": "greyramp16-tv_error_diffusion.yuv.z",
+     "video": "greyramp16-tv_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv_error_diffusion.mp4",
+     "decode": "ffmpeg -i greyramp16-tv_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.325,
+     "p99": 0.94,
+     "max": 1.98,
+     "white": -0.01,
+     "levels": 221,
+     "cambi": 11.41
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv_error_diffusion.png",
+     "err": null,
+     "planes": "radialgrad-tv_error_diffusion.yuv.z",
+     "video": "radialgrad-tv_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv_error_diffusion.mp4",
+     "decode": "ffmpeg -i radialgrad-tv_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.577,
+     "p99": 2.01,
+     "max": 4.34,
+     "white": null,
+     "levels": 57,
+     "cambi": 7.44
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv_error_diffusion.png",
+     "err": null,
+     "planes": "radialgrad16-tv_error_diffusion.yuv.z",
+     "video": "radialgrad16-tv_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv_error_diffusion.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.532,
+     "p99": 1.88,
+     "max": 4.19,
+     "white": null,
+     "levels": 58,
+     "cambi": 10.04
+    },
+    "marcie": {
+     "image": "marcie-tv_error_diffusion.png",
+     "err": null,
+     "planes": "marcie-tv_error_diffusion.yuv.z",
+     "video": "marcie-tv_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv_error_diffusion.mp4",
+     "decode": "ffmpeg -i marcie-tv_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.238,
+     "p99": 11.91,
+     "max": 49.74,
+     "white": null,
+     "levels": 217,
+     "cambi": 0.0
+    }
+   }
+  },
+  "full": {
+   "label": "Full range, tagged",
+   "group": "8-bit 4:2:0 full range (plays in every browser)",
+   "description": "Y\u2032 from 0 to 255, and the file says so (-color_range pc), so the decoder expands it correctly. Every 8-bit source level keeps its own code.",
+   "flags": "-pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "full",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-full.png",
+     "err": null,
+     "planes": "greyscale-full.yuv.z",
+     "video": "greyscale-full.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-full.mp4",
+     "decode": "ffmpeg -i greyscale-full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.0,
+     "p99": 0.0,
+     "max": 0.0,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 11.2
+    },
+    "greyramp16": {
+     "image": "greyramp16-full.png",
+     "err": null,
+     "planes": "greyramp16-full.yuv.z",
+     "video": "greyramp16-full.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-full.mp4",
+     "decode": "ffmpeg -i greyramp16-full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.272,
+     "p99": 0.72,
+     "max": 0.75,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 6.65
+    },
+    "radialgrad": {
+     "image": "radialgrad-full.png",
+     "err": null,
+     "planes": "radialgrad-full.yuv.z",
+     "video": "radialgrad-full.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-full.mp4",
+     "decode": "ffmpeg -i radialgrad-full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.466,
+     "p99": 1.62,
+     "max": 3.76,
+     "white": null,
+     "levels": 67,
+     "cambi": 19.99
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-full.png",
+     "err": null,
+     "planes": "radialgrad16-full.yuv.z",
+     "video": "radialgrad16-full.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-full.mp4",
+     "decode": "ffmpeg -i radialgrad16-full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.413,
+     "p99": 1.37,
+     "max": 3.53,
+     "white": null,
+     "levels": 66,
+     "cambi": 21.47
+    },
+    "marcie": {
+     "image": "marcie-full.png",
+     "err": null,
+     "planes": "marcie-full.yuv.z",
+     "video": "marcie-full.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-full.mp4",
+     "decode": "ffmpeg -i marcie-full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.167,
+     "p99": 11.78,
+     "max": 47.93,
+     "white": null,
+     "levels": 243,
+     "cambi": 0.0
+    }
+   }
+  },
+  "fullj": {
+   "label": "Full range, yuvj420p",
+   "group": "8-bit 4:2:0 full range (plays in every browser)",
+   "description": "The older way of asking for full range, with the JPEG pixel format. FFmpeg is deprecating yuvj420p; it gives the same file as yuv420p with -color_range pc.",
+   "flags": "-pix_fmt yuvj420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "full",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-fullj.png",
+     "err": null,
+     "planes": "greyscale-fullj.yuv.z",
+     "video": "greyscale-fullj.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuvj420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-fullj.mp4",
+     "decode": "ffmpeg -i greyscale-fullj.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.0,
+     "p99": 0.0,
+     "max": 0.0,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 11.2
+    },
+    "greyramp16": {
+     "image": "greyramp16-fullj.png",
+     "err": null,
+     "planes": "greyramp16-fullj.yuv.z",
+     "video": "greyramp16-fullj.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuvj420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-fullj.mp4",
+     "decode": "ffmpeg -i greyramp16-fullj.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.272,
+     "p99": 0.72,
+     "max": 0.75,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 6.65
+    },
+    "radialgrad": {
+     "image": "radialgrad-fullj.png",
+     "err": null,
+     "planes": "radialgrad-fullj.yuv.z",
+     "video": "radialgrad-fullj.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuvj420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-fullj.mp4",
+     "decode": "ffmpeg -i radialgrad-fullj.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.466,
+     "p99": 1.62,
+     "max": 3.76,
+     "white": null,
+     "levels": 67,
+     "cambi": 19.99
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-fullj.png",
+     "err": null,
+     "planes": "radialgrad16-fullj.yuv.z",
+     "video": "radialgrad16-fullj.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuvj420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-fullj.mp4",
+     "decode": "ffmpeg -i radialgrad16-fullj.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.413,
+     "p99": 1.37,
+     "max": 3.53,
+     "white": null,
+     "levels": 66,
+     "cambi": 21.47
+    },
+    "marcie": {
+     "image": "marcie-fullj.png",
+     "err": null,
+     "planes": "marcie-fullj.yuv.z",
+     "video": "marcie-fullj.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuvj420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-fullj.mp4",
+     "decode": "ffmpeg -i marcie-fullj.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.167,
+     "p99": 11.78,
+     "max": 47.93,
+     "white": null,
+     "levels": 243,
+     "cambi": 0.0
+    }
+   }
+  },
+  "fulluntagged": {
+   "label": "Full range, labelled limited (wrong)",
+   "group": "8-bit 4:2:0 full range (plays in every browser)",
+   "description": "Full-range pixels in a file that says limited range, so it is decoded as limited: blacks are crushed and whites clipped. Made here by relabelling zscale's full-range output as limited (setparams=range=tv). Older guides got this by accident with -color_range unknown: FFmpeg 6.1 then writes no full-range flag, while 9.0 keeps the frames' full-range tag.",
+   "flags": "-pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1,setparams=range=tv\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "full",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-fulluntagged.png",
+     "err": null,
+     "planes": "greyscale-fulluntagged.yuv.z",
+     "video": "greyscale-fulluntagged.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1,setparams=range=tv\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-fulluntagged.mp4",
+     "decode": "ffmpeg -i greyscale-fulluntagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 9.076,
+     "p99": 19.67,
+     "max": 20.0,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 11.2
+    },
+    "greyramp16": {
+     "image": "greyramp16-fulluntagged.png",
+     "err": null,
+     "planes": "greyramp16-fulluntagged.yuv.z",
+     "video": "greyramp16-fulluntagged.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1,setparams=range=tv\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-fulluntagged.mp4",
+     "decode": "ffmpeg -i greyramp16-fulluntagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 9.12,
+     "p99": 19.77,
+     "max": 20.69,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 6.65
+    },
+    "radialgrad": {
+     "image": "radialgrad-fulluntagged.png",
+     "err": null,
+     "planes": "radialgrad-fulluntagged.yuv.z",
+     "video": "radialgrad-fulluntagged.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1,setparams=range=tv\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-fulluntagged.mp4",
+     "decode": "ffmpeg -i radialgrad-fulluntagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 10.443,
+     "p99": 16.28,
+     "max": 18.79,
+     "white": null,
+     "levels": 67,
+     "cambi": 19.99
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-fulluntagged.png",
+     "err": null,
+     "planes": "radialgrad16-fulluntagged.yuv.z",
+     "video": "radialgrad16-fulluntagged.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1,setparams=range=tv\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-fulluntagged.mp4",
+     "decode": "ffmpeg -i radialgrad16-fulluntagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 10.437,
+     "p99": 16.09,
+     "max": 18.13,
+     "white": null,
+     "levels": 66,
+     "cambi": 21.47
+    },
+    "marcie": {
+     "image": "marcie-fulluntagged.png",
+     "err": null,
+     "planes": "marcie-fulluntagged.yuv.z",
+     "video": "marcie-fulluntagged.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1,setparams=range=tv\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-fulluntagged.mp4",
+     "decode": "ffmpeg -i marcie-fulluntagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 5.443,
+     "p99": 23.68,
+     "max": 63.19,
+     "white": null,
+     "levels": 243,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv10": {
+   "label": "10-bit limited, dither=none",
+   "group": "10-bit 4:2:0 limited range: zscale dither (H.264 High 10)",
+   "description": "10-bit 4:2:0 (H.264 High 10). Four times as many steps, so limited range costs nothing visible.",
+   "flags": "-pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv10.png",
+     "err": null,
+     "planes": "greyscale-tv10.yuv.z",
+     "video": "greyscale-tv10.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv10.mp4",
+     "decode": "ffmpeg -i greyscale-tv10.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.135,
+     "p99": 0.39,
+     "max": 0.42,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 8.96
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv10.png",
+     "err": null,
+     "planes": "greyramp16-tv10.yuv.z",
+     "video": "greyramp16-tv10.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv10.mp4",
+     "decode": "ffmpeg -i greyramp16-tv10.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.164,
+     "p99": 0.49,
+     "max": 0.64,
+     "white": -1.0,
+     "levels": 766,
+     "cambi": 0.31
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv10.png",
+     "err": null,
+     "planes": "radialgrad-tv10.yuv.z",
+     "video": "radialgrad-tv10.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv10.mp4",
+     "decode": "ffmpeg -i radialgrad-tv10.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.297,
+     "p99": 0.98,
+     "max": 1.95,
+     "white": null,
+     "levels": 221,
+     "cambi": 7.69
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv10.png",
+     "err": null,
+     "planes": "radialgrad16-tv10.yuv.z",
+     "video": "radialgrad16-tv10.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv10.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv10.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.188,
+     "p99": 0.69,
+     "max": 1.55,
+     "white": null,
+     "levels": 224,
+     "cambi": 6.04
+    },
+    "marcie": {
+     "image": "marcie-tv10.png",
+     "err": null,
+     "planes": "marcie-tv10.yuv.z",
+     "video": "marcie-tv10.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv10.mp4",
+     "decode": "ffmpeg -i marcie-tv10.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.199,
+     "p99": 11.84,
+     "max": 46.52,
+     "white": null,
+     "levels": 840,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv10_ordered": {
+   "label": "10-bit limited, dither=ordered",
+   "group": "10-bit 4:2:0 limited range: zscale dither (H.264 High 10)",
+   "description": "As the dither=none encode, with zscale's ordered dither: an ordered (Bayer) pattern, which spreads the rounding error in a fixed, fine grid. The encode (-crf 18) may smooth some of the dither away.",
+   "flags": "-pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv10_ordered.png",
+     "err": null,
+     "planes": "greyscale-tv10_ordered.yuv.z",
+     "video": "greyscale-tv10_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv10_ordered.mp4",
+     "decode": "ffmpeg -i greyscale-tv10_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.25,
+     "p99": 0.62,
+     "max": 0.66,
+     "white": -1.0,
+     "levels": 807,
+     "cambi": 0.21
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv10_ordered.png",
+     "err": null,
+     "planes": "greyramp16-tv10_ordered.yuv.z",
+     "video": "greyramp16-tv10_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv10_ordered.mp4",
+     "decode": "ffmpeg -i greyramp16-tv10_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.11,
+     "p99": 0.31,
+     "max": 0.42,
+     "white": 1.0,
+     "levels": 878,
+     "cambi": 0.0
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv10_ordered.png",
+     "err": null,
+     "planes": "radialgrad-tv10_ordered.yuv.z",
+     "video": "radialgrad-tv10_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv10_ordered.mp4",
+     "decode": "ffmpeg -i radialgrad-tv10_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.294,
+     "p99": 0.96,
+     "max": 1.77,
+     "white": null,
+     "levels": 222,
+     "cambi": 6.44
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv10_ordered.png",
+     "err": null,
+     "planes": "radialgrad16-tv10_ordered.yuv.z",
+     "video": "radialgrad16-tv10_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv10_ordered.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv10_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.186,
+     "p99": 0.67,
+     "max": 1.59,
+     "white": null,
+     "levels": 224,
+     "cambi": 5.93
+    },
+    "marcie": {
+     "image": "marcie-tv10_ordered.png",
+     "err": null,
+     "planes": "marcie-tv10_ordered.yuv.z",
+     "video": "marcie-tv10_ordered.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=ordered,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv10_ordered.mp4",
+     "decode": "ffmpeg -i marcie-tv10_ordered.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.197,
+     "p99": 11.88,
+     "max": 50.89,
+     "white": null,
+     "levels": 842,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv10_random": {
+   "label": "10-bit limited, dither=random",
+   "group": "10-bit 4:2:0 limited range: zscale dither (H.264 High 10)",
+   "description": "As the dither=none encode, with zscale's random dither: random noise, which hides banding but adds grain. The encode (-crf 18) may smooth some of the dither away.",
+   "flags": "-pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv10_random.png",
+     "err": null,
+     "planes": "greyscale-tv10_random.yuv.z",
+     "video": "greyscale-tv10_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv10_random.mp4",
+     "decode": "ffmpeg -i greyscale-tv10_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.252,
+     "p99": 0.61,
+     "max": 0.63,
+     "white": -0.25,
+     "levels": 869,
+     "cambi": 0.11
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv10_random.png",
+     "err": null,
+     "planes": "greyramp16-tv10_random.yuv.z",
+     "video": "greyramp16-tv10_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv10_random.mp4",
+     "decode": "ffmpeg -i greyramp16-tv10_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.099,
+     "p99": 0.29,
+     "max": 0.32,
+     "white": 0.0,
+     "levels": 877,
+     "cambi": 0.01
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv10_random.png",
+     "err": null,
+     "planes": "radialgrad-tv10_random.yuv.z",
+     "video": "radialgrad-tv10_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv10_random.mp4",
+     "decode": "ffmpeg -i radialgrad-tv10_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.294,
+     "p99": 0.97,
+     "max": 1.73,
+     "white": null,
+     "levels": 222,
+     "cambi": 6.39
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv10_random.png",
+     "err": null,
+     "planes": "radialgrad16-tv10_random.yuv.z",
+     "video": "radialgrad16-tv10_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv10_random.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv10_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.19,
+     "p99": 0.69,
+     "max": 1.52,
+     "white": null,
+     "levels": 225,
+     "cambi": 5.88
+    },
+    "marcie": {
+     "image": "marcie-tv10_random.png",
+     "err": null,
+     "planes": "marcie-tv10_random.yuv.z",
+     "video": "marcie-tv10_random.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=random,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv10_random.mp4",
+     "decode": "ffmpeg -i marcie-tv10_random.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.197,
+     "p99": 11.85,
+     "max": 46.57,
+     "white": null,
+     "levels": 839,
+     "cambi": 0.0
+    }
+   }
+  },
+  "tv10_error_diffusion": {
+   "label": "10-bit limited, dither=error_diffusion",
+   "group": "10-bit 4:2:0 limited range: zscale dither (H.264 High 10)",
+   "description": "As the dither=none encode, with zscale's error_diffusion dither: error diffusion, which carries each pixel's rounding error to its neighbours. The encode (-crf 18) may smooth some of the dither away.",
+   "flags": "-pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "420",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-tv10_error_diffusion.png",
+     "err": null,
+     "planes": "greyscale-tv10_error_diffusion.yuv.z",
+     "video": "greyscale-tv10_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-tv10_error_diffusion.mp4",
+     "decode": "ffmpeg -i greyscale-tv10_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.171,
+     "p99": 0.46,
+     "max": 0.6,
+     "white": -0.22,
+     "levels": 760,
+     "cambi": 1.33
+    },
+    "greyramp16": {
+     "image": "greyramp16-tv10_error_diffusion.png",
+     "err": null,
+     "planes": "greyramp16-tv10_error_diffusion.yuv.z",
+     "video": "greyramp16-tv10_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-tv10_error_diffusion.mp4",
+     "decode": "ffmpeg -i greyramp16-tv10_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.096,
+     "p99": 0.27,
+     "max": 0.33,
+     "white": 0.0,
+     "levels": 877,
+     "cambi": 0.01
+    },
+    "radialgrad": {
+     "image": "radialgrad-tv10_error_diffusion.png",
+     "err": null,
+     "planes": "radialgrad-tv10_error_diffusion.yuv.z",
+     "video": "radialgrad-tv10_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-tv10_error_diffusion.mp4",
+     "decode": "ffmpeg -i radialgrad-tv10_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.292,
+     "p99": 0.96,
+     "max": 1.84,
+     "white": null,
+     "levels": 222,
+     "cambi": 6.61
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-tv10_error_diffusion.png",
+     "err": null,
+     "planes": "radialgrad16-tv10_error_diffusion.yuv.z",
+     "video": "radialgrad16-tv10_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-tv10_error_diffusion.mp4",
+     "decode": "ffmpeg -i radialgrad16-tv10_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.188,
+     "p99": 0.69,
+     "max": 1.47,
+     "white": null,
+     "levels": 225,
+     "cambi": 5.88
+    },
+    "marcie": {
+     "image": "marcie-tv10_error_diffusion.png",
+     "err": null,
+     "planes": "marcie-tv10_error_diffusion.yuv.z",
+     "video": "marcie-tv10_error_diffusion.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv420p10le -vf \"zscale=matrix=709:range=limited:filter=lanczos:dither=error_diffusion,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-tv10_error_diffusion.mp4",
+     "decode": "ffmpeg -i marcie-tv10_error_diffusion.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 2.198,
+     "p99": 11.85,
+     "max": 47.97,
+     "white": null,
+     "levels": 839,
+     "cambi": 0.0
+    }
+   }
+  },
+  "full444": {
+   "label": "8-bit 4:4:4, full range",
+   "group": "Others (check which browsers play them)",
+   "description": "No chroma subsampling (H.264 High 4:4:4 Predictive). Not every browser plays it.",
+   "flags": "-pix_fmt yuv444p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "full",
+    "bits": 8,
+    "rgb": false
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-full444.png",
+     "err": null,
+     "planes": "greyscale-full444.yuv.z",
+     "video": "greyscale-full444.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt yuv444p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyscale-full444.mp4",
+     "decode": "ffmpeg -i greyscale-full444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.0,
+     "p99": 0.0,
+     "max": 0.0,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 11.2
+    },
+    "greyramp16": {
+     "image": "greyramp16-full444.png",
+     "err": null,
+     "planes": "greyramp16-full444.yuv.z",
+     "video": "greyramp16-full444.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt yuv444p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/greyramp16-full444.mp4",
+     "decode": "ffmpeg -i greyramp16-full444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.272,
+     "p99": 0.72,
+     "max": 0.75,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 6.65
+    },
+    "radialgrad": {
+     "image": "radialgrad-full444.png",
+     "err": null,
+     "planes": "radialgrad-full444.yuv.z",
+     "video": "radialgrad-full444.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt yuv444p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad-full444.mp4",
+     "decode": "ffmpeg -i radialgrad-full444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.495,
+     "p99": 1.9,
+     "max": 4.13,
+     "white": null,
+     "levels": 67,
+     "cambi": 20.13
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-full444.png",
+     "err": null,
+     "planes": "radialgrad16-full444.yuv.z",
+     "video": "radialgrad16-full444.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt yuv444p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-full444.mp4",
+     "decode": "ffmpeg -i radialgrad16-full444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 0.435,
+     "p99": 1.44,
+     "max": 3.96,
+     "white": null,
+     "levels": 66,
+     "cambi": 21.46
+    },
+    "marcie": {
+     "image": "marcie-full444.png",
+     "err": null,
+     "planes": "marcie-full444.yuv.z",
+     "video": "marcie-full444.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt yuv444p -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset slow -crf 18 ./greyramp-fulltv/marcie-full444.mp4",
+     "decode": "ffmpeg -i marcie-full444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
+     "mean": 1.962,
+     "p99": 8.48,
+     "max": 31.54,
+     "white": null,
+     "levels": 244,
+     "cambi": 0.0
+    }
+   }
+  },
+  "rgb": {
+   "label": "RGB (libx264rgb)",
+   "group": "Others (check which browsers play them)",
+   "description": "H.264 storing RGB directly, with no conversion and no range question. Browsers do not play it.",
+   "flags": "-c:v libx264rgb",
+   "layout": {
+    "chroma": "444",
+    "range": "full",
+    "bits": 8,
+    "rgb": true
+   },
+   "results": {
+    "greyscale": {
+     "image": "greyscale-rgb.png",
+     "err": null,
+     "planes": "greyscale-rgb.yuv.z",
+     "video": "greyscale-rgb.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/greyscale-raw.png -frames:v 24 -pix_fmt rgb24 -vf setparams=color_primaries=bt709:color_trc=iec61966-2-1 -c:v libx264rgb -preset slow -crf 18 ./greyramp-fulltv/greyscale-rgb.mp4",
+     "decode": "ffmpeg -i greyscale-rgb.mp4 -frames:v 1 -vf \"format=gbrp16le\" decoded.png",
+     "mean": 0.495,
+     "p99": 0.98,
+     "max": 0.98,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 10.91
+    },
+    "greyramp16": {
+     "image": "greyramp16-rgb.png",
+     "err": null,
+     "planes": "greyramp16-rgb.yuv.z",
+     "video": "greyramp16-rgb.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/greyramp-16bit.png -frames:v 24 -pix_fmt rgb24 -vf setparams=color_primaries=bt709:color_trc=iec61966-2-1 -c:v libx264rgb -preset slow -crf 18 ./greyramp-fulltv/greyramp16-rgb.mp4",
+     "decode": "ffmpeg -i greyramp16-rgb.mp4 -frames:v 1 -vf \"format=gbrp16le\" decoded.png",
+     "mean": 0.317,
+     "p99": 0.93,
+     "max": 1.0,
+     "white": 0.0,
+     "levels": 256,
+     "cambi": 7.53
+    },
+    "radialgrad": {
+     "image": "radialgrad-rgb.png",
+     "err": null,
+     "planes": "radialgrad-rgb.yuv.z",
+     "video": "radialgrad-rgb.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad.png -frames:v 24 -pix_fmt rgb24 -vf setparams=color_primaries=bt709:color_trc=iec61966-2-1 -c:v libx264rgb -preset slow -crf 18 ./greyramp-fulltv/radialgrad-rgb.mp4",
+     "decode": "ffmpeg -i radialgrad-rgb.mp4 -frames:v 1 -vf \"format=gbrp16le\" decoded.png",
+     "mean": 0.228,
+     "p99": 1.29,
+     "max": 1.88,
+     "white": null,
+     "levels": 69,
+     "cambi": 15.06
+    },
+    "radialgrad16": {
+     "image": "radialgrad16-rgb.png",
+     "err": null,
+     "planes": "radialgrad16-rgb.yuv.z",
+     "video": "radialgrad16-rgb.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ../sourceimages/radialgrad-16bit.png -frames:v 24 -pix_fmt rgb24 -vf setparams=color_primaries=bt709:color_trc=iec61966-2-1 -c:v libx264rgb -preset slow -crf 18 ./greyramp-fulltv/radialgrad16-rgb.mp4",
+     "decode": "ffmpeg -i radialgrad16-rgb.mp4 -frames:v 1 -vf \"format=gbrp16le\" decoded.png",
+     "mean": 0.266,
+     "p99": 0.72,
+     "max": 2.04,
+     "white": null,
+     "levels": 70,
+     "cambi": 15.22
+    },
+    "marcie": {
+     "image": "marcie-rgb.png",
+     "err": null,
+     "planes": "marcie-rgb.yuv.z",
+     "video": "marcie-rgb.mp4",
+     "encode": "ffmpeg -y -loop 1 -framerate 24 -i ./greyramp-fulltv/marcie-crop.png -frames:v 24 -pix_fmt rgb24 -vf setparams=color_primaries=bt709:color_trc=iec61966-2-1 -c:v libx264rgb -preset slow -crf 18 ./greyramp-fulltv/marcie-rgb.mp4",
+     "decode": "ffmpeg -i marcie-rgb.mp4 -frames:v 1 -vf \"format=gbrp16le\" decoded.png",
+     "mean": 0.974,
+     "p99": 3.44,
+     "max": 33.85,
+     "white": null,
+     "levels": 252,
+     "cambi": 0.0
+    }
+   }
+  }
+ },
+ "videos": true,
+ "rowLabel": "Encode",
+ "defaults": {
+  "a": "tv",
+  "b": "full"
+ },
+ "presets": [
+  {
+   "label": "Your browser: limited vs full",
+   "src": "radialgrad",
+   "a": "tv",
+   "b": "full",
+   "show": "browser",
+   "title": "Both should look the same as the source; if full range looks washed out or crushed, this browser ignores the range tag"
+  },
+  {
+   "label": "Your browser: full range labelled limited",
+   "src": "radialgrad",
+   "a": "full",
+   "b": "fulluntagged",
+   "show": "browser",
+   "mode": "toggle"
+  },
+  {
+   "label": "Grey ramp steps, difference",
+   "src": "greyscale",
+   "a": "source",
+   "b": "tv",
+   "mode": "diff",
+   "title": "Where limited range merges neighbouring grey levels"
+  },
+  {
+   "label": "8-bit dither: none vs random, 16-bit gradient",
+   "src": "radialgrad16",
+   "a": "tv",
+   "b": "tv_random",
+   "mode": "toggle",
+   "zoom": 2,
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "title": "Without dither the gradient bands (CAMBI 22.4); random dither swaps the bands for fine grain (5.6)"
+  },
+  {
+   "label": "8-bit dither: ordered vs random",
+   "src": "radialgrad16",
+   "a": "tv_ordered",
+   "b": "tv_random",
+   "mode": "toggle",
+   "zoom": 4,
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "title": "Ordered dither leaves a regular pattern; random reads as grain"
+  },
+  {
+   "label": "yuvj420p vs yuv420p full",
+   "src": "radialgrad",
+   "a": "full",
+   "b": "fullj",
+   "mode": "diff",
+   "title": "Identical: black everywhere"
+  }
+ ],
+ "footer": "<p>Made with FFmpeg 9.0.2. Every file is encoded with <code>libx264 -preset slow -crf 18</code>, 24 frames of the still image, so the measured errors include some compression. <i>Measured</i> decodes the first frame with <code>zscale</code> as BT.709, at the range the file is tagged with (limited if it is not tagged, as players assume). <i>Your browser</i> plays the .mp4 files themselves; the source is the PNG. We have seen full range work in Chrome, Safari and Firefox, and in RV.</p><p>zscale's dither (none by default) matters at 8-bit. By CAMBI, ordered and random cut the banding on every gradient by half or more; random did best on the radial gradients, ordered on the plain ramps, and error diffusion helped least. Dither slightly raises the per-pixel error, and it survives -crf 18. From a 16-bit source, 10-bit needs no dither. CAMBI reads the stored values, so it does not see a range mislabel. All results were the same on FFmpeg 6.1.6 and 9.0.2.</p><p>See <a href='../../Quickstart.html#tv-vs-full-range-' target='_top'>TV vs. Full range</a> and <a href='../../ColorPreservation.html' target='_top'>RGB to YCbCr Conversion</a>. Generated by <a href='../icctest-fulltv.py' target='_top'>tests/icctest-fulltv.py</a>.</p>",
+ "errSteps": 4,
+ "sources": [
+  {
+   "id": "greyscale",
+   "label": "Grey ramp (8-bit)",
+   "description": "256 grey steps, 8-bit RGB PNG: shows which levels survive",
+   "image": "greyscale-source.png",
+   "width": 1024,
+   "height": 150,
+   "planes": "greyscale-source-ideal.yuv.z",
+   "idealBits": 8,
+   "idealLabel": "BT.709, limited, 8-bit",
+   "cambi": 10.91
+  },
+  {
+   "id": "greyramp16",
+   "label": "Grey ramp (16-bit)",
+   "description": "a continuous 16-bit ramp, no steps of its own (sourceimages/make_gradients_16bit.py)",
+   "image": "greyramp16-source.png",
+   "width": 1024,
+   "height": 150,
+   "planes": "greyramp16-source-ideal.yuv.z",
+   "idealBits": 8,
+   "idealLabel": "BT.709, limited, 8-bit",
+   "cambi": 0.0
+  },
+  {
+   "id": "radialgrad",
+   "label": "Radial gradient (8-bit)",
+   "description": "8-bit RGB PNG, as in the ColorPreservation example",
+   "image": "radialgrad-source.png",
+   "width": 920,
+   "height": 250,
+   "planes": "radialgrad-source-ideal.yuv.z",
+   "idealBits": 8,
+   "idealLabel": "BT.709, limited, 8-bit",
+   "cambi": 15.23
+  },
+  {
+   "id": "radialgrad16",
+   "label": "Radial gradient (16-bit)",
+   "description": "the same gradient made at 16-bit (sourceimages/make_gradients_16bit.py)",
+   "image": "radialgrad16-source.png",
+   "width": 920,
+   "height": 250,
+   "planes": "radialgrad16-source-ideal.yuv.z",
+   "idealBits": 8,
+   "idealLabel": "BT.709, limited, 8-bit",
+   "cambi": 5.51
+  },
+  {
+   "id": "marcie",
+   "label": "Marcie",
+   "description": "640\u00d7360 of the 16-bit Kodak Digital LAD scan (sourceimages/Digital_LAD_raw.png), as stored",
+   "image": "marcie-source.png",
+   "width": 640,
+   "height": 360,
+   "planes": "marcie-source-ideal.yuv.z",
+   "idealBits": 8,
+   "idealLabel": "BT.709, limited, 8-bit",
+   "cambi": 0.0
+  }
+ ]
+};
+
+const $ = (id) => document.getElementById(id);
+const state = { src: DATA.sources[0].id, a: DATA.defaults.a, b: DATA.defaults.b, mode: "wipe", zoom: 0,
+                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null, show: "measured" };
+let flickerTimer = null;
+
+const item = (id) => DATA.items[id];
+const srcInfo = () => DATA.sources.find((s) => s.id === state.src);
+const imageFor = (id) => (id === "source" ? srcInfo().image : item(id).results[state.src].image);
+const fmtStat = (v, st) => {
+  if (v === null || v === undefined) return "–";
+  const s = v.toFixed(st.digits ?? 1);
+  return st.signed && v > 0 ? "+" + s : s;
+};
+const warnStat = (v, st) => st.warn !== undefined && v !== null && v !== undefined && Math.abs(v) >= st.warn;
+const browserView = () => DATA.videos && state.show === "browser";
+
+function readHash() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  if (h.get("src") && DATA.sources.some((s) => s.id === h.get("src"))) state.src = h.get("src");
+  for (const k of ["a", "b"]) if (h.get(k) && (h.get(k) === "source" || DATA.items[h.get(k)])) state[k] = h.get(k);
+  if (["wipe", "toggle", "diff"].includes(h.get("mode"))) state.mode = h.get("mode");
+  if (h.get("zoom") && [0, 1, 2, 4, 8].includes(+h.get("zoom"))) state.zoom = +h.get("zoom");
+  if (DATA.videos && h.get("show") === "browser") state.show = "browser";
+}
+function writeHash() {
+  const h = new URLSearchParams({ src: state.src, a: state.a, b: state.b, mode: state.mode, zoom: state.zoom });
+  if (DATA.videos) h.set("show", state.show);
+  try { history.replaceState(null, "", "#" + h.toString()); } catch (e) { /* sandboxed */ }
+}
+
+/* ---------- Controls ---------- */
+function buildControls() {
+  const seg = $("srcSeg");
+  for (const s of DATA.sources) {
+    const b = document.createElement("button");
+    b.textContent = s.label; b.dataset.src = s.id;
+    b.onclick = () => { state.src = s.id; render(); };
+    seg.appendChild(b);
+  }
+  for (const sel of [$("selA"), $("selB")]) {
+    const o = document.createElement("option"); o.value = "source"; o.textContent = DATA.sourceOption || "Source (original RGB)";
+    sel.appendChild(o);
+    for (const g of DATA.groups) {
+      const og = document.createElement("optgroup"); og.label = g.label;
+      for (const id of g.items) {
+        const op = document.createElement("option"); op.value = id; op.textContent = item(id).label; og.appendChild(op);
+      }
+      sel.appendChild(og);
+    }
+  }
+  $("selA").onchange = (e) => { state.a = e.target.value; render(); };
+  $("selB").onchange = (e) => { state.b = e.target.value; render(); };
+  $("swap").onclick = swap;
+  $("probeBtn").onclick = () => setProbe(!state.probe);
+  $("probeBtn").setAttribute("aria-pressed", "false");
+  $("modeSeg").onclick = (e) => { const m = e.target.dataset.mode; if (m) setMode(m); };
+  $("zoomSeg").onclick = (e) => { const z = e.target.dataset.zoom; if (z !== undefined) setZoom(+z); };
+  $("gainSeg").onclick = (e) => { const g = e.target.dataset.gain; if (g) { state.gain = +g; render(); } };
+  $("flicker").onchange = (e) => { state.flicker = e.target.checked; setFlicker(); };
+  if (DATA.videos) {
+    $("showGrp").classList.remove("hidden");
+    $("showSeg").onclick = (e) => { const s = e.target.dataset.show; if (s) setShow(s); };
+  }
+
+  const pr = $("presets");
+  for (const p of DATA.presets) {
+    const b = document.createElement("button"); b.className = "btn"; b.textContent = p.label; b.title = p.title || "";
+    b.onclick = () => applyPreset(p);
+    pr.appendChild(b);
+  }
+}
+
+function setShow(s) {
+  state.show = s;
+  if (browserView()) { if (state.mode === "diff") state.mode = "wipe"; if (state.probe) setProbe(false); }
+  render();
+}
+
+function applyPreset(p) {
+  Object.assign(state, { src: p.src, a: p.a, b: p.b, mode: p.mode || "wipe", pos: 0.5, shown: "a" });
+  if (DATA.videos) state.show = p.show || "measured";
+  state.flicker = false; $("flicker").checked = false; setFlicker();
+  render();
+  setZoom(p.zoom || 0, p.focus);
+}
+
+function swap() { [state.a, state.b] = [state.b, state.a]; render(); }
+
+function setMode(m) {
+  state.mode = m;
+  if (m !== "toggle") { state.flicker = false; $("flicker").checked = false; setFlicker(); }
+  render();
+}
+
+function setFlicker() {
+  clearInterval(flickerTimer); flickerTimer = null;
+  if (state.flicker) {
+    if (state.mode !== "toggle") { state.mode = "toggle"; render(); }
+    flickerTimer = setInterval(() => { state.shown = state.shown === "a" ? "b" : "a"; renderView(); }, 600);
+  }
+}
+
+/* ---------- Zoom ---------- */
+function naturalSize() { const s = srcInfo(); return { w: s.width, h: s.height }; }
+
+function layout() {
+  const { w, h } = naturalSize();
+  const stage = $("stage"), canvas = $("canvas");
+  if (state.zoom === 0) {
+    stage.classList.remove("zoomed");
+    const avail = stage.clientWidth;
+    const maxH = Math.max(240, window.innerHeight * 0.72);
+    let cw = avail, ch = avail * h / w;
+    if (ch > maxH) { ch = maxH; cw = ch * w / h; }
+    canvas.style.width = cw + "px"; canvas.style.height = ch + "px";
+    canvas.classList.remove("px");
+  } else {
+    stage.classList.add("zoomed");
+    const s = state.zoom / (window.devicePixelRatio || 1);
+    canvas.style.width = (w * s) + "px"; canvas.style.height = (h * s) + "px";
+    canvas.classList.toggle("px", state.zoom > 1);
+  }
+}
+
+function setZoom(z, focus) {
+  const stage = $("stage");
+  const prevW = $("canvas").offsetWidth, prevH = $("canvas").offsetHeight;
+  let fx = 0.5, fy = 0.5;
+  if (focus) { [fx, fy] = focus; }
+  else if (prevW && state.zoom !== 0) {
+    fx = (stage.scrollLeft + stage.clientWidth / 2) / prevW;
+    fy = (stage.scrollTop + stage.clientHeight / 2) / prevH;
+  }
+  state.zoom = z;
+  layout();
+  const c = $("canvas");
+  stage.scrollLeft = fx * c.offsetWidth - stage.clientWidth / 2;
+  stage.scrollTop = fy * c.offsetHeight - stage.clientHeight / 2;
+  renderControls(); writeHash();
+}
+
+/* ---------- Wipe and toggle ---------- */
+function pointerPos(e) {
+  const r = $("canvas").getBoundingClientRect();
+  return Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+}
+function bindCanvas() {
+  const c = $("canvas");
+  let dragging = false, downX = 0;
+  c.addEventListener("dragstart", (e) => e.preventDefault());
+  c.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    downX = e.clientX;
+    if (state.probe) return;
+    if (state.mode === "wipe") { dragging = true; c.setPointerCapture(e.pointerId); state.pos = pointerPos(e); renderView(); }
+  });
+  c.addEventListener("pointermove", (e) => {
+    if (dragging) { state.pos = pointerPos(e); renderView(); }
+    if (state.probe && !state.pin) probeAt(e);
+  });
+  c.addEventListener("pointerleave", () => { if (state.probe && !state.pin) $("probe").classList.add("hidden"); });
+  c.addEventListener("pointercancel", () => { dragging = false; });
+  c.addEventListener("pointerup", (e) => {
+    dragging = false;
+    if (state.probe) {
+      if (Math.abs(e.clientX - downX) < 4) { state.pin = state.pin ? null : pixelAt(e); probeAt(e); }
+      return;
+    }
+    if (state.mode === "toggle" && Math.abs(e.clientX - downX) < 4) flip();
+  });
+}
+function flip() { state.shown = state.shown === "a" ? "b" : "a"; renderView(); }
+
+/* ---------- Pixel probe ----------
+   Each result has its Y'CbCr planes as stored in the file (10-bit, zlib-compressed: Y', then Cb, then Cr), and each
+   source has the ideal BT.709 limited-range Y'CbCr, so the probe shows what is in the file, not what the RGB decode
+   makes of it (which clips anything above 100%). */
+const planeCache = {};
+function loadPlanes(file) {
+  if (!planeCache[file]) {
+    planeCache[file] = fetch(file).then((r) => {
+      if (!r.ok) throw new Error(r.status);
+      return new Response(r.body.pipeThrough(new DecompressionStream("deflate"))).arrayBuffer();
+    }).then((b) => new Uint16Array(b));
+  }
+  return planeCache[file];
+}
+function planeInfo(id) {
+  const s = srcInfo();
+  if (id === "source") return { file: s.planes, chroma: "444", range: "limited", bits: s.idealBits || 10, rgb: false,
+                                label: s.idealLabel || "BT.709, limited" };
+  const it = item(id);
+  return { file: it.results[state.src].planes, ...it.layout, label: it.label };
+}
+function pixelAt(e) {
+  const r = $("canvas").getBoundingClientRect(), { w, h } = naturalSize();
+  return { x: Math.min(w - 1, Math.max(0, Math.floor((e.clientX - r.left) / r.width * w))),
+           y: Math.min(h - 1, Math.max(0, Math.floor((e.clientY - r.top) / r.height * h))) };
+}
+function sample(planes, info, x, y) {
+  const { w, h } = naturalSize();
+  const sx = info.chroma === "444" ? 1 : 2, sy = info.chroma === "420" ? 2 : 1;
+  const cw = w / sx, ch = h / sy, cx = Math.floor(x / sx), cy = Math.floor(y / sy);
+  return { y: planes[y * w + x], cb: planes[w * h + cy * cw + cx], cr: planes[w * h + cw * ch + cy * cw + cx] };
+}
+let probeToken = 0, lastProbeEvent = null;
+async function probeAt(e) {
+  if (e) lastProbeEvent = { clientX: e.clientX, clientY: e.clientY };
+  const ev = lastProbeEvent; if (!ev) return;
+  const token = ++probeToken, panel = $("probe");
+  const px = state.pin || pixelAt(ev);
+  const sides = [["a", state.a], ["b", state.b]].filter(([, id]) => id !== "source" || srcInfo().planes);
+  if (state.a !== "source" && state.b !== "source" && srcInfo().planes) sides.push(["ideal", "source"]);
+  if (!sides.length) { panel.classList.add("hidden"); return; }
+  try {
+    const infos = sides.map(([, id]) => planeInfo(id));
+    const data = await Promise.all(infos.map((i) => loadPlanes(i.file)));
+    if (token !== probeToken) return;
+    const vals = data.map((d, k) => sample(d, infos[k], px.x, px.y));
+    let rows = "";
+    sides.forEach(([side, id], k) => {
+      const v = vals[k], info = infos[k];
+      const badge = side === "ideal" ? `<span class="note">ideal</span>` : `<span class="side ${side}">${side.toUpperCase()}</span>`;
+      const ch = info.rgb ? ["R ", "G ", "B "] : ["", "", ""];
+      const desc = `${info.rgb ? "RGB" : (info.range === "full" ? "full range" : "limited")}, ${info.bits}-bit`;
+      rows += `<tr><td class="l">${badge}</td><td>${ch[0]}${v.y}</td><td>${ch[1]}${v.cb}</td><td>${ch[2]}${v.cr}</td><td class="l note">${esc(info.label)}${side === "ideal" ? "" : " · " + desc}</td></tr>`;
+    });
+    if (sides.length >= 2 && infos[0].rgb === infos[1].rgb && infos[0].bits === infos[1].bits) {
+      const d = (k) => vals[1][k] - vals[0][k], sg = (n) => (n > 0 ? "+" : "") + n;
+      rows += `<tr><td class="l note">B − A</td><td>${sg(d("y"))}</td><td>${sg(d("cb"))}</td><td>${sg(d("cr"))}</td><td></td></tr>`;
+    }
+    const notes = [];
+    if (infos.some((i) => i.chroma === "422")) notes.push(`4:2:2: Cb and Cr are chroma sample ${px.x >> 1} of the row, ${px.x % 2 ? "shared with the column to the left" : "co-sited with this column"}.`);
+    if (infos.some((i) => i.chroma === "420")) notes.push(`4:2:0: Cb and Cr are shared by the 2×2 block at x ${px.x & ~1}, y ${px.y & ~1}.`);
+    const lim = [...new Set(infos.filter((i) => !i.rgb).map((i) => i.bits))].map((b) => b === 8 ? "8-bit limited: black 16, white 235; full: 0 to 255" : `${b}-bit limited: black 64, white 940; full: 0 to 1023`);
+    if (infos.some((i) => i.range === "full") || infos.some((i) => i.rgb)) notes.push(...lim);
+    panel.innerHTML = `<div class="t">${state.pin ? '<span class="pin">● pinned</span> ' : ""}x ${px.x}, y ${px.y} · ${esc(srcInfo().label)} · code values as stored</div>
+      <table><tr><th></th><th>Y′</th><th>Cb</th><th>Cr</th><th></th></tr>${rows}</table>
+      ${notes.map((n) => `<div class="n">${n}</div>`).join("")}
+      <div class="n">${state.pin ? "Click the image to unpin." : "Click to pin this pixel."}</div>`;
+  } catch (err) {
+    panel.innerHTML = `<div class="n">The probe reads the stored Y′CbCr files, which needs the page to be served over http(s), not opened as a file.</div>`;
+    if (token !== probeToken) return;
+  }
+  panel.classList.remove("hidden");
+  positionProbe(ev, px);
+}
+function positionProbe(ev, px) {
+  const panel = $("probe"), m = $("marker"), c = $("canvas"), { w, h } = naturalSize();
+  let x = ev.clientX + 18, y = ev.clientY + 18;
+  if (state.pin) {
+    const r = c.getBoundingClientRect();
+    x = r.left + (px.x + 1) / w * r.width + 18; y = r.top + (px.y + 1) / h * r.height + 18;
+  }
+  const pw = panel.offsetWidth, ph = panel.offsetHeight;
+  if (x + pw > innerWidth - 8) x = Math.max(8, x - pw - 36);
+  if (y + ph > innerHeight - 8) y = Math.max(8, y - ph - 36);
+  panel.style.left = x + "px"; panel.style.top = y + "px";
+  const sz = Math.max(6, c.offsetWidth / w);
+  m.style.width = m.style.height = sz + "px";
+  m.style.left = (px.x / w * c.offsetWidth + (c.offsetWidth / w - sz) / 2) + "px";
+  m.style.top = (px.y / h * c.offsetHeight + (c.offsetHeight / h - sz) / 2) + "px";
+  m.classList.toggle("hidden", !state.pin);
+}
+function setProbe(on) {
+  state.probe = on; state.pin = null;
+  $("probeBtn").setAttribute("aria-pressed", on);
+  $("canvas").classList.toggle("probing", on);
+  if (!on) { $("probe").classList.add("hidden"); $("marker").classList.add("hidden"); }
+}
+window.addEventListener("scroll", () => { if (state.pin) probeAt(); }, { passive: true });
+
+/* ---------- Difference ---------- */
+const imgCache = {};
+function loadImage(src) {
+  if (!imgCache[src]) {
+    imgCache[src] = new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  }
+  return imgCache[src];
+}
+let diffToken = 0;
+/* Each result has an error map against the source, made from the 16-bit decode: 128 is no error, each step is
+   1/errSteps of a 10-bit code. A − B = errA − errB, so the difference is accurate to that step, not to the 8-bit
+   display images. The source itself has no error map (zero error). */
+const errFor = (id) => (id === "source" ? null : item(id).results[state.src].err);
+// Without error maps (pages measured in 8-bit codes), Difference uses the 8-bit display images throughout.
+const hasMaps = () => [state.a, state.b].every((id) => id === "source" || errFor(id));
+function setBlend(on) {
+  $("imgB").style.mixBlendMode = on ? "difference" : "";
+  $("canvas").style.filter = on ? `brightness(${state.gain})` : "";
+}
+function gainHint() {
+  const U = DATA.unitMax, g = state.gain, one = Math.min(100, g * 100 / U), white = Math.ceil(U / g);
+  return `|A − B| × ${g}: a difference of one ${DATA.unitName} shows as ${one < 10 ? one.toFixed(1) : one.toFixed(0)}% grey` +
+    (white > 1 ? `, ${white} codes or more as white.` : ", and any difference as white.");
+}
+async function renderDiff() {
+  const token = ++diffToken;
+  const cv = $("diff"), steps = DATA.errSteps;
+  const toOut = state.gain * 255 / DATA.unitMax;   // code values to display level
+  try {
+    const maps = hasMaps();
+    const files = [maps && errFor(state.a), maps && errFor(state.b), imageFor(state.a), imageFor(state.b)];
+    const imgs = await Promise.all(files.map((f) => (f ? loadImage(f) : null)));
+    if (token !== diffToken) return;
+    const { w, h } = naturalSize();
+    cv.width = w; cv.height = h;
+    const ctx = cv.getContext("2d", { willReadFrequently: true });
+    const read = (img) => { if (!img) return null; ctx.drawImage(img, 0, 0); return ctx.getImageData(0, 0, w, h).data; };
+    const [ea, eb, pa, pb] = imgs.map(read);
+    const out = ctx.createImageData(w, h), o = out.data;
+    for (let i = 0; i < o.length; i += 4) {
+      for (let c = 0; c < 3; c++) {
+        const va = ea ? ea[i + c] : 128, vb = eb ? eb[i + c] : 128;
+        // Error maps hold about +-32 codes; beyond that, use the 8-bit display images (fine for large differences).
+        const d = (!maps || va === 0 || va === 255 || vb === 0 || vb === 255)
+          ? (pa[i + c] - pb[i + c]) * DATA.unitMax / 255
+          : (va - vb) / steps;
+        o[i + c] = Math.min(255, Math.abs(d) * toOut);
+      }
+      o[i + 3] = 255;
+    }
+    ctx.putImageData(out, 0, 0);
+    setBlend(false); cv.classList.remove("hidden"); $("imgA").classList.add("hidden"); $("imgB").classList.add("hidden");
+    $("hint").textContent = gainHint() + (maps ? "" : " From the 8-bit display images.") + " Black is identical.";
+  } catch (e) {
+    if (token !== diffToken) return;
+    // Opened as a file: the browser will not let the page read pixels, so blend the 8-bit display images instead.
+    cv.classList.add("hidden"); $("imgA").classList.remove("hidden"); $("imgB").classList.remove("hidden");
+    $("imgB").style.visibility = "visible"; $("imgB").style.clipPath = "none";
+    setBlend(true);
+    $("hint").textContent = gainHint() + " Approximate: opened as a file, so this uses the 8-bit display images; serve the page over http for the exact difference.";
+  }
+}
+
+/* ---------- Render ---------- */
+function renderControls() {
+  for (const b of $("srcSeg").children) b.setAttribute("aria-pressed", b.dataset.src === state.src);
+  for (const b of $("modeSeg").children) b.setAttribute("aria-pressed", b.dataset.mode === state.mode);
+  for (const b of $("zoomSeg").children) b.setAttribute("aria-pressed", +b.dataset.zoom === state.zoom);
+  for (const b of $("gainSeg").children) b.setAttribute("aria-pressed", +b.dataset.gain === state.gain);
+  $("selA").value = state.a; $("selB").value = state.b;
+  $("gainGrp").classList.toggle("hidden", state.mode !== "diff");
+  if (DATA.videos) {
+    for (const b of $("showSeg").children) b.setAttribute("aria-pressed", b.dataset.show === state.show);
+    $("modeSeg").querySelector('[data-mode="diff"]').disabled = browserView();
+    $("probeBtn").disabled = browserView();
+  }
+  $("flickerGrp").classList.toggle("hidden", state.mode === "diff");
+}
+
+function labelOf(id) { return id === "source" ? "Source" : item(id).label; }
+
+function sideEl(side) {
+  const S = side.toUpperCase();
+  return browserView() && state[side] !== "source" ? $("vid" + S) : $("img" + S);
+}
+function renderView() {
+  const c = $("canvas"), ia = sideEl("a"), ib = sideEl("b"), dv = $("divider"), cv = $("diff");
+  for (const el of [$("imgA"), $("imgB"), $("vidA"), $("vidB")]) el.classList.toggle("inactive", el !== ia && el !== ib);
+  c.classList.toggle("wipe", state.mode === "wipe");
+  c.classList.toggle("toggle", state.mode === "toggle");
+  const bA = $("badgeA"), bB = $("badgeB");
+  bA.lastElementChild.textContent = labelOf(state.a) + videoNote("a");
+  bB.lastElementChild.textContent = labelOf(state.b) + videoNote("b");
+  bA.classList.remove("dim", "center", "hidden"); bB.classList.remove("dim", "center", "hidden");
+  if (state.mode !== "diff") { setBlend(false); cv.classList.add("hidden"); ia.classList.remove("hidden"); ib.classList.remove("hidden"); }
+  if (state.mode === "wipe") {
+    ib.style.visibility = "visible"; ia.style.visibility = "visible";
+    ib.style.clipPath = `inset(0 0 0 ${state.pos * 100}%)`;
+    dv.classList.remove("hidden"); dv.style.left = (state.pos * 100) + "%";
+    $("hint").innerHTML = "Drag across the image to wipe: <b>A</b> on the left, <b>B</b> on the right.";
+  } else if (state.mode === "toggle") {
+    ib.style.clipPath = "none"; dv.classList.add("hidden");
+    ib.style.visibility = state.shown === "b" ? "visible" : "hidden";
+    const showing = state.shown === "a" ? bA : bB, other = state.shown === "a" ? bB : bA;
+    showing.classList.add("center"); other.classList.add("hidden");
+    $("hint").innerHTML = `Showing <b>${state.shown.toUpperCase()}</b>. Click the image or press Space to flip.`;
+  } else {
+    dv.classList.add("hidden");
+    renderDiff();
+  }
+}
+
+function statBlock(r) {
+  if (!r) return `<p class="note">The source image: the reference every result is measured against.</p>`;
+  return `<div class="stats">` + DATA.stats.map((st) =>
+    `<div class="stat" title="${esc(st.title || "")}"><span class="k">${esc(st.label)}</span><span class="v">${fmtStat(r[st.key], st)}</span></div>`).join("") + `</div>`;
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function renderCard(el, side, id) {
+  const s = srcInfo();
+  if (id === "source") {
+    el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>Source</h2>
+      <div class="sub">${esc(s.label)} · ${esc(s.description)}</div>${statBlock(null)}
+      ${s.cambi !== undefined && s.cambi !== null ? `<p class="note">Banding (CAMBI) of the source itself: <b>${s.cambi.toFixed(1)}</b>. An 8-bit source can already band before it is encoded.</p>` : ""}`;
+    return;
+  }
+  const it = item(id), r = it.results[state.src];
+  el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>${esc(it.label)}</h2>
+    <div class="sub">${esc(it.group)} · ${esc(s.label)} · error in ${esc(DATA.unit)}</div>
+    ${statBlock(r)}
+    <p>${esc(it.description)}</p>
+    <code class="flags">${esc(it.flags || "(no colour options)")}</code>
+    ${browserView() ? `<p class="note">Shown: <code>${esc(r.video)}</code>, played by this browser${videoNote(side)}.</p>` : ""}
+    <details><summary>Full commands</summary><pre>${esc(r.encode)}</pre><pre>${esc(r.decode)}</pre></details>`;
+}
+
+function buildTable() {
+  const t = $("results");
+  const srcs = DATA.sources;
+  const stats = DATA.stats, rank = DATA.rankKey || "mean";
+  let h = `<thead><tr><th class="l" rowspan="2"></th><th class="l" rowspan="2">${esc(DATA.rowLabel || "Conversion")}</th>`;
+  for (const s of srcs) h += `<th colspan="${stats.length}" class="colgrp" style="text-align:center">${esc(s.label)}</th>`;
+  h += `</tr><tr>`;
+  for (const s of srcs) h += stats.map((st, k) => `<th class="${k ? "" : "colgrp"}" title="${esc(st.title || "")}">${esc(st.short || st.label)}</th>`).join("");
+  h += `</tr></thead><tbody>`;
+  for (const g of DATA.groups) {
+    h += `<tr class="grp"><td colspan="${2 + stats.length * srcs.length}">${esc(g.label)}</td></tr>`;
+    const best = {};
+    for (const s of srcs) {
+      const vals = g.items.map((id) => item(id).results[s.id][rank]);
+      best[s.id] = { min: Math.min(...vals), max: Math.max(...vals) };
+    }
+    for (const id of g.items) {
+      const it = item(id);
+      h += `<tr class="row" data-id="${id}"><td class="pick"><button class="pa" data-side="a" aria-label="Set A to ${esc(it.label)}">A</button><button class="pb" data-side="b" aria-label="Set B to ${esc(it.label)}">B</button></td><td class="l">${esc(it.label)}</td>`;
+      for (const s of srcs) {
+        const r = it.results[s.id];
+        h += stats.map((st, k) => {
+          let cls = k ? "" : "colgrp";
+          if (st.key === rank && g.items.length > 1) cls += r[rank] === best[s.id].min ? " best" : (r[rank] === best[s.id].max ? " worst" : "");
+          if (warnStat(r[st.key], st)) cls += " warn";
+          return `<td class="${cls}">${fmtStat(r[st.key], st)}</td>`;
+        }).join("");
+      }
+      h += `</tr>`;
+    }
+  }
+  t.innerHTML = h + "</tbody>";
+  t.onclick = (e) => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    const id = btn.closest("tr").dataset.id;
+    state[btn.dataset.side] = id; render();
+    $("viewer").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+}
+function markTable() {
+  for (const tr of $("results").querySelectorAll("tr.row")) {
+    tr.classList.toggle("isA", tr.dataset.id === state.a);
+    tr.classList.toggle("isB", tr.dataset.id === state.b);
+  }
+}
+
+function render() {
+  const s = srcInfo();
+  $("imgA").src = imageFor(state.a); $("imgA").alt = `A: ${labelOf(state.a)}, ${s.label}`;
+  $("imgB").src = imageFor(state.b); $("imgB").alt = `B: ${labelOf(state.b)}, ${s.label}`;
+  if (browserView()) for (const side of ["a", "b"]) loadVideo(side);
+  layout(); renderControls(); renderView();
+  renderCard($("cardA"), "a", state.a); renderCard($("cardB"), "b", state.b);
+  markTable(); writeHash();
+  if (state.probe && lastProbeEvent) probeAt();
+}
+
+/* ---------- Keyboard ---------- */
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "SELECT" || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === " ") { e.preventDefault(); if (state.mode !== "toggle") { state.mode = "toggle"; render(); } flip(); }
+  else if (k === "w" || k === "W") setMode("wipe");
+  else if (k === "d" || k === "D") setMode("diff");
+  else if (k === "t" || k === "T") setMode("toggle");
+  else if (k === "x" || k === "X") swap();
+  else if (k === "p" || k === "P") setProbe(!state.probe);
+  else if (k === "Escape" && state.probe) setProbe(false);
+  else if (["0", "1", "2", "4", "8"].includes(k)) setZoom(+k);
+  else if ((k === "ArrowLeft" || k === "ArrowRight") && state.mode === "wipe") {
+    e.preventDefault();
+    state.pos = Math.min(1, Math.max(0, state.pos + (k === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 0.1 : 0.01)));
+    renderView();
+  }
+});
+window.addEventListener("resize", () => { if (state.zoom === 0) layout(); });
+
+/* ---------- Videos (Your browser) ---------- */
+const videoState = { a: "", b: "" };
+function videoNote(side) {
+  if (!browserView() || state[side] === "source") return "";
+  return videoState[side] === "fail" ? " · this browser cannot play it" : "";
+}
+function loadVideo(side) {
+  const S = side.toUpperCase(), v = $("vid" + S), id = state[side];
+  if (id === "source") return;
+  const src = item(id).results[state.src].video;
+  if (v.dataset.src === src) return;
+  v.dataset.src = src; videoState[side] = "loading";
+  v.onloadeddata = () => { videoState[side] = "ok"; v.play().catch(() => {}); };
+  v.onerror = () => { videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]); };
+  v.src = src; v.load();
+  setTimeout(() => {
+    if (v.dataset.src === src && videoState[side] === "loading" && v.readyState < 2) {
+      videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]);
+    }
+  }, 4000);
+}
+
+/* ---------- Start ---------- */
+document.title = DATA.pageTitle || document.title;
+$("title").textContent = DATA.title;
+$("lede").innerHTML = DATA.lede;
+$("tableNote").innerHTML = DATA.tableNote || "";
+$("footer").innerHTML = DATA.footer;
+readHash();
+buildControls(); buildTable(); bindCanvas();
+render();
+if (state.zoom) setZoom(state.zoom);
+</script>
 </body>
 </html>
-
-
-

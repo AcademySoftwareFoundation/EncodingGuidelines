@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Y'CbCr Conversion Compare</title>
+<title>Encoding Compare</title>
 <style>
 :root {
   --bg: #27262b;
@@ -72,11 +72,13 @@ select {
 .viewer { position: relative; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   background: var(--stage); }
 .stage { overflow: auto; position: relative; }
-.stage.zoomed { height: 72vh; }
+.stage.zoomed { max-height: 72vh; }
 .canvas { position: relative; margin: 0 auto; touch-action: none; user-select: none; }
-.canvas img, .canvas canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+.canvas img, .canvas canvas, .canvas video { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
   pointer-events: none; -webkit-user-drag: none; user-select: none; }
-.canvas.px img, .canvas.px canvas { image-rendering: pixelated; }
+.canvas.px img, .canvas.px canvas, .canvas.px video { image-rendering: pixelated; }
+.inactive { display: none !important; }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
 .canvas.wipe { cursor: ew-resize; }
 .canvas.toggle { cursor: pointer; }
 .divider { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid #fff;
@@ -164,10 +166,8 @@ a { color: var(--accent); }
 </head>
 <body>
 <main>
-  <h1>Comparing RGB to Y'CbCr conversions</h1>
-  <p class="lede">Each result is an RGB image converted to Y'CbCr by <code>ffmpeg</code>, encoded losslessly, then decoded
-    back the same way for all of them. Pick two results, <b>A</b> and <b>B</b>, and wipe or flip between them.
-    Errors are against the source, in 10-bit code values.</p>
+  <h1 id="title"></h1>
+  <p class="lede" id="lede"></p>
 
   <div class="toolbar" role="toolbar" aria-label="Comparison controls">
     <div class="group"><span class="lbl">Image</span><div class="seg" id="srcSeg"></div></div>
@@ -176,6 +176,10 @@ a { color: var(--accent); }
       <button class="btn" id="swap" title="Swap A and B (X)" aria-label="Swap A and B">⇄</button>
       <span class="side b">B</span><select id="selB" aria-label="Result B"></select>
     </div>
+    <div class="group hidden" id="showGrp"><span class="lbl">Show</span><div class="seg" id="showSeg">
+      <button data-show="measured" title="The files decoded by zscale, as measured">Measured</button>
+      <button data-show="browser" title="The video files, played by this browser">Your browser</button>
+    </div></div>
     <div class="group"><span class="lbl">View</span><div class="seg" id="modeSeg">
       <button data-mode="wipe" title="Wipe (W)">Wipe</button>
       <button data-mode="toggle" title="Toggle (Space)">Toggle</button>
@@ -203,7 +207,9 @@ a { color: var(--accent); }
     <div class="stage" id="stage">
       <div class="canvas" id="canvas">
         <img id="imgA" alt="" draggable="false">
+        <video id="vidA" class="inactive" muted loop playsinline preload="auto"></video>
         <img id="imgB" alt="" draggable="false">
+        <video id="vidB" class="inactive" muted loop playsinline preload="auto"></video>
         <canvas id="diff" class="hidden"></canvas>
         <div class="divider" id="divider"></div>
         <div class="marker hidden" id="marker"></div>
@@ -222,9 +228,7 @@ a { color: var(--accent); }
   </div>
 
   <h2 class="section">All results</h2>
-  <p class="note" style="margin:0 0 6px">Error against the source in 10-bit code values. <b>White</b> is how far the
-    source's 100% white lands from its specification value in the file (Y′ 940, or 1023 at full range): libswscale puts
-    it too high from 10-bit and higher sources.
+  <p class="note" style="margin:0 0 6px"><span id="tableNote"></span>
     Pick a row as <span class="side a">A</span> or <span class="side b">B</span>.</p>
   <div class="tablewrap"><table id="results"></table></div>
 
@@ -234,26 +238,43 @@ a { color: var(--accent); }
 
 <script>
 const DATA = {
- "sources": [
+ "pageTitle": "Y'CbCr Conversion Compare",
+ "title": "Comparing RGB to Y'CbCr conversions",
+ "lede": "Each result is an RGB image converted to Y'CbCr by <code>ffmpeg</code>, encoded losslessly, then decoded back the same way for all of them. Pick two results, <b>A</b> and <b>B</b>, and wipe or flip between them. Errors are against the source, in 10-bit code values.",
+ "tableNote": "Error against the source in 10-bit code values. <b>White</b> is how far the source's 100% white lands from its specification value in the file (Y\u2032 940, or 1023 at full range): libswscale puts it too high from 10-bit and higher sources.",
+ "unit": "10-bit code values",
+ "unitName": "10-bit code",
+ "unitMax": 1023,
+ "stats": [
   {
-   "id": "chip",
-   "label": "Chip chart",
-   "description": "16-bit RGB PNG, untagged",
-   "image": "chip-source.png",
-   "width": 1920,
-   "height": 1080,
-   "planes": "chip-source-ideal.yuv.z"
+   "key": "mean",
+   "label": "Mean",
+   "short": "Mean",
+   "digits": 2
   },
   {
-   "id": "bars",
-   "label": "Colour bars",
-   "description": "10-bit full-range RGB DPX from DaVinci Resolve, untagged",
-   "image": "bars-source.png",
-   "width": 1920,
-   "height": 1080,
-   "planes": "bars-source-ideal.yuv.z"
+   "key": "p99",
+   "label": "99th pct",
+   "short": "99th",
+   "digits": 1
+  },
+  {
+   "key": "max",
+   "label": "Max",
+   "short": "Max",
+   "digits": 1
+  },
+  {
+   "key": "white",
+   "label": "White Y\u2032",
+   "short": "White",
+   "digits": 1,
+   "signed": true,
+   "warn": 1,
+   "title": "Y\u2032 of the source's 100% white as stored, minus 940 (1023 at full range)"
   }
  ],
+ "rankKey": "mean",
  "groups": [
   {
    "label": "4:2:2 10-bit",
@@ -286,451 +307,562 @@ const DATA = {
    "group": "4:2:2 10-bit",
    "description": "No filter and no colour options. FFmpeg converts with BT.601 and leaves the file untagged, but players assume BT.709 for HD, so the colours shift. The same on every version.",
    "flags": "",
+   "layout": {
+    "chroma": "422",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-basic.png",
      "err": "chip-basic-err.png",
      "planes": "chip-basic.yuv.z",
+     "video": "chip-basic.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1  -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/chip-basic.mp4",
      "decode": "ffmpeg -i chip-basic.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 21.696,
      "p99": 142.82,
      "max": 622.45,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 872
     },
     "bars": {
      "image": "bars-basic.png",
      "err": "bars-basic-err.png",
      "planes": "bars-basic.yuv.z",
+     "video": "bars-basic.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1  -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/bars-basic.mp4",
      "decode": "ffmpeg -i bars-basic.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 16.563,
      "p99": 119.23,
      "max": 467.35,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "422",
-   "range": "limited"
+   }
   },
   "basictagged": {
    "label": "Default encode + colour options",
    "group": "4:2:2 10-bit",
    "description": "No filter, but with -colorspace bt709. From FFmpeg 7.1 that also sets the matrix of the conversion FFmpeg inserts, so the matrix is right; before 7.1 it only tagged the file and the pixels were still BT.601. The conversion is libswscale's, with its white level and centred chroma.",
    "flags": "-vf \"setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "422",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-basictagged.png",
      "err": "chip-basictagged-err.png",
      "planes": "chip-basictagged.yuv.z",
+     "video": "chip-basictagged.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -vf \"setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/chip-basictagged.mp4",
      "decode": "ffmpeg -i chip-basictagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.794,
      "p99": 8.43,
      "max": 663.31,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 866
     },
     "bars": {
      "image": "bars-basictagged.png",
      "err": "bars-basictagged-err.png",
      "planes": "bars-basictagged.yuv.z",
+     "video": "bars-basictagged.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -vf \"setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/bars-basictagged.mp4",
      "decode": "ffmpeg -i bars-basictagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.995,
      "p99": 9.68,
      "max": 550.03,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "422",
-   "range": "limited"
+   }
   },
   "colormatrix": {
    "label": "colormatrix filter",
    "group": "4:2:2 10-bit",
    "description": "colormatrix converts Y'CbCr from one matrix to another, here from BT.601 (bt470bg), which is what the conversion FFmpeg inserts in front of it produces, on every version tested. It works in 8-bit, so it is the least accurate filter here. Not recommended.",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int -vf \"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "422",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-colormatrix.png",
      "err": "chip-colormatrix-err.png",
      "planes": "chip-colormatrix.yuv.z",
+     "video": "chip-colormatrix.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/chip-colormatrix.mp4",
      "decode": "ffmpeg -i chip-colormatrix.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 2.733,
      "p99": 11.11,
      "max": 616.92,
-     "white": 3.33
+     "white": 3.33,
+     "levels": 221
     },
     "bars": {
      "image": "bars-colormatrix.png",
      "err": "bars-colormatrix-err.png",
      "planes": "bars-colormatrix.yuv.z",
+     "video": "bars-colormatrix.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/bars-colormatrix.mp4",
      "decode": "ffmpeg -i bars-colormatrix.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 2.861,
      "p99": 16.91,
      "max": 555.87,
-     "white": 2.56
+     "white": 2.56,
+     "levels": 221
     }
-   },
-   "chroma": "422",
-   "range": "limited"
+   }
   },
   "colorspace": {
    "label": "colorspace filter",
    "group": "4:2:2 10-bit",
    "description": "colorspace converts Y'CbCr between matrices, at up to 12-bit. Here it is told the input is BT.601, which is what the conversion FFmpeg inserts in front of it produces. Close, but the image is converted twice, and libswscale still does the RGB conversion.",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int -vf \"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "422",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-colorspace.png",
      "err": "chip-colorspace-err.png",
      "planes": "chip-colorspace.yuv.z",
+     "video": "chip-colorspace.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/chip-colorspace.mp4",
      "decode": "ffmpeg -i chip-colorspace.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.8,
      "p99": 9.41,
      "max": 648.13,
-     "white": 1.37
+     "white": 1.37,
+     "levels": 880
     },
     "bars": {
      "image": "bars-colorspace.png",
      "err": "bars-colorspace-err.png",
      "planes": "bars-colorspace.yuv.z",
+     "video": "bars-colorspace.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/bars-colorspace.mp4",
      "decode": "ffmpeg -i bars-colorspace.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 2.024,
      "p99": 17.12,
      "max": 457.75,
-     "white": 3.02
+     "white": 3.02,
+     "levels": 880
     }
-   },
-   "chroma": "422",
-   "range": "limited"
+   }
   },
   "splinecolormatrix": {
    "label": "scale (libswscale) + flags",
    "group": "4:2:2 10-bit",
    "description": "libswscale, with the flags that get the most out of it. The matrix is right, but from 10-bit and higher sources limited-range white is 943 instead of 940, and the 4:2:2 chroma is centred instead of co-sited.",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "422",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-splinecolormatrix.png",
      "err": "chip-splinecolormatrix-err.png",
      "planes": "chip-splinecolormatrix.yuv.z",
+     "video": "chip-splinecolormatrix.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/chip-splinecolormatrix.mp4",
      "decode": "ffmpeg -i chip-splinecolormatrix.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.814,
      "p99": 9.24,
      "max": 614.58,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 866
     },
     "bars": {
      "image": "bars-splinecolormatrix.png",
      "err": "bars-splinecolormatrix-err.png",
      "planes": "bars-splinecolormatrix.yuv.z",
+     "video": "bars-splinecolormatrix.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/bars-splinecolormatrix.mp4",
      "decode": "ffmpeg -i bars-splinecolormatrix.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 2.041,
      "p99": 15.73,
      "max": 550.03,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "422",
-   "range": "limited"
+   }
   },
   "zscale": {
    "label": "zscale (recommended)",
    "group": "4:2:2 10-bit",
    "description": "zscale (zimg): the conversion these guidelines recommend. Exact matrix and range, and co-sited chroma. Needs an ffmpeg built with --enable-libzimg.",
    "flags": "-vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "422",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-zscale.png",
      "err": "chip-zscale-err.png",
      "planes": "chip-zscale.yuv.z",
+     "video": "chip-zscale.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/chip-zscale.mp4",
      "decode": "ffmpeg -i chip-zscale.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.799,
      "p99": 6.9,
      "max": 598.8,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 862
     },
     "bars": {
      "image": "bars-zscale.png",
      "err": "bars-zscale-err.png",
      "planes": "bars-zscale.yuv.z",
+     "video": "bars-zscale.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv422p10le ./chip-chart-yuvconvert/bars-zscale.mp4",
      "decode": "ffmpeg -i bars-zscale.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.917,
      "p99": 9.46,
      "max": 340.05,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 877
     }
-   },
-   "chroma": "422",
-   "range": "limited"
+   }
   },
   "basic444": {
    "label": "Default encode (wrong)",
    "group": "4:4:4 10-bit",
    "description": "No filter and no colour options, at 4:4:4: BT.601 and untagged.",
    "flags": "",
+   "layout": {
+    "chroma": "444",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-basic444.png",
      "err": "chip-basic444-err.png",
      "planes": "chip-basic444.yuv.z",
+     "video": "chip-basic444.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1  -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-basic444.mp4",
      "decode": "ffmpeg -i chip-basic444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 21.319,
      "p99": 141.47,
      "max": 158.68,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 872
     },
     "bars": {
      "image": "bars-basic444.png",
      "err": "bars-basic444-err.png",
      "planes": "bars-basic444.yuv.z",
+     "video": "bars-basic444.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1  -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-basic444.mp4",
      "decode": "ffmpeg -i bars-basic444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 15.817,
      "p99": 119.23,
      "max": 119.23,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "444",
-   "range": "limited"
+   }
   },
   "basic444tagged": {
    "label": "Default encode + colour options",
    "group": "4:4:4 10-bit",
    "description": "No filter, but with -colorspace bt709. The matrix is right from FFmpeg 7.1; the conversion is libswscale's.",
    "flags": "-vf \"setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-basic444tagged.png",
      "err": "chip-basic444tagged-err.png",
      "planes": "chip-basic444tagged.yuv.z",
+     "video": "chip-basic444tagged.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -vf \"setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-basic444tagged.mp4",
      "decode": "ffmpeg -i chip-basic444tagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.289,
      "p99": 4.45,
      "max": 5.51,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 866
     },
     "bars": {
      "image": "bars-basic444tagged.png",
      "err": "bars-basic444tagged-err.png",
      "planes": "bars-basic444tagged.yuv.z",
+     "video": "bars-basic444tagged.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -vf \"setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-basic444tagged.mp4",
      "decode": "ffmpeg -i bars-basic444tagged.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.045,
      "p99": 3.39,
      "max": 3.5,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "444",
-   "range": "limited"
+   }
   },
   "spline444colormatrix2": {
    "label": "colormatrix filter",
    "group": "4:4:4 10-bit",
    "description": "colormatrix converts Y'CbCr from one matrix to another, here from BT.601 (bt470bg), which is what the conversion FFmpeg inserts in front of it produces, on every version tested. It works in 8-bit, so it is the least accurate filter here. Not recommended.",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int -vf \"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-spline444colormatrix2.png",
      "err": "chip-spline444colormatrix2-err.png",
      "planes": "chip-spline444colormatrix2.yuv.z",
+     "video": "chip-spline444colormatrix2.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-spline444colormatrix2.mp4",
      "decode": "ffmpeg -i chip-spline444colormatrix2.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 2.604,
      "p99": 11.16,
      "max": 21.17,
-     "white": 3.33
+     "white": 3.33,
+     "levels": 221
     },
     "bars": {
      "image": "bars-spline444colormatrix2.png",
      "err": "bars-spline444colormatrix2-err.png",
      "planes": "bars-spline444colormatrix2.yuv.z",
+     "video": "bars-spline444colormatrix2.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colormatrix=bt470bg:bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-spline444colormatrix2.mp4",
      "decode": "ffmpeg -i bars-spline444colormatrix2.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 2.016,
      "p99": 9.76,
      "max": 14.42,
-     "white": 2.56
+     "white": 2.56,
+     "levels": 221
     }
-   },
-   "chroma": "444",
-   "range": "limited"
+   }
   },
   "spline444colorspace": {
    "label": "colorspace filter",
    "group": "4:4:4 10-bit",
    "description": "colorspace converts Y'CbCr between matrices, at up to 12-bit. Here it is told the input is BT.601, which is what the conversion FFmpeg inserts in front of it produces. Close, but the image is converted twice, and libswscale still does the RGB conversion.",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int -vf \"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-spline444colorspace.png",
      "err": "chip-spline444colorspace-err.png",
      "planes": "chip-spline444colorspace.yuv.z",
+     "video": "chip-spline444colorspace.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-spline444colorspace.mp4",
      "decode": "ffmpeg -i chip-spline444colorspace.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.271,
      "p99": 4.56,
      "max": 6.37,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 866
     },
     "bars": {
      "image": "bars-spline444colorspace.png",
      "err": "bars-spline444colorspace-err.png",
      "planes": "bars-spline444colorspace.yuv.z",
+     "video": "bars-spline444colorspace.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int -vf \"colorspace=bt709:iall=bt601-6-625:fast=1,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-spline444colorspace.mp4",
      "decode": "ffmpeg -i bars-spline444colorspace.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.027,
      "p99": 3.03,
      "max": 3.5,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "444",
-   "range": "limited"
+   }
   },
   "spline444out_color_matrix": {
    "label": "scale (libswscale) + flags",
    "group": "4:4:4 10-bit",
    "description": "libswscale, with the flags that get the most out of it. The matrix is right, but from 10-bit and higher sources limited-range white is 943 instead of 940.",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-spline444out_color_matrix.png",
      "err": "chip-spline444out_color_matrix-err.png",
      "planes": "chip-spline444out_color_matrix.yuv.z",
+     "video": "chip-spline444out_color_matrix.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-spline444out_color_matrix.mp4",
      "decode": "ffmpeg -i chip-spline444out_color_matrix.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.289,
      "p99": 4.45,
      "max": 5.51,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 866
     },
     "bars": {
      "image": "bars-spline444out_color_matrix.png",
      "err": "bars-spline444out_color_matrix-err.png",
      "planes": "bars-spline444out_color_matrix.yuv.z",
+     "video": "bars-spline444out_color_matrix.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_color_matrix=bt709:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-spline444out_color_matrix.mp4",
      "decode": "ffmpeg -i bars-spline444out_color_matrix.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.045,
      "p99": 3.39,
      "max": 3.5,
-     "white": 3.0
+     "white": 3.0,
+     "levels": 880
     }
-   },
-   "chroma": "444",
-   "range": "limited"
+   }
   },
   "spline444out_color_matrixfull": {
    "label": "scale (libswscale) + flags, full range",
    "group": "4:4:4 10-bit",
    "description": "libswscale to full-range Y'CbCr. From FFmpeg 8.0 its full-range output is slightly too bright at 10-bit and above (see FFmpeg Version Changes).",
    "flags": "-sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "full",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-spline444out_color_matrixfull.png",
      "err": "chip-spline444out_color_matrixfull-err.png",
      "planes": "chip-spline444out_color_matrixfull.yuv.z",
+     "video": "chip-spline444out_color_matrixfull.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-spline444out_color_matrixfull.mp4",
      "decode": "ffmpeg -i chip-spline444out_color_matrixfull.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.992,
      "p99": 4.25,
      "max": 4.98,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 1006
     },
     "bars": {
      "image": "bars-spline444out_color_matrixfull.png",
      "err": "bars-spline444out_color_matrixfull-err.png",
      "planes": "bars-spline444out_color_matrixfull.yuv.z",
+     "video": "bars-spline444out_color_matrixfull.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -sws_flags spline+accurate_rnd+full_chroma_int+full_chroma_inp -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=full:out_color_matrix=bt709,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-spline444out_color_matrixfull.mp4",
      "decode": "ffmpeg -i bars-spline444out_color_matrixfull.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 1.002,
      "p99": 2.75,
      "max": 3.65,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 1008
     }
-   },
-   "chroma": "444",
-   "range": "full"
+   }
   },
   "zscale444": {
    "label": "zscale (recommended)",
    "group": "4:4:4 10-bit",
    "description": "zscale (zimg): the conversion these guidelines recommend. Exact matrix and range, and co-sited chroma. Needs an ffmpeg built with --enable-libzimg.",
    "flags": "-vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "limited",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-zscale444.png",
      "err": "chip-zscale444-err.png",
      "planes": "chip-zscale444.yuv.z",
+     "video": "chip-zscale444.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-zscale444.mp4",
      "decode": "ffmpeg -i chip-zscale444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.342,
      "p99": 1.36,
      "max": 1.62,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 862
     },
     "bars": {
      "image": "bars-zscale444.png",
      "err": "bars-zscale444-err.png",
      "planes": "bars-zscale444.yuv.z",
+     "video": "bars-zscale444.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -vf \"zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range tv -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-zscale444.mp4",
      "decode": "ffmpeg -i bars-zscale444.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=limited:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.167,
      "p99": 0.62,
      "max": 0.62,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 877
     }
-   },
-   "chroma": "444",
-   "range": "limited"
+   }
   },
   "zscale444full": {
    "label": "zscale, full range",
    "group": "4:4:4 10-bit",
    "description": "zscale to full-range Y'CbCr.",
    "flags": "-vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709",
+   "layout": {
+    "chroma": "444",
+    "range": "full",
+    "bits": 10,
+    "rgb": false
+   },
    "results": {
     "chip": {
      "image": "chip-zscale444full.png",
      "err": "chip-zscale444full-err.png",
      "planes": "chip-zscale444full.yuv.z",
+     "video": "chip-zscale444full.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/chip-chart-1080-16bit-noicc.png -frames:v 1 -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/chip-zscale444full.mp4",
      "decode": "ffmpeg -i chip-zscale444full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.298,
      "p99": 1.17,
      "max": 1.42,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 1005
     },
     "bars": {
      "image": "bars-zscale444full.png",
      "err": "bars-zscale444full-err.png",
      "planes": "bars-zscale444full.yuv.z",
+     "video": "bars-zscale444full.mp4",
      "encode": "ffmpeg -y -i ../sourceimages/rp219/smptehdbars_10_resolve.dpx -frames:v 1 -vf \"zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1\" -color_range pc -colorspace bt709 -c:v libx264 -preset placebo -qp 0 -pix_fmt yuv444p10le ./chip-chart-yuvconvert/bars-zscale444full.mp4",
      "decode": "ffmpeg -i bars-zscale444full.mp4 -frames:v 1 -vf \"zscale=matrixin=709:rangein=full:range=full:filter=spline36,format=gbrp16le\" decoded.png",
      "mean": 0.115,
      "p99": 0.97,
      "max": 1.28,
-     "white": 0.0
+     "white": 0.0,
+     "levels": 1024
     }
-   },
-   "chroma": "444",
-   "range": "full"
+   }
   }
  },
- "errSteps": 4,
  "defaults": {
   "a": "source",
   "b": "basic"
@@ -749,7 +881,7 @@ const DATA = {
    "a": "splinecolormatrix",
    "b": "zscale",
    "mode": "diff",
-   "title": "The bright lines are the bar edges, where the 4:2:2 chroma is placed differently. The white level error (943 instead of 940) is clipped when decoded to RGB, so it only shows in the table."
+   "title": "The bright lines are the bar edges, where the 4:2:2 chroma is placed differently. The white level error (943 instead of 940) is clipped when decoded to RGB; use the probe or the table to see it."
   },
   {
    "label": "4:2:2 chroma edge, 8\u00d7",
@@ -759,8 +891,8 @@ const DATA = {
    "mode": "toggle",
    "zoom": 8,
    "focus": [
-    0.9786458333333333,
-    0.8953703703703704
+    0.30104166666666665,
+    0.8888888888888888
    ],
    "title": "libswscale centres 4:2:2 chroma; zscale co-sites it, as 4:2:2 formats expect"
   },
@@ -772,19 +904,49 @@ const DATA = {
    "mode": "diff"
   }
  ],
- "footer": "<p>Made with FFmpeg 9.0.2. Every file is encoded with <code>libx264 -preset placebo -qp 0</code> (lossless) and decoded with <code>zscale</code> as BT.709, so the only difference is the conversion. The errors come from the 16-bit decode; the images shown are 8-bit copies, so differences below one 8-bit step (four 10-bit codes) may not show in <i>Difference</i>. The large maximum errors at 4:2:2 are at the edges of the coloured patches, where the chroma is subsampled.</p><p>The results were the same on FFmpeg 6.1.6, 9.0.2 and a 9.1 development build, except <i>Default encode + colour options</i>, which is only right from 7.1 (before that it matches the default encode), and libswscale's full-range result, which changed in 8.0. See <a href='../../FFmpegChanges.html' target='_top'>FFmpeg Version Changes</a> and <a href='../../ColorPreservation.html' target='_top'>RGB to YCbCr Conversion</a>. Generated by <a href='../chip-color-test.py' target='_top'>tests/chip-color-test.py</a>.</p>"
+ "footer": "<p>Made with FFmpeg 9.0.2. Every file is encoded with <code>libx264 -preset placebo -qp 0</code> (lossless) and decoded with <code>zscale</code> as BT.709, so the only difference is the conversion. The errors come from the 16-bit decode; the images shown are 8-bit copies, and <i>Difference</i> uses error maps made from the 16-bit decode. The probe shows the Y\u2032CbCr values stored in each file. The large maximum errors at 4:2:2 are at the edges of the coloured patches, where the chroma is subsampled.</p><p>The results were the same on FFmpeg 6.1.6, 9.0.2 and a 9.1 development build, except <i>Default encode + colour options</i>, which is only right from 7.1 (before that it matches the default encode), and libswscale's full-range result, which changed in 8.0. See <a href='../../FFmpegChanges.html' target='_top'>FFmpeg Version Changes</a> and <a href='../../ColorPreservation.html' target='_top'>RGB to YCbCr Conversion</a>. Generated by <a href='../chip-color-test.py' target='_top'>tests/chip-color-test.py</a>.</p>",
+ "errSteps": 4,
+ "sources": [
+  {
+   "id": "chip",
+   "label": "Chip chart",
+   "description": "16-bit RGB PNG, untagged",
+   "image": "chip-source.png",
+   "width": 1920,
+   "height": 1080,
+   "planes": "chip-source-ideal.yuv.z",
+   "idealBits": 10,
+   "idealLabel": "BT.709, limited, 10-bit"
+  },
+  {
+   "id": "bars",
+   "label": "Colour bars",
+   "description": "10-bit full-range RGB DPX from DaVinci Resolve, untagged",
+   "image": "bars-source.png",
+   "width": 1920,
+   "height": 1080,
+   "planes": "bars-source-ideal.yuv.z",
+   "idealBits": 10,
+   "idealLabel": "BT.709, limited, 10-bit"
+  }
+ ]
 };
 
 const $ = (id) => document.getElementById(id);
 const state = { src: DATA.sources[0].id, a: DATA.defaults.a, b: DATA.defaults.b, mode: "wipe", zoom: 0,
-                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null };
+                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null, show: "measured" };
 let flickerTimer = null;
 
 const item = (id) => DATA.items[id];
 const srcInfo = () => DATA.sources.find((s) => s.id === state.src);
 const imageFor = (id) => (id === "source" ? srcInfo().image : item(id).results[state.src].image);
-const fmt = (v, d) => (v === null || v === undefined ? "–" : (d === 2 ? v.toFixed(2) : v.toFixed(1)));
-const fmtSigned = (v) => (v === null || v === undefined ? "–" : (v > 0 ? "+" : "") + v.toFixed(1));
+const fmtStat = (v, st) => {
+  if (v === null || v === undefined) return "–";
+  const s = v.toFixed(st.digits ?? 1);
+  return st.signed && v > 0 ? "+" + s : s;
+};
+const warnStat = (v, st) => st.warn !== undefined && v !== null && v !== undefined && Math.abs(v) >= st.warn;
+const browserView = () => DATA.videos && state.show === "browser";
 
 function readHash() {
   const h = new URLSearchParams(location.hash.slice(1));
@@ -792,9 +954,11 @@ function readHash() {
   for (const k of ["a", "b"]) if (h.get(k) && (h.get(k) === "source" || DATA.items[h.get(k)])) state[k] = h.get(k);
   if (["wipe", "toggle", "diff"].includes(h.get("mode"))) state.mode = h.get("mode");
   if (h.get("zoom") && [0, 1, 2, 4, 8].includes(+h.get("zoom"))) state.zoom = +h.get("zoom");
+  if (DATA.videos && h.get("show") === "browser") state.show = "browser";
 }
 function writeHash() {
   const h = new URLSearchParams({ src: state.src, a: state.a, b: state.b, mode: state.mode, zoom: state.zoom });
+  if (DATA.videos) h.set("show", state.show);
   try { history.replaceState(null, "", "#" + h.toString()); } catch (e) { /* sandboxed */ }
 }
 
@@ -808,7 +972,7 @@ function buildControls() {
     seg.appendChild(b);
   }
   for (const sel of [$("selA"), $("selB")]) {
-    const o = document.createElement("option"); o.value = "source"; o.textContent = "Source (original RGB)";
+    const o = document.createElement("option"); o.value = "source"; o.textContent = DATA.sourceOption || "Source (original RGB)";
     sel.appendChild(o);
     for (const g of DATA.groups) {
       const og = document.createElement("optgroup"); og.label = g.label;
@@ -827,6 +991,10 @@ function buildControls() {
   $("zoomSeg").onclick = (e) => { const z = e.target.dataset.zoom; if (z !== undefined) setZoom(+z); };
   $("gainSeg").onclick = (e) => { const g = e.target.dataset.gain; if (g) { state.gain = +g; render(); } };
   $("flicker").onchange = (e) => { state.flicker = e.target.checked; setFlicker(); };
+  if (DATA.videos) {
+    $("showGrp").classList.remove("hidden");
+    $("showSeg").onclick = (e) => { const s = e.target.dataset.show; if (s) setShow(s); };
+  }
 
   const pr = $("presets");
   for (const p of DATA.presets) {
@@ -836,8 +1004,15 @@ function buildControls() {
   }
 }
 
+function setShow(s) {
+  state.show = s;
+  if (browserView()) { if (state.mode === "diff") state.mode = "wipe"; if (state.probe) setProbe(false); }
+  render();
+}
+
 function applyPreset(p) {
   Object.assign(state, { src: p.src, a: p.a, b: p.b, mode: p.mode || "wipe", pos: 0.5, shown: "a" });
+  if (DATA.videos) state.show = p.show || "measured";
   state.flicker = false; $("flicker").checked = false; setFlicker();
   render();
   setZoom(p.zoom || 0, p.focus);
@@ -947,9 +1122,10 @@ function loadPlanes(file) {
 }
 function planeInfo(id) {
   const s = srcInfo();
-  if (id === "source") return { file: s.planes, chroma: "444", range: "limited", label: "Ideal BT.709" };
+  if (id === "source") return { file: s.planes, chroma: "444", range: "limited", bits: s.idealBits || 10, rgb: false,
+                                label: s.idealLabel || "BT.709, limited" };
   const it = item(id);
-  return { file: it.results[state.src].planes, chroma: it.chroma, range: it.range, label: it.label };
+  return { file: it.results[state.src].planes, ...it.layout, label: it.label };
 }
 function pixelAt(e) {
   const r = $("canvas").getBoundingClientRect(), { w, h } = naturalSize();
@@ -957,8 +1133,10 @@ function pixelAt(e) {
            y: Math.min(h - 1, Math.max(0, Math.floor((e.clientY - r.top) / r.height * h))) };
 }
 function sample(planes, info, x, y) {
-  const { w, h } = naturalSize(), cw = info.chroma === "422" ? w / 2 : w, cx = info.chroma === "422" ? x >> 1 : x;
-  return { y: planes[y * w + x], cb: planes[w * h + y * cw + cx], cr: planes[w * h + cw * h + y * cw + cx], cx };
+  const { w, h } = naturalSize();
+  const sx = info.chroma === "444" ? 1 : 2, sy = info.chroma === "420" ? 2 : 1;
+  const cw = w / sx, ch = h / sy, cx = Math.floor(x / sx), cy = Math.floor(y / sy);
+  return { y: planes[y * w + x], cb: planes[w * h + cy * cw + cx], cr: planes[w * h + cw * ch + cy * cw + cx] };
 }
 let probeToken = 0, lastProbeEvent = null;
 async function probeAt(e) {
@@ -966,8 +1144,9 @@ async function probeAt(e) {
   const ev = lastProbeEvent; if (!ev) return;
   const token = ++probeToken, panel = $("probe");
   const px = state.pin || pixelAt(ev);
-  const sides = [["a", state.a], ["b", state.b]];
-  if (state.a !== "source" && state.b !== "source") sides.push(["ideal", "source"]);
+  const sides = [["a", state.a], ["b", state.b]].filter(([, id]) => id !== "source" || srcInfo().planes);
+  if (state.a !== "source" && state.b !== "source" && srcInfo().planes) sides.push(["ideal", "source"]);
+  if (!sides.length) { panel.classList.add("hidden"); return; }
   try {
     const infos = sides.map(([, id]) => planeInfo(id));
     const data = await Promise.all(infos.map((i) => loadPlanes(i.file)));
@@ -977,19 +1156,26 @@ async function probeAt(e) {
     sides.forEach(([side, id], k) => {
       const v = vals[k], info = infos[k];
       const badge = side === "ideal" ? `<span class="note">ideal</span>` : `<span class="side ${side}">${side.toUpperCase()}</span>`;
-      rows += `<tr><td class="l">${badge}</td><td>${v.y}</td><td>${v.cb}</td><td>${v.cr}</td><td class="l note">${esc(side === "ideal" ? "BT.709, limited" : info.label)}${info.range === "full" ? " (full range)" : ""}</td></tr>`;
+      const ch = info.rgb ? ["R ", "G ", "B "] : ["", "", ""];
+      const desc = `${info.rgb ? "RGB" : (info.range === "full" ? "full range" : "limited")}, ${info.bits}-bit`;
+      rows += `<tr><td class="l">${badge}</td><td>${ch[0]}${v.y}</td><td>${ch[1]}${v.cb}</td><td>${ch[2]}${v.cr}</td><td class="l note">${esc(info.label)}${side === "ideal" ? "" : " · " + desc}</td></tr>`;
     });
-    const d = (k) => vals[1][k] - vals[0][k], sg = (n) => (n > 0 ? "+" : "") + n;
-    rows += `<tr><td class="l note">B − A</td><td>${sg(d("y"))}</td><td>${sg(d("cb"))}</td><td>${sg(d("cr"))}</td><td></td></tr>`;
+    if (sides.length >= 2 && infos[0].rgb === infos[1].rgb && infos[0].bits === infos[1].bits) {
+      const d = (k) => vals[1][k] - vals[0][k], sg = (n) => (n > 0 ? "+" : "") + n;
+      rows += `<tr><td class="l note">B − A</td><td>${sg(d("y"))}</td><td>${sg(d("cb"))}</td><td>${sg(d("cr"))}</td><td></td></tr>`;
+    }
     const notes = [];
     if (infos.some((i) => i.chroma === "422")) notes.push(`4:2:2: Cb and Cr are chroma sample ${px.x >> 1} of the row, ${px.x % 2 ? "shared with the column to the left" : "co-sited with this column"}.`);
-    if (infos.some((i) => i.range === "full")) notes.push("Full range: black 0, white 1023. Limited: black 64, white 940.");
-    panel.innerHTML = `<div class="t">${state.pin ? '<span class="pin">● pinned</span> ' : ""}x ${px.x}, y ${px.y} · ${esc(srcInfo().label)} · 10-bit codes</div>
+    if (infos.some((i) => i.chroma === "420")) notes.push(`4:2:0: Cb and Cr are shared by the 2×2 block at x ${px.x & ~1}, y ${px.y & ~1}.`);
+    const lim = [...new Set(infos.filter((i) => !i.rgb).map((i) => i.bits))].map((b) => b === 8 ? "8-bit limited: black 16, white 235; full: 0 to 255" : `${b}-bit limited: black 64, white 940; full: 0 to 1023`);
+    if (infos.some((i) => i.range === "full") || infos.some((i) => i.rgb)) notes.push(...lim);
+    panel.innerHTML = `<div class="t">${state.pin ? '<span class="pin">● pinned</span> ' : ""}x ${px.x}, y ${px.y} · ${esc(srcInfo().label)} · code values as stored</div>
       <table><tr><th></th><th>Y′</th><th>Cb</th><th>Cr</th><th></th></tr>${rows}</table>
       ${notes.map((n) => `<div class="n">${n}</div>`).join("")}
       <div class="n">${state.pin ? "Click the image to unpin." : "Click to pin this pixel."}</div>`;
   } catch (err) {
     panel.innerHTML = `<div class="n">The probe reads the stored Y′CbCr files, which needs the page to be served over http(s), not opened as a file.</div>`;
+    if (token !== probeToken) return;
   }
   panel.classList.remove("hidden");
   positionProbe(ev, px);
@@ -1032,21 +1218,24 @@ let diffToken = 0;
    1/errSteps of a 10-bit code. A − B = errA − errB, so the difference is accurate to that step, not to the 8-bit
    display images. The source itself has no error map (zero error). */
 const errFor = (id) => (id === "source" ? null : item(id).results[state.src].err);
+// Without error maps (pages measured in 8-bit codes), Difference uses the 8-bit display images throughout.
+const hasMaps = () => [state.a, state.b].every((id) => id === "source" || errFor(id));
 function setBlend(on) {
   $("imgB").style.mixBlendMode = on ? "difference" : "";
   $("canvas").style.filter = on ? `brightness(${state.gain})` : "";
 }
 function gainHint() {
-  const g = state.gain, one = Math.min(100, g * 100 / 1023), white = Math.ceil(1023 / g);
-  return `|A − B| × ${g}: a difference of one 10-bit code shows as ${one < 10 ? one.toFixed(1) : one.toFixed(0)}% grey` +
+  const U = DATA.unitMax, g = state.gain, one = Math.min(100, g * 100 / U), white = Math.ceil(U / g);
+  return `|A − B| × ${g}: a difference of one ${DATA.unitName} shows as ${one < 10 ? one.toFixed(1) : one.toFixed(0)}% grey` +
     (white > 1 ? `, ${white} codes or more as white.` : ", and any difference as white.");
 }
 async function renderDiff() {
   const token = ++diffToken;
   const cv = $("diff"), steps = DATA.errSteps;
-  const toOut = state.gain * 255 / 1023;           // 10-bit codes to display level
+  const toOut = state.gain * 255 / DATA.unitMax;   // code values to display level
   try {
-    const files = [errFor(state.a), errFor(state.b), imageFor(state.a), imageFor(state.b)];
+    const maps = hasMaps();
+    const files = [maps && errFor(state.a), maps && errFor(state.b), imageFor(state.a), imageFor(state.b)];
     const imgs = await Promise.all(files.map((f) => (f ? loadImage(f) : null)));
     if (token !== diffToken) return;
     const { w, h } = naturalSize();
@@ -1059,8 +1248,8 @@ async function renderDiff() {
       for (let c = 0; c < 3; c++) {
         const va = ea ? ea[i + c] : 128, vb = eb ? eb[i + c] : 128;
         // Error maps hold about +-32 codes; beyond that, use the 8-bit display images (fine for large differences).
-        const d = (va === 0 || va === 255 || vb === 0 || vb === 255)
-          ? (pa[i + c] - pb[i + c]) * 1023 / 255
+        const d = (!maps || va === 0 || va === 255 || vb === 0 || vb === 255)
+          ? (pa[i + c] - pb[i + c]) * DATA.unitMax / 255
           : (va - vb) / steps;
         o[i + c] = Math.min(255, Math.abs(d) * toOut);
       }
@@ -1068,14 +1257,14 @@ async function renderDiff() {
     }
     ctx.putImageData(out, 0, 0);
     setBlend(false); cv.classList.remove("hidden"); $("imgA").classList.add("hidden"); $("imgB").classList.add("hidden");
-    $("hint").textContent = gainHint() + " Black is identical.";
+    $("hint").textContent = gainHint() + (maps ? "" : " From the 8-bit display images.") + " Black is identical.";
   } catch (e) {
     if (token !== diffToken) return;
     // Opened as a file: the browser will not let the page read pixels, so blend the 8-bit display images instead.
     cv.classList.add("hidden"); $("imgA").classList.remove("hidden"); $("imgB").classList.remove("hidden");
     $("imgB").style.visibility = "visible"; $("imgB").style.clipPath = "none";
     setBlend(true);
-    $("hint").textContent = gainHint() + " Approximate: opened as a file, so this uses the 8-bit display images (one step is 4 codes); serve the page over http for the exact difference.";
+    $("hint").textContent = gainHint() + " Approximate: opened as a file, so this uses the 8-bit display images; serve the page over http for the exact difference.";
   }
 }
 
@@ -1087,18 +1276,28 @@ function renderControls() {
   for (const b of $("gainSeg").children) b.setAttribute("aria-pressed", +b.dataset.gain === state.gain);
   $("selA").value = state.a; $("selB").value = state.b;
   $("gainGrp").classList.toggle("hidden", state.mode !== "diff");
+  if (DATA.videos) {
+    for (const b of $("showSeg").children) b.setAttribute("aria-pressed", b.dataset.show === state.show);
+    $("modeSeg").querySelector('[data-mode="diff"]').disabled = browserView();
+    $("probeBtn").disabled = browserView();
+  }
   $("flickerGrp").classList.toggle("hidden", state.mode === "diff");
 }
 
 function labelOf(id) { return id === "source" ? "Source" : item(id).label; }
 
+function sideEl(side) {
+  const S = side.toUpperCase();
+  return browserView() && state[side] !== "source" ? $("vid" + S) : $("img" + S);
+}
 function renderView() {
-  const c = $("canvas"), ia = $("imgA"), ib = $("imgB"), dv = $("divider"), cv = $("diff");
+  const c = $("canvas"), ia = sideEl("a"), ib = sideEl("b"), dv = $("divider"), cv = $("diff");
+  for (const el of [$("imgA"), $("imgB"), $("vidA"), $("vidB")]) el.classList.toggle("inactive", el !== ia && el !== ib);
   c.classList.toggle("wipe", state.mode === "wipe");
   c.classList.toggle("toggle", state.mode === "toggle");
   const bA = $("badgeA"), bB = $("badgeB");
-  bA.lastElementChild.textContent = labelOf(state.a);
-  bB.lastElementChild.textContent = labelOf(state.b);
+  bA.lastElementChild.textContent = labelOf(state.a) + videoNote("a");
+  bB.lastElementChild.textContent = labelOf(state.b) + videoNote("b");
   bA.classList.remove("dim", "center", "hidden"); bB.classList.remove("dim", "center", "hidden");
   if (state.mode !== "diff") { setBlend(false); cv.classList.add("hidden"); ia.classList.remove("hidden"); ib.classList.remove("hidden"); }
   if (state.mode === "wipe") {
@@ -1120,11 +1319,8 @@ function renderView() {
 
 function statBlock(r) {
   if (!r) return `<p class="note">The source image: the reference every result is measured against.</p>`;
-  return `<div class="stats">
-    <div class="stat"><span class="k">Mean</span><span class="v">${fmt(r.mean, 2)}</span></div>
-    <div class="stat"><span class="k">99th pct</span><span class="v">${fmt(r.p99)}</span></div>
-    <div class="stat"><span class="k">Max</span><span class="v">${fmt(r.max)}</span></div>
-    <div class="stat" title="Y′ of 100% white minus 940 (1023 at full range)"><span class="k">White Y′</span><span class="v">${fmtSigned(r.white)}</span></div></div>`;
+  return `<div class="stats">` + DATA.stats.map((st) =>
+    `<div class="stat" title="${esc(st.title || "")}"><span class="k">${esc(st.label)}</span><span class="v">${fmtStat(r[st.key], st)}</span></div>`).join("") + `</div>`;
 }
 function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
@@ -1137,35 +1333,41 @@ function renderCard(el, side, id) {
   }
   const it = item(id), r = it.results[state.src];
   el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>${esc(it.label)}</h2>
-    <div class="sub">${esc(it.group)} · ${esc(s.label)} · error in 10-bit code values</div>
+    <div class="sub">${esc(it.group)} · ${esc(s.label)} · error in ${esc(DATA.unit)}</div>
     ${statBlock(r)}
     <p>${esc(it.description)}</p>
     <code class="flags">${esc(it.flags || "(no colour options)")}</code>
+    ${browserView() ? `<p class="note">Shown: <code>${esc(r.video)}</code>, played by this browser${videoNote(side)}.</p>` : ""}
     <details><summary>Full commands</summary><pre>${esc(r.encode)}</pre><pre>${esc(r.decode)}</pre></details>`;
 }
 
 function buildTable() {
   const t = $("results");
   const srcs = DATA.sources;
-  let h = `<thead><tr><th class="l" rowspan="2"></th><th class="l" rowspan="2">Conversion</th>`;
-  for (const s of srcs) h += `<th colspan="4" class="colgrp" style="text-align:center">${esc(s.label)}</th>`;
+  const stats = DATA.stats, rank = DATA.rankKey || "mean";
+  let h = `<thead><tr><th class="l" rowspan="2"></th><th class="l" rowspan="2">${esc(DATA.rowLabel || "Conversion")}</th>`;
+  for (const s of srcs) h += `<th colspan="${stats.length}" class="colgrp" style="text-align:center">${esc(s.label)}</th>`;
   h += `</tr><tr>`;
-  for (const s of srcs) h += `<th class="colgrp">Mean</th><th>99th</th><th>Max</th><th>White</th>`;
+  for (const s of srcs) h += stats.map((st, k) => `<th class="${k ? "" : "colgrp"}" title="${esc(st.title || "")}">${esc(st.short || st.label)}</th>`).join("");
   h += `</tr></thead><tbody>`;
   for (const g of DATA.groups) {
-    h += `<tr class="grp"><td colspan="${2 + 4 * srcs.length}">${esc(g.label)}</td></tr>`;
+    h += `<tr class="grp"><td colspan="${2 + stats.length * srcs.length}">${esc(g.label)}</td></tr>`;
     const best = {};
     for (const s of srcs) {
-      const means = g.items.map((id) => item(id).results[s.id].mean);
-      best[s.id] = { min: Math.min(...means), max: Math.max(...means) };
+      const vals = g.items.map((id) => item(id).results[s.id][rank]);
+      best[s.id] = { min: Math.min(...vals), max: Math.max(...vals) };
     }
     for (const id of g.items) {
       const it = item(id);
       h += `<tr class="row" data-id="${id}"><td class="pick"><button class="pa" data-side="a" aria-label="Set A to ${esc(it.label)}">A</button><button class="pb" data-side="b" aria-label="Set B to ${esc(it.label)}">B</button></td><td class="l">${esc(it.label)}</td>`;
       for (const s of srcs) {
         const r = it.results[s.id];
-        const cls = r.mean === best[s.id].min ? "best" : (r.mean === best[s.id].max ? "worst" : "");
-        h += `<td class="colgrp ${cls}">${fmt(r.mean, 2)}</td><td>${fmt(r.p99)}</td><td>${fmt(r.max)}</td><td class="${r.white !== null && Math.abs(r.white) >= 1 ? 'warn' : ''}">${fmtSigned(r.white)}</td>`;
+        h += stats.map((st, k) => {
+          let cls = k ? "" : "colgrp";
+          if (st.key === rank && g.items.length > 1) cls += r[rank] === best[s.id].min ? " best" : (r[rank] === best[s.id].max ? " worst" : "");
+          if (warnStat(r[st.key], st)) cls += " warn";
+          return `<td class="${cls}">${fmtStat(r[st.key], st)}</td>`;
+        }).join("");
       }
       h += `</tr>`;
     }
@@ -1189,6 +1391,7 @@ function render() {
   const s = srcInfo();
   $("imgA").src = imageFor(state.a); $("imgA").alt = `A: ${labelOf(state.a)}, ${s.label}`;
   $("imgB").src = imageFor(state.b); $("imgB").alt = `B: ${labelOf(state.b)}, ${s.label}`;
+  if (browserView()) for (const side of ["a", "b"]) loadVideo(side);
   layout(); renderControls(); renderView();
   renderCard($("cardA"), "a", state.a); renderCard($("cardB"), "b", state.b);
   markTable(); writeHash();
@@ -1215,7 +1418,33 @@ document.addEventListener("keydown", (e) => {
 });
 window.addEventListener("resize", () => { if (state.zoom === 0) layout(); });
 
+/* ---------- Videos (Your browser) ---------- */
+const videoState = { a: "", b: "" };
+function videoNote(side) {
+  if (!browserView() || state[side] === "source") return "";
+  return videoState[side] === "fail" ? " · this browser cannot play it" : "";
+}
+function loadVideo(side) {
+  const S = side.toUpperCase(), v = $("vid" + S), id = state[side];
+  if (id === "source") return;
+  const src = item(id).results[state.src].video;
+  if (v.dataset.src === src) return;
+  v.dataset.src = src; videoState[side] = "loading";
+  v.onloadeddata = () => { videoState[side] = "ok"; v.play().catch(() => {}); };
+  v.onerror = () => { videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]); };
+  v.src = src; v.load();
+  setTimeout(() => {
+    if (v.dataset.src === src && videoState[side] === "loading" && v.readyState < 2) {
+      videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]);
+    }
+  }, 4000);
+}
+
 /* ---------- Start ---------- */
+document.title = DATA.pageTitle || document.title;
+$("title").textContent = DATA.title;
+$("lede").innerHTML = DATA.lede;
+$("tableNote").innerHTML = DATA.tableNote || "";
 $("footer").innerHTML = DATA.footer;
 readHash();
 buildControls(); buildTable(); bindCanvas();

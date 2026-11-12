@@ -190,6 +190,42 @@ see [FFmpeg OCIO Filter](FfmpegOcio.html).
 
 ### Dithering
 
-`zscale` does not dither by default (`dither=none`): conversions are rounded to the nearest code value, which is
-what our accuracy tests measured as exact. If you convert a high bit depth source down to 8-bit, consider
-`dither=error_diffusion` to avoid banding; we have not tested its effect.
+`zscale` does not dither by default (`dither=none`): each value is rounded to the nearest code, which is what our
+accuracy tests measure as exact. At 8-bit limited range that can band on smooth gradients, since 256 levels have to
+fit into 220 (Y′ 16 to 235). Dithering trades the bands for fine noise.
+
+We measured each dither mode on H.264 4:2:0 at limited range, encoded as for web review (`-crf 18`), with
+[CAMBI](https://github.com/Netflix/vmaf/blob/master/resource/doc/cambi.md), Netflix's banding index
+from libvmaf (`libvmaf=feature=name=cambi`): 0 is no banding, higher is more visible banding. The sources are a grey
+ramp and a radial gradient, each made at 16-bit (no banding of their own) and as an 8-bit image, and a photograph: a
+640×360 part of the Kodak Digital LAD scan (Marcie), a genuine high bit depth image (about 30,000 distinct values in
+its 16-bit PNG). The results were the same on FFmpeg 6.1.6 and 9.0.2.
+
+| `dither=` | Grey ramp, 16-bit | Radial gradient, 16-bit | Grey ramp, 8-bit | Radial gradient, 8-bit | Photograph, 16-bit |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| The source itself | 0.0 | 5.5 | 10.9 | 15.2 | 0.0 |
+| 8-bit `none` | 13.5 | 22.4 | 13.0 | 22.0 | 0.0 |
+| 8-bit `ordered` | 3.3 | 7.8 | 5.3 | 8.2 | 0.0 |
+| 8-bit `random` | 6.6 | 5.6 | 5.3 | 3.4 | 0.0 |
+| 8-bit `error_diffusion` | 11.4 | 10.0 | 7.9 | 7.4 | 0.0 |
+| 10-bit `none` | 0.3 | 6.0 | 9.0 | 7.7 | 0.0 |
+| 10-bit `random` | 0.0 | 5.9 | 0.1 | 6.4 | 0.0 |
+
+**Dithering matters most for motion graphics, titles, CG and anything else with clean, smooth gradients.** Live
+action already carries its own grain and noise, which does the job of a dither: the photograph shows no banding at
+8-bit, with or without dither. A clean graphic has nothing to break up the steps, so without dither it bands badly
+(22.4 on the 16-bit radial gradient), even from a 16-bit render.
+
+* At 8-bit, `ordered` and `random` cut the banding by half or more on every gradient. `random` did best on the radial
+  gradients, and looked best by eye: `ordered` leaves a regular pattern that can show close up, while `random` reads
+  as grain. `ordered` did best on the plain ramps. `error_diffusion` helped least.
+* Dithering slightly raises the per-pixel error, since it adds fine noise. It survives `-crf 18`; a lower-quality
+  encode may smooth it away.
+* From a 16-bit source, 10-bit needs no dither. From an 8-bit source, dithering to 10-bit also hides the source's
+  own 8-bit steps.
+
+So for 8-bit deliveries of motion graphics, CG or anything with smooth gradients, add a dither to the conversion, for
+example `zscale=matrix=709:range=limited:filter=lanczos:dither=random`. For live action there is little to gain: on the
+photograph, dither changed neither the banding nor the error (mean 2.24 against 2.25 8-bit codes). The recommended commands leave it at `none`, which is what the accuracy tests check. To see the
+effect, flip between the two in the
+[range and dither comparison](tests/greyramp-fulltv/compare.html#src=radialgrad16&a=tv&b=tv_random&mode=toggle&zoom=2&show=measured).

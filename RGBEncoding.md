@@ -113,5 +113,5 @@ development build). Set them with `setparams`, as in the [VP9 example](#vp9-rgb-
 
 For more details see:
 
-* [Comparing full-range vs. tv range](tests/greyramp-fulltv/compare.html)
+* [Comparing full range vs. limited (TV) range vs. dithering](tests/greyramp-fulltv/compare.html)
 * [TV vs. full range](ColorPreservation.html#tvfull)
