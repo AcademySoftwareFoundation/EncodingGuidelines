@@ -67,15 +67,94 @@ def write_raw_png(img, path):
                 + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
 
 
+def write_png16(img, path):
+    """Float RGB in 0..1 as a 16-bit RGB PNG with no colour chunks."""
+    a = np.round(np.clip(img, 0, 1) * 65535).astype(">u2")
+    h, w = a.shape[:2]
+    raw = b"".join(b"\x00" + a[y].tobytes() for y in range(h))
+
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xffffffff)
+    with open(path, "wb") as f:
+        f.write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 16, 2, 0, 0, 0))
+                + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+
+
+def srgb_to_linear(v):
+    return np.where(v <= 0.04045, v / 12.92, ((v + 0.055) / 1.055) ** 2.4)
+
+
+def linear_to_srgb(v):
+    v = np.clip(v, 0, None)
+    return np.where(v <= 0.0031308, v * 12.92, 1.055 * v ** (1 / 2.4) - 0.055)
+
+
+def run_images(root, sources, groups, unit_max=255):
+    """For tests whose results are RGB images rather than encodes (the resize comparison). Each source has 'path'
+    and 'reference' (a float RGB array, the size of the results), and optionally 'exr' (a scene-linear original);
+    each variant has 'command', a template with {src}, {exr}, {out} (a 16-bit PNG to write), {w} and {h}, and
+    optionally 'only', the source ids it applies to. Results are compared with the reference.
+
+    A source may give 'crop' = (x, y, w, h) in output pixels: the whole image is still resized, but only that part of
+    each result (and of the reference) is kept and measured, to keep the page's files small. A resize only looks at
+    nearby pixels, so the crop is exactly that part of the full result."""
+    os.makedirs(root, exist_ok=True)
+    # The probe shows 8-bit RGB values, the same unit as the measurements (and far smaller files than 16-bit).
+    rgb8 = {'chroma': '444', 'range': 'full', 'bits': 8, 'rgb': True}
+
+    def planes8(img):
+        return [np.round(np.clip(img[..., c], 0, 1) * 255) for c in range(3)]
+    out_sources, out_groups, items = [], [], {}
+    def cut(img, c):
+        return img if c is None else img[c[1]:c[1] + c[3], c[0]:c[0] + c[2]]
+
+    for s in sources:
+        full_h, full_w = s['reference'].shape[:2]
+        ref = cut(s['reference'], s.get('crop'))
+        h, w = ref.shape[:2]
+        s = dict(s, reference=ref, out_w=full_w, out_h=full_h, image=f"{s['id']}-reference.png", width=w, height=h,
+                 planes=f"{s['id']}-reference.yuv.z", idealLabel="Reference", layout=rgb8)
+        write_display_png(ref, os.path.join(root, s['image']))
+        write_planes(planes8(ref), os.path.join(root, s['planes']), 8)
+        out_sources.append(s)
+    for glabel, entries in groups:
+        out_groups.append({'label': glabel, 'items': [e['id'] for e in entries]})
+        for e in entries:
+            it = {'label': e['label'], 'group': glabel, 'description': e['description'], 'flags': e['flags'],
+                  'layout': rgb8, 'results': {}}
+            for s in out_sources:
+                if 'only' in e and s['id'] not in e['only']:
+                    continue
+                base = f"{s['id']}-{e['id']}"
+                tmp = os.path.join(root, base + "-16bit.png")
+                cmd = e['command'].format(src=s['path'], exr=s.get('exr', ''), out=tmp, w=s['out_w'], h=s['out_h'])
+                run(cmd)
+                out = cut(read_rgb(tmp), s.get('crop'))
+                os.remove(tmp)
+                write_display_png(out, os.path.join(root, base + ".png"))
+                write_planes(planes8(out), os.path.join(root, base + ".yuv.z"), 8)
+                diff = (out - s['reference']) * unit_max
+                err = np.abs(diff)
+                it['results'][s['id']] = {
+                    'image': base + ".png", 'err': None, 'planes': base + ".yuv.z",
+                    'encode': cmd.replace(tmp, base + ".png"), 'decode': "(the result is an RGB image; no decode)",
+                    'mean': round(float(err.mean()), 3), 'p99': round(float(np.percentile(err, 99)), 2),
+                    'max': round(float(err.max()), 2), 'bias': round(float(diff.mean()), 3)}
+            items[e['id']] = it
+    return out_sources, out_groups, items
+
+
 def write_error_png(diff, path):
     """Signed error against the source, in code values: 128 is none, each step is 1/ERR_STEPS of a code."""
     write_raw_png(np.clip(np.round(diff * ERR_STEPS) + 128, 0, 255).astype(np.uint8), path)
 
 
-def write_planes(planes, path):
-    """Planes for the pixel probe: each as uint16 little-endian, one after the other, zlib-compressed."""
+def write_planes(planes, path, bits):
+    """Planes for the pixel probe, one after the other, zlib-compressed: uint8 for 8-bit values, otherwise uint16
+    little-endian. The page reads them with the bit depth from the data."""
+    dtype = np.uint8 if bits <= 8 else "<u2"
     with open(path, "wb") as f:
-        f.write(zlib.compress(b"".join(p.astype("<u2").tobytes() for p in planes), 9))
+        f.write(zlib.compress(b"".join(p.astype(dtype).tobytes() for p in planes), 9))
 
 
 def raw_planes(video, layout, w, h):
@@ -176,7 +255,7 @@ def run_comparison(root, sources, groups, unit_max, keep_videos=False, ideal_bit
             s['planes'] = f"{s['id']}-source-ideal.yuv.z"
             s['idealBits'] = ideal_bits
             s['idealLabel'] = f"BT.709, limited, {ideal_bits}-bit"
-            write_planes(ideal_ycbcr(src, ideal_bits), os.path.join(root, s['planes']))
+            write_planes(ideal_ycbcr(src, ideal_bits), os.path.join(root, s['planes']), ideal_bits)
         out_sources.append(s)
 
     for glabel, entries in groups:
@@ -199,7 +278,7 @@ def run_comparison(root, sources, groups, unit_max, keep_videos=False, ideal_bit
                 if error_maps:       # finer than the 8-bit display images; not needed when the unit is 8-bit
                     write_error_png(diff, os.path.join(root, base + "-err.png"))
                 planes = raw_planes(video, lay, s['width'], s['height'])
-                write_planes(planes, os.path.join(root, base + ".yuv.z"))
+                write_planes(planes, os.path.join(root, base + ".yuv.z"), lay['bits'])
                 err = np.abs(diff)
                 first = planes[1] if lay['rgb'] else planes[0]          # Y', or G for RGB
                 white = float(first[s['white']].mean()) - white_spec(lay) if s['white'].any() else None
@@ -227,7 +306,10 @@ def print_table(version, sources, groups, items, stats):
         for id_ in g['items']:
             cells = []
             for s in sources:
-                r = items[id_]['results'][s['id']]
+                r = items[id_]['results'].get(s['id'])
+                if r is None:
+                    cells += ["n/a"] * len(stats)
+                    continue
                 for st in stats:
                     v = r[st['key']]
                     cells.append("–" if v is None else (f"{v:+.{st.get('digits', 1)}f}" if st.get('signed')
@@ -238,7 +320,7 @@ def print_table(version, sources, groups, items, stats):
 def write_page(root, data, sources):
     data = dict(data, errSteps=ERR_STEPS,
                 sources=[{k: s[k] for k in ('id', 'label', 'description', 'image', 'width', 'height', 'planes',
-                                            'idealBits', 'idealLabel', 'cambi') if k in s} for s in sources])
+                                            'idealBits', 'idealLabel', 'cambi', 'layout') if k in s} for s in sources])
     with open(TEMPLATE) as f:
         html = f.read().replace("/*DATA*/null", json.dumps(data, indent=1))
     path = os.path.join(root, "compare.html")

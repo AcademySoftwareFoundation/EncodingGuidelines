@@ -940,6 +940,19 @@ let flickerTimer = null;
 const item = (id) => DATA.items[id];
 const srcInfo = () => DATA.sources.find((s) => s.id === state.src);
 const imageFor = (id) => (id === "source" ? srcInfo().image : item(id).results[state.src].image);
+// A variant may exist for only some sources (e.g. HDR-only steps); such results are absent for the others.
+const available = (id) => id === "source" || !!(DATA.items[id] && DATA.items[id].results[state.src]);
+const wanted = { a: null, b: null };   // what was picked, restored when an image that has it comes back
+function fixAvailability() {
+  for (const k of ["a", "b"]) {
+    if (wanted[k] && wanted[k] !== state[k] && available(wanted[k])) state[k] = wanted[k];
+    if (!available(state[k])) {
+      if (!wanted[k]) wanted[k] = state[k];
+      const first = DATA.groups.flatMap((g) => g.items).find((id) => available(id) && id !== state[k === "a" ? "b" : "a"]);
+      state[k] = k === "a" ? "source" : (first || "source");
+    }
+  }
+}
 const fmtStat = (v, st) => {
   if (v === null || v === undefined) return "–";
   const s = v.toFixed(st.digits ?? 1);
@@ -982,8 +995,8 @@ function buildControls() {
       sel.appendChild(og);
     }
   }
-  $("selA").onchange = (e) => { state.a = e.target.value; render(); };
-  $("selB").onchange = (e) => { state.b = e.target.value; render(); };
+  $("selA").onchange = (e) => { state.a = wanted.a = e.target.value; render(); };
+  $("selB").onchange = (e) => { state.b = wanted.b = e.target.value; render(); };
   $("swap").onclick = swap;
   $("probeBtn").onclick = () => setProbe(!state.probe);
   $("probeBtn").setAttribute("aria-pressed", "false");
@@ -1012,13 +1025,14 @@ function setShow(s) {
 
 function applyPreset(p) {
   Object.assign(state, { src: p.src, a: p.a, b: p.b, mode: p.mode || "wipe", pos: 0.5, shown: "a" });
+  wanted.a = p.a; wanted.b = p.b;
   if (DATA.videos) state.show = p.show || "measured";
   state.flicker = false; $("flicker").checked = false; setFlicker();
   render();
   setZoom(p.zoom || 0, p.focus);
 }
 
-function swap() { [state.a, state.b] = [state.b, state.a]; render(); }
+function swap() { [state.a, state.b] = [state.b, state.a]; wanted.a = state.a; wanted.b = state.b; render(); }
 
 function setMode(m) {
   state.mode = m;
@@ -1047,7 +1061,8 @@ function layout() {
     let cw = avail, ch = avail * h / w;
     if (ch > maxH) { ch = maxH; cw = ch * w / h; }
     canvas.style.width = cw + "px"; canvas.style.height = ch + "px";
-    canvas.classList.remove("px");
+    // A small image enlarged to fit: show its pixels sharply, so smoothing does not hide aliasing.
+    canvas.classList.toggle("px", cw > 1.5 * w / (window.devicePixelRatio || 1));
   } else {
     stage.classList.add("zoomed");
     const s = state.zoom / (window.devicePixelRatio || 1);
@@ -1111,19 +1126,19 @@ function flip() { state.shown = state.shown === "a" ? "b" : "a"; renderView(); }
    source has the ideal BT.709 limited-range Y'CbCr, so the probe shows what is in the file, not what the RGB decode
    makes of it (which clips anything above 100%). */
 const planeCache = {};
-function loadPlanes(file) {
+function loadPlanes(file, bits) {
   if (!planeCache[file]) {
     planeCache[file] = fetch(file).then((r) => {
       if (!r.ok) throw new Error(r.status);
       return new Response(r.body.pipeThrough(new DecompressionStream("deflate"))).arrayBuffer();
-    }).then((b) => new Uint16Array(b));
+    }).then((b) => (bits <= 8 ? new Uint8Array(b) : new Uint16Array(b)));   // 8-bit planes are stored as bytes
   }
   return planeCache[file];
 }
 function planeInfo(id) {
   const s = srcInfo();
   if (id === "source") return { file: s.planes, chroma: "444", range: "limited", bits: s.idealBits || 10, rgb: false,
-                                label: s.idealLabel || "BT.709, limited" };
+                                ...(s.layout || {}), label: s.idealLabel || "BT.709, limited" };
   const it = item(id);
   return { file: it.results[state.src].planes, ...it.layout, label: it.label };
 }
@@ -1149,7 +1164,7 @@ async function probeAt(e) {
   if (!sides.length) { panel.classList.add("hidden"); return; }
   try {
     const infos = sides.map(([, id]) => planeInfo(id));
-    const data = await Promise.all(infos.map((i) => loadPlanes(i.file)));
+    const data = await Promise.all(infos.map((i) => loadPlanes(i.file, i.bits)));
     if (token !== probeToken) return;
     const vals = data.map((d, k) => sample(d, infos[k], px.x, px.y));
     let rows = "";
@@ -1274,6 +1289,7 @@ function renderControls() {
   for (const b of $("modeSeg").children) b.setAttribute("aria-pressed", b.dataset.mode === state.mode);
   for (const b of $("zoomSeg").children) b.setAttribute("aria-pressed", +b.dataset.zoom === state.zoom);
   for (const b of $("gainSeg").children) b.setAttribute("aria-pressed", +b.dataset.gain === state.gain);
+  for (const sel of [$("selA"), $("selB")]) for (const o of sel.options) o.disabled = !available(o.value);
   $("selA").value = state.a; $("selB").value = state.b;
   $("gainGrp").classList.toggle("hidden", state.mode !== "diff");
   if (DATA.videos) {
@@ -1284,7 +1300,7 @@ function renderControls() {
   $("flickerGrp").classList.toggle("hidden", state.mode === "diff");
 }
 
-function labelOf(id) { return id === "source" ? "Source" : item(id).label; }
+function labelOf(id) { return id === "source" ? (DATA.sourceLabel || "Source") : item(id).label; }
 
 function sideEl(side) {
   const S = side.toUpperCase();
@@ -1318,7 +1334,7 @@ function renderView() {
 }
 
 function statBlock(r) {
-  if (!r) return `<p class="note">The source image: the reference every result is measured against.</p>`;
+  if (!r) return `<p class="note">${DATA.sourceNote || "The source image: the reference every result is measured against."}</p>`;
   return `<div class="stats">` + DATA.stats.map((st) =>
     `<div class="stat" title="${esc(st.title || "")}"><span class="k">${esc(st.label)}</span><span class="v">${fmtStat(r[st.key], st)}</span></div>`).join("") + `</div>`;
 }
@@ -1327,8 +1343,9 @@ function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 function renderCard(el, side, id) {
   const s = srcInfo();
   if (id === "source") {
-    el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>Source</h2>
-      <div class="sub">${esc(s.label)} · ${esc(s.description)}</div>${statBlock(null)}`;
+    el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>${esc(DATA.sourceLabel || "Source")}</h2>
+      <div class="sub">${esc(s.label)} · ${esc(s.description)}</div>${statBlock(null)}
+      ${s.cambi !== undefined && s.cambi !== null ? `<p class="note">Banding (CAMBI) of the source itself: <b>${s.cambi.toFixed(1)}</b>. An 8-bit source can already band before it is encoded.</p>` : ""}`;
     return;
   }
   const it = item(id), r = it.results[state.src];
@@ -1354,17 +1371,18 @@ function buildTable() {
     h += `<tr class="grp"><td colspan="${2 + stats.length * srcs.length}">${esc(g.label)}</td></tr>`;
     const best = {};
     for (const s of srcs) {
-      const vals = g.items.map((id) => item(id).results[s.id][rank]);
-      best[s.id] = { min: Math.min(...vals), max: Math.max(...vals) };
+      const vals = g.items.map((id) => item(id).results[s.id]).filter(Boolean).map((r) => r[rank]);
+      best[s.id] = { min: Math.min(...vals), max: Math.max(...vals), n: vals.length };
     }
     for (const id of g.items) {
       const it = item(id);
       h += `<tr class="row" data-id="${id}"><td class="pick"><button class="pa" data-side="a" aria-label="Set A to ${esc(it.label)}">A</button><button class="pb" data-side="b" aria-label="Set B to ${esc(it.label)}">B</button></td><td class="l">${esc(it.label)}</td>`;
       for (const s of srcs) {
         const r = it.results[s.id];
+        if (!r) { h += stats.map((st, k) => `<td class="${k ? "" : "colgrp"} note">${k ? "" : "n/a"}</td>`).join(""); continue; }
         h += stats.map((st, k) => {
           let cls = k ? "" : "colgrp";
-          if (st.key === rank && g.items.length > 1) cls += r[rank] === best[s.id].min ? " best" : (r[rank] === best[s.id].max ? " worst" : "");
+          if (st.key === rank && best[s.id].n > 1) cls += r[rank] === best[s.id].min ? " best" : (r[rank] === best[s.id].max ? " worst" : "");
           if (warnStat(r[st.key], st)) cls += " warn";
           return `<td class="${cls}">${fmtStat(r[st.key], st)}</td>`;
         }).join("");
@@ -1376,7 +1394,10 @@ function buildTable() {
   t.onclick = (e) => {
     const btn = e.target.closest("button"); if (!btn) return;
     const id = btn.closest("tr").dataset.id;
-    state[btn.dataset.side] = id; render();
+    if (!available(id)) {      // only exists for another image: switch to the first one that has it
+      const s = DATA.sources.find((x) => item(id).results[x.id]); if (s) state.src = s.id;
+    }
+    state[btn.dataset.side] = wanted[btn.dataset.side] = id; render();
     $("viewer").scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 }
@@ -1388,6 +1409,7 @@ function markTable() {
 }
 
 function render() {
+  fixAvailability();
   const s = srcInfo();
   $("imgA").src = imageFor(state.a); $("imgA").alt = `A: ${labelOf(state.a)}, ${s.label}`;
   $("imgB").src = imageFor(state.b); $("imgB").alt = `B: ${labelOf(state.b)}, ${s.label}`;
