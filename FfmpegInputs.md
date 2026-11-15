@@ -94,7 +94,7 @@ For image sequences `-framerate` is the option to prefer. The FFmpeg documentati
 You can loop the input file with the `-loop 1` parameter, e.g.:
 
 ```console
-ffmpeg -y -pattern_type glob -loop 1 -framerate ntsc -i "../sourceimages/chip-chart-1080-noicc.*.png" -pix_fmt yuv444p10le  -frames:v 100  ./chip-chart-yuvconvert/looptest.mov
+ffmpeg -y -pattern_type glob -loop 1 -framerate ntsc -i "inputfile.*.png" -pix_fmt yuv444p10le  -frames:v 100  outputfile.mov
 ```
 
 Note, with a looping input you need to limit the number of frames to output. `-frames:v 100` is an output option, so it goes before the output file; before the "-i" flag FFmpeg rejects it.

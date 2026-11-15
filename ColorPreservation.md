@@ -107,11 +107,11 @@ comparisontest:
        string: nclx 1/13/1 tv
 -->
 ```console
-ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
+ffmpeg -y -i inputfile.png \
    -pix_fmt yuv444p10le -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-   ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
+   outputfile.mp4
 ```
 
 ## libswscale filter
@@ -151,12 +151,12 @@ comparisontest:
        less: 5
 -->
 ```console
-ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
+ffmpeg -y -i inputfile.png \
    -pix_fmt yuv444p10le \
    -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-   ./chip-chart-yuvconvert/spline444out_color_matrix.mp4
+   outputfile.mp4
 ```
 
 Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to YCbCr conversion, if you are not resizing the image. For more details on this see [SWS Flags](EncodeSwsScale.html) section.
@@ -190,11 +190,11 @@ comparisontest:
        less: 5
 -->
 ```console
-ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
+ffmpeg -y -i inputfile.png \
    -pix_fmt yuv444p10le -vf "colorspace=bt709:iall=bt601-6-625:fast=1" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-   ./chip-chart-yuvconvert/spline444colorspace.mp4
+   outputfile.mp4
 ```
 
 ## colormatrix filter
@@ -228,11 +228,11 @@ comparisontest:
        between: [8, 12]
 -->
 ```console
-ffmpeg -y -i ../sourceimages/chip-chart-1080-noicc.png \
+ffmpeg -y -i inputfile.png \
     -pix_fmt yuv444p10le -vf "colormatrix=bt470bg:bt709" \
     -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-    ./chip-chart-yuvconvert/spline444colormatrix2.mp4
+    outputfile.mp4
 ```
 
 ## TV vs. Full range {#tvfull}
@@ -302,10 +302,10 @@ comparisontest:
        string: nclx 1/13/1 pc
 -->
 ```console
-ffmpeg -y -loop 1 -i ../sourceimages/radialgrad.png \
+ffmpeg -y -loop 1 -i inputfile.png \
     -pix_fmt yuv420p -vf "zscale=matrix=709:range=full:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -c:v libx264 -t 5 -crf 18 \
-    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 ./greyramp-fulltv/radialgrad-full.mp4
+    -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 outputfile.mp4
 ```
 
 We have seen the full range encoding work across all browsers, and a number of players including RV.
