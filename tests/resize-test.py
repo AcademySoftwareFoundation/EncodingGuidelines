@@ -49,6 +49,26 @@ NUKE = "./resize-compare/nuke"   # written by tests/resize-nuke.py in Nuke; not 
 FF_EXR = 'OCIO=ocio://default ffmpeg -v error -y -i {exr} -frames:v 1 -vf "VF" {out}'
 ZLIN = (f"zscale={Z709}:transferin=iec61966-2-1:transfer=linear,format=gbrpf32le,"
         f"zscale=w={{w}}:h={{h}}:filter=lanczos,zscale={Z709}:transferin=linear:transfer=iec61966-2-1,format=gbrp16le")
+# oiiotool's --resize:highlightcomp=1 is IBA::rangecompress per channel, the resize, then IBA::rangeexpand
+# (src/libOpenImageIO/imagebufalgo_pixelmath.cpp, SPI's coefficients): unchanged up to |x| = 0.18, then
+# sign(x) * (a + b * ln(c * |x| + 1)), which meets the straight part with the same value and slope.
+RC_X1, RC_A, RC_B, RC_C = 0.18, -0.54576885700225830078, 0.18351669609546661377, 284.3577880859375
+# The same curve for values >= 0, as a CLF for the ocio filter (below 0.18 it is a straight line, so it does not
+# mirror the curve for values below -0.18 as OIIO does).
+RC_CLF = "rangecompress.clf"
+
+
+def rangecompress(v):
+    return f"if(lte(abs({v}),{RC_X1}),{v},sgn({v})*({RC_A}+{RC_B}*log({RC_C}*abs({v})+1)))"
+
+
+def rangeexpand(v):
+    return f"if(lte(abs({v}),{RC_X1}),{v},sgn({v})*(exp((abs({v})-({RC_A}))/{RC_B})-1)/{RC_C})"
+
+
+def geq_rgb(fn):
+    """geq applying fn to each of R, G and B. geq works in float (gbrpf32le) and does not clip."""
+    return "geq=" + ":".join(f"{p}='{fn(p + '(X,Y)')}'" for p in "rgb")
 
 
 def ff(vf):
@@ -134,9 +154,10 @@ GROUPS = [
                "oiiotool {exr} --resize:filter=lanczos3 {w}x{h} --clamp:min=0 " + OIIO_VIEW + " -d uint16 -o {out}"),
              only=HDR_IDS),
         dict(v('hdr_oiio_scene_lanczos_hc', 'oiiotool, lanczos3 in scene-linear with highlightcomp, then OCIO',
-               "--resize:highlightcomp=1 compresses values above 1 before filtering and expands them afterwards, which "
-               "stops the ringing, but the averaging then happens on compressed values, so bright detail loses some "
-               "of its light.",
+               "--resize:highlightcomp=1 compresses each channel with OIIO's rangecompress before filtering (values "
+               "up to 0.18 are unchanged, above that a log curve takes 200 down to about 1.46) and expands the result "
+               "with rangeexpand. That stops the ringing, but the averaging then happens on compressed values, so "
+               "bright detail loses some of its light.",
                f'--resize:filter=lanczos3:highlightcomp=1 WxH {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=lanczos3:highlightcomp=1 {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"),
              only=HDR_IDS),
@@ -194,6 +215,32 @@ GROUPS = [
                FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le,"
                               "geq=r='max(r(X\\,Y)\\,0)':g='max(g(X\\,Y)\\,0)':b='max(b(X\\,Y)\\,0)',"
                               "format=gbrpf32le," + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
+        dict(v('hdr_ff_zscale_hc_ocio', 'FFmpeg zscale lanczos in scene-linear with highlightcomp (geq), then ocio',
+               "oiiotool's highlightcomp in FFmpeg: geq applies OIIO's rangecompress curve to each channel, zscale "
+               "resizes, and a second geq applies rangeexpand. geq matches oiiotool's curves to float precision, so "
+               "this differs from oiiotool only by the small differences between zscale's lanczos and oiiotool's "
+               "lanczos3. The first zscale (no size) converts the half-float EXR to float without clamping; geq "
+               "does not take half float, and format=gbrpf32le alone would clamp (see the last variant). geq is "
+               "slow, about 0.2 s per 4K frame.",
+               "-vf \"zscale,format=gbrpf32le,geq=r='" + rangecompress("r(X,Y)") + "':g=...:b=...,"
+               "zscale=w=W:h=H:filter=lanczos,format=gbrpf32le,geq=r='" + rangeexpand("r(X,Y)") + "':g=...:b=...,"
+               "ocio=...:format=rgb48\"",
+               FF_EXR.replace("VF", "zscale,format=gbrpf32le," + geq_rgb(rangecompress) + ","
+                              "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le," + geq_rgb(rangeexpand) + ","
+                              "format=gbrpf32le," + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
+        dict(v('hdr_ff_ocio_hc_ocio', 'FFmpeg zscale lanczos in scene-linear with highlightcomp (OCIO CLF), then ocio',
+               "The same, with the rangecompress curve as a CLF Log node (cameraLinToLog, base e: logSideSlope = b, "
+               "logSideOffset = a, linSideSlope = c, linSideOffset = 1, linSideBreak = 0.18) applied by the ocio "
+               "filter, and inverted with inverse=1. Far faster than geq. Below the break OCIO's curve is a "
+               "straight line, so values below -0.18 are not compressed (OIIO mirrors the curve for negative "
+               "values). None of these sources goes below -0.18 (Desk's lowest value is -0.012), but lanczos's "
+               "undershoot can, so the two versions can differ slightly next to the brightest highlights.",
+               f'-vf "ocio=filetransform={RC_CLF}:format=gbrpf32le,format=gbrpf32le,zscale=w=W:h=H:filter=lanczos,'
+               f'ocio=filetransform={RC_CLF}:inverse=1:format=gbrpf32le,format=gbrpf32le,ocio=...:format=rgb48"',
+               FF_EXR.replace("VF", f"ocio=filetransform={RC_CLF}:format=gbrpf32le,format=gbrpf32le,"
+                              "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le,"
+                              f"ocio=filetransform={RC_CLF}:inverse=1:format=gbrpf32le,format=gbrpf32le,"
+                              + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
         dict(v('hdr_ff_acescct_ocio', 'FFmpeg ocio to ACEScct, zscale lanczos, then ocio', "The log-space route in "
                "FFmpeg: the ocio filter converts to ACEScct, zscale resizes the log values, and a second ocio filter "
                "applies the view. The format filter between ocio and zscale is needed: without it the filter graph "
@@ -402,6 +449,11 @@ def main():
             {'label': 'BrightRings: lanczos vs cubic in scene-linear, 4×', 'src': 'brightrings',
              'a': 'hdr_oiio_scene_lanczos', 'b': 'hdr_oiio_scene_cubic', 'mode': 'toggle', 'zoom': 4, 'focus': rings,
              'title': "Lanczos's negative lobes ring around values over 1000; the Hermite cubic has none"},
+            {'label': 'HDR: FFmpeg lanczos without and with highlightcomp, 8×', 'src': 'sparks',
+             'a': 'hdr_ff_zscale_ocio', 'b': 'hdr_ff_zscale_hc_ocio', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
+             'title': "OIIO's rangecompress/rangeexpand around zscale's lanczos, done with geq, removes the halos"},
+            {'label': 'highlightcomp: oiiotool vs FFmpeg', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos_hc',
+             'b': 'hdr_ff_zscale_hc_ocio', 'mode': 'diff'},
             {'label': 'FFmpeg vs oiiotool, linear light', 'src': 'chart', 'a': 'zscale_lanczos_linear',
              'b': 'oiio_lanczos3_linear', 'mode': 'diff'},
         ],
