@@ -1,58 +1,77 @@
-# Piecewise sRGB vs Pure Gamma 2.2 — Display EOTF Test Chart
+# Piecewise sRGB or Pure Gamma 2.2? A Display EOTF Test Chart
 
-This folder contains a generator (`make_srgb_vs_gamma22_chart.py`) and visual test charts designed to tell whether a display (or viewing pipeline) follows the **piecewise sRGB EOTF (IEC 61966-2-1)** or a **pure $\gamma = 2.2$ power law**.
+This folder holds a generator (`make_srgb_vs_gamma22_chart.py`) and a visual test chart that tells whether a display, or the whole viewing pipeline in front of it, follows the **piecewise sRGB EOTF (IEC 61966-2-1)** or a **pure $\gamma = 2.2$ power law**.
 
-## How the Test Works
-
-A fine spatial dither alternating between black (`0`) and a reference 8-bit code value $V_{\text{hi}}$ with duty cycle $d \in \{0.50, 0.25\}$ is optically averaged by the human eye in **linear luminance**:
-
-$$L_{\text{dither}} = d \cdot \text{EOTF}(V_{\text{hi}})$$
-
-A solid patch of code value $V_{\text{solid}}$ matches the dither field when $\text{EOTF}(V_{\text{solid}}) = L_{\text{dither}}$:
-
-- **Pure $\gamma = 2.2$** ($\text{EOTF}(V) = V^{2.2}$):
-  $$V_{2.2} = d^{1/2.2} \cdot V_{\text{hi}}$$
-  The ratio $V_{2.2} / V_{\text{hi}}$ is constant across the entire tonal range ($0.7297$ for $d = 0.50$, $0.5325$ for $d = 0.25$).
-- **Piecewise sRGB** ($\text{EOTF}(V) = V / 12.92$ for $V \le 0.04045$, else $((V + 0.055)/1.055)^{2.4}$):
-  Because of the linear toe below 8-bit code value `10.3` and the $0.055$ offset above it, the matching solid code value shifts strongly across the tonal range relative to $\gamma = 2.2$:
-  - **3 to 5 code values LOWER** than $\gamma = 2.2$ in the shadows ($V_{\text{hi}} \in [18..43]$),
-  - **Identical** at the crossover ($V_{\text{hi}} = 185 \to 135$),
-  - **2 code values HIGHER** at peak white ($V_{\text{hi}} = 255 \to 188$ vs $186$).
-
-The seven reference columns are chosen so that **both** the piecewise sRGB match and the pure $\gamma = 2.2$ match fall within $\le 0.08$ of exact 8-bit integers, eliminating 8-bit quantization rounding error:
-
-| Column | Dither ($0$ & $V_{\text{hi}}$) | Piecewise sRGB Match | Pure $\gamma = 2.2$ Match | Difference ($\text{sRGB} - \gamma 2.2$) |
-| :--- | :--- | :---: | :---: | :---: |
-| **1. Deep Toe** | `0 & 18` (50%) | **10** (`9.96`) | **13** (`13.14`) | **−3.17** |
-| **2. Low Shadow** | `0 & 22` (50%) | **13** (`12.96`) | **16** (`16.05`) | **−3.09** |
-| **3. Upper Toe** | `0 & 26` (50%) | **16** (`15.96`) | **19** (`18.97`) | **−3.01** |
-| **4. 25% Shadow** | `0 & 43` (25%) | **18** (`17.98`) | **23** (`22.90`) | **−4.92** |
-| **5. Low Midtone** | `0 & 74` (50%) | **52** (`51.92`) | **54** (`54.00`) | **−2.08** |
-| **6. Crossover** | `0 & 185` (50%) | **135** (`135.08`) | **135** (`135.00`) | **+0.07** |
-| **7. Peak White** | `0 & 255` (50%) | **188** (`187.52`) | **186** (`186.08`) | **+1.43** |
+The chart shows the word **`sRGB`** on a piecewise sRGB display and the word **`2.2`** on a pure gamma 2.2 display.
 
 ## Reading the Chart
 
-1. **1:1 Scale Check (Top Right)**:
-   Both halves of the scale check patch (1-pixel checkerboard on the left, 20-pixel checkerboard on the right) must look **equally bright**. If the left half is darker or shows moiré, the viewer or OS is resampling the image.
-2. **Upper Section — Vanishing Watermarks (`Band 1: Piecewise sRGB` vs `Band 2: Pure Gamma 2.2`)**:
-   - Each column contains four alternating solid/dither bars on top and a block-aligned `sRGB` or `2.2` watermark on the bottom.
-   - On a **Piecewise sRGB** display, the **`sRGB`** text and bars in **Band 1** vanish into a flat field, while **`2.2`** in **Band 2** stands out clearly.
-   - On a **Pure $\gamma = 2.2$** display, the **`2.2`** text and bars in **Band 2** vanish into a flat field, while **`sRGB`** in **Band 1** stands out clearly.
-3. **Lower Section — Precision 1-Code-Value Step Ladder**:
-   - Each column shows 11 solid steps ($\pm 5$ code values around the $\gamma = 2.2$ match), flanked by **horizontal-line dither** on the left (immune to horizontal pixel rise/fall slewing) and **checkerboard dither** on the right.
-   - On a **Pure $\gamma = 2.2$** display, the matching solid steps form a **flat horizontal line across the middle row (`0` / amber ticks)**.
-   - On a **Piecewise sRGB** display, the matching solid steps follow the **cyan ticks** (`-3` in columns 1–3, `-5` in column 4, `-2` in column 5, `0` in column 6, `+2` in column 7).
+View the chart at one image pixel per device pixel (see [Viewing at 1:1](#viewing-at-11)), straight on, then work through three steps:
 
-## Generated Files
+1. **Checks (top right).** In patch **A** and in patch **B**, the fine left half and the coarse right half must look equally bright.
+   - A differs: the image is being resampled. Fix the zoom or scaling.
+   - B differs (usually the fine half is brighter): the display or viewer is sharpening. Turn sharpening off.
+   - If either check fails, nothing below can be trusted.
+2. **Control (column 4).** Both curves agree here, so no word should be readable in either band, and in the ladder the step at the green tick (`135`) should vanish. If a word shows, or a different step vanishes, the display is neither curve (pure gamma 2.4 vanishes near `139`), and the shadow columns do not decide anything.
+3. **Result (columns 1–3).** Squint or step back so the dither blends.
+   - **Words:** the word you can read names your display. The other band is a flat field.
+   - **Ladder:** find the solid step that vanishes into the dither around it. It sits at the cyan tick on a piecewise sRGB display and at the amber tick on a pure gamma 2.2 display. The left half of each column is line dither and the right half is checkerboard dither; both should give the same answer.
 
-Run:
+If the three shadow columns disagree with each other, or the step vanishes away from both ticks, the display is neither curve in the shadows.
+
+`simulated_on_srgb_display.png` and `simulated_on_gamma22_display.png` show what to expect on each display (with the shadow columns brightened so they are easy to see on any screen).
+
+## What the Result Means
+
+The chart measures everything between the PNG and your eye: the viewer, the operating system's colour management and the panel. On a colour-managed system an sRGB-tagged image can come out as piecewise sRGB on a panel that is itself gamma 2.2, because the system converts between the two.
+
+The two PNGs have identical pixels. If they look different in the same viewer, that viewer treats untagged images differently from sRGB-tagged ones (for example by sending untagged pixels straight to the display).
+
+## Viewing at 1:1
+
+The dither is one pixel wide, so any scaling breaks the test. Check A catches it, but these avoid it:
+
+- **Browser:** open `view.html`. It sizes the chart to one image pixel per device pixel on 2× Retina displays, fractional scaling (such as Windows 150%) and any browser zoom, and switches between the untagged and tagged files. Do not pinch-zoom.
+- **Image viewer or player:** use 100% / actual pixels on a display with no scaling. On a 2× display, "100%" in many viewers doubles the image with smoothing; use `view.html` instead.
+
+Also view the screen straight on: VA and TN panels change gamma with viewing angle, which moves the match.
+
+## How the Test Works
+
+A fine dither between black (`0`) and a code value $V_{\text{hi}}$ with duty cycle $d$ is averaged by the eye in **linear light**. A solid patch $V_{\text{solid}}$ matches it when
+
+$$\text{EOTF}(V_{\text{solid}}) = d \cdot \text{EOTF}(V_{\text{hi}})$$
+
+- **Pure $\gamma = 2.2$:** $V_{\text{solid}} = d^{1/2.2} \cdot V_{\text{hi}}$, a constant fraction of $V_{\text{hi}}$ ($0.7297$ for $d = 0.50$, $0.5325$ for $d = 0.25$).
+- **Piecewise sRGB:** the linear segment below 8-bit code `10.3` and the $0.055$ offset above it pull the match 3 to 5 code values lower in the shadows.
+- At $V_{\text{hi}} = 185$ the two curves give the same match (`135`), which makes it the control.
+
+A black level or screen flare adds the same light to the dither and to the solid, so it does not move the match; it only lowers the contrast you see.
+
+| Column | Dither | Piecewise sRGB match | Pure $\gamma = 2.2$ match | Luminance error of the wrong match |
+| :--- | :--- | :---: | :---: | :---: |
+| **1. Deep toe** | `0 & 18` (50%) | **10** (`9.96`) | **13** (`13.14`) | 33–45% |
+| **2. Upper toe** | `0 & 26` (50%) | **16** (`15.96`) | **19** (`18.97`) | 26–31% |
+| **3. 25% shadow** | `0 & 43` (25%) | **18** (`17.98`) | **23** (`22.90`) | 41–42% |
+| **4. Control** | `0 & 185` (50%) | **135** (`135.08`) | **135** (`135.00`) | 0% |
+
+The levels are chosen so both matches fall within `0.15` of an 8-bit integer, so rounding does not blur the result. The last column is how far off the other curve's patch is on each display; that is what makes the word readable.
+
+The word `sRGB` is drawn with the gamma 2.2 match, so it vanishes on a gamma 2.2 display and stands out on an sRGB one. The word `2.2` is drawn with the sRGB match.
+
+Highlights are not used: at peak white the two curves differ by about 2% in luminance, which is too little to see reliably.
+
+## Generating the Files
 
 ```bash
 python tests/srgb-vs-gamma22/make_srgb_vs_gamma22_chart.py
 ```
 
-- `srgb_vs_gamma22_untagged.png` — Raw 8-bit PNG (`IHDR`, `IDAT`, `IEND` only; no colour chunks) for pass-through / non-colour-managed viewers at 1:1 native pixel mapping.
-- `srgb_vs_gamma22_tagged_srgb.png` — Identical pixels with `cICP` (`1, 13, 0, 1`) and `sRGB` chunks to test OS/browser colour management when the image is explicitly tagged as sRGB.
-- `srgb_vs_gamma22_2x_retina.png` — Untagged chart with $2 \times 2$ pixel-doubled dither cells for viewing at 100% logical zoom on 2× Retina/HiDPI displays.
-- `simulated_on_srgb_display.png` & `simulated_on_gamma22_display.png` — Simulated human-eye views (4×4 linear-light spatial integration with shadow gain boost) demonstrating how the chart responds on each display type.
+Needs `numpy` and `Pillow`. The script checks itself before writing anything and stops if a check fails: both matches near integers, both matches inside the ladder, and, on a simulated display of each kind, the right word visible, the other word and the control column flat, and the right ladder step vanishing.
+
+- `srgb_vs_gamma22_untagged.png`: 8-bit PNG with `IHDR`, `IDAT` and `IEND` only (no colour chunks).
+- `srgb_vs_gamma22_tagged_srgb.png`: identical pixels with `cICP` (`1, 13, 0, 1`) and `sRGB` chunks.
+- `simulated_on_srgb_display.png`, `simulated_on_gamma22_display.png`: the chart as the eye sees it on each display (4×4 linear-light averaging, shadow columns brightened 3.2×).
+- `view.html`: the 1:1 browser viewer (written by hand, not generated).
+
+To change the test levels, edit `COLUMNS` in the script; labels, ticks and the ladder follow from it, but update the table above by hand from the script's printed output.
