@@ -339,6 +339,44 @@ def worst_pixel(result, reference):
     return [float(x / e.shape[1]), float(y / e.shape[0])]
 
 
+def timing_table(path=os.path.join(os.path.dirname(os.path.abspath(__file__)), "resize-timing-results.json")):
+    """The timing table, from tests/resize-timing.py's results (None if it has not been run)."""
+    import json
+    if not os.path.exists(path):
+        print(f"No {os.path.relpath(path)} (run tests/resize-timing.py): leaving out the timing table")
+        return None
+    with open(path) as fh:
+        data = json.load(fh)
+    first, last = data['frames']
+    n = last - first + 1
+    modes = data['modes']
+    values = {}
+    for name, key in (("default", "fps"), ("parallel-frames", "fps_par")):
+        for id_, r in modes.get(name, {}).get('results', {}).items():
+            values.setdefault(id_, {})[key] = n / r['total']
+            if name == "default":
+                values[id_]['s'] = r['total']
+    d = modes.get("default") or next(iter(modes.values()))
+    about = (f"Sparks frames {first}-{last} ({n} frames of 4096×2160 half-float EXR) to a 1024×540 ProRes 422 HQ "
+             f"QuickTime, timed by tests/resize-timing.py with {d['ffmpeg']} and oiiotool {d['oiiotool']} on "
+             f"{d['machine']} ({d['date']}). FFmpeg variants are one ffmpeg command; oiiotool variants write 16-bit "
+             "TIFFs, then ffmpeg encodes them, and the time is the sum.")
+    extra = {
+        'label': 'Timing: the Sparks sequence to ProRes',
+        'note': about + " <b>fps, par.</b> is oiiotool with <code>--parallel-frames</code> (several frames at once).",
+        'columns': [
+            {'key': 's', 'short': 'Time (s)', 'label': 'Time', 'digits': 1,
+             'title': f"Wall-clock seconds for all {n} frames, EXR to QuickTime (oiiotool one frame at a time)"},
+            {'key': 'fps', 'short': 'fps', 'label': 'Frames/s', 'digits': 1,
+             'title': "Frames per second, end to end (oiiotool one frame at a time, using all cores per frame)"},
+            {'key': 'fps_par', 'short': 'fps, par.', 'label': 'Frames/s, --parallel-frames', 'digits': 1,
+             'title': "oiiotool with --parallel-frames (several frames at once), then the same ProRes encode"},
+        ],
+        'values': values,
+    }
+    return extra
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--outdir", default="./resize-compare")
@@ -418,13 +456,17 @@ def main():
     edge = worst_pixel(yc.read_rgb(os.path.join(root, "animation-scale_lanczos.png")),
                        yc.read_rgb(os.path.join(root, "animation-reference.png")))
 
+    extra = timing_table()
+
     yc.write_page(root, {
+        **({'extra': extra} if extra else {}),
         'pageTitle': "Resize Compare",
         'title': "Resizing: FFmpeg, oiiotool, linear light and HDR",
         'lede': ("Each image shrunk to a quarter of its size by FFmpeg (<code>scale</code> and <code>zscale</code>) and by <code>oiiotool</code>, on the gamma-encoded values and in linear light. The <b>reference</b> averages each 4×4 block of pixels in linear light, which gives fine detail its right brightness; for the EXR sources (Sparks, BrightRings and Desk, treated as ACES2065-1), in scene-linear light before OCIO's ACES 2.0 view, with extra variants that resize before or after the view transform. Errors are against the reference, in 8-bit code values."),
         'tableNote': ("Error against the reference in 8-bit code values. <b>Bright</b> is the mean signed difference: "
                       "negative means darker than the reference, which is what resizing gamma-encoded values does to "
-                      "fine detail. The reference is a plain average, so sharper filters also differ from it at edges."),
+                      "fine detail. The reference is a plain average, so sharper filters also differ from it at edges."
+),
         'unit': '8-bit code values', 'unitName': '8-bit code', 'unitMax': 255,
         'stats': STATS, 'rankKey': 'mean', 'groups': grps, 'items': items, 'rowLabel': 'Resize',
         'sourceOption': 'Reference (4×4 average in linear light)', 'sourceLabel': 'Reference',

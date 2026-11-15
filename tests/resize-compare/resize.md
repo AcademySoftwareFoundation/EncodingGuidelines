@@ -40,6 +40,12 @@ It prints the results as a Markdown table and takes a few minutes. Any EXR it ca
 To view the page locally, serve the folder over HTTP (browsers do not let the page load its images from a `file://`
 URL), for example `python -m http.server` in `tests`, then open `http://localhost:8000/resize-compare/compare.html`.
 
+The timing table (HDR variants only) comes from
+[`tests/resize-timing.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-timing.py),
+which runs each variant on the 200 Sparks frames, from the EXRs to a ProRes 422 HQ QuickTime, and writes
+`tests/resize-timing-results.json`. Run it once as it is and once with `--parallel-frames` (for oiiotool), before
+`resize-test.py`; it takes about half an hour. Without the results, the timing table is left out.
+
 The Nuke variants (Sparks only) come from [`tests/resize-nuke.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-nuke.py): paste it into Nuke's Script
 Editor (it was run in Nuke 17.1v1) to write the EXRs to `resize-compare/nuke/`, then run `resize-test.py`. Without them,
 the Nuke variants are left out.

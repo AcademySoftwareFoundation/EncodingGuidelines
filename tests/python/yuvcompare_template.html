@@ -232,6 +232,12 @@ a { color: var(--accent); }
     Pick a row as <span class="side a">A</span> or <span class="side b">B</span>.</p>
   <div class="tablewrap"><table id="results"></table></div>
 
+  <div id="extraSection" class="hidden">
+    <h2 class="section" id="extraTitle"></h2>
+    <p class="note" style="margin:0 0 6px" id="extraNote"></p>
+    <div class="tablewrap"><table id="extra"></table></div>
+  </div>
+
   <div class="probe hidden" id="probe" role="status" aria-live="polite"></div>
   <footer id="footer"></footer>
 </main>
@@ -645,6 +651,12 @@ function statBlock(r) {
   return `<div class="stats">` + DATA.stats.map((st) =>
     `<div class="stat" title="${esc(st.title || "")}"><span class="k">${esc(st.label)}</span><span class="v">${fmtStat(r[st.key], st)}</span></div>`).join("") + `</div>`;
 }
+function extraBlock(id) {
+  const ex = DATA.extra, ev = ex && ex.values[id];
+  if (!ev) return "";
+  return `<div class="sub" title="${esc(ex.title || "")}">${esc(ex.label)}</div><div class="stats">` + ex.columns.filter((c) => ev[c.key] !== undefined).map((c) =>
+    `<div class="stat" title="${esc(c.title || "")}"><span class="k">${esc(c.label || c.short)}</span><span class="v">${fmtStat(ev[c.key], c)}</span></div>`).join("") + `</div>`;
+}
 function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
 function renderCard(el, side, id) {
@@ -659,6 +671,7 @@ function renderCard(el, side, id) {
   el.innerHTML = `<h2><span class="side ${side}">${side.toUpperCase()}</span>${esc(it.label)}</h2>
     <div class="sub">${esc(it.group)} · ${esc(s.label)} · error in ${esc(DATA.unit)}</div>
     ${statBlock(r)}
+    ${extraBlock(id)}
     <p>${esc(it.description)}</p>
     <code class="flags">${esc(it.flags || "(no colour options)")}</code>
     ${browserView() ? `<p class="note">Shown: <code>${esc(r.video)}</code>, played by this browser${videoNote(side)}.</p>` : ""}
@@ -698,18 +711,44 @@ function buildTable() {
     }
   }
   t.innerHTML = h + "</tbody>";
-  t.onclick = (e) => {
-    const btn = e.target.closest("button"); if (!btn) return;
-    const id = btn.closest("tr").dataset.id;
-    if (!available(id)) {      // only exists for another image: switch to the first one that has it
-      const s = DATA.sources.find((x) => item(id).results[x.id]); if (s) state.src = s.id;
+  t.onclick = pickRow;
+  buildExtraTable();
+}
+// Optional second table of per-variant values that do not depend on the source image (e.g. timings): DATA.extra =
+// {label, note, columns: [{key, short, label, title, digits}], values: {itemId: {key: number}}}
+function buildExtraTable() {
+  const ex = DATA.extra;
+  if (!ex) return;
+  $("extraSection").classList.remove("hidden");
+  $("extraTitle").textContent = ex.label;
+  $("extraNote").innerHTML = ex.note || "";
+  const cols = ex.columns;
+  let h = `<thead><tr><th class="l"></th><th class="l">${esc(DATA.rowLabel || "Conversion")}</th>` +
+    cols.map((c, k) => `<th class="${k ? "" : "colgrp"}" title="${esc(c.title || "")}">${esc(c.short)}</th>`).join("") + `</tr></thead><tbody>`;
+  for (const g of DATA.groups) {
+    const ids = g.items.filter((id) => ex.values[id]);
+    if (!ids.length) continue;
+    h += `<tr class="grp"><td colspan="${2 + cols.length}">${esc(g.label)}</td></tr>`;
+    for (const id of ids) {
+      const it = item(id), ev = ex.values[id];
+      h += `<tr class="row" data-id="${id}"><td class="pick"><button class="pa" data-side="a" aria-label="Set A to ${esc(it.label)}">A</button><button class="pb" data-side="b" aria-label="Set B to ${esc(it.label)}">B</button></td><td class="l">${esc(it.label)}</td>` +
+        cols.map((c, k) => `<td class="${k ? "" : "colgrp"}">${ev[c.key] === undefined ? "" : fmtStat(ev[c.key], c)}</td>`).join("") + `</tr>`;
     }
-    state[btn.dataset.side] = wanted[btn.dataset.side] = id; render();
-    $("viewer").scrollIntoView({ behavior: "smooth", block: "nearest" });
-  };
+  }
+  $("extra").innerHTML = h + "</tbody>";
+  $("extra").onclick = pickRow;
+}
+function pickRow(e) {
+  const btn = e.target.closest("button"); if (!btn) return;
+  const id = btn.closest("tr").dataset.id;
+  if (!available(id)) {      // only exists for another image: switch to the first one that has it
+    const s = DATA.sources.find((x) => item(id).results[x.id]); if (s) state.src = s.id;
+  }
+  state[btn.dataset.side] = wanted[btn.dataset.side] = id; render();
+  $("viewer").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 function markTable() {
-  for (const tr of $("results").querySelectorAll("tr.row")) {
+  for (const tr of document.querySelectorAll("#results tr.row, #extra tr.row")) {
     tr.classList.toggle("isA", tr.dataset.id === state.a);
     tr.classList.toggle("isB", tr.dataset.id === state.b);
   }
