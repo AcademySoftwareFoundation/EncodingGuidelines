@@ -253,7 +253,7 @@ This has not changed in any version from 6.0 to 9.0:
 * `zscale` was exact for every combination we tested: 8-, 10- and 16-bit RGB to 8-, 10- and 12-bit Y'CbCr, in
   4:4:4, 4:2:2 and 4:2:0.
 
-See [FFmpeg Scaling Options](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) for
+See [FFmpeg swscale Filter](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) for
 more on the cause.
 
 ## libswscale full-range conversions changed in 8.0 {#libswscale-full-range-80}

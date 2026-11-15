@@ -58,7 +58,7 @@ What we have found that works is using the [msys2](https://www.msys2.org/) envir
 
 Note, this build does not include x265 or aom (AV1). Sadly there are unresolved issues building x265 and aom on Windows so they are currently disabled, although they will be built on linux and MacOS.
 
-zimg is now enabled by default (`with_zimg=True`), which provides the `zscale` filter. This matters for colour accuracy: swscale's `scale` filter has a systematic bias in its full-range to limited-range conversion, so `zscale` is the recommended filter for colour space and range conversions. See [Scaling and colour conversion](../EncodeSwsScale.html) for the measurements. If zimg causes problems in your environment you can still turn it off with `-o with_zimg=False`.
+zimg is now enabled by default (`with_zimg=True`), which provides the `zscale` filter. This matters for colour accuracy: swscale's `scale` filter has a systematic bias in its full-range to limited-range conversion, so `zscale` is the recommended filter for colour space and range conversions. See [FFmpeg swscale Filter](../EncodeSwsScale.html) for the measurements. If zimg causes problems in your environment you can still turn it off with `-o with_zimg=False`.
 
 Start by downloading msys2, once its installed, you will be presented with a number of different launch environments. You want to use the one that has "mingw" in the name, e.g. "MSYS2 MinGW 64-bit".
 
