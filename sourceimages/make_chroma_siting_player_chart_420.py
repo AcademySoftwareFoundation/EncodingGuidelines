@@ -35,6 +35,16 @@ and some say topleft or center on purpose, to show whether a player reads the la
   chroma_siting_player_chart_420-hevc-8bit.mp4    HEVC Main, 8-bit, VUI left
   chroma_siting_player_chart_420-h264-10bit.mp4   H.264 High 10, no VUI location (plus -topleft and -center copies)
 
+And an HDR10 version (BT.2020, PQ, every pixel between 1 and 100 cd/m^2 and inside the BT.709 gamut), with its own
+colours, from chroma_siting_420_colours.py; the three HEVC files have the same pixels:
+
+  chroma_siting_player_chart_420-pq-lossless.mkv       FFV1, lossless, labelled left
+  chroma_siting_player_chart_420-hevc-pq.mp4           HEVC Main 10, CRF 4, 2 s, HDR10 SEI, no VUI location (= left)
+  chroma_siting_player_chart_420-hevc-pq-left.mp4      the same, VUI left (0) written explicitly
+  chroma_siting_player_chart_420-hevc-pq-topleft.mp4   the same, VUI topleft (2)
+
+--hdr10-only writes just these (FFmpeg 7.1 or later, for setparams=chroma_location).
+
 (The .mkv names must not end in a digit: xStudio would read one as a single frame of a sequence.)
 
 The 8-bit HEVC and 10-bit H.264 files separate the codec from the bit depth in a player that differs between
@@ -44,6 +54,7 @@ Needs ffmpeg with libx264 and libx265 on the PATH (or FFMPEG_BIN), numpy and Pil
 
     python sourceimages/make_chroma_siting_player_chart_420.py
 """
+import argparse
 import os
 import subprocess
 import tempfile
@@ -51,6 +62,7 @@ from pathlib import Path
 
 import numpy as np
 
+from chroma_siting_420_colours import PQ, PQ_MAX_NITS, PQ_MIN_NITS, pq_eotf, pq_oetf
 from make_chroma_siting_player_chart import BLOCK, H, LABEL, TOP, W, annotate
 
 HERE = Path(__file__).resolve().parent
@@ -70,14 +82,22 @@ BANDS = [
     ('Down: co-sited ("topleft")', "BT.2020", "y", "co-sited",
      ((-0.095, -0.112), (0.229, 0.290), (0.177, 0.179, 0.179, 0.535))),
 ]
+BANDS_PQ = [(label, note, axis, mirror, colours) for (label, note, axis, mirror, _), colours in zip(BANDS, [
+    ((-0.048, -0.027), (0.033, 0.03), (0.275, 0.275, 0.271, 0.439)),
+    ((-0.016, -0.024), (0.066, 0.065), (0.456, 0.267, 0.277, 0.375)),
+    ((-0.059, -0.031), (0.038, 0.034), (0.473, 0.313, 0.243, 0.43)),
+    ((-0.03, -0.018), (0.063, 0.043), (0.221, 0.221, 0.22, 0.381)),
+])]
 
 
-def chart():
-    """The chart as 10-bit Y, Cb, Cr planes (Cb and Cr at half width and half height)."""
+def chart(hdr10=False):
+    """The chart as 10-bit Y, Cb, Cr planes (Cb and Cr at half width and half height). With hdr10, the PQ colours,
+    and the text and scale check kept between 1 and 100 cd/m^2 like the bands."""
+    bands = BANDS_PQ if hdr10 else BANDS
     y = np.full((H, W), 0.5)
     cb = np.zeros((H, W))
     cr = np.zeros((H, W))
-    for k, (_, _, axis, mirror, (X, Z, lumas)) in enumerate(BANDS):
+    for k, (_, _, axis, mirror, (X, Z, lumas)) in enumerate(bands):
         r0, r1 = TOP + k * 2 * BLOCK, TOP + (k + 1) * 2 * BLOCK
         yy, xx = np.mgrid[r0:r1, LABEL:W]
         original = ((yy - r0) // BLOCK + (xx - LABEL) // BLOCK) % 2 == 0
@@ -87,16 +107,61 @@ def chart():
         # Chroma samples alternate X, Z along u (sample index u // 2) and are the same in both blocks.
         c = np.array([X, Z])[(u // 2) % 2]
         cb[r0:r1, LABEL:], cr[r0:r1, LABEL:] = c[..., 0], c[..., 1]
-    y, cb, cr = annotate(y, cb, cr, [
-        "4:2:0 chroma siting: which bands are uniform fields?",
-        "Across: co-sited is right for H.264, HEVC and AV1. Down: centred (\"left\") is their default; "
-        "co-sited (\"topleft\") is BT.2020.",
-        "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
-        "the viewer is scaling: ignore the bands."], [band[:2] for band in BANDS])
+    if hdr10:
+        lo, hi = float(pq_oetf(PQ_MIN_NITS)), float(pq_oetf(PQ_MAX_NITS))
+        title = [
+            "4:2:0 chroma siting, HDR10 (BT.2020, PQ): which bands are uniform fields?",
+            "Untagged, or tagged left: Across: co-sited and Down: centred (\"left\"). Tagged topleft: Across: co-sited "
+            "and Down: co-sited.",
+            "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
+            "the viewer is scaling: ignore the bands."]
+        y, cb, cr = annotate(y, cb, cr, title, [band[:2] for band in bands],
+                             grey=(float(pq_oetf(10)), hi - float(pq_oetf(10))), check=(lo, hi))
+    else:
+        y, cb, cr = annotate(y, cb, cr, [
+            "4:2:0 chroma siting: which bands are uniform fields?",
+            "Across: co-sited is right for H.264, HEVC and AV1. Down: centred (\"left\") is their default; "
+            "co-sited (\"topleft\") is BT.2020.",
+            "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
+            "the viewer is scaling: ignore the bands."], [band[:2] for band in bands])
     return [np.clip(p, 4, 1019).astype("<u2") for p in (y, cb[0::2, 0::2], cr[0::2, 0::2])]
 
 
+def light_levels(planes):
+    """MaxCLL and MaxFALL (cd/m^2) of a PQ BT.2020 chart, for the HDR10 metadata."""
+    y = (planes[0].astype(float) - 64) / 876.0
+    cb, cr = ((np.repeat(np.repeat(p.astype(float), 2, 0), 2, 1) - 512) / 896.0 for p in planes[1:])
+    peak = pq_eotf(PQ.rgb(y, cb, cr)).max(-1)
+    return int(np.ceil(peak.max())), int(np.ceil(peak.mean()))
+
+
+def hdr10_jobs(tmp):
+    """The HDR10 copies: HEVC Main 10, BT.2020, PQ, with mastering display and light level metadata. The pixels
+    are the same in each; only the VUI chroma location differs. setparams only labels the frames (FFmpeg 7.1 and
+    later); -chroma_sample_location is not reliable for this (see ChromaSiting.md)."""
+    planes = chart(hdr10=True)
+    raw = Path(tmp) / "chart-pq.yuv"
+    raw.write_bytes(b"".join(p.tobytes() for p in planes))
+    max_cll, max_fall = light_levels(planes)
+    src = ["-f", "rawvideo", "-pix_fmt", "yuv420p10le", "-s", f"{W}x{H}", "-r", "25", "-i", raw]
+    tags = "setparams=range=tv:color_primaries=bt2020:color_trc=smpte2084:colorspace=bt2020nc"
+    # P3-D65 mastering display, 1000 cd/m^2 peak, 0.0001 minimum: the usual HDR10 values.
+    x265 = ("log-level=error:hdr10=1:repeat-headers=1:"
+            "master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):"
+            f"max-cll={max_cll},{max_fall}")
+    hevc = ["-stream_loop", "49"] + src + ["-c:v", "libx265", "-crf", "4", "-tag:v", "hvc1", "-x265-params", x265]
+    return [
+        (src + ["-vf", tags + ":chroma_location=left", "-c:v", "ffv1"], "-pq-lossless.mkv"),
+        (hevc + ["-vf", tags], "-hevc-pq.mp4"),
+        (hevc + ["-vf", tags + ":chroma_location=left"], "-hevc-pq-left.mp4"),
+        (hevc + ["-vf", tags + ":chroma_location=topleft"], "-hevc-pq-topleft.mp4"),
+    ], (max_cll, max_fall)
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--hdr10-only", action="store_true", help="Write only the HDR10 files")
+    args = parser.parse_args()
     ffmpeg = os.environ.get("FFMPEG_BIN", "ffmpeg")
     with tempfile.TemporaryDirectory() as tmp:
         planes = chart()
@@ -126,9 +191,12 @@ def main():
             (src + loop + ["-i", raw] + h264_10 + ["-chroma_sample_location", "topleft"], "-h264-10bit-topleft.mp4"),
             (src + loop + ["-i", raw] + h264_10 + ["-chroma_sample_location", "center"], "-h264-10bit-center.mp4"),
         ]
-        for args, suffix in jobs:
+        pq_jobs, (max_cll, max_fall) = hdr10_jobs(tmp)
+        print(f"HDR10: MaxCLL {max_cll}, MaxFALL {max_fall} cd/m^2")
+        jobs = pq_jobs if args.hdr10_only else jobs + pq_jobs
+        for job, suffix in jobs:
             out = HERE / (NAME + suffix)
-            subprocess.run([ffmpeg, "-v", "error", "-y"] + [str(a) for a in args] + [str(out)], check=True)
+            subprocess.run([ffmpeg, "-v", "error", "-y"] + [str(a) for a in job] + [str(out)], check=True)
             print(out.name, out.stat().st_size)
 
 

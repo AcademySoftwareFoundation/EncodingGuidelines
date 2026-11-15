@@ -104,9 +104,10 @@ def chart():
     return [np.clip(p, 4, 1019).astype("<u2") for p in (y, cb[:, 0::2], cr[:, 0::2])]
 
 
-def annotate(y, cb, cr, title, labels):
+def annotate(y, cb, cr, title, labels, grey=(0.45, 0.45), check=(0.0, 1.0)):
     """Add the title band (three lines), the band labels and the scale check, in luma only on a neutral grey, and
-    quantise to 10-bit limited range codes (full resolution; the caller subsamples the chroma)."""
+    quantise to 10-bit limited range codes (full resolution; the caller subsamples the chroma). The text is
+    grey[0] + grey[1] * coverage, and the scale check alternates the two luma values in check."""
     img = Image.new("L", (W, H), 0)
     d = ImageDraw.Draw(img)
     big, mid, small = (ImageFont.load_default(size=s) for s in (30, 26, 20))
@@ -119,13 +120,14 @@ def annotate(y, cb, cr, title, labels):
     text_area = np.zeros((H, W), bool)
     text_area[:TOP] = True
     text_area[:, :LABEL] = True
-    y = np.where(text_area, 0.45 + 0.45 * np.asarray(img) / 255.0, y)
+    y = np.where(text_area, grey[0] + grey[1] * np.asarray(img) / 255.0, y)
     cb[text_area], cr[text_area] = 0, 0
     # Scale check: one-pixel checkerboard on the left half, 20-pixel checkerboard on the right half.
     x0, y0, x1, y1 = CHECK
     xm = (x0 + x1) // 2
     yy, xx = np.mgrid[y0:y1, x0:x1]
-    y[y0:y1, x0:x1] = np.where(xx < xm, (yy + xx) % 2, ((yy - y0) // 20 + (xx - xm) // 20) % 2)
+    on = np.where(xx < xm, (yy + xx) % 2, ((yy - y0) // 20 + (xx - xm) // 20) % 2)
+    y[y0:y1, x0:x1] = np.where(on == 1, check[1], check[0])
     return np.round(y * 876 + 64), np.round(cb * 896 + 512), np.round(cr * 896 + 512)
 
 

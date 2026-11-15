@@ -14,14 +14,21 @@ FFmpeg decodes (the ffmpeg on the PATH, or FFMPEG_BIN):
 A screenshot, taken at one image pixel per screen pixel (e.g. screencapture -o -l <window id> shot.png on macOS):
     python tests/chroma_siting_player_chart.py --capture shot.png
 The 4:2:0 chart: --chart sourceimages/chroma_siting_player_chart_420-hevc.mp4, or --420 with --capture.
+The HDR10 4:2:0 chart (a chart file with "-pq" in its name): FFmpeg leaves the decoded R'G'B' in PQ and BT.2020, so
+the light is computed with the PQ EOTF instead of gamma 2.4. A screenshot is already display-referred, so use
+--420 as for SDR.
 """
 import argparse
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "sourceimages"))
+from chroma_siting_420_colours import BT2020_TO_709, pq_eotf  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 CHART = HERE.parent / "sourceimages" / "chroma_siting_player_chart_422-lossless.mkv"
@@ -47,9 +54,9 @@ def oklab(rgb):
     return M2 @ np.cbrt(M1 @ rgb)
 
 
-def bands(img, left=0, top=0, s=1.0):
-    """Difference between test and reference blocks for each band; img is R'G'B' in 0..1."""
-    lin = np.clip(img, 0, 1) ** 2.4
+def bands(img, left=0, top=0, s=1.0, pq=False):
+    """Difference between test and reference blocks for each band; img is R'G'B' in 0..1 (PQ and BT.2020 if pq)."""
+    lin = pq_eotf(img) / 100 @ BT2020_TO_709.T if pq else np.clip(img, 0, 1) ** 2.4
     out = []
     for k in range(4):
         sums, n = np.zeros((2, 3)), np.zeros(2)
@@ -86,7 +93,7 @@ def find_chart(img):
     """Top-left corner and scale of the chart in a screenshot: the first row with a long run of the title band's
     grey (it spans the chart's full width) that continues down its unlettered left edge for the band's height."""
     g = ((np.abs(img[..., 0] - img[..., 1]) < 0.02) & (np.abs(img[..., 1] - img[..., 2]) < 0.02)
-         & (img[..., 1] > 0.15) & (img[..., 1] < 0.6))
+         & (img[..., 1] > 0.08) & (img[..., 1] < 0.6))     # 0.08: the HDR10 chart's title band is darker
 
     def longest_run(row):
         best, start, cur = (0, 0), 0, 0
@@ -105,11 +112,15 @@ def find_chart(img):
         s = n / W
         if n >= 900 and g[y:y + int(110 * s), x0 + 4].all():
             # Confirm with the scale check's coarse checkerboard (20-pixel cells from x 1730, y 10 of the chart):
-            # the cell centres alternate black and white whatever the scale.
+            # the cell centres alternate dark and light whatever the scale (black and white in SDR; 1 and
+            # 100 cd/m^2 in the HDR10 chart, which a screenshot shows as two greys).
             def cell(i, j):
                 cy, cx = int(y + (20 + 20 * j) * s), int(x0 + (1740 + 20 * i) * s)
                 return img[cy, cx].mean() if cy < img.shape[0] and cx < img.shape[1] else 0.5
-            if all(abs(cell(i, j) - (i + j) % 2) < 0.2 for i in range(8) for j in range(5)):
+            cells = [(cell(i, j), (i + j) % 2) for i in range(8) for j in range(5)]
+            dark = [v for v, light in cells if not light]
+            light = [v for v, light in cells if light]
+            if min(light) - max(dark) > 0.15:
                 return x0, y, s
     raise SystemExit("chart not found: is the whole title band visible?")
 
@@ -147,7 +158,7 @@ def main():
         else:
             g, b, r = px.reshape(3, H, W)
             img = np.stack([r, g, b], -1)
-        report(name, bands(img), c420=c420)
+        report(name, bands(img, pq="-pq" in args.chart.name), c420=c420)
 
 
 if __name__ == "__main__":

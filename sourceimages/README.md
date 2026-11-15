@@ -24,6 +24,11 @@ Source images for tests.
      tests across and down separately: FFV1 and HEVC Main 10 (10-bit), 8-bit H.264 High, plus 8-bit HEVC and
      10-bit H.264 High 10; the -topleft and -center copies carry that chroma location in the VUI, to show whether a
      player reads it. Made by make_chroma_siting_player_chart_420.py; measured with --chart (or --420 --capture).
+   * chroma_siting_player_chart_420-pq-lossless.mkv, chroma_siting_player_chart_420-hevc-pq{,-left,-topleft}.mp4 - the
+     4:2:0 chart as HDR10 (BT.2020, PQ, HEVC Main 10 with mastering display and content light level SEI), every
+     pixel between 1 and 100 cd/m^2. The same pixels in each; the VUI chroma location is absent, left (0) or
+     topleft (2). Colours from chroma_siting_420_colours.py; made with make_chroma_siting_player_chart_420.py
+     (--hdr10-only writes just these).
    * chroma_siting_pixel_chart_{422,420}-{10bit,8bit,reference}.mkv - tiny 64x64 FFV1 charts to zoom in on: flat grey
      luma with single raised chroma samples and luma rulers, and 4:4:4 references holding the expected pixels. Made
      by make_chroma_siting_pixel_chart.py; measured by tests/chroma_siting_pixel_chart.py.

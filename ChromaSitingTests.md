@@ -320,6 +320,15 @@ neighbouring chroma samples across only in its 10/12-bit path, and repeats rows 
 every tag we tried (HEVC `topleft` and `center`, 8-bit H.264 `topleft`, 10-bit H.264 `center`). OpenRV is centred
 both ways whatever the file says.
 
+The other tagged copies were measured later, with the HDR10 files (Safari 26.6.2 and Chrome 157, on the laptop's
+built-in screen; Chrome 157 gave the same results as 156 for the untagged and `topleft` HEVC files):
+
+* `-hevc-center.mp4`: both follow the tag (centred both ways).
+* `-h264-10bit-topleft.mp4`: both show it **centred both ways**, as with the 8-bit H.264 `topleft` file.
+* `-h264-10bit-center.mp4`: both show it centred both ways. In Safari that is following the tag, since it shows the
+  untagged 10-bit file correctly. In Chrome it proves nothing, since Chrome shows every 10-bit H.264 file centred
+  across, and centred down is the default anyway.
+
 FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-...`:
 
 | Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
@@ -328,6 +337,74 @@ FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/ch
 | No filter, to planar RGB | **Centred both ways**, whatever the tag | Follows the tag |
 | No filter, to packed RGB (PNG) | **Centred both ways**, whatever the tag | **Centred both ways**, whatever the tag (the finest detail; see [How it works](#how-it-works)) |
 | `scale=flags=...+full_chroma_int` | **Centred both ways** | Follows the tag |
+
+### The HDR10 copies {#chart-420-hdr10}
+
+HDR video often takes a different path through a player (tone mapping, macOS EDR, a TV's HDR mode), so the SDR
+results above do not necessarily carry over, and HDR10 is where the specifications disagree most (see
+[What specifications ask for](ChromaSiting.html#what-specifications-ask-for)). There is an HDR10 version of the 4:2:0 chart with
+the same bands: `sourceimages/chroma_siting_player_chart_420-hevc-pq.mp4` (HEVC Main 10, BT.2020, PQ, with
+mastering display and content light level SEI), with a lossless FFV1 copy in `-pq-lossless.mkv`. There are three
+HEVC files with the same pixels; only the VUI differs:
+
+| File | VUI chroma location | Should show |
+| :--- | :--- | :--- |
+| `-hevc-pq.mp4` | None (so `left`, the default) | Across: co-sited, Down: centred |
+| `-hevc-pq-left.mp4` | 0 (`left`), written explicitly | Across: co-sited, Down: centred |
+| `-hevc-pq-topleft.mp4` | 2 (`topleft`), as Ultra HD Blu-ray, ATSC 3.0 and DVB BT.2020 use | Across: co-sited, **Down: co-sited** |
+
+A player that shows `-hevc-pq-topleft.mp4` the same as the other two ignores the tag, and would show `topleft`
+HDR10 material with the colour half a line too low.
+
+The colours had to be chosen again for PQ. Every pixel is between 1 and 100 cd/m<sup>2</sup> (MaxCLL 100, MaxFALL
+31) and inside the BT.709 gamut. So no display tone maps it, gamut maps it, or crushes it into its black level, and
+a screenshot does not clip it. The wrong band differs by at least 0.071 in Oklab, against 0.065 for the SDR chart.
+`sourceimages/chroma_siting_420_colours.py` checks both sets of colours with the same player models, and found the
+PQ ones (`--search --seed 3`).
+
+**Viewing it:**
+
+* Use an HDR display in its HDR mode, and keep the player window entirely on that display. On a Mac with external
+  SDR monitors, a window on (or partly on) an SDR screen is tone mapped to SDR. Disconnecting the other displays
+  removes any doubt.
+* It still has to be shown at exactly 100%, with the same scale check. On a Retina laptop screen at its default
+  scaling a 1920x1080 frame at 100% is 3840 screen pixels wide and does not fit. Switch the display to its native
+  resolution, without HiDPI (System Settings > Displays > Advanced > Show resolutions as list, then Show all
+  resolutions), so one image pixel is one screen pixel.
+* On a TV, turn off dynamic tone mapping, sharpening and noise reduction, and use a mode with no picture
+  processing (Filmmaker or Cinema mode). Play the file from USB or a media server; the TV's own player is often
+  what you want to test.
+
+FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-hevc-pq...`
+(the script uses the PQ EOTF for files with `-pq` in the name), on 6.1.6, 9.0.2 and 9.1.dev, gives the same
+answers as for the SDR chart:
+
+| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
+| :--- | :--- | :--- |
+| `zscale` | Follows the tag (`left`, `topleft`) | Follows the tag |
+| No filter, to planar RGB | **Centred both ways**, whatever the tag | Follows the tag |
+
+Measured on macOS 26.6.2 (Apple M2 Max, built-in Liquid Retina XDR display at its native 3024x1964, no other
+displays) from full-screen screenshots, analysed with `--420 --capture`. OpenRV and xStudio are left out: they do
+not display HDR.
+
+| Player | `-hevc-pq.mp4`,<br>should be `left` | `-hevc-pq-left.mp4`,<br>should be `left` | `-hevc-pq-topleft.mp4`,<br>should be `topleft` |
+| :--- | :--- | :--- | :--- |
+| Safari 26.6.2 | Co-sited across; **down: neither** | Co-sited across; **down: neither** | Follows the tag |
+| Chrome 157 | Co-sited across; **down: neither** | Co-sited across; **down: neither** | Follows the tag |
+| Firefox 159 | Correct | Correct | **Ignores the tag** (shown as `left`) |
+| QuickTime Player 10.5 | Co-sited across; **down: neither** | Co-sited across; **down: neither** | Follows the tag |
+| A TV's own player | not yet tested | not yet tested | not yet tested |
+
+Safari, Chrome and QuickTime Player agree, as Safari and Chrome do for SDR, so the cause is probably the macOS
+HDR video path they share (not confirmed). Across is right in every file, and a `topleft` tag is followed exactly. But the untagged and `left`
+files, which should be centred down, match neither: both "Down" bands keep a faint checkerboard, at about a
+quarter (centred band) and a third (co-sited band) of the contrast of a wrong band, so the chroma is placed
+between the two positions or blurred vertically; we have not worked out which. The same SDR files, captured the
+same way, came out right, and the SDR `topleft` file followed its tag (QuickTime Player as well). So on a Mac,
+HDR10 tagged `topleft` is shown as intended by these three, and HDR10 at the H.264/HEVC default is not. Firefox is
+the opposite: it shows HDR10 as `left` whatever the tag, which is right for the untagged and `left` files and wrong
+for `topleft`. In SDR, Firefox also ignored the HEVC `center` and 10-bit H.264 `topleft` and `center` tags.
 
 ## Checking the pixels {#pixel-chart}
 

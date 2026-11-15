@@ -18,7 +18,7 @@ parent: Encoding Overview
 
 When an image is converted to 4:2:2 or 4:2:0, there is only one chroma (colour) sample for every two luma samples
 across, and for 4:2:0 also for every two down. *Chroma siting* (or chroma sample location) is where each of
-those chroma samples sits relative to the luma samples:
+those chroma samples **sits** relative to the luma samples:
 
 * **Co-sited**: the chroma sample sits on top of the even luma sample. This is what professional 4:2:2
   (SDI, ProRes, DNxHD/DNxHR) and H.264, HEVC and AV1 4:2:0 expect horizontally.
@@ -46,8 +46,9 @@ instead (see [Where this is specified](ChromaSitingTests.html#where-this-is-spec
 position; that it also means vertically centred is FFmpeg's convention, taken from MPEG-2 and H.264.
 
 If the converter puts the chroma in one place and the player assumes another, the colour is shifted half a pixel
-against the detail. It is subtle, a fraction of a pixel on colour edges, but it is systematic, it accumulates
-over round trips, and in most formats nothing in the file tells the player otherwise.
+against the detail. It is subtle, a fraction of a pixel on colour edges, but it is systematic, and it accumulates
+over round trips. For 4:2:2 the position is agreed (co-sited), so a file needs no label; it just has to be made
+that way. For 4:2:0, H.264, HEVC and AV1 can say where the chroma is, but most players ignore what they say.
 
 ## Summary
 
@@ -59,8 +60,12 @@ over round trips, and in most formats nothing in the file tells the player other
 * libswscale can be made to co-site, on 7.1 and later, with `out_chroma_loc=left` **and**
   `-sws_flags +full_chroma_inp`. Without `full_chroma_inp` it averages pairs of RGB pixels before filtering, and
   the result is only approximately co-sited.
-* **In most delivery formats there is nowhere to record the siting**, so the conversion has to match what players
-  assume: co-sited. Matroska is the exception.
+* **4:2:2 needs no label**: every standard says co-sited, so the conversion just has to co-site it, and a player
+  that centres it is simply wrong. ProRes, DNxHR and 4:2:2 H.264/HEVC have no field for it, and do not need one.
+* **4:2:0 is where the choice is**, between `left` (the H.264/HEVC/AV1 default) and `topleft` (BT.2020). H.264,
+  HEVC and AV1 have a field for it, but only some players read it. For SDR use `left`, which is the default and
+  needs no label. For BT.2020/HDR the specifications mostly point to `topleft`, which must then be signalled, and
+  players disagree (see [What specifications ask for](#what-specifications-ask-for)).
 * **Reading 4:2:2 or 4:2:0 back to RGB has the same problem in reverse.** `zscale` reads the file's chroma
   location and assumes co-sited when there is none. libswscale, which is what a plain `ffmpeg -i movie.mov
   frame.png` uses, assumes centred whatever the file says, up to and including 9.0, so stills from ProRes, DNxHR
@@ -118,7 +123,7 @@ build (zoomed 3 times with nearest neighbour).
 
 ## Where chroma siting is recorded
 
-In most formats there is nowhere to say where the chroma is ([each codec and container](ChromaSitingTests.html#recorded-details)):
+Where the chroma is can be recorded in these places ([each codec and container](ChromaSitingTests.html#recorded-details)):
 
 * **H.264, HEVC and AV1** have a field, for 4:2:0 only.
 * **ProRes and DNxHD/DNxHR** have none, and MOV and MP4 add nothing to what the codec stream carries.
@@ -127,8 +132,8 @@ In most formats there is nowhere to say where the chroma is ([each codec and con
 
 Two things follow:
 
-* For ProRes and DNxHR in MOV, and for any 4:2:2 H.264 or HEVC, there is no way to say where the chroma is: it
-  is always read as co-sited, so it has to be made co-sited.
+* For ProRes and DNxHR in MOV, and for any 4:2:2 H.264 or HEVC, there is no field, and none is needed: 4:2:2 is
+  co-sited by every standard and read that way, so it has to be made co-sited.
 * `ffprobe`'s `chroma_location` is not always what is in the file. For H.264 it shows `left` when nothing is
   written, even for 4:2:2, and for AV1 in MP4 it showed `unspecified` even when the stream had `left`.
 
@@ -138,35 +143,94 @@ centred, so the file states the wrong thing; see [DNxHR in MXF](ChromaSitingTest
 
 ## What specifications ask for {#what-specifications-ask-for}
 
-For 4:2:2 there is no disagreement: it is co-sited. For 4:2:0 the choice is between `left` (H.264/HEVC VUI type
-0, co-sited horizontally and centred vertically) and `topleft` (type 2, co-sited both ways), and the specifications
-do not agree:
+For 4:2:2 there is no disagreement: it is co-sited, and in ProRes, DNxHR and 4:2:2 H.264/HEVC there is nowhere to
+say otherwise. For 4:2:0 the choice is between `left` (H.264/HEVC VUI type 0, co-sited horizontally and centred
+vertically) and `topleft` (type 2, co-sited both ways). Most of the specifications that choose are written for a
+particular kind of device, and they do not agree:
 
-| Specification | 4:2:0 siting |
-| :--- | :--- |
-| ITU-T H.264 / H.265, Annex E | `left` (0) when nothing is signalled. H.265 has recommended `topleft` (2) for BT.2020 and BT.2100 video since its 2018 edition, according to [Dolby](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) and 3GPP (we have not checked the ITU text) |
-| [ITU-T H.Sup19](https://www.itu.int/epublications/publication/itu-t-h-suppl-19-2021-04-usage-of-video-signal-type-code-points) / ISO/IEC TR 23091-4, typical values | `left` (0) for SD and HD, `topleft` (2) for UHD with wide colour gamut |
-| [DVB, ETSI TS 101 154](https://www.etsi.org/deliver/etsi_ts/101100_101199/101154/02.09.01_60/ts_101154v020901p.pdf) V2.9.1, clause 5.14.1.5.3 (HEVC) | The siting **shall** be signalled; recommends `left` (0) for progressive BT.709 and `topleft` (2) for progressive BT.2020. (For H.264 it recommends 0.) |
-| [ATSC 3.0, A/341:2024](https://www.atsc.org/wp-content/uploads/2024/04/A341-2024-04-Video-HEVC.pdf), section 6.2.3.2 | **`topleft` (2), required for all progressive video**, including 1080p and 720p BT.709 SDR. `left` (0) for legacy SD and interlaced HD ([Amendment 1](https://www.atsc.org/wp-content/uploads/2022/09/A341-2022-03-Amendment-No-1.pdf), 2022) |
-| [Dolby Vision profiles](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) | Either, but the VUI must say so unless it is `left`. Default `left` (0) for profile 5 ("all commercially produced profile 5 ... bitstreams have used center-left siting"), for the HDR10 base layer of profile 8.1 and for the DVB HLG base layer of 8.4; `topleft` (2) for profile 7 (Ultra HD Blu-ray) and for the ARIB HLG base layer of 8.4 |
+| Specification | Applies to | 4:2:0 siting |
+| :--- | :--- | :--- |
+| ITU-T H.264 / H.265, Annex E | Every H.264/HEVC decoder | `left` (0) when nothing is signalled. H.265 has recommended `topleft` (2) for BT.2020 and BT.2100 video since its 2018 edition, according to [Dolby](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) and 3GPP (we have not checked the ITU text) |
+| [ITU-T H.Sup19](https://www.itu.int/epublications/publication/itu-t-h-suppl-19-2021-04-usage-of-video-signal-type-code-points) / ISO/IEC TR 23091-4, typical values | Guidance, summarising the delivery specifications | `left` (0) for SD and HD, `topleft` (2) for UHD with wide colour gamut |
+| [DVB, ETSI TS 101 154](https://www.etsi.org/deliver/etsi_ts/101100_101199/101154/02.09.01_60/ts_101154v020901p.pdf) V2.9.1, clause 5.14.1.5.3 (HEVC) | Broadcast receivers and set-top boxes in Europe and most of the world outside the Americas, Japan and Korea | The siting **shall** be signalled; recommends `left` (0) for progressive BT.709 and `topleft` (2) for progressive BT.2020. (For H.264 it recommends 0.) |
+| [ATSC 3.0, A/341:2024](https://www.atsc.org/wp-content/uploads/2024/04/A341-2024-04-Video-HEVC.pdf), section 6.2.3.2 | Broadcast receivers ("NextGen TV") in the US and Korea | **`topleft` (2), required for all progressive video**, including 1080p and 720p BT.709 SDR. `left` (0) for legacy SD and interlaced HD ([Amendment 1](https://www.atsc.org/wp-content/uploads/2022/09/A341-2022-03-Amendment-No-1.pdf), 2022) |
+| Blu-ray Disc (BD-ROM Part 3) | HD Blu-ray (H.264, VC-1, MPEG-2) and Ultra HD Blu-ray (HEVC) players | The specifications are not public. H.Sup19 cites BD-ROM Part 3 v3.2 for `topleft` (2) in UHD wide colour gamut, and Dolby's profile 7 (the Ultra HD Blu-ray profile) defaults to `topleft`. [Encoder users report](https://forum.doom9.org/archive/index.php/t-175042.html) that a BT.2020 disc must signal 2 and a BT.709 one may use 0 or 2. For HD Blu-ray we have found nothing beyond the H.264/MPEG-2 default, `left` |
+| [Dolby Vision profiles](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) | Dolby Vision devices: profile 5 and 8.1 for streaming, 7 for Ultra HD Blu-ray, 8.4 for HLG | Either, but the VUI must say so unless it is `left`. Default `left` (0) for profile 5 ("all commercially produced profile 5 ... bitstreams have used center-left siting"), for the HDR10 base layer of profile 8.1 and for the DVB HLG base layer of 8.4; `topleft` (2) for profile 7 and for the ARIB (Japanese broadcast) HLG base layer of 8.4 |
+| [Apple HLS authoring specification](https://developer.apple.com/documentation/http-live-streaming/hls-authoring-specification-for-apple-devices) | Streaming to Apple devices | Says nothing about siting, so `left`, the H.264/HEVC default |
 
 Where they disagree:
 
 * **HD:** a 1080p BT.709 HEVC stream for ATSC 3.0 must be `topleft`; the same stream for DVB is recommended to be
   `left`, which is also what H.264/HEVC readers assume when nothing is signalled.
-* **HDR10 and HLG:** H.265, DVB and ATSC point to `topleft` for BT.2020/BT.2100, but most streaming HDR (Dolby
-  Vision profile 5, and the HDR10 base layer of profile 8.1) is `left`, and Dolby's own default for a DVB HLG base
-  layer is `left` where DVB recommends `topleft`.
+* **HDR10 and HLG:** H.265, DVB, ATSC and Ultra HD Blu-ray point to `topleft` for BT.2020/BT.2100, but most
+  streaming HDR (Dolby Vision profile 5, and the HDR10 base layer of profile 8.1) is `left`, and Dolby's own
+  default for a DVB HLG base layer is `left` where DVB recommends `topleft`.
 * **Players:** Dolby notes that `topleft` is checked when a Dolby Vision chip is approved, but not when a device
   is. A player that ignores the VUI treats `topleft` material as `left`, and puts the chroma half a line too
-  low.
+  low, as Firefox does. The reverse also happens: on a Mac, Safari 26.6, Chrome 157 and QuickTime Player showed
+  HDR10 HEVC tagged `topleft` exactly right, but untagged or `left` HDR10 neither centred nor co-sited down, though
+  the same SDR files were right ([measured](ChromaSitingTests.html#chart-420-hdr10)). So on a Mac no choice is
+  right in every player. To check a player or TV, there are HDR10 copies of the
+  4:2:0 chart with and without the `topleft` tag.
 
-The default `zscale` siting (`left`) is right for H.264/HEVC 4:2:0 that does not say otherwise, and for DVB HD.
-For a specification that asks for `topleft`, set it, and the encoder signals it: with `libx265`,
-`zscale=matrix=709:range=limited:chromal=topleft` gave top-left chroma (measured 0.00 horizontally, 0.02
-vertically) and VUI `chroma_sample_loc_type` 2 on FFmpeg 6.1.6 and 9.0.2. For a BT.2020 conversion use the
-matching `matrix` and `primaries`. In 4:2:2 MXF, `topleft` is also the value that gives the correct `ColorSiting`
-(see [DNxHR in MXF](ChromaSitingTests.html#dnxhr-in-mxf)).
+So for anything that is not going to a broadcaster or onto a disc with its own specification (review files, web
+and streaming, files played on desktops and phones), use `left`, the `zscale` default. Use `topleft` when the
+delivery specification asks for it: ATSC 3.0, Ultra HD Blu-ray, and BT.2020 HEVC for DVB.
+
+### Should the siting always be signalled? {#signalling}
+
+Signalling it is safe, but it is not enough on its own:
+
+* **Most players ignore the tag** (see [Checking a player by eye](#checking-a-player)): of those we tried, only
+  FFmpeg followed it reliably. So the pixels have to be where players assume, `left`, unless a specification says
+  otherwise. A `topleft` file is shown correctly only by a player that reads the tag.
+* **Signalling `left` costs nothing**, and DVB requires the siting to be signalled for HEVC. It is not needed
+  elsewhere, since `left` is what H.264/HEVC readers assume when nothing is written.
+* **Signalling `topleft` is essential**: without it every reader assumes `left`.
+* **It can only be signalled for 4:2:0 H.264, HEVC and AV1, and in Matroska.** For ProRes, DNxHR and any 4:2:2 in
+  MOV or MP4 there is nothing to set; co-siting the chroma is all you can do (see
+  [Where chroma siting is recorded](#where-chroma-siting-is-recorded)).
+
+A label that disagrees with the pixels is worse than no label, so **set the siting on the conversion**, with
+`zscale`'s `chromal`. That puts the chroma there and labels the frames, and the encoder writes the label (for
+BT.2020, use the matching `matrix` and primaries as well):
+
+```console
+ffmpeg -i input.%04d.png -vf "zscale=matrix=709:range=limited:chromal=left:filter=lanczos,format=yuv420p10le,setparams=color_primaries=bt709:color_trc=iec61966-2-1" -c:v libx265 -crf 18 -colorspace bt709 output.mp4
+```
+
+What we measured, with `libx265` and `libx264` 4:2:0 on FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and a 9.1 development
+build:
+
+| Command | Pixels | What is written |
+| :--- | :--- | :--- |
+| `zscale` with no `chromal` | `left` | Nothing (the frames carry no location), which readers take as `left` |
+| `zscale=...:chromal=left` | `left` | `libx265`: type 0. `libx264`: nothing, because x264 never writes type 0, even with `-x264-params chromaloc=0` |
+| `zscale=...:chromal=topleft` | `topleft` (measured 0.00 px horizontally, 0.02 vertically) | Type 2 with both encoders |
+| `scale` | Centred | Nothing, so it is read as `left`: half a pixel off |
+
+The options that only set the label do not move the chroma, so with `scale`, or with `zscale` at its default and
+a `topleft` label, they give a file whose label is wrong:
+
+* **`-chroma_sample_location`** relabelled the frames without converting on 6.1.6, 8.1 and 9.0.2, was ignored on
+  7.1.5, and on the 9.1 development build made `zscale` convert to it. Do not rely on it.
+* **`setparams=chroma_location=`** (FFmpeg 7.1 and later) only relabels.
+* **`-x265-params chromaloc=`** overrides what `libx265` writes, whatever the pixels are.
+
+FFmpeg's wrappers for `libx264`, `libx265`, `libsvtav1` and the VAAPI/Vulkan H.264 encoders pass the location on;
+`libaom-av1` writes unknown ([measured](ChromaSitingTests.html#recorded-details)), and the VideoToolbox and NVENC
+wrappers have no code to pass it on (from the FFmpeg source; not measured).
+
+To check what a file says, read the bitstream; `ffprobe`'s `chroma_location` shows a default when nothing is
+written:
+
+```console
+ffmpeg -i output.mp4 -c copy -bsf:v trace_headers -f null - 2>&1 | grep -E "chroma_loc_info_present_flag|chroma_sample_loc_type|chroma_sample_position"
+```
+
+For H.264/HEVC, `chroma_loc_info_present_flag` 0 (or no line) means nothing is written; 1 is followed by the
+type. For AV1, `chroma_sample_position` is 0 (unknown), 1 (`left`) or 2 (`topleft`). In 4:2:2 MXF, `topleft` is
+also the value that gives the correct `ColorSiting` (see [DNxHR in MXF](ChromaSitingTests.html#dnxhr-in-mxf)).
 
 ## Reading back to RGB {#reading-back-to-rgb}
 
@@ -237,11 +301,14 @@ results per codec and FFmpeg version, and how the charts work.
 | :--- | :--- | :--- | :--- |
 | `zscale` | Correct | Correct | Yes |
 | libswscale, up to 9.0 | **Centred, or sample repeat** | **Centred both ways** | No |
-| Safari 26.6.2 | Correct for HEVC and H.264; **ProRes wrong** | Correct | Partly |
-| Chrome 156 | Correct for HEVC; **H.264 centred** | Correct, except **10-bit H.264 centred across** | Partly |
-| Firefox 152 | **HEVC wrong**: chroma also lost vertically | Correct | No |
+| Safari 26.6.2 | Correct for HEVC and H.264; **ProRes wrong** | Correct; **HDR10: down neither centred nor co-sited** | HEVC `topleft` and `center`, H.264 `center` (8- and 10-bit), HDR10 HEVC `topleft`: yes. **H.264 `topleft` (8- and 10-bit): no**, shown centred both ways |
+| Chrome 156 and 157 | Correct for HEVC; **H.264 centred** | Correct, except **10-bit H.264 centred across**; **HDR10: down neither centred nor co-sited** | HEVC `topleft` and `center`, 8-bit H.264 `center`, HDR10 HEVC `topleft`: yes. **H.264 `topleft` (8- and 10-bit): no**, shown centred both ways |
+| Firefox 152 (HDR10: 159) | **HEVC wrong**: chroma also lost vertically | Correct, including HDR10 | No |
 | OpenRV 3.1.0 | **Centred** | **Centred both ways** | No |
 | xStudio, with the [4:2:2 fix](https://github.com/AcademySoftwareFoundation/xstudio/pull/361) (not yet merged) | 10-bit correct; **8-bit sample repeat** | 10-bit correct; **8-bit centred across** | No |
 
 xStudio 1.4.0 has the same results as the fixed build, except that in 10-bit only the left half of the picture is
 interpolated.
+
+QuickTime Player 10.5 (4:2:0 only, HEVC) behaves like Safari: correct, follows `topleft`, and for HDR10 is neither
+centred nor co-sited down unless the file is tagged `topleft`.
