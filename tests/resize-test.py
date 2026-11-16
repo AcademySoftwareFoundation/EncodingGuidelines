@@ -474,7 +474,7 @@ def main():
                        "brightness. It is not the sharpest result, and a plain average still lets some fine detail "
                        "alias (the zone plate's outer rings), so it is a reference for brightness, not an ideal "
                        "filter."),
-        'defaults': {'a': 'source', 'b': 'scale_bicubic'},
+        'defaults': {'src': 'sparks', 'a': 'source', 'b': 'hdr_ff_ocio_hc_ocio'},
         'presets': [
             {'label': 'Zone plate: FFmpeg default vs reference', 'src': 'zoneplate', 'a': 'source',
              'b': 'scale_bicubic', 'mode': 'wipe',

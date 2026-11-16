@@ -246,7 +246,7 @@ a { color: var(--accent); }
 const DATA = /*DATA*/null;
 
 const $ = (id) => document.getElementById(id);
-const state = { src: DATA.sources[0].id, a: DATA.defaults.a, b: DATA.defaults.b, mode: "wipe", zoom: 0,
+const state = { src: (DATA.defaults.src && DATA.sources.some((s) => s.id === DATA.defaults.src)) ? DATA.defaults.src : DATA.sources[0].id, a: DATA.defaults.a, b: DATA.defaults.b, mode: "wipe", zoom: 0,
                 gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null, show: "measured" };
 let flickerTimer = null;
 
