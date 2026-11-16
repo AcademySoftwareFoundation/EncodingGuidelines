@@ -106,18 +106,18 @@ ffmpeg -i input.mp4 -movflags use_metadata_tags -crf 22 output.mp4
 
 Below are suggestions for common metadata fields:
 
-| Field | Type | Description | Notes |
-| ---- | ---- | ---- | ---- |
-| first_frame, last_frame | int | Encoding to movie files typically loses the start frame, making it a pain to identify which frame you are looking at. We could look at doing this with timecode, but sometimes you want both timecode and a frame number. | |
-| source_filename | string | Something to track where the encoded media came from. | |
-| source_id | string | Unique ID from vendor creating content. - This could be using: [https://proto.school/content-addressing/04](https://proto.school/content-addressing/04) | |
-| source_frame_rate | float | If you are reviewing a proxy, but still want to remap back to the source frame, knowing the source frame rate is required Useful for high-frame rate media, e.g. 120 fps. Open questions: whether this is needed as well as the last frame, and whether a string would handle rates such as 59.94 better. | |
-| image_active_area | xMin, yMin, xMax, yMax | The bounding box of the picture location within the image. This is used in cases where the image is a re-processed version of the source frame, e.g. where a 2.35 aspect ratio picture has been padded to HD (perhaps time-code is burnt in, etc), this would allow any annotations to be always defined relative to the source frames, so would be able to be correctly overlayed on top. | |
-| watermarking | String | Document what sort of watermarking has been applied? - invisible, burnin? | |
-| slate_length | Int | Duration of slate length (0 if no slate). | |
-| display_type | Enum | Stereo left/right Stereo top/bottom  Long/Lat VR mono Long/Lat VR Stereo top/bottom NOTE: This should be based on existing standards, e.g. [https://github.com/google/spatial-media/tree/master/spatialmedia](https://github.com/google/spatial-media/tree/master/spatialmedia) | |
-| task | string | Taskname if known. | |
-| date_authored | string | The latest date of the original authored content. This would be carried through any transcoding, so we dont end up with the transcoded timestamps. | |
-| aswf_color_space | string | Many file-formats do already have options for color spaces, but certainly for internal reviews facilities may decide to encode to a non-standard color space. For media that is crossing facilities we should stick to known embedded colorspaces, and allow existing tools to remap where necessary. - TBD - Color interop. | |
+| Field | Type | Description |
+| ---- | ---- | ---- |
+| first_frame, last_frame | int | Encoding to movie files typically loses the start frame, making it a pain to identify which frame you are looking at. This can be done with timecode, although you do sometimes need both. See [Editorial Workflow](EditorialWorkflow.html) |
+| source_filename | string | Something to track where the encoded media came from. |
+| source_id | string | Unique ID from vendor creating content. - This could be using: [https://proto.school/content-addressing/04](https://proto.school/content-addressing/04) |
+| source_frame_rate | float | If you are reviewing a proxy, but still want to remap back to the source frame, knowing the source frame rate is required. Useful for high-frame-rate media, e.g. 120 fps. Open questions: whether this is needed as well as the last frame, and whether a string would handle rates such as 59.94 better. |
+| image_active_area | xMin, yMin, xMax, yMax | The bounding box of the picture location within the image. This is used in cases where the image is a re-processed version of the source frame, e.g. where a 2.35 aspect ratio picture has been padded to HD (perhaps time-code is burnt in, etc), this would allow any annotations to be always defined relative to the source frames, so would be able to be correctly overlayed on top. |
+| watermarking | string | Document what sort of watermarking has been applied? - invisible, burnin? |
+| slate_length | int | Duration of slate length (0 if no slate). |
+| display_type | enum | Stereo left/right Stereo top/bottom  Long/Lat VR mono Long/Lat VR Stereo top/bottom NOTE: This should be based on existing standards, e.g. [https://github.com/google/spatial-media/tree/master/spatialmedia](https://github.com/google/spatial-media/tree/master/spatialmedia) |
+| task | string | Taskname if known. |
+| date_authored | string | The latest date of the original authored content. This would be carried through any transcoding, so we don't end up with the transcoded timestamps. |
+| colorInteropID | string | This is mainly for exr file currently, but the hope is that this field would be used elsewhere, see [ColorInterOP](https://github.com/AcademySoftwareFoundation/ColorInterop/blob/main/Recommendations/04_OpenEXRFiles/OpenEXRFiles.md) |
 
 This was originally defined in the [Playback and Review Standards documentation](https://lf-aswf.atlassian.net/wiki/spaces/PRWG/pages/11274595/Playback+and+Review+Standards)
