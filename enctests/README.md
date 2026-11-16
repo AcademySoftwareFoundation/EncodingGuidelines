@@ -23,8 +23,12 @@ making sure color and quality is preserved.
 
 ## Requirements
 
-* FFmpeg with VMAF enabled
-* OpenTimelineIO (>=0.15)
+* Python 3.10 or later, with the packages in the repository's `requirements.txt` (OpenTimelineIO, OpenImageIO,
+  pandas, plotly, ...); see [Setup Test Environment](#setup-test-environment).
+* An FFmpeg build with `libvmaf` (and the VMAF model files) and `zscale` (zimg). To decode AV1 it also needs
+  `libdav1d` or `libaom-av1`. Tests whose encoder is not in the build are skipped, not failed; see
+  [Requirements: skipping tests](#requirements-skipping-tests-the-build-or-machine-cannot-run).
+* Google Chrome, which `kaleido` uses to write the report graphs (or run `kaleido_get_chrome`).
 
 ## Description
 
@@ -34,24 +38,45 @@ You can use your own test data, but we also provide scripts for downloading some
 
 ## Usage
 
-```
-usage: main.py [-h] [--source-folder SOURCE_FOLDER] [--test-config-dir TEST_CONFIG_DIR] [--prep-sources] [--encoded-folder ENCODED_FOLDER] [--output OUTPUT]
+```console
+usage: main.py [-h] [--sources SOURCES [SOURCES ...]]
+               [--source-folder SOURCE_FOLDER]
+               [--test-config-dir TEST_CONFIG_DIR]
+               [--test-config TEST_CONFIG_FILE] [--prep-sources] [--verbose]
+               [--force] [--encoded-folder ENCODED_FOLDER]
+               [--results-folder RESULTS_FOLDER] [--skip-reports]
+               [--output OUTPUT]
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --sources SOURCES [SOURCES ...]
-                        Provide a list of paths to sources instead of running all from source folder. Please note this overrides the --source-folder argument.
+                        Provide a list of paths to sources in stead of running
+                        all from source folder. Please note this overrides the
+                        --source-folder argument.
   --source-folder SOURCE_FOLDER
                         Where to look for source media files
   --test-config-dir TEST_CONFIG_DIR
-                        Where to look for *.yml files containing test descriptions
+                        Where to look for *.yml files containing test
+                        descriptions
   --test-config TEST_CONFIG_FILE
                         Specify a single test config file to run
-  --prep-sources        Create *.yml files from media in --source-folder used as sources in encoding tests
+  --prep-sources        Create *.yml files from media in --source-folder used
+                        as sources in encoding tests
+  --verbose             Be verbose in the progress.
+  --force               Force generation of results.
   --encoded-folder ENCODED_FOLDER
                         Where to store the encoded files
-  --output OUTPUT       Path to results file including ".otio" extension (default: ./encoding-test-results.otio)
+  --results-folder RESULTS_FOLDER
+                        Basepath for all the results, not used if --encoded-
+                        folder is defined.
+  --skip-reports        Skip any report generation (default: False).
+  --output OUTPUT       Path to results file including ".otio" extension
+                        (default: ./encoding-test-results.otio)
 ```
+
+The defaults are `--source-folder ./sources`, `--test-config-dir ./test_configs` and `--results-folder ./results`,
+so run it from the `enctests` folder. When `--output` is not given, each config writes its own `.otio` file in the
+results folder (see [Results](#results)).
 
 ### Prepare your sources
 
@@ -343,10 +368,31 @@ that should not have it (see `cicp_flags_tests.yml`).
 
 ### Run the tests
 
-To run the default tests, simply run the app like below
+From the `enctests` folder, with the virtual environment active:
 
-```commandline
-python -m testframework.main --source-folder /path/to/sources/ --encoded-folder /path/to/save/the/encoded/files/
+```console
+cd enctests
+python -m testframework.main --test-config-dir ./test_configs --source-folder ./sources
+```
+
+This runs every `*.yml` config in `test_configs`. To run one config, use `--test-config`:
+
+```console
+python -m testframework.main --test-config test_configs/color_tests.yml
+```
+
+A config is skipped when its results `.otio` is newer than the config file, so a second run only re-runs configs
+that have changed. After changing anything else (the FFmpeg build, the framework, a source), pass `--force`, or
+nothing is re-encoded and only the index and change report are rewritten. `--skip-reports` leaves out the HTML
+report for each config, and `--results-folder` writes the results somewhere other than `./results`, for example to
+try a build without touching existing results.
+
+With rez, `rez/encodingguidelines_env` provides the Python environment and FFmpeg is picked separately, so the same
+tests can run against several FFmpeg versions:
+
+```console
+cd enctests
+rez-env encodingguidelines_env ffmpeg-8.1 -- python -m testframework.main --test-config-dir ./test_configs --source-folder ./sources
 ```
 
 #### Environment variables
@@ -367,92 +413,70 @@ raise the limit, for example `ENCODE_TIMEOUT=7200`.
 
 ### Results
 
-The results are stored in an "*.otio" file. Each source clip contains a media reference
-for its source plus all additional encoded test files.
-Each test is compared against the source with VMAF and the score is stored in
-the media reference's metadata.
+Each config's results go in `<results-folder>/ffmpeg_version_<version>/<platform>/<config>-encode/`, for example
+`results/ffmpeg_version_9.0.2/darwin-arm64/color_tests-encode/`: the encoded files, a log per test, the
+`<config>.otio` file and the config's HTML report. In the `.otio` file each source clip has a media reference for
+its source plus one for each encoded test, with the comparison results (VMAF, PSNR, Y'CbCr errors, tags) in the
+media reference's metadata.
+
+The results folder also gets an `index.html` linking every report, and `changes.html`/`changes.json`, which compare
+the FFmpeg versions in the folder (see [Changes between FFmpeg versions](#changes-between-ffmpeg-versions)).
 
 ## Setup Test Environment
 
-**Please note! We're working on dockerizing this**
+### Python packages
 
-In addition to OpenTimelineIO the tests rely on FFmpeg with VMAF support and most
-likely OpenImageIO.
-The commands below are what's needed to build OTIO for python development.
-As of the time writing this the multi media-reference feature of OTIO is still in
-the main branch of the project.
-Also, we're relying on FFmpeg and OIIO being installed on the system. (Guides to come)
+From the repository root:
 
 ```console
-# Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate
-
-# Upgrade pip and install dependencies
-pip install --upgrade pip
-pip install cmake pyseq fileseq OpenTimelineIO PyYAML meson kaleido plotly pandas jinja2 yuvio
-
-# Run tests (for now)
-.venv/bin/python main.py
-```
-
-## Native Windows Configuration
-
-Have tried using MSYS2 - [msys2](https://www.msys2.org/) once that is installed you can install ffmpeg and openimageio with:
-
-```
-pacman -S mingw-w64-x86_64-openimageio 
-pacman -S mingw-w64-x86_64-ffmpeg 
-```
-
-But had problems getting OTIO working. The build environment doesnt like the windows/ming64x environment.
-
-So have instead used [VCPKG](https://github.com/microsoft/vcpkg):
-
-```
-vcpkg install openimageio[tools]:x64-windows ffmpeg[ffmpeg]:x64-windows
-```
-
-And then used the above virtual environment.
-You will need to add the paths to the above tools to your path, which would be:
-%VCPKGHOME%\installed\x64-windows\tools\ffmpeg;%VCPKGHOME%\installed\x64-windows\tools\openimageio;
-which you can do in the .venv/Scripts/activate.bat file.
-
-This does not get you the vmaf model though which can be downloaded
-<https://raw.githubusercontent.com/Netflix/vmaf/master/model/vmaf_v0.6.1.json>
-Also you need to install an earlier version of kaleido since the current one will hang when generating an image.
-
-```
-pip install kaleido==0.1.0post1 
-```
-
-## MacOS Configuration
-
-```console
-brew install openimageio ffmpeg
-
-# Create a virtual environment
 python3 -m venv .venv
-source .venv/bin/activate
-
-# Upgrade pip and install dependencies
-pip3 install --upgrade pip
-pip3 install six testresources recommonmark sphinx-press-theme sphinx-tabs breathe pyseq 
-pip3 install awscli pillow PyYAML meson kaleido plotly pandas jinja2 OpenTimelineIO
-
-mkdir aces
-cd aces
-curl -sLO https://github.com/colour-science/OpenColorIO-Configs/archive/refs/tags/v1.2.tar.gz && \
-tar zxvf v1.2.tar.gz OpenColorIO-Configs-1.2/aces_1.2 && \
-rm v1.2.tar.gz
-export OCIO=$PWD/OpenColorIO-Configs-1.2/aces_1.2/config.ocio
-        
-# Set VMAF_Models NOTE, should probably change this.
-export VMAF_MODEL_DIR=/opt/homebrew/Cellar/libvmaf/3.0.0/share/libvmaf/model/
-
-# Run tests (for now)
-.venv/bin/python main.py
+source .venv/bin/activate          # on Windows: .venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements.txt
+kaleido_get_chrome                 # only if Google Chrome is not installed
 ```
+
+The `OpenImageIO` package also provides `oiiotool` and `idiff`, which some tests and the source download scripts
+use. With rez, install `rez/encodingguidelines_env` instead (`rez-build -i` in that folder); it has the same
+packages.
+
+### FFmpeg
+
+Check that your build has what the tests need:
+
+```console
+ffmpeg -hide_banner -filters | grep -E "libvmaf|zscale"
+ffmpeg -hide_banner -decoders | grep -E "libdav1d|libaom"
+```
+
+Package-manager builds vary in what they include. The `conan/` recipes and the `docker/` files in this repository
+build FFmpeg from source with everything the tests use. Set `FFMPEG_BIN` to test a build that is not first on the
+`PATH`.
+
+The VMAF model files (`vmaf_v0.6.1.json` and `vmaf_4k_v0.6.1.json`) come with libvmaf. Point `VMAF_MODEL_DIR` at
+their folder if it is not `/usr/share/vmaf`: with Homebrew on macOS that is `/opt/homebrew/share/libvmaf/model/`. The
+models can also be downloaded from the [VMAF repository](https://github.com/Netflix/vmaf/tree/master/model). The
+framework prints a warning at start-up if it cannot find them.
+
+On Windows, [vcpkg](https://github.com/microsoft/vcpkg) can install FFmpeg and OpenImageIO
+(`vcpkg install openimageio[tools]:x64-windows ffmpeg[ffmpeg]:x64-windows`); add their `tools` folders to the
+`PATH`, for example in `.venv\Scripts\activate.bat`. This route has not been retested with the current
+`requirements.txt`.
+
+### Test sources
+
+Most configs use images from `../sourceimages`, which are in the repository. The rest use media from
+`enctests/sources`, which is downloaded:
+
+```console
+cd enctests/sources
+./download_media.sh
+```
+
+This runs `enc_sources/download_media.sh` and `hdr_sources/download_media.sh`, which need the AWS command-line tool
+(`pip install awscli`; no account is needed) and `oiiotool`; see [Reference Source Test Media](sources/enc_sources/README.html).
+`sws_tests`, `swsscale_tests`, `swsyuv420_tests` and `order_tests` also need
+`sourceimages/SonyF35.StillLife_srgb.png`, which is not committed: `sourceimages/generate.sh` makes it.
 
 ## How to add an encoder
 
