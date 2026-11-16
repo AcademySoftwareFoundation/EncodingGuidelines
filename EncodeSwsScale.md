@@ -22,14 +22,14 @@ libswscale: where its color conversion goes wrong, how to replace it with `zscal
 use it.
 
 - **Color conversion** (RGB to and from Y'CbCr, range, and chroma subsampling to 4:2:2 or 4:2:0): use `zscale`.
-  libswscale puts 10-bit white at 943 instead of 940 ([below](#colour-range-accuracy-prefer-zscale-for-range-conversions)),
+  libswscale puts 10-bit white at 943 instead of 940 ([below](#color-conversion-use-zscale)),
   centres the chroma when subsampling, and up to FFmpeg 9.0 assumes it is centred when converting back to RGB
   ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)). For the `zscale` options, see
   [zscale Conversion](EncodeZscale.html).
 - **Resizing**: see [Resizing](Resizing.html). Do it outside FFmpeg, or in linear light; the scaler matters much less
   than that.
 
-## Color conversion: use zscale {#colour-range-accuracy-prefer-zscale-for-range-conversions}
+## Color conversion: use zscale
 
 {: .warning }
 > libswscale has a systematic bias when converting between full range and limited (studio) range from 10-bit and

@@ -23,7 +23,7 @@ link to the page that explains it. If you just want a command that works, start 
 
 ## The pipeline in five steps
 
-### 1. Color-manage to display RGB {#1-colour-manage-to-display-rgb}
+### 1. Color-manage to display RGB
 
 Convert the scene-linear renders (typically ACEScg EXRs) to the display you are reviewing on, with OCIO. Either do it
 before FFmpeg and write 16-bit PNG or TIFF frames, see [Preparing Frames with oiiotool](OiiotoolConversion.html), or

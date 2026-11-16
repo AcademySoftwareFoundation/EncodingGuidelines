@@ -7,6 +7,10 @@ parent: Test Output
 
 # Resizing in FFmpeg vs. oiiotool vs. Linear Light vs. HDR
 
+{: .warning }
+This is currently actively in development. If you have any recommendations for this, do please let us know.
+
+
 Images shrunk to a quarter of their size by FFmpeg's `scale` and `zscale` filters, by `oiiotool` and by Nuke, both
 on the gamma-encoded values and in linear light, compared with a reference that averages each 4×4 block in linear
 light. Three ACES2065-1 OpenEXR images (Sparks, BrightRings and Desk), viewed through OCIO's ACES 2.0 SDR view, add

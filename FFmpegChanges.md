@@ -27,7 +27,7 @@ commands that give the right result on all of them.
 | [`-colorspace` and `-color_range` drive the RGB to Y'CbCr conversion](#colorspace-flags-71) | 7.1 and later | A plain encode tagged `-colorspace bt709` is now converted with BT.709 instead of BT.601. On a tagged source, `-colorspace` now converts the pixels rather than retagging them. |
 | [`-colorspace` and `-color_range` convert, they no longer relabel](#relabelling-a-file) | 7.1 and later | Transcoding a tagged Y'CbCr file with them changes the pixels. To fix a wrong tag, use `setparams`. |
 | [`-color_primaries` and `-color_trc` are ignored](#primaries-trc-flags-71) | 7.1 and later | The flags are silently dropped. Use `setparams` to set primaries and transfer. |
-| [ProRes writes its color tags from the frame, not the flags](#prores-colour-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
+| [ProRes writes its color tags from the frame, not the flags](#prores-color-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
 | [`-x265-params` color settings only tag the HEVC stream](#hdr-and--x265-params) | All | They do not change the conversion. Without `-colorspace` or a conversion filter, the pixels are BT.601 in a file tagged BT.2020. |
 | [Some encoders only accept limited range](#limited-range-encoders-71) | 7.1 and later | FFV1, ProRes, DNxHR, HuffYUV and others: full-range frames are converted back to limited range unless you add `-color_range pc`. |
 | [libswscale puts limited-range white too high for high-bit-depth input](#libswscale-white-level-for-high-bit-depth-input) | All, including 9.0 | 10-bit RGB to 10-bit Y'CbCr puts 100% white at 943 instead of 940. Use `zscale`. `scale=...:flags=unstable` (8.1 and later) fixes 4:4:4 only. |
@@ -220,7 +220,7 @@ Encoding 10-bit RGB bars with `zscale=matrix=709:range=full`:
 
 Tested on 6.1.6, 7.1.5 and 9.0.2, reading the pixels back at the stream's own pixel format.
 
-## ProRes color tags come from the frame {#prores-colour-tags-come-from-the-frame}
+## ProRes color tags come from the frame
 
 The ProRes encoder (`prores_ks`) writes primaries, transfer and matrix into each frame header from the frame's
 own properties, never from the `-color_*` flags. The flags only reach the MOV `colr` atom. A player may read
@@ -259,7 +259,7 @@ This has not changed in any version from 6.0 to 9.0:
 * `zscale` was exact for every combination we tested: 8-, 10- and 16-bit RGB to 8-, 10- and 12-bit Y'CbCr, in
   4:4:4, 4:2:2 and 4:2:0.
 
-See [FFmpeg swscale Filter](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) for
+See [FFmpeg swscale Filter](EncodeSwsScale.html#color-conversion-use-zscale) for
 more on the cause.
 
 ## libswscale full-range conversions changed in 8.0 {#libswscale-full-range-80}

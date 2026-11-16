@@ -5,7 +5,7 @@ nav_order: 1
 parent: ORI Encoding Test Framework
 ---
 
-# Reading the Color Test Reports {#reading-the-colour-test-reports}
+# Reading the Color Test Reports
 
 <details open markdown="block">
   <summary>

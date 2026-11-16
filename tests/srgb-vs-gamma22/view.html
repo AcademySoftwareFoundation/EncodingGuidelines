@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sRGB vs gamma 2.2 chart, 1:1 pixels</title>
+<style>
+  /* The chart sits at the page origin with no margin so its pixels land on the device pixel grid. */
+  html, body { margin: 0; background: #060606; color: #bbb; font: 14px/1.5 system-ui, sans-serif; }
+  #chart { display: block; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+  #bar { padding: 12px 16px; }
+  #bar a { color: #5ac8f0; margin-right: 16px; }
+  #bar a.on { color: #fff; font-weight: 600; text-decoration: none; }
+  #warn { color: #ebaf46; }
+</style>
+</head>
+<body>
+<img id="chart" src="srgb_vs_gamma22_untagged.png" alt="sRGB vs gamma 2.2 test chart">
+<div id="bar">
+  <a href="#untagged" data-src="srgb_vs_gamma22_untagged.png">Untagged PNG</a>
+  <a href="#tagged" data-src="srgb_vs_gamma22_tagged_srgb.png">Tagged sRGB PNG</a>
+  <span id="status"></span>
+  <div id="warn"></div>
+</div>
+<script>
+  const img = document.getElementById('chart');
+  const links = [...document.querySelectorAll('#bar a')];
+
+  // Size the image so one image pixel covers exactly one device pixel, whatever the display scaling
+  // (2x Retina, Windows 150%) or browser zoom.
+  function fit() {
+    if (!img.naturalWidth) return;
+    const dpr = window.devicePixelRatio || 1;
+    img.style.width = (img.naturalWidth / dpr) + 'px';
+    img.style.height = (img.naturalHeight / dpr) + 'px';
+    document.getElementById('status').textContent =
+      `${img.naturalWidth}x${img.naturalHeight} image pixels, device pixel ratio ${dpr}, shown 1:1.`;
+    const pinch = window.visualViewport ? window.visualViewport.scale : 1;
+    document.getElementById('warn').textContent = Math.abs(pinch - 1) > 0.001
+      ? 'Pinch zoom is active: zoom back out, or the chart is resampled.' : '';
+    // Re-run when the ratio changes (browser zoom, window moved to another display).
+    matchMedia(`(resolution: ${dpr}dppx)`).addEventListener('change', fit, { once: true });
+  }
+
+  function pick() {
+    const link = links.find(a => a.hash === location.hash) || links[0];
+    links.forEach(a => a.classList.toggle('on', a === link));
+    img.src = link.dataset.src;
+  }
+
+  img.addEventListener('load', fit);
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', pick);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+  pick();
+</script>
+</body>
+</html>

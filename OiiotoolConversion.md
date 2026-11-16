@@ -22,7 +22,7 @@ parent: Encoding Overview
 > frames for FFmpeg to encode. From FFmpeg 8.1 you can instead do it inside FFmpeg with the
 > [OCIO filter](FfmpegOcio.html).
 
-## Why do the color management first {#why-do-the-colour-management-first}
+## Why do the color management first
 
 FFmpeg's own color handling is designed for video standards, not for scene-linear VFX sources. We recommend doing
 any color space conversion with OCIO, either in a tool such as Nuke or `oiiotool`, or with FFmpeg's
