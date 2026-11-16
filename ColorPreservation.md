@@ -82,7 +82,7 @@ We previously recommended libswscale here on the basis that it looked very sligh
 | 10-bit | 12-bit | 3770 | 3760 | 3760 |
 | 16-bit | 12-bit | 3774 | 3760 | 3760 |
 
-The error is largest in luma, but not limited to it: from a 16-bit source the worst errors are 3 / 2 / 2 code values (Y'/Cb/Cr) at 10-bit and 14 / 7 / 7 at 12-bit. It is small in absolute terms, but it is systematic and it accumulates across round trips. libswscale also centres the chroma when subsampling to 4:2:2 or 4:2:0, where professional formats and H.264/HEVC expect it co-sited; zscale co-sites it. For the full measurements see [Color range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) and [Chroma Siting](ChromaSiting.html).
+The error is largest in luma, but not limited to it: from a 16-bit source the worst errors are 3 / 2 / 2 code values (Y'/Cb/Cr) at 10-bit and 14 / 7 / 7 at 12-bit. It is small in absolute terms, but it is systematic and it accumulates across round trips. libswscale also centres the chroma when subsampling to 4:2:2 or 4:2:0, where professional formats and H.264/HEVC expect it co-sited; zscale co-sites it. For the full measurements see [Color range accuracy](EncodeSwsScale.html#color-conversion-use-zscale) and [Chroma Siting](ChromaSiting.html).
 
 More detailed docs are in the [FFmpeg filter documentation](https://ffmpeg.org/ffmpeg-filters.html#zscale).
 

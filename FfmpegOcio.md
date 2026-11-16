@@ -25,7 +25,7 @@ ocio=...:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanc
 ```
 
 * **`setparams` is essential here.** The OCIO filter changes the pixels but not the frame's color tags, and FFmpeg 9.0 tags EXR frames as linear. Without `setparams`, the file is labelled with a linear transfer function and no primaries, whatever display transform you applied. The earlier examples on this page did exactly that.
-* **`zscale` rather than `scale`.** libswscale puts white about 3 code values (10-bit) too high, as on the other pages; see [Color range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions).
+* **`zscale` rather than `scale`.** libswscale puts white about 3 code values (10-bit) too high, as on the other pages; see [Color range accuracy](EncodeSwsScale.html#color-conversion-use-zscale).
 * **`format=rgb48le` between the two filters** works around a crash in the FFmpeg 9.0 release, which segfaults when `zscale` follows the OCIO filter directly. It changes nothing (`rgb48` already is `rgb48le`), and builds with the format negotiation rework (our 8.1 build, and 9.1-dev) do not need it; see [Building ffmpeg with OCIO support](#building-ffmpeg-with-ocio-support).
 
 Measured on 9.0 against the OCIO filter's own RGB output (ACES sRGB display transform, H.264 4:2:0 10-bit, `-crf 18`): the earlier `scale` version was white +3.0, mean error 1.7, tagged linear transfer with no `colr` atom; the `zscale` version is white 0.0, mean error 1.3, tagged BT.709/sRGB (`colr` `nclc 1/13/1`).
