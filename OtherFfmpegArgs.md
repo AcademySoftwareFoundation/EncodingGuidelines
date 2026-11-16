@@ -193,13 +193,13 @@ ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=
 
 A dummy source video signal.
 
-Creating a blank YUV H.264 file of 1024 frames.
+Creating a blank Y'CbCr H.264 file of 1024 frames.
 
 ```console
 ffmpeg -r 24 -f lavfi -i nullsrc=s=1280x720,format=yuv444p -frames:v 1024 yuv444p.mov
 ```
 
-Creating a blank YUV 10-bit H.264 file
+Creating a blank Y'CbCr 10-bit H.264 file
 
 ```console
 ffmpeg -r 24 -f lavfi -i nullsrc=s=1280x720,format=yuv444p10le -frames:v 1024 yuv444p10le.mov

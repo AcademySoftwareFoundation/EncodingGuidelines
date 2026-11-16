@@ -46,17 +46,17 @@ FFmpeg version, see [FFmpeg Version Changes](FFmpegChanges.html).
 
 | Codec Family | FFmpeg encoder | Bit depth | Pixel format supported | Web Support | HDR |
 | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
-| [H.264](Encodeh264.html) | `libx264` | 8 10 | YUV-4:4:4 yuv-4:2:2 YUV-4:2:0 | All Browsers | HLG |
-| [VP9](EncodeVP9.html) | `libvpx-vp9` | 8 10 12 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All Browsers | Yes |
-| [HEVC/H.265](EncodeHevc.html) | `libx265` | 8 10 12 | yuv-4:2:0 yuv-4:2:2 yuv-4:4:4 rgb rgb-10 rgb-12 | All browsers* | Yes |
-| [HEVC/H.265](EncodeHevc.html) | `hevc_videotoolbox` | 8 10 | yuv-4:2:0 yuv-4:2:2 (10-bit) | All browsers* | Yes |
-| [AV1](EncodeAv1.html) | `libsvtav1` | 8 10 | yuv-4:2:0 | Chrome Firefox Edge, Safari on devices with an AV1 hardware decoder | Yes |
-| [ProRes](EncodeProres.html) | `prores_ks` | 10 | yuv-4:4:4:4 yuv-4:4:4 yuv-4:2:2 | Safari | ? |
-| [DNxHD/DNxHR](EncodeDNXHD.html) | `dnxhd` | 8 10 | yuv-4:2:2 yuv-4:4:4 rgb | no | ? |
-| [MJPEG](EncodeMJPEG.html) | `mjpeg` | 8 | yuv-4:2:2 yuv-4:4:4 | no | no |
-| [OpenAPV](EncodeOpenAPV.html) | `liboapv` | 10 12 | yuv-4:4:4:4 yuv-4:4:4 yuv-4:2:2 | no | yes |
-| [VP8](EncodeVP8.html) | `libvpx` | 8 | yuv-4:2:0 | Chrome Firefox Edge | no |
-| [HTJ2K](EncodeHTJ2K.html) | external encoder (OpenJPH, Kakadu), wrapped with `-c:v copy` | 8 to 16 | rgb | no | ? |
+| [H.264](Encodeh264.html) | `libx264` | 8 10 | Y'CbCr 4:4:4, 4:2:2, 4:2:0 | All Browsers | HLG |
+| [VP9](EncodeVP9.html) | `libvpx-vp9` | 8 10 12 | Y'CbCr 4:2:0, 4:2:2, 4:4:4; RGB 8, 10, 12-bit | All Browsers | Yes |
+| [HEVC/H.265](EncodeHevc.html) | `libx265` | 8 10 12 | Y'CbCr 4:2:0, 4:2:2, 4:4:4; RGB 8, 10, 12-bit | All browsers* | Yes |
+| [HEVC/H.265](EncodeHevc.html) | `hevc_videotoolbox` | 8 10 | Y'CbCr 4:2:0, 4:2:2 (10-bit) | All browsers* | Yes |
+| [AV1](EncodeAv1.html) | `libsvtav1` | 8 10 | Y'CbCr 4:2:0 | Chrome Firefox Edge, Safari on devices with an AV1 hardware decoder | Yes |
+| [ProRes](EncodeProres.html) | `prores_ks` | 10 | Y'CbCr 4:4:4:4, 4:4:4, 4:2:2 | Safari | ? |
+| [DNxHD/DNxHR](EncodeDNXHD.html) | `dnxhd` | 8 10 | Y'CbCr 4:2:2, 4:4:4; RGB | no | ? |
+| [MJPEG](EncodeMJPEG.html) | `mjpeg` | 8 | Y'CbCr 4:2:2, 4:4:4 | no | no |
+| [OpenAPV](EncodeOpenAPV.html) | `liboapv` | 10 12 | Y'CbCr 4:4:4:4, 4:4:4, 4:2:2 | no | yes |
+| [VP8](EncodeVP8.html) | `libvpx` | 8 | Y'CbCr 4:2:0 | Chrome Firefox Edge | no |
+| [HTJ2K](EncodeHTJ2K.html) | external encoder (OpenJPH, Kakadu), wrapped with `-c:v copy` | 8 to 16 | RGB | no | ? |
 
 \* HEVC support in browsers is a bit of a mess. It works in Safari, Firefox and Chrome on MacOS. It works in Firefox and Chrome on Linux. It works in Firefox on Windows, but not in Chrome on Windows. In many cases it needs to be supported by the GPU though and configured correctly.
 

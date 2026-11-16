@@ -100,7 +100,7 @@ Separately, if you are converting from exr's in other colorspaces, **please use 
 For more details see:
 
 * [H.264 Encoding](Encodeh264.html)
-* [YUV Conversion](ColorPreservation.html#yuv)
+* [Y'CbCr Conversion](ColorPreservation.html#yuv)
 * [Browser color issues](WebColorPreservation.html)
 
 ## H.264 Encoding directly from EXRs with the OCIO filter
@@ -167,7 +167,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 | --- | --- |
 | **-vf "zscale=...,setparams=..."** | Convert to BT.709 Y'CbCr and tag it, as for [H.264 above](#h264-encoding-from-an-image-sequence-for-web-review). ProRes takes its color tags from the frames, so no `-color_*` flags are needed. |
 | **-profile:v 3** | ProRes 422 HQ; see the [profile list](EncodeProres.html#prores_ks-profile) |
-| **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
+| **-pix_fmt yuv422p10le** | Convert to 10-bit Y'CbCr 4:2:2 |
 | **-vendor apl0** | Treat the file as if it was created by the Apple ProRes encoder (even though it isn't), helps some tools correctly read the Quicktime |
 
 For ProRes 4444 (4:4:4, optionally with alpha), use `-profile:v 4444` with `-pix_fmt yuv444p10le`
@@ -176,7 +176,7 @@ For ProRes 4444 (4:4:4, optionally with alpha), use `-profile:v 4444` with `-pix
 For more details see:
 
 * [ProRes](EncodeProres.html)
-* [YUV Conversion](ColorPreservation.html#yuv)
+* [Y'CbCr Conversion](ColorPreservation.html#yuv)
 
 ## Other codecs and workflows
 

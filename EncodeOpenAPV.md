@@ -189,7 +189,7 @@ You can explicitly set the bitrate, below are wedges for 422p10.
 
 But in practice it does cap out at a quality above 300Mbps.
 
-Note, if you look at the [YUV Diff](https://encode.taurich.org/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_bitrate_tests-encode/apv_bitrate-compare.html?media=chimera_wind_srgb.%2506d&left=chimera_wind_srgb-test_oapv_bitrate-medium_b050&right=chimera_wind_srgb-test_oapv_bitrate-medium_b250), particularly for 422p10 Comparing a bit rate of 250Mb/s vs, qp16 (which approximately have the same filesize) show using the qp value generates better results than using the bitrate flag.
+Note, if you look at the [Y'CrCb Diff](https://encode.taurich.org/wedge_results/ffmpeg_version_git-2025-07-22-1ce20f55cc/darwin-arm64/apv_bitrate_tests-encode/apv_bitrate-compare.html?media=chimera_wind_srgb.%2506d&left=chimera_wind_srgb-test_oapv_bitrate-medium_b050&right=chimera_wind_srgb-test_oapv_bitrate-medium_b250), particularly for 422p10 Comparing a bit rate of 250Mb/s vs, qp16 (which approximately have the same filesize) show using the qp value generates better results than using the bitrate flag.
 
 | ![][image8] | ![][image9] |
 | Bitrate: 250Mb/s |   qp: 16 |  

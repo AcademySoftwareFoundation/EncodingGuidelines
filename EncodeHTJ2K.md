@@ -158,7 +158,7 @@ The progression order (typically a prog_order flag in openjph, or jph:prog_order
 | RLCP | Resolution -\> Layer -\> Component -\> Position | Prioritizes lower resolutions first, allows you to load all of the layers at a lower resolution and then load in the higher resolutions |
 | RPCL | Resolution -\> Position -\> Component -\> Layer | Optimized for random access and tiling. |
 | PCRL | Position -\> Component -\> Resolution -\> Layer | Less common, spatial prioritisation, good for large images where you are viewing zoomed in sections of it. |
-| CPRL | Component -\> Position -\> Resolution -\> Layer | Used when components are needed separately, e.g. YUV where you might just want Y first, rarely used in VFX. |
+| CPRL | Component -\> Position -\> Resolution -\> Layer | Used when components are needed separately, e.g. Y'CrCb where you might just want Y first, rarely used in VFX. |
 
 Of these settings picking either RPCL or LRCP are the two most common progression orders. OIIO does not currently support layers, so really LRCP and RLCP are very similar.
 

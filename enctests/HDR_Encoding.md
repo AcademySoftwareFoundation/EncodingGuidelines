@@ -331,7 +331,7 @@ ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 | -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
 | -color_primaries bt2020 | Use the bt2020 color primaries |
 | -colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
-| -pix_fmt yuv444p10le | YUV 444 10-bit output |
+| -pix_fmt yuv444p10le | Y'CbCr 4:4:4 10-bit output |
 
 #### X265 parameters
 

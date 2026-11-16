@@ -23,7 +23,7 @@ parent: Encoding Overview
 > tell players how to display the result, [Color Metadata and Web Color Preservation](WebColorPreservation.html); and
 > if `zscale` is not available, [FFmpeg swscale Filter](EncodeSwsScale.html).
 
-We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically Y'CbCr). Do be aware that a number of codecs do support native RGB encoding (including H.264, hevc, vp9, av1), but they are not typically supported in web browsers; see [RGB Encoding](RGBEncoding.html).
+We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to Y'CbCr (often called YUV). Do be aware that a number of codecs do support native RGB encoding (including H.264, hevc, vp9, av1), but they are not typically supported in web browsers; see [RGB Encoding](RGBEncoding.html).
 
 Without a filter that sets the matrix, FFmpeg's conversion depends on the version. Before FFmpeg 7.1 it converts
 any untagged still image (which is most of them) with the [rec601](https://en.wikipedia.org/wiki/Rec._601) matrix,
@@ -39,7 +39,7 @@ tag; to fix a wrong tag, use `setparams`. See [Relabelling a file](FFmpegChanges
 
 Separately, Y'CbCr video normally uses limited range (16-235 for Y' at 8-bit), which can cause banding at 8-bit. Encoding at 10-bit avoids this; see [TV vs. Full range](#tvfull).
 
-Even if you are sticking to 8-bits encodes, if your source media is able to have a higher bit-depth (e.g. you are able to write out 16-bit PNG's to do the encode) it will help with the accuracy of the RGB to YUV conversion. Use zscale for it: libswscale's errors are larger with 10-bit and 16-bit sources (see below).
+Even if you are sticking to 8-bits encodes, if your source media is able to have a higher bit-depth (e.g. you are able to write out 16-bit PNG's to do the encode) it will help with the accuracy of the RGB to Y'CbCr conversion. Use zscale for it: libswscale's errors are larger with 10-bit and 16-bit sources (see below).
 
 For more information, see: [https://trac.ffmpeg.org/wiki/colorspace](https://trac.ffmpeg.org/wiki/colorspace)
 
