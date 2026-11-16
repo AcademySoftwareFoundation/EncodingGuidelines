@@ -1,3 +1,10 @@
+---
+layout: default
+nav_order: 6.18
+title: 10-Bit vs 8-Bit Signal Path & Encoding Test Chart
+parent: Test Output
+---
+
 # 10-Bit vs 8-Bit Signal Path & Encoding Test Chart
 
 This folder contains `make_bitdepth_chart.py` and 16-bit RGB / 10-bit video test patterns designed to visually tell whether an encoding pipeline, video player, GPU compositor, or display signal path is **true 10-bit** or **quantized to 8-bit**.
