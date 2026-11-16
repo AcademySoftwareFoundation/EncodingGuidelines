@@ -20,9 +20,9 @@ H.265 (High Efficiency Video Coding - HEVC) is one of the replacements for H.264
 
 In our tests on macOS, Safari, Chrome and Firefox all played HEVC. Browsers generally rely on the operating system or GPU to decode it, so support varies from machine to machine; see the note under [Codecs reviewed](Encoding.html#encode).
 
-See [ffmpeg h265 docs](https://trac.ffmpeg.org/wiki/Encode/H.265)
+See [FFmpeg H.265 docs](https://trac.ffmpeg.org/wiki/Encode/H.265)
 
-There are four HEVC encoders available to ffmpeg:
+There are four HEVC encoders available to FFmpeg:
 
 * [libx265](#libx265)
 * [hevc_videotoolbox](#hevc_videotoolbox) - Available on MacOS via the videotoolbox library.
@@ -75,7 +75,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
 | Flag | Description |
 | -- | -- |
 | -preset slow | Can be one of ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo |
-| -crf 22 | Similar to h264, default is 28 which is on the low quality side |
+| -crf 22 | Similar to H.264, default is 28 which is on the low quality side |
 | -x265-params lossless=1 | Does lossless encoding, -crf 0 is not required |
 | -tag:v hvc1 | Tag the file as `hvc1`, which Apple players (QuickTime Player, Safari) need to play HEVC in MP4/MOV |
 | -profile:v main | Profile can be one of main or main10 or main12 |
@@ -86,7 +86,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
 
 To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
 
-If you are trying to map crf values from h264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
+If you are trying to map crf values from H.264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
 
 ```console
 x265_crf(x264_crf) = 1.09 * x264_crf −  4.19

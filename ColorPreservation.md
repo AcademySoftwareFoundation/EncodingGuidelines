@@ -17,7 +17,13 @@ parent: Encoding Overview
 {:toc}
 </details>
 
-We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically YCbCr). Do be aware that a number of codecs do support native RGB encoding (including h264, hevc, vp9, av1), but they are not typically supported in web browsers.
+{: .note }
+> This is the starting point for the colour conversion pages. For the converter we recommend and its options, see
+> [zscale Conversion](EncodeZscale.html); for 4:2:2 and 4:2:0, [Chroma Siting](ChromaSiting.html); for the tags that
+> tell players how to display the result, [Color Metadata and Web Color Preservation](WebColorPreservation.html); and
+> if `zscale` is not available, [FFmpeg swscale Filter](EncodeSwsScale.html).
+
+We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically YCbCr). Do be aware that a number of codecs do support native RGB encoding (including h264, hevc, vp9, av1), but they are not typically supported in web browsers; see [RGB Encoding](RGBEncoding.html).
 
 Without a filter that sets the matrix, FFmpeg's conversion depends on the version. Before FFmpeg 7.1 it converts
 any untagged still image (which is most of them) with the [rec601](https://en.wikipedia.org/wiki/Rec._601) matrix,

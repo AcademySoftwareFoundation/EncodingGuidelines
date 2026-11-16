@@ -16,11 +16,11 @@ parent: Codec Comparisons
 {:toc}
 </details>
 
-AV1 is an open-source and royalty free codec developed by the [Alliance for Open Media](https://en.wikipedia.org/wiki/Alliance_for_Open_Media) (AOMedia), a non-profit industry consortium. It can be 50% higher efficiency than h264.
+AV1 is an open-source and royalty free codec developed by the [Alliance for Open Media](https://en.wikipedia.org/wiki/Alliance_for_Open_Media) (AOMedia), a non-profit industry consortium. It can be 50% higher efficiency than H.264.
 
-The royalty free and open-source features of the codec make it extremely interesting to the VFX community, however most of the codecs are significantly slower than h264, which may be a major hurdle for adoption. Having said that, they are actively being developed, so this could change at some point.
+The royalty free and open-source features of the codec make it extremely interesting to the VFX community, however most of the codecs are significantly slower than H.264, which may be a major hurdle for adoption. Having said that, they are actively being developed, so this could change at some point.
 
-General ffmpeg info on AV1 is [here](https://trac.ffmpeg.org/wiki/Encode/AV1).
+General FFmpeg info on AV1 is [here](https://trac.ffmpeg.org/wiki/Encode/AV1).
 
 AV1 has browser support in:
 
@@ -31,11 +31,11 @@ AV1 has browser support in:
 
 Safari plays AV1 only on Apple devices that have an AV1 hardware decoder; on older hardware it does not play.
 
-Outside of the web browser, AV1 support is pretty much limited to Houdini, ffmpeg and VLC.
+Outside of the web browser, AV1 support is pretty much limited to Houdini, FFmpeg and VLC.
 
 AV1 is supported by mp4 and webm containers, no support exists for mov.
 
-There are three encoders available via ffmpeg:
+There are three encoders available via FFmpeg:
 
 * [libsvtav1](#libsvtav1)
 * [libaom-av1](#libaom-av1)
@@ -119,7 +119,7 @@ See: [SVT-AV1 Common Questions](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/m
 See Also:
 
 * [svt-av1 encoder user guide](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/svt-av1_encoder_user_guide.md)
-* [ffmpeg svt-av1](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)
+* [FFmpeg svt-av1](https://gitlab.com/AOMediaCodec/SVT-AV1/-/blob/master/Docs/Ffmpeg.md)
 
 ## libaom-av1
 
@@ -158,7 +158,7 @@ To help pick appropriate values with the cpu-speed flag, we have run the [Test F
 | ![](enctests/reference-results/aomav1-crf-test-filesize.png) This is showing cpu-speed values against file size. |
 | ![](enctests/reference-results/aomav1-crf-test-vmaf_harmonic_mean.png) This is showing cpu-speed values against VMAF harmonic mean |
 
-See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to ffmpeg:
+See Also - note these are all guides for AOMENC (the AOM encoder that is part of libaom), but many of the parameters map to FFmpeg:
 
 * [A 2nd generation guide to aomenc-av1](https://forum.doom9.org/showthread.php?t=183906)
 * [Making aomenc-AV1/libaom-AV1 the best it can be in a sea of uncertainty](https://old.reddit.com/r/AV1/comments/lfheh9/encoder_tuning_part_2_making_aomencav1libaomav1/)

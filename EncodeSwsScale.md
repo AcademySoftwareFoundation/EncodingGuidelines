@@ -1,7 +1,7 @@
 ---
 layout: default
 title: FFmpeg swscale Filter
-nav_order: 5.6
+nav_order: 3.6
 parent: Encoding Overview
 ---
 

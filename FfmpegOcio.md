@@ -1,7 +1,7 @@
 ---
 layout: default
 title: FFmpeg OCIO Filter
-nav_order: 5.5
+nav_order: 5
 parent: Encoding Overview
 ---
 
@@ -39,7 +39,7 @@ This example is encoding to a 10-bit h264 quicktime.
 ```console
 ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
    -c:v libx264 -pix_fmt yuv420p10le -crf 18 -preset slow \
-   -vf "ocio=input=ACEScct:display=sRGB - Display:view=ACES 1.0 - SDR Video:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+   -vf "ocio=input=ACEScg:display=sRGB - Display:view=ACES 1.0 - SDR Video:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
    OUTPUTFILE.mov
 ```
 
@@ -62,7 +62,7 @@ Note, you can also specify the OCIO config file as a "config" parameter; otherwi
 
 ## Creating an HDR movie from ACEScg
 
-This example demonstrates how to convert an ACEScg EXR image sequence to a 10-bit HDR10 (PQ) QuickTime movie.
+This example demonstrates how to convert an ACEScg EXR image sequence to a 10-bit HDR10 (PQ) QuickTime movie. For HDR codec settings and metadata, see [HDR Encoding](enctests/HDR_Encoding.html).
 
 ```console
 ffmpeg -y -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%04d.exr -c:v libx265 -pix_fmt yuv422p10le -threads 0 -vf "ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc -tag:v hvc1  \

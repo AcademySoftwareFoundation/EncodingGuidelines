@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 6.5
+nav_order: 5.5
 title: HDR Encoding
 parent: Encoding Overview
 ---

@@ -16,9 +16,9 @@ parent: Codec Comparisons
 {:toc}
 </details>
 
-VP9 is an open-source and royalty free codec developed by [Google](https://chromium.googlesource.com/webm/libvpx), and maintained as part of the [WebM Project](https://www.webmproject.org/code/). Its successor, AV1, is developed by the Alliance for Open Media (AOMedia). It can be 20-50% higher efficiency than h264.
+VP9 is an open-source and royalty free codec developed by [Google](https://chromium.googlesource.com/webm/libvpx), and maintained as part of the [WebM Project](https://www.webmproject.org/code/). Its successor, AV1, is developed by the Alliance for Open Media (AOMedia). It can be 20-50% higher efficiency than H.264.
 
-General ffmpeg info on VP9 is [here](https://trac.ffmpeg.org/wiki/Encode/VP9), and on the encoder in general [https://developers.google.com/media/vp9/hdr-encoding](https://developers.google.com/media/vp9/hdr-encoding).
+General FFmpeg info on VP9 is [here](https://trac.ffmpeg.org/wiki/Encode/VP9), and on the encoder in general [https://developers.google.com/media/vp9/hdr-encoding](https://developers.google.com/media/vp9/hdr-encoding).
 
 VP9 has browser support in:
 
@@ -31,7 +31,7 @@ VP9 has browser support in:
 VP9 is supported by mp4 and webm containers, no support exists for mov.
 VP9 does support an alpha channel (via the yuva420p pixfmt).
 
-Outside of the web browser, VP9 support is pretty much limited to Davinci Resolve (Mac R/W, windows Read-only), Houdini, Blender, ffmpeg and VLC.
+Outside of the web browser, VP9 support is pretty much limited to Davinci Resolve (Mac R/W, windows Read-only), Houdini, Blender, FFmpeg and VLC.
 
 The encoder we cover is [libvpx-vp9](#libvpx-vp9).
 
@@ -86,19 +86,19 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 
 | Flag | Description |
 | --- | --- |
-| **-crf 22** | This is the constant quality rate factor, controlling the default quality, similar to h264. The range is a little different to h264, so you may need to test. |
+| **-crf 22** | This is the constant quality rate factor, controlling the default quality, similar to H.264. The range is a little different to H.264, so you may need to test. |
 | *-quality good* | May require additional testing, but so far switching to *-quality best* increased the duration, but didn't increase the VMAF score (which is already pretty high with these values of crf). |
-| -b:v 0 | Unlike with h264, you can set a constant quality rate factor unless it exceeds a specified bit-rate, if the bit-rate is set to 0, it ignores the bit-rate as a factor. |
+| -b:v 0 | Unlike with H.264, you can set a constant quality rate factor unless it exceeds a specified bit-rate, if the bit-rate is set to 0, it ignores the bit-rate as a factor. |
 | -cpu-used 2 | It sets how efficient the compression will be. The default is 1 (FFmpeg 9.0), changing this will increase encoding speed at the expense of having some impact on quality and rate control accuracy. (See below). |
 | -row-mt 1 | This enables row based multi-threading (see [here](https://trac.ffmpeg.org/wiki/Encode/VP9#rowmt)) which is not enabled by default. |
 
-It's possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the `-g` flag): by default libvpx puts a keyframe every 128 frames (FFmpeg 6.1.6 and 9.0.2). Unlike h264 and h265 VP9 does behave strangely with GOP values less than 10, the closer you get to 1, the longer the encoding takes and the larger the file (which is not true for other codecs).
+It's possible you might want to change the [GOP](https://aws.amazon.com/blogs/media/part-1-back-to-basics-gops-explained/#:~:text=Simply%20put%2C%20a%20GOP%20is,30%20frames%2C%20or%201%20second.) values (changed with the `-g` flag): by default libvpx puts a keyframe every 128 frames (FFmpeg 6.1.6 and 9.0.2). Unlike H.264 and H.265 VP9 does behave strangely with GOP values less than 10, the closer you get to 1, the longer the encoding takes and the larger the file (which is not true for other codecs).
 
 ### CRF Comparison
 
 Below is a comparison of different CRF rates, with -b:v 0 and -quality good
 
-If you are trying to map crf values from h264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
+If you are trying to map crf values from H.264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
 
 ```console
 vp9_crf (x264_crf) = 1.98 * x264_crf − 14.46

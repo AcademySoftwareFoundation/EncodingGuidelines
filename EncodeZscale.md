@@ -1,7 +1,7 @@
 ---
 layout: default
 title: zscale Conversion
-nav_order: 5.7
+nav_order: 3.2
 parent: Encoding Overview
 ---
 

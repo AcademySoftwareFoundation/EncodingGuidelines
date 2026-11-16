@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Chroma Siting
-nav_order: 5.8
+nav_order: 3.4
 parent: Encoding Overview
 ---
 
@@ -15,6 +15,12 @@ parent: Encoding Overview
 1. TOC
 {:toc}
 </details>
+
+{: .highlight }
+> **In short:** convert with `zscale` and leave its chroma location at the default. That co-sites the chroma
+> horizontally (and centres it vertically for 4:2:0), which is what 4:2:2 and SDR H.264/HEVC/AV1 4:2:0 expect.
+> `scale` (libswscale) centres it, half a pixel off, on every FFmpeg version we tested. For BT.2020/HDR 4:2:0 the
+> choice is less clear; see the [Summary](#summary).
 
 When an image is converted to 4:2:2 or 4:2:0, there is only one chroma (colour) sample for every two luma samples
 across, and for 4:2:0 also for every two down. *Chroma siting* (or chroma sample location) is where each of

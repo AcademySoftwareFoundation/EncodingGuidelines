@@ -103,6 +103,33 @@ For more details see:
 * [YUV Conversion](ColorPreservation.html#yuv)
 * [Browser color issues](WebColorPreservation.html)
 
+## H264 Encoding directly from EXRs with the OCIO filter
+
+From FFmpeg 8.1, the [OCIO filter](FfmpegOcio.html) can apply the colour management inside FFmpeg, so you can encode
+straight from scene-linear EXRs without writing intermediate PNG or TIFF files:
+
+```console
+export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1 # Or the path to your own config.
+ffmpeg -r 24 -start_number 1 -i inputfile.%04d.exr -pix_fmt yuv420p10le \
+        -vf "ocio=input=ACEScg:display=sRGB - Display:view=ACES 1.0 - SDR Video:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+        -frames:v 100 -c:v libx264 -preset slower -crf 18 \
+        -movflags +faststart outputfile.mp4
+```
+
+| Setting | Description |
+| --- | --- |
+| **ocio=input=ACEScg** | The colour space of the EXRs, as named in your OCIO config. |
+| **display=sRGB - Display:view=ACES 1.0 - SDR Video** | The display and view transform, as you would pick them in a review tool. |
+| **format=rgb48** | OCIO writes 16-bit RGB, which `zscale` then converts to Y'CbCr. |
+| **format=rgb48le** | Changes nothing, but works around a crash in the FFmpeg 9.0 release when `zscale` directly follows the OCIO filter. |
+| **zscale=...,setparams=...** | The same conversion and tags as the [command above](#h264-encoding-from-an-image-sequence-for-web-review). `setparams` matters even more here: FFmpeg tags EXR frames as linear, and the OCIO filter does not change the tags. |
+
+This needs an FFmpeg built with OCIO (`ffmpeg -filters | grep ocio`); the [Conan recipes](conan/README.html)
+in this repository build one. On FFmpeg 8.1, 9.0.2 and 9.1-dev, the result matched converting the same frames with
+`oiiotool --ociodisplay` and then using the command above, to within 1 code value at 10-bit.
+
+For more details, including HDR, resizing, and slates and burn-ins, see [FFmpeg OCIO Filter](FfmpegOcio.html).
+
 ## ProRes 422 encoding with FFmpeg
 
 Unlike h264 and DNxHD, ProRes is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one. If you are running on MacOS we would recommend using [prores_videotoolbox](EncodeProres.html#prores_videotoolbox) which is using the official Apple ProRes library and is hardware accelerated.
@@ -143,50 +170,17 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
 | **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the Quicktime |
 
-For more details see:
-
-* [Prores](EncodeProres.html)
-* [YUV Conversion](ColorPreservation.html#yuv)
-
-## ProRes 4444 encoding with FFmpeg
-
-As above, but using the 4444 profile, which keeps a colour value for every pixel (4:4:4). The profile can also carry an alpha channel; for that use `-pix_fmt yuva444p10le`.
-
-<!---
-name: test_prores444
-sources: 
-- sourceimages/smptehdbars_10.dpx.yml
-comparisontest:
-   - testtype: ycbcr
-     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
-   - testtype: assertresults
-     tests:
-     - assert: between
-       value: white_error_10bit
-       between: [-1.5, 1.5]
-     - assert: less
-       value: p99_error_10bit
-       less: 5
-     - assert: less
-       value: mean_error_10bit
-       less: 0.8
-     - assert: less
-       value: max_error_10bit
-       less: 12
--->
-```console
-ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
-    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
-    -pix_fmt yuv444p10le -frames:v 100 \
-    -c:v prores_ks -profile:v 4444 -vendor apl0 outputfile.mov
-```
-
-| Flag | Description |
-| --------- | ----------- |
-| **-profile:v 4444** | Prores profile for 4444 |
-| **-pix_fmt yuv444p10le** | Convert to 10-bit YUV 4:4:4 (`yuva444p10le` to include alpha) |
+For ProRes 4444 (4:4:4, optionally with alpha), use `-profile:v 4444` with `-pix_fmt yuv444p10le`
+(`yuva444p10le` for alpha); see the [ProRes](EncodeProres.html) page.
 
 For more details see:
 
-* [Prores](EncodeProres.html)
+* [ProRes](EncodeProres.html)
 * [YUV Conversion](ColorPreservation.html#yuv)
+
+## Other codecs and workflows
+
+* For other codecs (DNxHR for Avid, AV1 and VP9 for the web, OpenAPV, HTJ2K) see [Codec Comparisons](Encoding.html),
+  which starts with which codec to use for which job.
+* [Encoding Overview](EncodingOverview.html) walks through the whole pipeline, from EXRs to a tagged movie.
+* If a command gives different results on another FFmpeg version, see [FFmpeg Version Changes](FFmpegChanges.html).

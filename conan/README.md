@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 5.7
+nav_order: 8.1
 title: Building FFmpeg with Conan
 parent: Encoding Overview
 ---

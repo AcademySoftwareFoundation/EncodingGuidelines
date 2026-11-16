@@ -1,11 +1,11 @@
 ---
 layout: default
 nav_order: 4.1
-title: H264 Encoding
+title: H.264 Encoding
 parent: Codec Comparisons
 ---
 
-# H264 <a name="h264"></a>
+# H.264 <a name="h264"></a>
 
 <details open markdown="block">
   <summary>
@@ -16,13 +16,13 @@ parent: Codec Comparisons
 {:toc}
 </details>
 
-This is the workhorse encoder for web review, it's well supported by ffmpeg, and there is a lot of support for both encoding and decoding in hardware.
+This is the workhorse encoder for web review, it's well supported by FFmpeg, and there is a lot of support for both encoding and decoding in hardware.
 
-There are several h264 encoders available:
+There are several H.264 encoders available:
 
-* [x264](#x264) - the videolan h264 open source library.
+* [x264](#x264) - the videolan H.264 open source library.
 * [h264_nvenc](#nvidia-nvenc) - the nvidia hardware encoder.
-* [h264_videotoolbox](#macos-videotoolbox) - MacOS only apple h264 encoder.
+* [h264_videotoolbox](#macos-videotoolbox) - MacOS only apple H.264 encoder.
 
 ## x264
 
@@ -30,7 +30,7 @@ x264 is a library developed by the [videolan association](https://www.videolan.o
 
 Supported pixel formats: yuv420p yuvj420p yuv422p yuvj422p yuv444p yuvj444p nv12 nv16 nv21 yuv420p10le yuv422p10le yuv444p10le nv20le gray gray10le
 
-Note, for web browsers use 4:2:0. 4:2:2 is not reliably supported (Firefox did not play 4:2:2 H.264 in our tests); see [H264 Bitdepth](#h264-bitdepth) for 8-bit against 10-bit.
+Note, for web browsers use 4:2:0. 4:2:2 is not reliably supported (Firefox did not play 4:2:2 H.264 in our tests); see [H.264 Bitdepth](#h264-bitdepth) for 8-bit against 10-bit.
 
 Key flags (see [https://trac.ffmpeg.org/wiki/Encode/H.264](https://trac.ffmpeg.org/wiki/Encode/H.264) )
 
@@ -75,7 +75,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
 | Flag | Description |
 | --- | --- |
 | **-crf 18** | This is the constant rate factor, controlling the default quality (see: [https://slhck.info/video/2017/02/24/crf-guide.html](https://slhck.info/video/2017/02/24/crf-guide.html) ) where lower values are higher quality (`-crf 0` is not lossless at 10-bit; see [Lossless Encoding](#lossless-encoding)). By default this is set to 23, which is a little on the low quality side; using values closer to 18 is recommended, but this does come at the expense of file-size. For more on this see the [CRF comparison](#crf-comparison) below. Use `-crf` rather than a fixed quantiser (`-qp`), except for lossless encoding (see: [https://slhck.info/video/2017/03/01/rate-control.html](https://slhck.info/video/2017/03/01/rate-control.html) ). |
-| **-pix_fmt yuv420p10le** | 10-bit 4:2:0; see [H264 Bitdepth](#h264-bitdepth). |
+| **-pix_fmt yuv420p10le** | 10-bit 4:2:0; see [H.264 Bitdepth](#h264-bitdepth). |
 | **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ); see the [preset comparison](#libx264-preset-comparisons) below. |
 | **-movflags +faststart** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 | **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
@@ -109,13 +109,13 @@ It shows that you really can just encode with -preset medium or -preset slow any
 | ![](enctests/reference-results/h264-test-filesize.png) This is showing preset values against file size. Seeing very little variation in file size for the different presets. |
 | ![](enctests/reference-results/h264-test-vmaf_harmonic_mean.png) This is showing preset values against VMAF harmonic mean (quality). |
 
-### H264 Bitdepth
+### H.264 Bitdepth
 
-By default, h264 is created as yuv420p (8-bit 4:2:0), which is the most widely supported format. We recommend 10-bit 4:2:0 (`-pix_fmt yuv420p10le`) where your players allow it, since it avoids most of the banding of 8-bit at a similar file size.
+By default, H.264 is created as yuv420p (8-bit 4:2:0), which is the most widely supported format. We recommend 10-bit 4:2:0 (`-pix_fmt yuv420p10le`) where your players allow it, since it avoids most of the banding of 8-bit at a similar file size.
 
 In our tests on macOS 26, Safari, Chrome and Firefox all played 10-bit H.264, although Chrome placed its chroma half a pixel off (see [Chroma Siting Tests](ChromaSitingTests.html#chart-420)). Browsers on other platforms, and hardware players, have not been retested. Where a file has to play everywhere, use `-pix_fmt yuv420p`.
 
-The h264 codec also supports other formats, selected with the `-pix_fmt` flag.
+The H.264 codec also supports other formats, selected with the `-pix_fmt` flag.
 
 Setting `-pix_fmt` to 10-bit or high-chroma formats usually auto-selects the appropriate H.264 profile. However, explicitly setting `-profile:v` is recommended for ensuring compatibility with specific hardware decoders.
 

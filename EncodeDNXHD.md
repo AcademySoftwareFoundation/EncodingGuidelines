@@ -67,7 +67,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -y  outputfile.mov
 ```
 
-## ffmpeg DNxHR Profiles
+## FFmpeg DNxHR Profiles
 
 | Profile name | Profile description | Profile # | Pix Fmt | Bit Depth | Compression Ratio |
 | :---------- | :----------- | :----------- | :----------- | :----------- | :----------- |
@@ -79,7 +79,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v dnxhd \
 
 There really are not any significant flags to be used, since the quality is adjusted automatically to fit the compression ratio. Similarly the bit-rate flag has no impact on this. For more Bit-rate control, see the [DNxHD settings](#dnxhd-profiles) below.
 
-(*) The 12-bit depth is what the codec can support, but does not appear to be supported by ffmpeg, since the encoding only allows 10-bit image data to be encoded.
+(*) The 12-bit depth is what the codec can support, but does not appear to be supported by FFmpeg, since the encoding only allows 10-bit image data to be encoded.
 
 ### DNxHR resolutions
 
@@ -99,7 +99,7 @@ This is the difference from DNxHD, which only accepts four frame sizes; see [DNx
 
 NOTE, we have sometimes seen incompatibility issues with DNxHD Quicktimes not being read by Black Magic devices (e.g. the HyperDeck Studio), so there may be cases where you will need to use Resolve or Adobe Media Encoder to create compatible media.
 
-## ffmpeg RGB support
+## FFmpeg RGB support
 
 The `dnxhr_444` profile can also store RGB directly (`gbrp10le`), with no Y'CbCr conversion:
 
@@ -187,7 +187,7 @@ These can be imported directly into the AVID, although it will need to do some u
 
 ### Op-Atom MXF
 
-AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but it's now integrated into ffmpeg. This works for a single piece of media (i.e. just video, or audio, not both).
+AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but it's now integrated into FFmpeg. This works for a single piece of media (i.e. just video, or audio, not both).
 
 <!---
 name: test_dnxhd_opatom_mxf

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Resizing
-nav_order: 5.75
+nav_order: 4.5
 parent: Encoding Overview
 ---
 

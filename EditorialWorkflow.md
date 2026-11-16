@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Adding Timecode and Editorial Workflow
-nav_order: 5.1
+nav_order: 6
 parent: Encoding Overview
 ---
 
@@ -22,6 +22,12 @@ parent: Encoding Overview
 1. TOC
 {:toc}
 </details>
+
+{: .highlight }
+> **In short:** give media for editorial a start timecode with `-timecode`, usually derived from the start frame
+> (frame 1001 at 24 fps is `00:00:41:17`), and for camera proxies a reel name with
+> `-metadata:s:v:0 reel_name=...`. For Avid, deliver DNxHD/DNxHR in MXF, and agree OpAtom or Op1a with editorial; see
+> [AVID Media Composer Workflows](#avid-media-composer-workflows).
 
 When delivering media to editorial, it's useful to attach a start timecode value to the media.
 
@@ -240,4 +246,5 @@ In this simplistic example, we are overwriting the Shot and Scene metadata colum
 
 ## See Also
 
+* [Adding Metadata](EncodingMetadata.html): shot, version and other metadata in MOV, MXF and MKV.
 * [Feature Turnover Guide](https://www.evanschiff.com/articles/feature-turnover-guide-vfx/)

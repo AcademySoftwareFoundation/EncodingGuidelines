@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 6
+nav_order: 3.8
 title: RGB Encoding
 parent: Encoding Overview
 ---

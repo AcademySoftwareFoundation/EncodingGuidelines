@@ -16,7 +16,7 @@ parent: Codec Comparisons
 {:toc}
 </details>
 
-There are four ProRes encoders, `prores`, `prores_ks`, `prores_aw` and `prores_videotoolbox`, which is a hardware based MacOS M1 encoder/decoder (ffmpeg version 5 or higher).
+There are four ProRes encoders, `prores`, `prores_ks`, `prores_aw` and `prores_videotoolbox`, which is a hardware based MacOS M1 encoder/decoder (FFmpeg version 5 or higher).
 
 If you are doing lighting or compositing reviews the recommendation is to use Prores_ks with -profile:v 3. If you are able we would recommend using [OpenAPV](EncodeOpenAPV.html) or prores_videotoolbox over prores_ks, and look at a 444 10-bit or 12-bit encode, since they both give a superior result.
 
@@ -75,7 +75,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
 Options that can be used include:
 
 | --- | --- |
-| -profile:v 4444xq | Which prores encoding profile to use, see below |
+| -profile:v 4444xq | Which ProRes encoding profile to use, see below |
 | -qscale:v 3 | A fixed quantiser for the whole frame, 1 (highest quality) to 64; above 64 the encoder stops with "too large quantiser, maximum is 64". 0, or leaving it out, uses the profile's rate control instead (see below). |
 | -vendor apl0 | tricks the codec into believing its from an Apple codec. |
 | -alpha_bits 16 | Allows you to specify how many bits to use for the alpha channel (default 16) |
@@ -122,7 +122,7 @@ Profile values can be one of:
 | standard | 2 | 4:2:2 | 147Mbps | Standard |
 | hq | 3 | 4:2:2 | 220Mbps | High Quality 10-bit |
 | 4444 | 4 | 4:4:4:4 | 330Mbps | High quality mastering format, can support both RGB and Y'CbCr. Also supports a 16-bit mathematically lossless alpha. |
-| 4444xq | 5 | 4:4:4:4 | 500Mbps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. ffmpeg will only generate up to 10-bit. |
+| 4444xq | 5 | 4:4:4:4 | 500Mbps | High quality mastering format, supports up to 12 bit, and 16-bit alpha. FFmpeg will only generate up to 10-bit. |
 
 See [https://support.apple.com/en-us/HT202410](https://support.apple.com/en-us/HT202410)
 
@@ -161,7 +161,7 @@ To help pick appropriate values with the -qscale:v , we have run the [Test Frame
 
 ## prores_videotoolbox {#prores_videotoolbox}
 
-If you are on a MacOS M1 machine and are using ffmpeg 5.0 or higher, you can use the built in libraries to encode to ProRes using:
+If you are on a MacOS M1 machine and are using FFmpeg 5.0 or higher, you can use the built in libraries to encode to ProRes using:
 
 <!---
 name: test_prores_videotoolbox

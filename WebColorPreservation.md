@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Color Metadata and Web Color Preservation
-nav_order: 5.3
+nav_order: 4
 parent: Encoding Overview
 ---
 
@@ -22,6 +22,12 @@ parent: Encoding Overview
 1. TOC
 {:toc}
 </details>
+
+{: .highlight }
+> **In short:** for web review, tag the file as BT.709 primaries, BT.709 matrix, limited range and the sRGB transfer
+> function (`iec61966-2-1`). Set primaries and transfer with `setparams` in the filter chain, as in the
+> [Encoding Cheatsheet](Quickstart.html), because from FFmpeg 7.1 `-color_primaries` and `-color_trc` are ignored.
+> Browsers do not support a gamma of 2.4 (BT.1886); see the [Summary](#summary).
 
 There are a number of metadata flags designed to help the player know what colorspace the media is in, so it can correctly interpret it for playback. We do recommend adding the metadata tags to media, particularly if you are reviewing it on a web browser, however there are a lot of gotchas here.
 

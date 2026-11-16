@@ -1,7 +1,7 @@
 ---
 layout: default
 nav_order: 4.7
-title: JPEG2000 HTJ2K Encoding
+title: JPEG 2000 HTJ2K Encoding
 parent: Codec Comparisons
 ---
 
@@ -21,7 +21,7 @@ HTJ2K is an extremely interesting extension of the JPEG-2000 standard that is wi
 The key advantages of HTJ2K include:
 
 1. Visually lossless compression with high throughput.
-2. 10x-30x faster than Jpeg2000.  
+2. 10x-30x faster than JPEG 2000.  
 3. Resolution scalability, lower resolutions extracted without needing to fully decode the file.  
 4. Frame-based (intra-frame) compression. Each frame is encoded independently, which is ideal for random-access playback and scrubbing. Since each frame is encoded separately, and then stitched together into a container the compression can easily be parallelized.  
 5. Support for 10-16-bit precision, JPEG-2000 can go higher, but many of the tools do not natively support it.  
@@ -102,10 +102,10 @@ Without the jph:qstep flag, lossless mode is used, which is typically quite a bi
 | Flag | Description |
 | --- | --- |
 | `--attrib jph:qstep 0.001` | Interval size used to quantize wavelet coefficients. There is a rough mapping between this and the meaningful bit-depth of the resulting picture, qstep \= 2^(- bit-depth)   If this is not defined, lossless compression is used. (See below). |
-| `--attrib jph:block_size 64,64` | The older JPEG2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
+| `--attrib jph:block_size 64,64` | The older JPEG 2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
 | `--attrib jph:prog_order RPCL` | (see [below](#progression-order)). |
 
-While JPEG2000 can support YCbCr this openimageio implementation assumes that we are only generating RGB results.
+While JPEG 2000 can support YCbCr this openimageio implementation assumes that we are only generating RGB results.
 
 ### HTJ2K Wrapping J2C files in container
 
@@ -115,7 +115,7 @@ There are a number of advantages to having the J2C files in a container:
 * Allows additional metadata to be stored in the container header.  
 * In some cases seek time could be improved with the right container by creating an index table to seek into the container faster, although this may require additional development to support it.
 
-FFMPEG provides the ability to add j2c files to a container with the following command:
+FFmpeg provides the ability to add j2c files to a container with the following command:
 
 ```console
 ffmpeg -f image2 -r 24 -i JPEGFILES.%05d.j2c -vcodec copy outputfile.mov
@@ -166,7 +166,7 @@ For many cases position can be ignored, unless you start generating particularly
 
 ## HTJ2K Decoding and Playback
 
-HTJ2K decoding has already been included in the OpenJpeg 2.5 library, which is widely used by ffmpeg and OIIO. However it is using a slower older version of the code that became OpenJPH, so is not suitable for playback. Similarly, ffmpeg has its own decoder that can read htj2k files, but does not have the throughput that OpenJPH has.
+HTJ2K decoding has already been included in the OpenJpeg 2.5 library, which is widely used by FFmpeg and OIIO. However it is using a slower older version of the code that became OpenJPH, so is not suitable for playback. Similarly, FFmpeg has its own decoder that can read htj2k files, but does not have the throughput that OpenJPH has.
 
 Playback is somewhat limited, but [OpenRV](https://github.com/AcademySoftwareFoundation/OpenRV) recently added HTJ2K support both as image sequences of J2C files, as well as wrapped in MXF, MOV or MP4 containers.
 
@@ -180,7 +180,7 @@ The test was to pick a frame rate where openRV is able to load a buffer at a rat
 | HTJ2K qstep=0.002 8K | 6 fps | 11 fps |
 | HTJ2K qstep=0.002 8K loading 4K resolution | 40 fps |  |
 
-Note, the higher performance on windows is from the additional optimization on windows hardware, having said that the performance for 4k playback is acceptable for cinema content and does have quite a bit of optimization compared to OpenJPEG and FFMPEG.  
+Note, the higher performance on windows is from the additional optimization on windows hardware, having said that the performance for 4k playback is acceptable for cinema content and does have quite a bit of optimization compared to OpenJPEG and FFmpeg.  
 It's also worth pointing out that improved playback performance can be achieved using [Kakadu](https://kakadusoftware.com/) and [Comprimato](https://comprimato.com/) commercial decoders, although pure GPU based ones may not perform too well within openRV.
 
 [Blackmagic Resolve](https://www.blackmagicdesign.com/uk/products/davinciresolve) can also playback HTJ2K J2C image sequence files. It does not appear to be able to recognise J2C files in containers though.
