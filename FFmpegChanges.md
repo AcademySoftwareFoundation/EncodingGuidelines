@@ -262,6 +262,8 @@ This has not changed in any version from 6.0 to 9.0:
 See [FFmpeg swscale Filter](EncodeSwsScale.html#color-conversion-use-zscale) for
 more on the cause.
 
+Thanks to John Joumaa for reporting this.
+
 ## libswscale full-range conversions changed in 8.0 {#libswscale-full-range-80}
 
 [Commit 384fe39623](https://github.com/FFmpeg/FFmpeg/commit/384fe39623) ("swscale/range_convert: fix mpeg ranges in
