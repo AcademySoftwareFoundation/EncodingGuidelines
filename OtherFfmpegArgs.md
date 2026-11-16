@@ -115,7 +115,7 @@ draws the bars directly as 8-bit Y'CbCr, limited range, with BT.709 values (75% 
 them correctly: 6.1.6 tags the matrix as BT.709 but sets no primaries or transfer, and from 7.0 it tags the matrix
 as BT.601 (`bt470bg`), so anything that converts the frames to RGB uses the wrong matrix (75% yellow comes out as
 188,203,6 instead of 191,191,0). This looks like a bug: the filter compares its instance name, not the filter name,
-with `smptehdbars`. Colour flags before `-i` (`-colorspace bt709 -f lavfi -i smptehdbars...`) change neither the
+with `smptehdbars`. Color flags before `-i` (`-colorspace bt709 -f lavfi -i smptehdbars...`) change neither the
 pixels nor the matrix tag. Add `setparams` to the source instead, as in all the commands below (tested on 6.1.6,
 7.1.5 and 9.0.2).
 
@@ -183,7 +183,7 @@ Creating it with ffmpeg directly to RGB:
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt rgb48be zoneplate_rgb16.png
 ```
 
-Creating it with ffmpeg directly to YCbCr:
+Creating it with ffmpeg directly to Y'CbCr:
 
 ```console
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv420p10 -strict -1 zoneplate_yuv420p10.y4m
@@ -193,13 +193,13 @@ ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=
 
 A dummy source video signal.
 
-Creating a blank YUV h264 file of 1024 frames.
+Creating a blank YUV H.264 file of 1024 frames.
 
 ```console
 ffmpeg -r 24 -f lavfi -i nullsrc=s=1280x720,format=yuv444p -frames:v 1024 yuv444p.mov
 ```
 
-Creating a blank YUV 10-bit h264 file
+Creating a blank YUV 10-bit H.264 file
 
 ```console
 ffmpeg -r 24 -f lavfi -i nullsrc=s=1280x720,format=yuv444p10le -frames:v 1024 yuv444p10le.mov
@@ -238,7 +238,7 @@ Will output a line like:
 
 Where each number is a 0-1 scale, where 1 is identical.
 
-The two images need to be the same resolution and pixel format (at least both RGB or YCbCr).
+The two images need to be the same resolution and pixel format (at least both RGB or Y'CbCr).
 
 ### lut lutrgb and lutyuv
 

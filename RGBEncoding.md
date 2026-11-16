@@ -16,13 +16,13 @@ parent: Encoding Overview
 {:toc}
 </details>
 
-You do not *have* to encode into YCbCr, there are a number of codecs that support RGB directly.
+You do not *have* to encode into Y'CbCr, there are a number of codecs that support RGB directly.
 
-It does lower the compression efficiency a little, but eliminates any concern that the YCbCr conversion is affecting the imagery.
+It does lower the compression efficiency a little, but eliminates any concern that the Y'CbCr conversion is affecting the imagery.
 
 | Codec Family | ffmpeg codec | Bit depth |  pix_fmt | Web Support |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
-| [h264](Encodeh264.html) | libx264rgb | 8 | rgb | no |
+| [H.264](Encodeh264.html) | libx264rgb | 8 | rgb | no |
 | [HEVC/H265](EncodeHevc.html) | libx265 | 8 10 12 | rgb rgb-10 rgb-12 | All browsers |
 | [HEVC/H265](EncodeHevc.html) | hevc_videotoolbox | 8 10 | rgb rgb-10 rgb-12 | All browsers |
 | [VP9](EncodeVP9.html) | libvpx-vp9 | 8 10 12 | rgb rgb-10 rgb-12 | All Browsers |
@@ -30,9 +30,9 @@ It does lower the compression efficiency a little, but eliminates any concern th
 | [DNxHD](EncodeDNXHD.html) | dnxhd | 8 10 | rgb | no |
 | [HTJ2K](EncodeHTJ2K.html) |  | 8 -> 16 | rgb | no |
 
-## H264 RGB Encoding
+## H.264 RGB Encoding
 
-h264 does support RGB encoding, which may be preferable in some situations.
+H.264 does support RGB encoding, which may be preferable in some situations.
 
 Using the encoder:
 

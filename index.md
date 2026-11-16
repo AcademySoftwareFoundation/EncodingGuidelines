@@ -26,7 +26,7 @@ An example of why this is important is to compare:
 <TR><TD style='padding-top:0px; padding-bottom: 0px'>Converting explicitly to BT.709 with zscale</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/zscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
 </table>
 
-You can see the default FFmpeg conversion introduces a dramatic color shift, but with the right flags you can match the original. See [RGB to YCbCr Conversion](ColorPreservation.html) for more details on this.
+You can see the default FFmpeg conversion introduces a dramatic color shift, but with the right flags you can match the original. See [RGB to Y'CbCr Conversion](ColorPreservation.html) for more details on this.
 
 ## Where to start
 
@@ -42,12 +42,12 @@ You can see the default FFmpeg conversion introduces a dramatic color shift, but
 These are the problems we see most often, each with the page that explains it:
 
 * **FFmpeg converts with the wrong matrix by default.** Before FFmpeg 7.1, untagged RGB images are converted with
-  BT.601, the shift shown above. See [RGB to YCbCr Conversion](ColorPreservation.html).
+  BT.601, the shift shown above. See [RGB to Y'CbCr Conversion](ColorPreservation.html).
 * **The `scale` filter (libswscale) gets 10-bit and higher white wrong**, putting it at 943 instead of 940, and
   centres the chroma. We recommend `zscale`; see [zscale Conversion](EncodeZscale.html).
-* **The colour flags changed meaning in FFmpeg 7.1.** `-color_primaries` and `-color_trc` are now ignored, and
+* **The color flags changed meaning in FFmpeg 7.1.** `-color_primaries` and `-color_trc` are now ignored, and
   `-colorspace` converts the pixels rather than just tagging them. See [FFmpeg Version Changes](FFmpegChanges.html).
-* **Browsers ignore or misread some colour tags**, so the same file can look different in Chrome, Safari and RV. See
+* **Browsers ignore or misread some color tags**, so the same file can look different in Chrome, Safari and RV. See
   [Color Metadata and Web Color Preservation](WebColorPreservation.html).
 * **Chroma siting is easy to get wrong in 4:2:2 and 4:2:0**, and the error grows each time a file is re-encoded. See
   [Chroma Siting](ChromaSiting.html).

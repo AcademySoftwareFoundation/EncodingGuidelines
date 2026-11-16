@@ -7,7 +7,7 @@ parent: Test Output
 
 # Y'CbCr Conversion Tests
 
-Different ways of converting RGB to Y'CbCr with `ffmpeg`, on a chip chart and on colour bars. Pick two results and
+Different ways of converting RGB to Y'CbCr with `ffmpeg`, on a chip chart and on color bars. Pick two results and
 wipe or flip between them, or show their difference; the table at the bottom has the errors for all of them.
 The viewer works best [full screen](compare.html).
 

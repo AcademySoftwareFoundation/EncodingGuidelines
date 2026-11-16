@@ -170,11 +170,11 @@ The difference between the blocks only appears when the display turns each pixel
 it. Y'CbCr to R'G'B' is linear, so the average code value of a test block is the same for every player. A viewer
 that shrinks the picture averages code values before the display does, which removes the difference. At half
 size or less a wrong player then looks right, hence the scale check, which is also pure black and white for the
-same reason. The colours were chosen so that each wrong band differs from the right one by at least 0.04 in Oklab
+same reason. The colors were chosen so that each wrong band differs from the right one by at least 0.04 in Oklab
 (linear-light means, gamma 2.4), with every pixel in gamut for every kind of player, so the result does not
 depend on clipping.
 
-The chart tests the finest chroma detail 4:2:2 can hold. A player can place coarse colour correctly and still
+The chart tests the finest chroma detail 4:2:2 can hold. A player can place coarse color correctly and still
 fail here: FFmpeg 9.1.dev, decoding to packed RGB, puts a slow chroma sine within 0.03 pixel of the right place
 but rebuilds the finest detail as a centred filter would, so the chart shows it as centred bicubic, while the
 decode test in [Reading back to RGB](#reading-back-results), which blurs before it measures, sees it as co-sited.
@@ -287,8 +287,8 @@ any player that treats the samples as co-sited, with any symmetric filter, rebui
 exact mirror image of the original: the two contain the same pixels and the band is uniform. A player that thinks
 the samples are centred pairs luma and chroma differently in the two blocks, and the checkerboard shows. Mirrored
 between two pixels instead, it is the other way round. The right band matches exactly whatever the filter, and
-the colours were chosen so the wrong one differs by at least 0.065 (Oklab, linear light), all in gamut. Each band
-has its own colours, so a uniform band's colour means nothing; only which bands are uniform does. Unlike the
+the colors were chosen so the wrong one differs by at least 0.065 (Oklab, linear light), all in gamut. Each band
+has its own colors, so a uniform band's color means nothing; only which bands are uniform does. Unlike the
 4:2:2 chart, it does not tell linear from bicubic; it only answers where the player thinks the samples are.
 
 The chroma in these files has no true position: the bands show what the player assumes, and which is right
@@ -354,12 +354,12 @@ HEVC files with the same pixels; only the VUI differs:
 | `-hevc-pq-topleft.mp4` | 2 (`topleft`), as Ultra HD Blu-ray, ATSC 3.0 and DVB BT.2020 use | Across: co-sited, **Down: co-sited** |
 
 A player that shows `-hevc-pq-topleft.mp4` the same as the other two ignores the tag, and would show `topleft`
-HDR10 material with the colour half a line too low.
+HDR10 material with the color half a line too low.
 
-The colours had to be chosen again for PQ. Every pixel is between 1 and 100 cd/m<sup>2</sup> (MaxCLL 100, MaxFALL
+The colors had to be chosen again for PQ. Every pixel is between 1 and 100 cd/m<sup>2</sup> (MaxCLL 100, MaxFALL
 31) and inside the BT.709 gamut. So no display tone maps it, gamut maps it, or crushes it into its black level, and
 a screenshot does not clip it. The wrong band differs by at least 0.071 in Oklab, against 0.065 for the SDR chart.
-`sourceimages/chroma_siting_420_colours.py` checks both sets of colours with the same player models, and found the
+`sourceimages/chroma_siting_420_colours.py` checks both sets of colors with the same player models, and found the
 PQ ones (`--search --seed 3`).
 
 **Viewing it:**
@@ -410,9 +410,9 @@ for `topleft`. In SDR, Firefox also ignored the HEVC `center` and 10-bit H.264 `
 
 The charts above depend on display gamma and the eye. To check their answer directly, or to show that a particular
 player is wrong, there are also tiny 64x64 charts to zoom in on. In each, the luma is flat grey and single chroma
-samples are raised, so the only thing that can spread the colour is the player's chroma reconstruction:
+samples are raised, so the only thing that can spread the color is the player's chroma reconstruction:
 
-| The player assumes | Weight of the sample in the columns tick-1, tick, tick+1, tick+2 | The colour is centred |
+| The player assumes | Weight of the sample in the columns tick-1, tick, tick+1, tick+2 | The color is centred |
 | :--- | :--- | :--- |
 | Co-sited, interpolated | .5, 1, .5, 0 | **on the tick** |
 | Centred, linear | .25, .75, .75, .25 | between the tick and the next column |
@@ -452,8 +452,8 @@ How a player zooms matters:
 * **xStudio** computes each image pixel in its shader, so any zoom shows the real values. Trust the screen, not the
   pixel probe: the probe is separate code, and did not have the half-width bug that the screen did.
 * **OpenRV** applies its filter setting (`n` toggles it) to the chroma planes as well as the luma. Under Linear, the
-  default, a zoomed view is smooth, but the peak of the colour is where the chroma is. Under Nearest the chroma
-  becomes sample repeat across, which is not what RV shows at normal playback, although the colour is still centred
+  default, a zoomed view is smooth, but the peak of the color is where the chroma is. Under Nearest the chroma
+  becomes sample repeat across, which is not what RV shows at normal playback, although the color is still centred
   half a pixel to the right. Down the picture, 8-bit 4:2:0 is repeated too, but 10-bit 4:2:0 stays blended, so the two
   look different (OpenRV 3.1.0). Check the chroma position, not the pixel shapes, or use Linear.
 
@@ -519,11 +519,11 @@ which is how the xStudio bug showed.
 | Specification | What it says |
 | :--- | :--- |
 | [ITU-R BT.601-7](https://www.itu.int/rec/R-REC-BT.601) (SD), Part A, sampling structure | "C<sub>R</sub> and C<sub>B</sub> samples co-sited with odd (1st, 3rd, 5th, etc.) Y samples in each line" |
-| [ITU-R BT.709-6](https://www.itu.int/rec/R-REC-BT.709) (HD), item 4.3 | C<sub>B</sub>, C<sub>R</sub> "co-sited with each other and with alternate Y samples", "the first active colour-difference samples being co-sited with the first active luminance sample" |
+| [ITU-R BT.709-6](https://www.itu.int/rec/R-REC-BT.709) (HD), item 4.3 | C<sub>B</sub>, C<sub>R</sub> "co-sited with each other and with alternate Y samples", "the first active color-difference samples being co-sited with the first active luminance sample" |
 | [ITU-R BT.2020-2](https://www.itu.int/rec/R-REC-BT.2020) (UHD), Table 5 | For 4:2:2 and 4:2:0: "The first (top-left) sample is co-sited with the first Y' samples" |
 | [ITU-T H.264](https://www.itu.int/rec/T-REC-H.264) and [ITU-T H.265](https://www.itu.int/rec/T-REC-H.265), Annex E (VUI) | `chroma_sample_loc_type_top_field` / `_bottom_field`, values 0 to 5, for 4:2:0 only, shown in Figure E-1. 0 (left: co-sited horizontally, centred vertically) is the default when nothing is signalled. |
 | [ITU-T H.273](https://www.itu.int/rec/T-REC-H.273) (07/21 and later) | Adds a coding-independent code point for the 4:2:0 chroma sampling grid alignment, alongside the familiar primaries, transfer and matrix code points |
-| [AV1 specification](https://aomediacodec.github.io/av1-spec/#color-config-semantics), colour config semantics | `chroma_sample_position`, 4:2:0 only: 0 unknown, 1 `CSP_VERTICAL` "horizontally co-located with (0, 0) luma sample, vertical position in the middle between two luma samples", 2 `CSP_COLOCATED` "co-located with (0, 0) luma sample". There is no value for centred. |
+| [AV1 specification](https://aomediacodec.github.io/av1-spec/#color-config-semantics), color config semantics | `chroma_sample_position`, 4:2:0 only: 0 unknown, 1 `CSP_VERTICAL` "horizontally co-located with (0, 0) luma sample, vertical position in the middle between two luma samples", 2 `CSP_COLOCATED` "co-located with (0, 0) luma sample". There is no value for centred. |
 | [Matroska, RFC 9559](https://www.rfc-editor.org/rfc/rfc9559#section-5.1.4.1.28.23) sections 5.1.4.1.28.23 and .24 | `ChromaSitingHorz`: 0 unspecified, 1 left collocated, 2 half. `ChromaSitingVert`: 0 unspecified, 1 top collocated, 2 half. |
 | SMPTE ST 377-1:2019 (MXF), section G.2.29, CDCI picture descriptor | `ColorSiting`: 0 coSiting, "as in ITU-R Rec 601, SMPTE ST 314 4:1:1 or MPEG-2 4:2:2"; 1 horizontal mid-point; 3 quincunx, "as in MPEG-1 4:2:0"; 4 Rec601 (equivalent to 0, deprecated); 5 line alternating; 6 vertical midpoint, "as in MPEG-2 4:2:0 and H.264/AVC 4:2:0"; 255 unknown, the default when absent. (SMPTE standards are not freely available.) |
 | FFmpeg [`AVChromaLocation`](https://github.com/FFmpeg/FFmpeg/blob/master/libavutil/pixfmt.h) (`libavutil/pixfmt.h`) | FFmpeg's own names, with a diagram: `left` is "MPEG-2/4 4:2:0, H.264 default for 4:2:0", `center` is "MPEG-1 4:2:0, JPEG 4:2:0", `topleft` is "ITU-R 601, SMPTE 274M ..., mpeg2 4:2:2" |

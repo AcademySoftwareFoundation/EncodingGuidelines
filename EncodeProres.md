@@ -70,7 +70,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
 ```
 
 {: .note }
-> These examples convert with `zscale`, which needs FFmpeg built with zimg; see [zscale Conversion](EncodeZscale.html). The `scale` filter (libswscale) puts white at 943 instead of 940 when converting a 10-bit or higher source to limited range. ProRes takes its colour tags from the frames, so `setparams` sets the primaries and transfer function; the `-color_*` flags are harmless but not needed. The automated comparison results further down this page were made with `scale`.
+> These examples convert with `zscale`, which needs FFmpeg built with zimg; see [zscale Conversion](EncodeZscale.html). The `scale` filter (libswscale) puts white at 943 instead of 940 when converting a 10-bit or higher source to limited range. ProRes takes its color tags from the frames, so `setparams` sets the primaries and transfer function; the `-color_*` flags are harmless but not needed. The automated comparison results further down this page were made with `scale`.
 
 Options that can be used include:
 
@@ -108,7 +108,7 @@ ffmpeg -i INPUTFILE.mov -c copy \
 ```
 
 `zscale` then accepts the file (tested on 6.1.6, 7.1.5 and 9.0.2; of those, only 9.0.2's `ffprobe` shows the new
-tags). This only changes the label, so use it only if the pixels really are BT.709: an encode with no colour settings
+tags). This only changes the label, so use it only if the pixels really are BT.709: an encode with no color settings
 and no conversion filter is converted as BT.601.
 
 ### Prores_ks profile

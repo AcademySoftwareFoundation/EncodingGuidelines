@@ -43,7 +43,7 @@ Depending on the movie file, there are a variety of mechanisms for embedding key
 
 ### MKV
 
-Mkv is the most flexible for adding arbitrary key-value strings to the file, all values are preserved and viewable by openrv.
+Mkv is the most flexible for adding arbitrary key-value strings to the file, all values are preserved and viewable by OpenRV.
 
 ```console
 ffmpeg -i input.mp4 -metadata my_custom_key="my value" -c copy output.mkv
@@ -89,7 +89,7 @@ By default, MP4 and MOV only support a limited set of standard metadata fields:
 * creation_time  
 * publisher
 
-To add arbitrary/custom metadata keys, use the -movflags use_metadata_tags option. This writes your custom fields into the mdta atom, which ffmpeg and ffprobe and openrv can read, but most standard players (like QuickTime) will ignore these fields.
+To add arbitrary/custom metadata keys, use the -movflags use_metadata_tags option. This writes your custom fields into the mdta atom, which ffmpeg and ffprobe and OpenRV can read, but most standard players (like QuickTime) will ignore these fields.
 
 ```console
 ffmpeg -i input.mp4 -movflags use_metadata_tags \

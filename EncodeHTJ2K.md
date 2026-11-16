@@ -105,7 +105,7 @@ Without the jph:qstep flag, lossless mode is used, which is typically quite a bi
 | `--attrib jph:block_size 64,64` | The older JPEG 2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
 | `--attrib jph:prog_order RPCL` | (see [below](#progression-order)). |
 
-While JPEG 2000 can support YCbCr this openimageio implementation assumes that we are only generating RGB results.
+While JPEG 2000 can support Y'CbCr this openimageio implementation assumes that we are only generating RGB results.
 
 ### HTJ2K Wrapping J2C files in container
 

@@ -18,14 +18,14 @@ parent: Encoding Overview
 
 With the introduction of FFmpeg 8.1 a [OCIO](https://ocio.readthedocs.io/en/latest/) [filter](https://ffmpeg.org/ffmpeg-filters.html#ocio) has been added. This allows you to convert from EXR files directly to encoded media using an OCIO filter to convert the colorspace correctly without needing an intermediate file.
 
-If you are encoding to YCbCr, you should perform the OCIO conversion in an RGB colorspace first, and then convert to YCbCr with `zscale`, in the same way as the other pages on this site (see [zscale Conversion](EncodeZscale.html)):
+If you are encoding to Y'CbCr, you should perform the OCIO conversion in an RGB colorspace first, and then convert to Y'CbCr with `zscale`, in the same way as the other pages on this site (see [zscale Conversion](EncodeZscale.html)):
 
 ```console
 ocio=...:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1
 ```
 
-* **`setparams` is essential here.** The OCIO filter changes the pixels but not the frame's colour tags, and FFmpeg 9.0 tags EXR frames as linear. Without `setparams`, the file is labelled with a linear transfer function and no primaries, whatever display transform you applied. The earlier examples on this page did exactly that.
-* **`zscale` rather than `scale`.** libswscale puts white about 3 code values (10-bit) too high, as on the other pages; see [Colour range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions).
+* **`setparams` is essential here.** The OCIO filter changes the pixels but not the frame's color tags, and FFmpeg 9.0 tags EXR frames as linear. Without `setparams`, the file is labelled with a linear transfer function and no primaries, whatever display transform you applied. The earlier examples on this page did exactly that.
+* **`zscale` rather than `scale`.** libswscale puts white about 3 code values (10-bit) too high, as on the other pages; see [Color range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions).
 * **`format=rgb48le` between the two filters** works around a crash in the FFmpeg 9.0 release, which segfaults when `zscale` follows the OCIO filter directly. It changes nothing (`rgb48` already is `rgb48le`), and builds with the format negotiation rework (our 8.1 build, and 9.1-dev) do not need it; see [Building ffmpeg with OCIO support](#building-ffmpeg-with-ocio-support).
 
 Measured on 9.0 against the OCIO filter's own RGB output (ACES sRGB display transform, H.264 4:2:0 10-bit, `-crf 18`): the earlier `scale` version was white +3.0, mean error 1.7, tagged linear transfer with no `colr` atom; the `zscale` version is white 0.0, mean error 1.3, tagged BT.709/sRGB (`colr` `nclc 1/13/1`).
@@ -34,7 +34,7 @@ Measured on 9.0 against the OCIO filter's own RGB output (ACES sRGB display tran
 
 ### Using OCIO-Display
 
-This example is encoding to a 10-bit h264 quicktime.
+This example is encoding to a 10-bit H.264 quicktime.
 
 ```console
 ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
@@ -56,7 +56,7 @@ ffmpeg -y  -framerate 24 -start_number <STARTFRAME> -i SOURCEFRAMES.%05d.exr \
 
 ACEScct has no standard primaries or transfer code, so this leaves them unspecified rather than letting the EXR's linear tag through. Anything that reads the file needs to be told it is ACEScct.
 
-The format parameter that's part of the OCIO filter allows you to specify an output pixel_format that OCIO will be converting to. This has to be an RGB colorspace since OCIO doesn't know how to convert to YCbCr. If you do not supply the format, the output will match the input with the exception of half-floats which will be converted to full floats (due to poor support for half-floats).
+The format parameter that's part of the OCIO filter allows you to specify an output pixel_format that OCIO will be converting to. This has to be an RGB colorspace since OCIO doesn't know how to convert to Y'CbCr. If you do not supply the format, the output will match the input with the exception of half-floats which will be converted to full floats (due to poor support for half-floats).
 
 Note, you can also specify the OCIO config file as a "config" parameter; otherwise, it will default to the `OCIO` environment variable.
 
@@ -109,7 +109,7 @@ ffmpeg -y -i INPUT_REC2100.%04d.exr -vf "ocio=input=ACEScg:display=Rec.2100-PQ -
 | display | Set the display colorspace, used in combination with view. |
 | view | Set the view colorspace, used in combination with display. |
 | inverse | When used in combination with display and view, this inverts the transform, so going from a display/view to the "input colorspace". |
-| format | Allow you to specify the output pix_fmt of the OCIO filter. This *has* to be a RGB colorspace, so you really are limited to rgb24, rgba, rgb48, rgba48, gbrp10, gbrp12, gbrpf32le, gbrapf32le, for most encoding we would recommend rgb48. By default this is the pix_fmt of the input with the exception of gbrpf16le which we automatically convert to a 32bit version (half float is not fully supported by ffmpeg, swscale in particular). Note that choosing an integer format such as rgb48 also **clamps** the result to the 0.0 - 1.0 range. That is usually what you want for a display-referred output, and it matches what Nuke does, but it is a real choice: a display transform can emit values outside that range, and leaving `format` unset carries them through to the YCbCr conversion where they become illegal levels. |
+| format | Allow you to specify the output pix_fmt of the OCIO filter. This *has* to be a RGB colorspace, so you really are limited to rgb24, rgba, rgb48, rgba48, gbrp10, gbrp12, gbrpf32le, gbrapf32le, for most encoding we would recommend rgb48. By default this is the pix_fmt of the input with the exception of gbrpf16le which we automatically convert to a 32bit version (half float is not fully supported by ffmpeg, swscale in particular). Note that choosing an integer format such as rgb48 also **clamps** the result to the 0.0 - 1.0 range. That is usually what you want for a display-referred output, and it matches what Nuke does, but it is a real choice: a display transform can emit values outside that range, and leaving `format` unset carries them through to the Y'CbCr conversion where they become illegal levels. |
 | context_params | Allow you to specify additional context parameters for the OCIO filter. This is a list of key=value pairs, separated by colons. |
 
 ## Working with EXR files and FFmpeg
@@ -135,11 +135,11 @@ Values below black and above white survive into the file but are clipped by the 
 
 ## Filter order: resizing before or after the OCIO filter
 
-If you need to resize as well as colour convert, the order matters for both correctness and speed.
+If you need to resize as well as color convert, the order matters for both correctness and speed.
 
 ### Resizing first is faster
 
-The OCIO filter is the expensive part of the chain, so resizing first means it processes fewer pixels. Converting a 1920x1080 ACES sequence through a display transform to 10-bit YCbCr, 20 frames, best of three runs:
+The OCIO filter is the expensive part of the chain, so resizing first means it processes fewer pixels. Converting a 1920x1080 ACES sequence through a display transform to 10-bit Y'CbCr, 20 frames, best of three runs:
 
 | Chain | Time per frame |
 | :--- | ---: |

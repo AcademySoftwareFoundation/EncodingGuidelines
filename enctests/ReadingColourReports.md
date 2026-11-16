@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Reading the Colour Test Reports
+title: Reading the Color Test Reports
 nav_order: 1
 parent: ORI Encoding Test Framework
 ---
 
-# Reading the Colour Test Reports
+# Reading the Color Test Reports {#reading-the-colour-test-reports}
 
 <details open markdown="block">
   <summary>
@@ -16,8 +16,8 @@ parent: ORI Encoding Test Framework
 {:toc}
 </details>
 
-The colour tests (`color_tests.yml`, the codec `*_color_tests.yml` configs and the documentation tests) use the
-`ycbcr` comparison. Each encode is decoded at its own pixel format, so FFmpeg does no colour conversion, and
+The color tests (`color_tests.yml`, the codec `*_color_tests.yml` configs and the documentation tests) use the
+`ycbcr` comparison. Each encode is decoded at its own pixel format, so FFmpeg does no color conversion, and
 compared with the ideal conversion of the source image, done in numpy. The report (`ycbcr.html.jinja`) shows the
 result for each wedge as a row of numbers, an error map and a plot. This page explains how to read them.
 
@@ -46,9 +46,9 @@ Each panel is the whole frame, showing for each pixel how far the encode is from
 
 * **Black**: exact.
 * **Orange to yellow**: too high. **Blue to cyan**: too low.
-* The colour brightens with the size of the error, to full at &plusmn;4 (set with `error_map_limit` in the
+* The color brightens with the size of the error, to full at &plusmn;4 (set with `error_map_limit` in the
   comparison config).
-* **Dim colour**: within rounding, meaning one code value of the encode, or one 10-bit code value for 12-bit and
+* **Dim color**: within rounding, meaning one code value of the encode, or one 10-bit code value for 12-bit and
   above. These errors are too small to matter on their own, but their pattern can still tell you something (see
   [a rounding bias](#a-rounding-bias)).
 * **Grey**: left out of the comparison (see below).
@@ -63,10 +63,10 @@ Grey marks the areas left out of every number on the report: anything within 8 p
 image. An edge is a step of more than 4 8-bit code values (16 at 10-bit) between neighbouring pixels, in any
 plane.
 
-These areas are left out because the result there depends on things other than the colour conversion:
+These areas are left out because the result there depends on things other than the color conversion:
 
 * For 4:2:2 and 4:2:0, the chroma filter and chroma siting (see [Chroma Siting](../ChromaSiting.html)). Errors at
-  the edges of coloured patches are expected, and different converters put them in different places.
+  the edges of colored patches are expected, and different converters put them in different places.
 * For lossy codecs, ringing at sharp edges.
 
 Smooth gradients, such as the grey ramps, are not edges, so they are compared in full. On the chip chart about
@@ -85,7 +85,7 @@ What the shapes mean:
 * **Flat along 0**: no systematic error, even if the map shows noise.
 * **Flat, away from 0**: an offset or bias, the same at every level.
 * **A slope through 0**: a gain error. For Y' the error grows towards white; for Cb and Cr the lines cross 0 at
-  512 and grow towards both ends, as the colours are too saturated or not saturated enough.
+  512 and grow towards both ends, as the colors are too saturated or not saturated enough.
 * **A curve**: the levels are being remapped, for example a transfer function or primaries conversion.
 * **A line that stops early**: there are no pixels at those levels in the image.
 
@@ -100,7 +100,7 @@ top. Cmd- or Ctrl-click the map to open the image on its own instead.
 
 ![The compare viewer, with the Cb error map over the decoded chip chart](../static/colour-reports/viewer.png)
 
-Comparing the source with the decoded frame shows compression artefacts, but not colour errors of a few code
+Comparing the source with the decoded frame shows compression artefacts, but not color errors of a few code
 values, which are far too small to see. The error map is what shows those.
 
 ## Examples
@@ -136,8 +136,8 @@ it as a flat line at about &minus;0.12, close to 0 on the plot's &plusmn;2 scale
 rather than rounding.
 
 It is far too small to see, but it is a systematic bias rather than rounding noise, and it is why this wedge fails:
-mean 0.117 against a limit of 0.1. Random rounding errors show as scattered dim speckle of both colours; whole
-patches of one colour are a bias.
+mean 0.117 against a limit of 0.1. Random rounding errors show as scattered dim speckle of both colors; whole
+patches of one color are a bias.
 
 ### The wrong conversion
 
@@ -153,8 +153,8 @@ the levels being remapped. Errors this large are visible in the image.
 ![DNxHD 175 Mb/s, 10-bit 4:2:2](../static/colour-reports/lossy.png)
 
 DNxHD at 175 Mb/s, 10-bit 4:2:2. Max is 10, but p99 is 2, mean 0.2 and white 0, so it passes. The map is
-scattered speckle of both colours, which is compression noise, and the plot is flat on 0: there is no systematic
-colour error. For a lossy codec, judge it by p99, mean and white, and use the plot to check for a bias; the max is
+scattered speckle of both colors, which is compression noise, and the plot is flat on 0: there is no systematic
+color error. For a lossy codec, judge it by p99, mean and white, and use the plot to check for a bias; the max is
 set by a few pixels.
 
 ### 4:2:0

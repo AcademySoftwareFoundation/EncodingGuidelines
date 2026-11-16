@@ -30,7 +30,7 @@ The codec specification allows:
 
 There are three implementations:
 
-* OpenAPV library - [https://github.com/AcademySoftwareFoundation/OpenAPV](https://github.com/AcademySoftwareFoundation/OpenAPV) - which can encode a YCbCr stream to the apv format.  
+* OpenAPV library - [https://github.com/AcademySoftwareFoundation/OpenAPV](https://github.com/AcademySoftwareFoundation/OpenAPV) - which can encode a Y'CbCr stream to the apv format.  
 * Native ffmpeg - FFmpeg has implemented their own decoder as part of the core ffmpeg app, they also have their own encoder using the OpenAPV library.  
 * Android Open Source Project (AOSP) 16 - Android has added support of APV in v16. [Android 16](https://developer.android.com/about/versions/16/features#apv).
 
@@ -118,7 +118,7 @@ HIDING Familys for now, they dont work.
 ## APV Familys
 
 Instead of the bitrate and QP parameter, you can optionally specify a family, which can be one of:
-| *Family Name* | *Color Sampling* | *Notes* | * FFMPEG Parameter *|
+| *Family Name* | *Color Sampling* | *Notes* | * FFmpeg Parameter *|
 | 422-LQ |  YCbCr422 | Editing-friendly low-data-rate workflows | -oapv-params: profile=422-10:family=422-HQ |
 | 422-SQ |  YCbCr422 | Standard quality mezzanine || -oapv-params: profile=422-10:family=422-HQ |
 | 422-HQ | YCbCr422 | High quality mezzanine || -oapv-params: profile=422-10:family=422-HQ |

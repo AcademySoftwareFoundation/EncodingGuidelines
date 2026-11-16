@@ -61,7 +61,7 @@ ffmpeg -i input.%06d.dpx \
 * `filter=lanczos` sets the resampling filter used for the 4:2:2/4:2:0 chroma (and for any resize). zscale's
   default, `bilinear`, gives softer chroma: on 4:2:0 test charts it left 99th percentile edge errors of 61 code
   values against 46 with `lanczos`. On 4:2:2 the two were within a code value or so on average, with `bilinear`
-  very slightly cleaner on hard-edged graphics. The filter makes no difference to the colour accuracy inside flat
+  very slightly cleaner on hard-edged graphics. The filter makes no difference to the color accuracy inside flat
   areas, or to the chroma siting.
 * `zscale` tags its output frames with the matrix and range, which the encoder copies into the file.
 * `setparams` adds the primaries and transfer, which `zscale` only sets if you ask it to convert them (see
@@ -79,7 +79,7 @@ For HDR (BT.2020, PQ), the same pattern with `matrix=2020_ncl` and
 
 ## What zscale tags
 
-The encoder takes its colour tags from the frames it receives, so what `zscale` sets on its output frames is what
+The encoder takes its color tags from the frames it receives, so what `zscale` sets on its output frames is what
 ends up in the file:
 
 | Property | Set by `zscale` | Otherwise |
@@ -96,7 +96,7 @@ So this is equivalent to the recommended command, without `setparams` (tested on
 
 ## Options
 
-The options that matter for colour conversion (`ffmpeg -h filter=zscale` lists them all). Each has an input
+The options that matter for color conversion (`ffmpeg -h filter=zscale` lists them all). Each has an input
 version (`...in`) describing the source, and an output version; the defaults (`input`) mean "the same as the
 input frame".
 
@@ -104,7 +104,7 @@ input frame".
 | :--- | :--- | :--- | :--- | :--- |
 | `matrix` | `m` | `matrixin` / `min` | Y'CbCr matrix: `709`, `2020_ncl`, `170m` (BT.601), `470bg` | input |
 | `range` | `r` | `rangein` / `rin` | `limited` or `full` | input |
-| `primaries` | `p` | `primariesin` / `pin` | Colour primaries: `709`, `2020`, ... | input |
+| `primaries` | `p` | `primariesin` / `pin` | Color primaries: `709`, `2020`, ... | input |
 | `transfer` | `t` | `transferin` / `tin` | Transfer: `709`, `iec61966-2-1` (sRGB), `smpte2084` (PQ), `linear`, ... | input |
 | `chromal` | `c` | `chromalin` / `cin` | Chroma location: `left`, `center`, `topleft`, ... | input |
 | `filter` | `f` | | Resampling filter, for resizing and for chroma subsampling: `point`, `bilinear`, `bicubic`, `spline16`, `spline36`, `spline64`, `lanczos`. We recommend `lanczos` | `bilinear` |
@@ -172,7 +172,7 @@ run with `-v verbose` and look for `auto_scale` lines: anything other than a pla
 
 ### Decoding untagged Y'CbCr
 
-`zscale` on its own gives no output for Y'CbCr that carries no colour tags (for example raw `.yuv`): it reports
+`zscale` on its own gives no output for Y'CbCr that carries no color tags (for example raw `.yuv`): it reports
 `no path between colorspaces`. Either give the input options, as in [Sources without tags](#sources-without-tags)
 (`zscale=matrixin=709:rangein=limited,format=gbrp16le` converted raw 10-bit 4:2:2 on 6.1.6, 8.1 and 9.0.2), or tag
 the frames with `setparams` first and let `zscale` convert:
@@ -184,7 +184,7 @@ the frames with `setparams` first and let `zscale` convert:
 ### Geometry
 
 `zscale` resizes (`w`, `h`, `filter`), but does not pad or fit to an aspect ratio, so command lines that combine
-scaling with `pad`, `force_original_aspect_ratio` or `setsar` need the colour conversion separated from the
+scaling with `pad`, `force_original_aspect_ratio` or `setsar` need the color conversion separated from the
 geometry rather than swapping `scale` for `zscale`. Its default filter is `bilinear`; for resizing, as for chroma
 subsampling, use `filter=lanczos`. Resizing scene-linear EXR data must be done with `zscale`, not `scale`;
 see [FFmpeg OCIO Filter](FfmpegOcio.html).

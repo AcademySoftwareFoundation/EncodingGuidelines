@@ -163,8 +163,8 @@ test_colorspace_yuv420p:
 `comparisontest` lists the checks run on each encode, in order. If it is left out, `vmaf` is used. The other
 types are `vmaf3`, `ffmpeg_psnr`, `identity`, `ycbcr`, `idiff`, `yuvdiff`, `frame_extract` and `assertresults`.
 
-For colour accuracy, use `ycbcr`. It decodes the first frame of the encode at the stream's own pixel format, so
-FFmpeg does no colour conversion, and compares it with the ideal conversion of the source RGB, worked out in
+For color accuracy, use `ycbcr`. It decodes the first frame of the encode at the stream's own pixel format, so
+FFmpeg does no color conversion, and compares it with the ideal conversion of the source RGB, worked out in
 numpy (see `testframework/ycbcr_compare.py`). RGB encodes are compared with the source RGB directly. Unlike
 `idiff`, it does not extract the encode to a PNG with `scale`, which added a second libswscale conversion, so it
 can see libswscale's errors.
@@ -213,11 +213,11 @@ Its results are in code values at the encode's bit depth:
 
 The encode also gets a viewable PNG (converted in numpy), an `-x20diff.png` error image (unsigned, not
 used by the report templates) and an `-errormap.png`: the signed error of each plane side by side, in 10-bit code values,
-orange/yellow too high and blue/cyan too low, full colour at `error_map_limit` (default 4). Errors within one code
+orange/yellow too high and blue/cyan too low, full color at `error_map_limit` (default 4). Errors within one code
 value of the encode (rounding) are dim, and edges left out of the comparison are grey. The results also hold
 `error_by_level`, the mean signed error per plane against the ideal level, which shows a gain error as a slope and
 an offset as a shift. The `ycbcr.html.jinja` report template shows both, with the white, max, mean and p99 errors
-and the range tag for each wedge; see [Reading the Colour Test Reports](ReadingColourReports.html). Each plane's
+and the range tag for each wedge; see [Reading the Color Test Reports](ReadingColourReports.html). Each plane's
 map is also written on its own (`-errormap-y.png`, `-errormap-cb.png`, ...), with a copy of the source
 (`<source>-source.png`), for the report's viewer, which lays an error map over the decoded frame.
 
@@ -278,11 +278,11 @@ As well as what the comparison measures, every encode records what FFmpeg wrote 
 | :--- | :--- |
 | `pix_fmt`, `profile`, `color_*`, `chroma_location` | ffprobe's view of the stream. Some are decoder defaults when nothing is written. |
 | `colr` | The MOV/MP4 `colr` atom, e.g. `nclx 1/1/1 tv`. |
-| `bitstream_colour` | The colour fields in the bitstream itself, read with `-bsf:v trace_headers` (H.264/HEVC VUI, AV1, VP9, APV, MPEG-2), as `primaries/transfer/matrix range`, e.g. `1/1/1 tv`. |
+| `bitstream_colour` | The color fields in the bitstream itself, read with `-bsf:v trace_headers` (H.264/HEVC VUI, AV1, VP9, APV, MPEG-2), as `primaries/transfer/matrix range`, e.g. `1/1/1 tv`. |
 | `bitstream_chroma_loc` | The chroma location in the bitstream (H.264/HEVC, AV1), or `not written`. |
 | `prores_header` | Primaries/transfer/matrix in the ProRes frame header, which the encoder writes separately from `colr`. |
 | `container_chroma_siting` | The MKV `ChromaSitingHorz`/`Vert` elements, or the MXF descriptor's siting. |
-| `auto_conversions` | Conversions FFmpeg inserted itself that change the colour space or range, e.g. `rgb48be gbr pc -> yuv444p10le bt709 tv`, or `none`. |
+| `auto_conversions` | Conversions FFmpeg inserted itself that change the color space or range, e.g. `rgb48be gbr pc -> yuv444p10le bt709 tv`, or `none`. |
 | `encoder_library` | The encoder library's version as it logs it, e.g. `x265 3.6+1-aa7f602f7`. |
 | `decoder` | The decoder FFmpeg picks for the file, with `(fails)` if it cannot decode it. |
 

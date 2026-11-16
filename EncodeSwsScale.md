@@ -18,10 +18,10 @@ parent: Encoding Overview
 
 FFmpeg has two scalers: the built-in `scale` filter (libswscale), and `zscale` (zimg), which needs an FFmpeg built
 with `--enable-libzimg` (the Docker builds and the Conan recipe in this repository enable it). This page covers
-libswscale: where its colour conversion goes wrong, how to replace it with `zscale`, and its options for when you do
+libswscale: where its color conversion goes wrong, how to replace it with `zscale`, and its options for when you do
 use it.
 
-- **Colour conversion** (RGB to and from Y'CbCr, range, and chroma subsampling to 4:2:2 or 4:2:0): use `zscale`.
+- **Color conversion** (RGB to and from Y'CbCr, range, and chroma subsampling to 4:2:2 or 4:2:0): use `zscale`.
   libswscale puts 10-bit white at 943 instead of 940 ([below](#colour-range-accuracy-prefer-zscale-for-range-conversions)),
   centres the chroma when subsampling, and up to FFmpeg 9.0 assumes it is centred when converting back to RGB
   ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)). For the `zscale` options, see
@@ -29,7 +29,7 @@ use it.
 - **Resizing**: see [Resizing](Resizing.html). Do it outside FFmpeg, or in linear light; the scaler matters much less
   than that.
 
-## Colour conversion: use zscale {#colour-range-accuracy-prefer-zscale-for-range-conversions}
+## Color conversion: use zscale {#colour-range-accuracy-prefer-zscale-for-range-conversions}
 
 {: .warning }
 > libswscale has a systematic bias when converting between full range and limited (studio) range from 10-bit and
@@ -49,7 +49,7 @@ value the specification calls for, at every output bit depth (8-bit sources are 
 | 12-bit | 3774 | 3760 | 3760 |
 
 The error is one-sided and largest in luma, growing with brightness; black is correct. The chroma gain is slightly
-too high as well (up to 2 code values at 10-bit; see [RGB to YCbCr Conversion](ColorPreservation.html#zscale-filter)).
+too high as well (up to 2 code values at 10-bit; see [RGB to Y'CbCr Conversion](ColorPreservation.html#zscale-filter)).
 It is a gain error, not rounding noise: libswscale derives the scale factor as a ratio of full scale rather than as
 the bit-shifted narrow-range span. The same bias appears in the other direction: limited-range Y'CbCr white (940 at
 10-bit) comes back as 65283 in 16-bit RGB with `scale`, where the specification calls for 65535 (`zscale` gives

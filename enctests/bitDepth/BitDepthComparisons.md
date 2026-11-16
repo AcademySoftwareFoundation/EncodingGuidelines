@@ -20,7 +20,7 @@ Sometimes it's useful to know what the actual dynamic range of a particular comb
 
 This work is inspired by [https://github.com/ColorlabMD/Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth).
 
-These tests generate a luminance YCbCr flat image, where each frame increments the luminance by one using the geq FFmpeg filter.
+These tests generate a luminance Y'CbCr flat image, where each frame increments the luminance by one using the geq FFmpeg filter.
 
 For example for the prores_ks codec we would run:
 
@@ -59,11 +59,11 @@ Tests - prores_ks_10_4444xq, prores_ks_10_proxy, prores_ks_10_hq
 
 It shows that the prores_ks encoder is only encoding to the legal 10-bit range (i.e. 877 values), which is pretty much what we expect.
 
-The [ColorlabMD Prores-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) tests seem a little unfair on prores_ks, which clearly defines itself as a 10-bit codec, and we suspect that the apple encoding is setting full range values which Prores (in this case) is not.
+The [ColorlabMD ProRes-BitDepth](https://github.com/ColorlabMD/Prores-BitDepth) tests seem a little unfair on prores_ks, which clearly defines itself as a 10-bit codec, and we suspect that the apple encoding is setting full range values which ProRes (in this case) is not.
 
 Note, Prores_ks will read 12 bit files, just not generate them.
 
-### Apple Videotoolbox Prores
+### Apple Videotoolbox ProRes
 
 Tests - prores_videotoolbox_10_proxy, prores_videotoolbox_10_hq, prores_videotoolbox_10_4444, prores_videotoolbox_12_xq
 
@@ -75,7 +75,7 @@ However, for 4444 and XQ they are good.
 
 All the values are as expected.
 
-### h264
+### H.264
 
 All the values are as expected.
 

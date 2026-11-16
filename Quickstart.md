@@ -17,12 +17,12 @@ title: Encoding Cheatsheet
 
 This is a cheatsheet for encoding best practices for VFX/Animation production. For each section there are more detailed sections on why these settings are picked, and notes on what parameters you may want to change.
 
-The commands on this page were tested with FFmpeg 6.0 and 9.0. Colour handling changed in FFmpeg 7.1, and these
+The commands on this page were tested with FFmpeg 6.0 and 9.0. Color handling changed in FFmpeg 7.1, and these
 commands give the same result either side of it; see [FFmpeg Version Changes](FFmpegChanges.html).
 
-## H264 Encoding from an image sequence for Web Review
+## H.264 Encoding from an image sequence for Web Review
 
-If you are encoding from an [image sequence](FfmpegInputs.html) (e.g. imagefile.0000.png imagefile.0001.png ...) to h264 using ffmpeg, we recommend:
+If you are encoding from an [image sequence](FfmpegInputs.html) (e.g. imagefile.0000.png imagefile.0001.png ...) to H.264 using ffmpeg, we recommend:
 
 <!---
 name: test_quickstart
@@ -75,10 +75,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
 | **-start_number** 1 | The frame sequence starts from frame 1 (defaults to 0) |
 | **-i inputfile.%04d.png** | the %04d means the file sequence will be padded to 4 digits, i.e. 0000, 0001, 0002, etc. It is the same syntax supported by the C printf function. |
 | **[-frames:v](https://ffmpeg.org/ffmpeg.html#toc-Video-Options) 100** | is optional, but allows you to specify how many frames to encode, otherwise it will encode the entire frame range. There is an obsolete alias flag `-vframes` which will be retired. |
-| **-c:v libx264** | use the h264 encoding library (libx264) |
+| **-c:v libx264** | use the H.264 encoding library (libx264) |
 | **-preset slower** | a reasonably high quality preset, which will run slow, but not terribly slow. |
-| **-pix_fmt yuv420p10le** | 4:2:0 10-bit. 10-bit avoids most of the banding of 8-bit at a similar file size. Safari, Chrome and Firefox played 10-bit H.264 in our tests on macOS; other platforms have not been retested, so if a file has to play everywhere use `-pix_fmt yuv420p` (8-bit). See [H264 Bitdepth](Encodeh264.html#h264-bitdepth). For better quality in RV or other desktop tools use `-pix_fmt yuv444p10le`. |
-| **-color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1** | The colour tags for the file: limited range (64-940 at 10-bit), BT.709 matrix, BT.709 primaries and the sRGB transfer function. The filter chain already sets all four (see below), so these are not needed, but they are harmless. Do not rely on them alone: before FFmpeg 7.1 they do not change the conversion, and from 7.1 `-color_primaries` and `-color_trc` are ignored. See [FFmpeg Version Changes](FFmpegChanges.html). |
+| **-pix_fmt yuv420p10le** | 4:2:0 10-bit. 10-bit avoids most of the banding of 8-bit at a similar file size. Safari, Chrome and Firefox played 10-bit H.264 in our tests on macOS; other platforms have not been retested, so if a file has to play everywhere use `-pix_fmt yuv420p` (8-bit). See [H.264 Bitdepth](Encodeh264.html#h264-bitdepth). For better quality in RV or other desktop tools use `-pix_fmt yuv444p10le`. |
+| **-color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1** | The color tags for the file: limited range (64-940 at 10-bit), BT.709 matrix, BT.709 primaries and the sRGB transfer function. The filter chain already sets all four (see below), so these are not needed, but they are harmless. Do not rely on them alone: before FFmpeg 7.1 they do not change the conversion, and from 7.1 `-color_primaries` and `-color_trc` are ignored. See [FFmpeg Version Changes](FFmpegChanges.html). |
 | **-movflags +faststart** | `faststart` re-organises the mp4 file, so that it doesnt have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
 
 **-vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"** converts the RGB images to Y'CbCr with the zscale filter, then labels the result:
@@ -99,13 +99,13 @@ Separately, if you are converting from exr's in other colorspaces, **please use 
 
 For more details see:
 
-* [H264 Encoding](Encodeh264.html)
+* [H.264 Encoding](Encodeh264.html)
 * [YUV Conversion](ColorPreservation.html#yuv)
 * [Browser color issues](WebColorPreservation.html)
 
-## H264 Encoding directly from EXRs with the OCIO filter
+## H.264 Encoding directly from EXRs with the OCIO filter
 
-From FFmpeg 8.1, the [OCIO filter](FfmpegOcio.html) can apply the colour management inside FFmpeg, so you can encode
+From FFmpeg 8.1, the [OCIO filter](FfmpegOcio.html) can apply the color management inside FFmpeg, so you can encode
 straight from scene-linear EXRs without writing intermediate PNG or TIFF files:
 
 ```console
@@ -118,7 +118,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.exr -pix_fmt yuv420p10le \
 
 | Setting | Description |
 | --- | --- |
-| **ocio=input=ACEScg** | The colour space of the EXRs, as named in your OCIO config. |
+| **ocio=input=ACEScg** | The color space of the EXRs, as named in your OCIO config. |
 | **display=sRGB - Display:view=ACES 1.0 - SDR Video** | The display and view transform, as you would pick them in a review tool. |
 | **format=rgb48** | OCIO writes 16-bit RGB, which `zscale` then converts to Y'CbCr. |
 | **format=rgb48le** | Changes nothing, but works around a crash in the FFmpeg 9.0 release when `zscale` directly follows the OCIO filter. |
@@ -132,7 +132,7 @@ For more details, including HDR, resizing, and slates and burn-ins, see [FFmpeg 
 
 ## ProRes 422 encoding with FFmpeg
 
-Unlike h264 and DNxHD, ProRes is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one. If you are running on MacOS we would recommend using [prores_videotoolbox](EncodeProres.html#prores_videotoolbox) which is using the official Apple ProRes library and is hardware accelerated.
+Unlike H.264 and DNxHD, ProRes is a reverse-engineered codec. However, in many cases ffmpeg can produce adequate results. There are a number of codecs, we recommend the prores_ks one. If you are running on MacOS we would recommend using [prores_videotoolbox](EncodeProres.html#prores_videotoolbox) which is using the official Apple ProRes library and is hardware accelerated.
 
 <!---
 name: test_proresquickstart
@@ -165,10 +165,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png \
 
 | Flag | Description |
 | --- | --- |
-| **-vf "zscale=...,setparams=..."** | Convert to BT.709 Y'CbCr and tag it, as for [H.264 above](#h264-encoding-from-an-image-sequence-for-web-review). ProRes takes its colour tags from the frames, so no `-color_*` flags are needed. |
+| **-vf "zscale=...,setparams=..."** | Convert to BT.709 Y'CbCr and tag it, as for [H.264 above](#h264-encoding-from-an-image-sequence-for-web-review). ProRes takes its color tags from the frames, so no `-color_*` flags are needed. |
 | **-profile:v 3** | ProRes 422 HQ; see the [profile list](EncodeProres.html#prores_ks-profile) |
 | **-pix_fmt yuv422p10le** | Convert to 10-bit YUV 422 |
-| **-vendor apl0** | Treat the file as if it was created by the apple-Prores encoder (even though it isn't), helps some tools correctly read the Quicktime |
+| **-vendor apl0** | Treat the file as if it was created by the Apple ProRes encoder (even though it isn't), helps some tools correctly read the Quicktime |
 
 For ProRes 4444 (4:4:4, optionally with alpha), use `-profile:v 4444` with `-pix_fmt yuv444p10le`
 (`yuva444p10le` for alpha); see the [ProRes](EncodeProres.html) page.

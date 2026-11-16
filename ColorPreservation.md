@@ -1,12 +1,12 @@
 ---
 layout: default
-title: RGB to YCbCr Conversion
+title: RGB to Y'CbCr Conversion
 nav_order: 3
 parent: Encoding Overview
 
 ---
 
-# RGB to YCbCr Conversion <a name="yuv"></a>
+# RGB to Y'CbCr Conversion <a name="yuv"></a>
 
 <details open markdown="block">
   <summary>
@@ -18,12 +18,12 @@ parent: Encoding Overview
 </details>
 
 {: .note }
-> This is the starting point for the colour conversion pages. For the converter we recommend and its options, see
+> This is the starting point for the color conversion pages. For the converter we recommend and its options, see
 > [zscale Conversion](EncodeZscale.html); for 4:2:2 and 4:2:0, [Chroma Siting](ChromaSiting.html); for the tags that
 > tell players how to display the result, [Color Metadata and Web Color Preservation](WebColorPreservation.html); and
 > if `zscale` is not available, [FFmpeg swscale Filter](EncodeSwsScale.html).
 
-We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically YCbCr). Do be aware that a number of codecs do support native RGB encoding (including h264, hevc, vp9, av1), but they are not typically supported in web browsers; see [RGB Encoding](RGBEncoding.html).
+We would like ffmpeg to do as little as possible in terms of color space conversion. i.e. what comes in, goes out. The problem is that most of the codecs prefer to convert from RGB to YUV conversion (technically Y'CbCr). Do be aware that a number of codecs do support native RGB encoding (including H.264, hevc, vp9, av1), but they are not typically supported in web browsers; see [RGB Encoding](RGBEncoding.html).
 
 Without a filter that sets the matrix, FFmpeg's conversion depends on the version. Before FFmpeg 7.1 it converts
 any untagged still image (which is most of them) with the [rec601](https://en.wikipedia.org/wiki/Rec._601) matrix,
@@ -47,7 +47,7 @@ For examples comparing these see the [conversion comparison page](tests/chip-cha
 
 ## Comparison
 
-We measured each filter converting a 16-bit RGB DPX of the SMPTE RP 219 colour bars to BT.709 limited-range
+We measured each filter converting a 16-bit RGB DPX of the SMPTE RP 219 color bars to BT.709 limited-range
 Y'CbCr (4:4:4), against the ideal conversion, on FFmpeg 6.0 and 9.0, using the example commands below. Errors are
 the worst case over the patches, in code values, as Y'/Cb/Cr; 10-bit white should be 940.
 
@@ -64,7 +64,7 @@ the worst case over the patches, in code values, as Y'/Cb/Cr; 10-bit white shoul
 -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
 ```
 
-[zscale](https://github.com/sekrit-twc/zimg) is an alternative to libswscale. **This is the recommended filter for RGB to YCbCr conversion.** It is required to be explicitly compiled into ffmpeg (`--enable-libzimg`); the Docker builds and the Conan recipe in this repository both enable it.
+[zscale](https://github.com/sekrit-twc/zimg) is an alternative to libswscale. **This is the recommended filter for RGB to Y'CbCr conversion.** It is required to be explicitly compiled into ffmpeg (`--enable-libzimg`); the Docker builds and the Conan recipe in this repository both enable it.
 
 `matrix=709` and `range=limited` describe the output; zscale tags its output frames with the matrix and range. The
 input is read from the frames (RGB is always full range, JPEG and video use their tags), so leave it alone unless
@@ -82,7 +82,7 @@ We previously recommended libswscale here on the basis that it looked very sligh
 | 10-bit | 12-bit | 3770 | 3760 | 3760 |
 | 16-bit | 12-bit | 3774 | 3760 | 3760 |
 
-The error is largest in luma, but not limited to it: from a 16-bit source the worst errors are 3 / 2 / 2 code values (Y'/Cb/Cr) at 10-bit and 14 / 7 / 7 at 12-bit. It is small in absolute terms, but it is systematic and it accumulates across round trips. libswscale also centres the chroma when subsampling to 4:2:2 or 4:2:0, where professional formats and H.264/HEVC expect it co-sited; zscale co-sites it. For the full measurements see [Colour range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) and [Chroma Siting](ChromaSiting.html).
+The error is largest in luma, but not limited to it: from a 16-bit source the worst errors are 3 / 2 / 2 code values (Y'/Cb/Cr) at 10-bit and 14 / 7 / 7 at 12-bit. It is small in absolute terms, but it is systematic and it accumulates across round trips. libswscale also centres the chroma when subsampling to 4:2:2 or 4:2:0, where professional formats and H.264/HEVC expect it co-sited; zscale co-sites it. For the full measurements see [Color range accuracy](EncodeSwsScale.html#colour-range-accuracy-prefer-zscale-for-range-conversions) and [Chroma Siting](ChromaSiting.html).
 
 More detailed docs are in the [FFmpeg filter documentation](https://ffmpeg.org/ffmpeg-filters.html#zscale).
 
@@ -165,7 +165,7 @@ ffmpeg -y -i inputfile.png \
    outputfile.mp4
 ```
 
-Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to YCbCr conversion, if you are not resizing the image. For more details on this see [SWS Flags](EncodeSwsScale.html) section.
+Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to Y'CbCr conversion, if you are not resizing the image. For more details on this see [SWS Flags](EncodeSwsScale.html) section.
 
 ## colorspace filter
 
@@ -255,7 +255,7 @@ range:
 | :--- | :--- | :--- | :--- |
 | **8-bit** | **Limited (TV)** | **High** | Most prone to banding in gradients. |
 | **8-bit** | **Full (PC)** | **Medium** | Better, but not always supported by hardware players. |
-| **10-bit** | **Limited (TV)** | **Low** | Preferred for review. For browser support of 10-bit H.264, see [H264 Bitdepth](Encodeh264.html#h264-bitdepth). |
+| **10-bit** | **Limited (TV)** | **Low** | Preferred for review. For browser support of 10-bit H.264, see [H.264 Bitdepth](Encodeh264.html#h264-bitdepth). |
 
 {: .important }
 We recommend 10-bit limited range over 8-bit full range. The file size is comparable, if not a little smaller than

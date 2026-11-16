@@ -39,7 +39,7 @@ We are going to focus on codecs that match one of the following conditions:
 | HDR | See [HDR Encoding](enctests/HDR_Encoding.html) | |
 
 Whichever codec you pick, we recommend converting RGB to Y'CbCr with [`zscale`](EncodeZscale.html); see
-[RGB to YCbCr Conversion](ColorPreservation.html) for why. If a codec page's command behaves differently on your
+[RGB to Y'CbCr Conversion](ColorPreservation.html) for why. If a codec page's command behaves differently on your
 FFmpeg version, see [FFmpeg Version Changes](FFmpegChanges.html).
 
 ## Codecs reviewed <a name="encode"></a>
@@ -71,7 +71,7 @@ For details on codec flags, and how we picked the parameters, see the page for e
 
 ## Uncompressed containers
 
-[Y4m](https://wiki.multimedia.cx/index.php/YUV4MPEG2) is a terrific container for uncompressed media. It allows uncompressed raw YCbCr data to be stored with a simple header.
+[Y4m](https://wiki.multimedia.cx/index.php/YUV4MPEG2) is a terrific container for uncompressed media. It allows uncompressed raw Y'CbCr data to be stored with a simple header.
 
 ## Uncompressed Codecs
 

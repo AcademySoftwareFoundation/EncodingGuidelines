@@ -115,12 +115,12 @@ ffmpeg  \
 | \-color\_range tv | Set the output range to be tv (limited) range. |
 | \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
 | \-color\_primaries bt2020 | Use the bt2020 color primaries |
-| \-colorspace bt2020nc | Tagging the YCbCr as being encoded using the BT-2020 non-constant luminance. |
-| \-pix\_fmt yuv444p10le | YCbCr 444, although 422 in many cases is also fine. |
+| \-colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
+| \-pix\_fmt yuv444p10le | Y'CbCr 444, although 422 in many cases is also fine. |
 
 In many cases this may be sufficient, particularly if you are using the ACES transforms that closely map to the maximum luminance of the review monitor (e.g. the 1000 nit view-transforms). It depends on how much the monitor can take advantage of the master-display parameters (see below).
 
-This will also work for other codecs such as h264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
+This will also work for other codecs such as H.264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
 
 ### PQ 422 FFmpeg H265 encoding
 
@@ -280,7 +280,7 @@ oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resi
 |--ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" | This is the core colorspace conversion, out_rec2020hlg1000nits is an output colorspace conversion for rec2020 HLG at 1000 nit display |
 | -d uint16 | Output as 16-bit file format |
 
-### HLG 444 FFMPEG encoding
+### HLG 444 FFmpeg encoding
 
 <!---
 name: test_hlg
@@ -330,12 +330,12 @@ ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 | -color_range tv | Set the output range to be tv (limited) range. |
 | -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
 | -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | Tagging the YCbCr as being encoded using the BT-2020 non-constant luminance. |
+| -colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
 | -pix_fmt yuv444p10le | YUV 444 10-bit output |
 
 #### X265 parameters
 
-The colour tags come from the filter chain (`zscale` and `setparams`), which FFmpeg passes to libx265, so they are
+The color tags come from the filter chain (`zscale` and `setparams`), which FFmpeg passes to libx265, so they are
 not repeated in `-x265-params` (see [x265](https://x265.readthedocs.io/en/2.5/cli.html)). Setting them there as
 well can disagree with the filter chain: with `transfer=bt2020-10`, FFmpeg 6.0 wrote `bt2020-10` into the stream
 and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#hdr-and--x265-params).
@@ -347,7 +347,7 @@ and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#h
 ### cICP/mDCV/cLLI in PNG
 
 PNG files have transferable parameters for video encoding in two formats:  
-[cICP](https://w3c.github.io/png/#cICP-chunk) which has the color primaries, transfer function and matrix coefficients based on the [ITU-T-H.273](https://w3c.github.io/png/#bib-itu-t-h.273) spec. FFmpeg 9.0 reads the `cICP` chunk as the frame's colour tags (6.0 does not); see [Sources without tags](../EncodeZscale.html#sources-without-tags).
+[cICP](https://w3c.github.io/png/#cICP-chunk) which has the color primaries, transfer function and matrix coefficients based on the [ITU-T-H.273](https://w3c.github.io/png/#bib-itu-t-h.273) spec. FFmpeg 9.0 reads the `cICP` chunk as the frame's color tags (6.0 does not); see [Sources without tags](../EncodeZscale.html#sources-without-tags).
 
 Similarly for HDR, the Mastering display color volume can be defined with the [mDCV](https://w3c.github.io/png/#mDCV-chunk) and [cLLI](https://w3c.github.io/png/#cLLI-chunk) metadata chunks in PNG.
 

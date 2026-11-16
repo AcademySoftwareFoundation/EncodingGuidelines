@@ -17,17 +17,17 @@ parent: Encoding Overview
 </details>
 
 {: .highlight }
-> Do the colour management (scene-linear EXR to display) with [OCIO](https://opencolorio.org/), in a tool such as
+> Do the color management (scene-linear EXR to display) with [OCIO](https://opencolorio.org/), in a tool such as
 > [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) or Nuke, and write 16-bit PNG or TIFF
 > frames for FFmpeg to encode. From FFmpeg 8.1 you can instead do it inside FFmpeg with the
 > [OCIO filter](FfmpegOcio.html).
 
-## Why do the colour management first
+## Why do the color management first {#why-do-the-colour-management-first}
 
-FFmpeg's own colour handling is designed for video standards, not for scene-linear VFX sources. We recommend doing
-any colour space conversion with OCIO, either in a tool such as Nuke or `oiiotool`, or with FFmpeg's
+FFmpeg's own color handling is designed for video standards, not for scene-linear VFX sources. We recommend doing
+any color space conversion with OCIO, either in a tool such as Nuke or `oiiotool`, or with FFmpeg's
 [OCIO filter](FfmpegOcio.html) (FFmpeg 8.1 or later). We recommend the ACES configuration whenever possible, since
-it gives a good baseline for colour space conversion. We mention Nuke a number of times, but many other tools also
+it gives a good baseline for color space conversion. We mention Nuke a number of times, but many other tools also
 do this conversion well using OCIO.
 
 When the conversion is done outside FFmpeg, an intermediate file is written out, such as PNG, TIFF or DPX, for FFmpeg
@@ -51,22 +51,22 @@ oiiotool --parallel-frames --framepadding 5 --frames 1-100 sourcefilename_acescg
 | `--parallel-frames` | Process several frames at once rather than one after another. In our tests (24 UHD EXRs to HD PNGs, Apple M2) it was 3.7 times faster, with identical pixels. |
 | `--frames 1-100` | The frame range of the source media. |
 | `--framepadding 5` | Set the frame padding to 5 (i.e. outputimage.00001.png) |
-| [`--resize 1920x0`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-resize) | Resize the image so that the width is 1920 wide, and adjust the height so that the aspect ratio stays the same. (Note you may want to use [`--fit`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-fit) too). This uses the lanczos3 filter for decreasing resolution, and the blackman-harris filter for increasing it. Where in the chain to resize, and in which colour space, is covered on the [Resizing](Resizing.html) page. |
+| [`--resize 1920x0`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-resize) | Resize the image so that the width is 1920 wide, and adjust the height so that the aspect ratio stays the same. (Note you may want to use [`--fit`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-fit) too). This uses the lanczos3 filter for decreasing resolution, and the blackman-harris filter for increasing it. Where in the chain to resize, and in which color space, is covered on the [Resizing](Resizing.html) page. |
 | `--ociodisplay "sRGB - Display" "ACES 1.0 - SDR Video"` | Apply the ACES display and view transform for an sRGB monitor, as a review tool would. |
 | `-d uint16` | Write 16-bit files rather than the 8-bit default. 16-bit intermediates make the RGB to Y'CbCr conversion more accurate, even for 8-bit encodes. |
 | `--cicp "1,13,0,1"` | Tag the PNG files as BT.709 primaries with the sRGB transfer function (see [below](#tagging-the-frames-with---cicp)). |
 
-To convert between colour spaces without a view transform, use `--colorconvert` instead, e.g.
+To convert between color spaces without a view transform, use `--colorconvert` instead, e.g.
 `--colorconvert acescg srgb`. If you have to write 8-bit files, add `--dither`, and leave out `-d uint16`.
 
 ## Tagging the frames with `--cicp` {#tagging-the-frames-with---cicp}
 
 `--ociodisplay` changes the pixels, but does not tag the file with the display it converted to: in our tests
-(OpenImageIO 3.1.12) its PNG files had no colour chunks at all, so FFmpeg reads them as untagged. `--cicp` writes a
+(OpenImageIO 3.1.12) its PNG files had no color chunks at all, so FFmpeg reads them as untagged. `--cicp` writes a
 PNG `cICP` chunk, the same four [ITU-T H.273](https://www.itu.int/rec/T-REC-H.273) code points that video files use
 (primaries, transfer, matrix, full range), which FFmpeg reads as the frame's primaries and transfer.
 
-A PNG with no colour chunks has no defined colour space, and tools fill the gap differently: browsers and most image
+A PNG with no color chunks has no defined color space, and tools fill the gap differently: browsers and most image
 viewers display it as sRGB, and OpenImageIO reports it as sRGB when it reads it back, but FFmpeg reports the
 primaries and transfer function as unknown. The sRGB guess is wrong for frames converted for a Rec.1886 or PQ
 display, which is when tagging matters most. An encode that relies on the frames for its tags, rather than on
@@ -89,7 +89,7 @@ the frames describe themselves to any tool that reads them.
 Apart from `--ociodisplay`, OpenImageIO writes `sRGB`, `gAMA` and `cHRM` chunks to PNG files by default, including
 after `--colorconvert acescg srgb`, which is correct. But it also writes them when nothing was converted: an EXR
 written straight to PNG is still scene-linear, but tagged sRGB, and FFmpeg reads it as BT.709/sRGB. So a PNG
-tagged sRGB is not evidence that the colour conversion was done; check the command that made it.
+tagged sRGB is not evidence that the color conversion was done; check the command that made it.
 
 Other flags you might want to use include:
 

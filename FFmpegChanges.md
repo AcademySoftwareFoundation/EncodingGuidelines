@@ -7,7 +7,7 @@ nav_order: 8
 # FFmpeg Version Changes
 
 FFmpeg changes behaviour between releases, sometimes without any warning, and the same command line can produce
-different pixels or different colour tags depending on the version you run it with. This page lists the changes
+different pixels or different color tags depending on the version you run it with. This page lists the changes
 we have found that affect the recommendations in these guidelines, which versions they apply to, and a set of
 commands that give the right result on all of them.
 
@@ -27,15 +27,15 @@ commands that give the right result on all of them.
 | [`-colorspace` and `-color_range` drive the RGB to Y'CbCr conversion](#colorspace-flags-71) | 7.1 and later | A plain encode tagged `-colorspace bt709` is now converted with BT.709 instead of BT.601. On a tagged source, `-colorspace` now converts the pixels rather than retagging them. |
 | [`-colorspace` and `-color_range` convert, they no longer relabel](#relabelling-a-file) | 7.1 and later | Transcoding a tagged Y'CbCr file with them changes the pixels. To fix a wrong tag, use `setparams`. |
 | [`-color_primaries` and `-color_trc` are ignored](#primaries-trc-flags-71) | 7.1 and later | The flags are silently dropped. Use `setparams` to set primaries and transfer. |
-| [ProRes writes its colour tags from the frame, not the flags](#prores-colour-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
-| [`-x265-params` colour settings only tag the HEVC stream](#hdr-and--x265-params) | All | They do not change the conversion. Without `-colorspace` or a conversion filter, the pixels are BT.601 in a file tagged BT.2020. |
+| [ProRes writes its color tags from the frame, not the flags](#prores-colour-tags-come-from-the-frame) | All | With flags only, the MOV `colr` atom and the ProRes frame header can disagree (7.0 and earlier) or both be missing (7.1 and later). |
+| [`-x265-params` color settings only tag the HEVC stream](#hdr-and--x265-params) | All | They do not change the conversion. Without `-colorspace` or a conversion filter, the pixels are BT.601 in a file tagged BT.2020. |
 | [Some encoders only accept limited range](#limited-range-encoders-71) | 7.1 and later | FFV1, ProRes, DNxHR, HuffYUV and others: full-range frames are converted back to limited range unless you add `-color_range pc`. |
 | [libswscale puts limited-range white too high for high-bit-depth input](#libswscale-white-level-for-high-bit-depth-input) | All, including 9.0 | 10-bit RGB to 10-bit Y'CbCr puts 100% white at 943 instead of 940. Use `zscale`. `scale=...:flags=unstable` (8.1 and later) fixes 4:4:4 only. |
 | [libswscale RGB to full-range Y'CbCr is too bright](#libswscale-full-range-80) | 8.0 and later | 10-bit and 12-bit output: luma gain too high, white about 3 code values (10-bit) high. Exact up to 7.1. Use `zscale`. |
 | [libswscale Y'CbCr range conversion was 3 code values out](#libswscale-full-range-80) | 7.1 and earlier | Limited to full and full to limited at 10/12-bit. Fixed in 8.0 by the same change. |
 | [Half-float EXRs decode as half-float, and converting them clamps](#exr-half-float-80) | 8.0 and later | Asking for 32-bit float through libswscale limits the image to 0.0 - 1.0. Use `zscale`. |
 | [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
-| [libswscale ignores the chroma location when converting to RGB](#ycbcr-to-rgb) | 9.0 and earlier | Stills from co-sited 4:2:2/4:2:0 (ProRes, DNxHR, H.264) come out with the colour half a pixel to the right. Use `zscale`. |
+| [libswscale ignores the chroma location when converting to RGB](#ycbcr-to-rgb) | 9.0 and earlier | Stills from co-sited 4:2:2/4:2:0 (ProRes, DNxHR, H.264) come out with the color half a pixel to the right. Use `zscale`. |
 | [Untagged Y'CbCr is converted to RGB as BT.601](#ycbcr-to-rgb) | All | libswscale assumes BT.601; `zscale` refuses. Give the matrix explicitly. |
 | [Chroma location reaches the filter graph](#chroma-location-91) | 9.1 development builds | `-chroma_sample_location`, and the file's chroma location when decoding, now steer libswscale. Untagged files are still taken as centred. |
 
@@ -43,7 +43,7 @@ commands that give the right result on all of them.
 
 ### Every version
 
-This gives correct pixels and correct colour tags, in every place they are stored, on every version we tested
+This gives correct pixels and correct color tags, in every place they are stored, on every version we tested
 (FFmpeg 6.0 to 9.0), for both ProRes and H.264, and for any source bit depth:
 
 ```console
@@ -104,9 +104,9 @@ unspecified.
 
 * **FFmpeg versions:** 6.0, 7.0, 7.1, 8.0.1, 8.1 (a git build from the 8.1 branch, `N-124257-g73262c9136`; the
   7.1 changes were also confirmed on the 8.1 release) and 9.0.1.
-* **Colour tags:** read with `ffprobe`, plus the MOV/MP4 `colr` atom and the ProRes frame header read directly
+* **Color tags:** read with `ffprobe`, plus the MOV/MP4 `colr` atom and the ProRes frame header read directly
   from the file.
-* **Pixels:** the encoded planes are read without any FFmpeg colour conversion and compared, in code values,
+* **Pixels:** the encoded planes are read without any FFmpeg color conversion and compared, in code values,
   with the ideal BT.709 and BT.601 conversions computed independently in numpy. The libswscale measurements use
   SMPTE RP 219 reference bars generated from the specification's own Y'CbCr tables, and validated against them;
   see `sourceimages/README.md`.
@@ -134,7 +134,7 @@ The same checks are also in the encoding test framework, which is run on each FF
 
 When an RGB source is encoded to Y'CbCr without a conversion filter, `ffmpeg` inserts its own `scale` filter to
 do the conversion. Before 7.1, that conversion always used BT.601, and `-colorspace bt709` only wrote the tag, so
-the file said BT.709 but contained BT.601 values. This is the classic "the colours shifted when I encoded" bug.
+the file said BT.709 but contained BT.601 values. This is the classic "the colors shifted when I encoded" bug.
 
 From 7.1, the encoder's `-colorspace` and `-color_range` are passed into the filter graph as requirements, and
 the inserted `scale` converts to them
@@ -145,14 +145,14 @@ Encoding an untagged RGB PNG to ProRes 4444 with no conversion filter:
 
 | Command line | 7.0 and earlier | 7.1 and later |
 | :--- | :--- | :--- |
-| No colour flags | BT.601, untagged | BT.601, untagged |
+| No color flags | BT.601, untagged | BT.601, untagged |
 | `-colorspace bt709 -color_range tv` | **BT.601 pixels, tagged BT.709** | BT.709 pixels, tagged BT.709 |
 | Explicit `scale` or `zscale` to BT.709 | BT.709 | BT.709 |
 
 Two consequences:
 
 * **The bare encode now gets the matrix right on 7.1 and later, as long as you tag it.** Any example that shows a
-  "default" encode giving the wrong colours is only true before 7.1, or with no `-colorspace` at all. It is still
+  "default" encode giving the wrong colors is only true before 7.1, or with no `-colorspace` at all. It is still
   not fully correct: the conversion is done by libswscale, which puts white at 943 instead of 940 from a 10-bit or
   16-bit source, so use `zscale` as in the recommended commands.
 * **On a source that is already Y'CbCr, `-colorspace` now converts.** Before 7.1, transcoding a BT.709 file with
@@ -165,7 +165,7 @@ The inserted `scale` uses libswscale's defaults (bicubic, no `accurate_rnd`). `-
 
 ## `-color_primaries` and `-color_trc` are ignored (7.1) {#primaries-trc-flags-71}
 
-From 7.1, `-color_primaries` and `-color_trc` on the output have no effect. The encoder copies all its colour
+From 7.1, `-color_primaries` and `-color_trc` on the output have no effect. The encoder copies all its color
 settings from the frames it receives, and since only matrix and range are passed into the filter graph, the
 frames' primaries and transfer (usually "unspecified" for an image sequence) overwrite the values you set. This
 follows from [commit 9a7686e545](https://github.com/FFmpeg/FFmpeg/commit/9a7686e545) ("fftools/ffmpeg_mux_init:
@@ -189,7 +189,7 @@ writes no `colr` at all, so the stream is the only place the values are; `ffprob
 
 ## Some encoders only accept limited range (7.1) {#limited-range-encoders-71}
 
-Each encoder in FFmpeg declares the colour ranges it supports. From 7.1 `ffmpeg` passes that list into the filter
+Each encoder in FFmpeg declares the color ranges it supports. From 7.1 `ffmpeg` passes that list into the filter
 graph, together with `-colorspace` and `-color_range` (the same change as
 [above](#colorspace-flags-71), [commit a850f80e2c](https://github.com/FFmpeg/FFmpeg/commit/a850f80e2c)). Many
 encoders declare limited range only, so if the frames reaching them are full range, `ffmpeg` inserts a libswscale
@@ -220,7 +220,7 @@ Encoding 10-bit RGB bars with `zscale=matrix=709:range=full`:
 
 Tested on 6.1.6, 7.1.5 and 9.0.2, reading the pixels back at the stream's own pixel format.
 
-## ProRes colour tags come from the frame
+## ProRes color tags come from the frame {#prores-colour-tags-come-from-the-frame}
 
 The ProRes encoder (`prores_ks`) writes primaries, transfer and matrix into each frame header from the frame's
 own properties, never from the `-color_*` flags. The flags only reach the MOV `colr` atom. A player may read
@@ -315,7 +315,7 @@ decode as `gbrpf16le`. 32-bit float EXRs are still `gbrpf32le`. Measured with an
 
 ## HDR and `-x265-params` {#hdr-and--x265-params}
 
-HDR encodes often set the colour description through the encoder's own options, for example:
+HDR encodes often set the color description through the encoder's own options, for example:
 
 ```console
 ffmpeg -i hdr_pq.tif -c:v libx265 -pix_fmt yuv420p10le \
@@ -329,7 +329,7 @@ atom. Encoding a 16-bit PQ TIFF:
 
 | Command line | 7.0 | 8.1, 9.0 |
 | :--- | :--- | :--- |
-| `-x265-params` colour settings only | **BT.601 pixels**, stream tagged BT.2020 | **BT.601 pixels**, stream tagged BT.2020 |
+| `-x265-params` color settings only | **BT.601 pixels**, stream tagged BT.2020 | **BT.601 pixels**, stream tagged BT.2020 |
 | `-x265-params` + `-color_primaries`/`-color_trc`/`-colorspace` | **BT.601 pixels**, tagged BT.2020 | BT.2020 pixels, but with `+write_colr` the `colr` atom says primaries and transfer are unspecified |
 | `zscale` + `setparams` (below) | BT.2020 pixels, tagged BT.2020 everywhere | BT.2020 pixels, tagged BT.2020 everywhere |
 
@@ -391,7 +391,7 @@ exiftool -overwrite_original -EXIF= image.png
 ```
 
 Re-saving with a current `oiiotool` also works, but it adds `sRGB`, `gAMA` and `cHRM` chunks, which FFmpeg reads
-as colour tags.
+as color tags.
 
 * Tested on 6.0, 7.1.5, 8.0.1 (decode), and 8.1, 9.0.2 and 9.1-dev (fail).
 * Introduced by FFmpeg commit `44af382979` ("avcodec/pngdec: support reading EXIF profiles"), first in 8.1.
@@ -416,7 +416,7 @@ the RGB they were made from (errors in 10-bit code values, away from edges):
   tagged file.
 * **Chroma siting:** for 4:2:2 and 4:2:0 sources, libswscale also assumes the chroma is centred, whatever the
   file says, on every release up to 9.0, so co-sited material (ProRes, DNxHR, most H.264/HEVC) comes out with the
-  colour half a pixel to the right. `zscale` follows the file's chroma location and assumes co-sited when there is
+  color half a pixel to the right. `zscale` follows the file's chroma location and assumes co-sited when there is
   none. Details in [Chroma Siting](ChromaSiting.html#reading-back-to-rgb).
 
 ```console
@@ -449,7 +449,7 @@ From 7.1 there are three distinct operations, and it helps to keep them separate
 
 * **Convert:** `-pix_fmt`, `-colorspace` and `-color_range` say what you want the output to be, and `ffmpeg`
   converts to it if the input differs.
-* **Transform:** filters such as `zscale`, `colorspace` and `ocio` change the colour and set the tags on their
+* **Transform:** filters such as `zscale`, `colorspace` and `ocio` change the color and set the tags on their
   output.
 * **Relabel:** `setparams` changes the tags without touching the pixels. This is what you want to fix a file that
   is correctly encoded but wrongly tagged:

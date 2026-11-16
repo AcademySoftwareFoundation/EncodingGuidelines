@@ -185,9 +185,9 @@ ffmpeg -y -r 24 -start_number 2500 -i inputfile.%04d.png  -frames:v 100 \
 
 These can be imported directly into the AVID, although it will need to do some unpacking. For the fastest import you probably want to use OpAtom (see below). If you want to import with a reel-name, wrapping the file in an AAF (see [AAF Creation](EditorialWorkflow.html#aaf-creation)) is the recommended approach.
 
-### Op-Atom MXF
+### OP-Atom MXF
 
-AVID prefer deliveries in MXF using the Avid Op-Atom format. Generating the Op-Atom format used to be a separate application, but it's now integrated into FFmpeg. This works for a single piece of media (i.e. just video, or audio, not both).
+AVID prefer deliveries in MXF using the Avid OP-Atom format. Generating the OP-Atom format used to be a separate application, but it's now integrated into FFmpeg. This works for a single piece of media (i.e. just video, or audio, not both).
 
 <!---
 name: test_dnxhd_opatom_mxf

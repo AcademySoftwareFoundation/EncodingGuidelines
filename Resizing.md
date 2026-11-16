@@ -40,7 +40,7 @@ difference from the reference in 8-bit code values; negative is darker. The resu
 - The filter makes no difference to the brightness: only resizing in linear light fixes it.
 - It matters most for fine, high-contrast detail: test charts, text, thin lines, hair and fabric, CG and graphics.
   The zone plate's finest rings, which should shrink to an even grey, come out 30 codes too dark. On the animation
-  frame, which is mostly flat colour, it is under one code.
+  frame, which is mostly flat color, it is under one code.
 - `zscale` in linear light and `oiiotool` in linear light give practically the same result.
 
 See the [resize comparison](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=scale_bicubic&mode=wipe&zoom=0)

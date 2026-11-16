@@ -31,7 +31,7 @@ parent: Encoding Overview
 
 There are a number of metadata flags designed to help the player know what colorspace the media is in, so it can correctly interpret it for playback. We do recommend adding the metadata tags to media, particularly if you are reviewing it on a web browser, however there are a lot of gotchas here.
 
-The NCLC/NCLX is defined as a ISO spec here (see [ISO-23091](https://www.iso.org/standard/73412.html) ). The numbers below are part of the definition. NCLC stands for nonconstant luminance coding. For MP4 files, it is also known as NCLX. Additionally this metadata can also be represented in the h264 metadata stream in the video usability Information (VUI) block.
+The NCLC/NCLX is defined as a ISO spec here (see [ISO-23091](https://www.iso.org/standard/73412.html) ). The numbers below are part of the definition. NCLC stands for nonconstant luminance coding. For MP4 files, it is also known as NCLX. Additionally this metadata can also be represented in the H.264 metadata stream in the video usability Information (VUI) block.
 
 You can read the metadata using [mp4box.js](https://gpac.github.io/mp4box.js/test/filereader.html) which is a visual browser of the mp4 metadata, and look at moov/trak/mdia/minf/stbl/stsd/avc1/colr property.
 

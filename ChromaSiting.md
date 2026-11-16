@@ -22,7 +22,7 @@ parent: Encoding Overview
 > `scale` (libswscale) centres it, half a pixel off, on every FFmpeg version we tested. For BT.2020/HDR 4:2:0 the
 > choice is less clear; see the [Summary](#summary).
 
-When an image is converted to 4:2:2 or 4:2:0, there is only one chroma (colour) sample for every two luma samples
+When an image is converted to 4:2:2 or 4:2:0, there is only one chroma (color) sample for every two luma samples
 across, and for 4:2:0 also for every two down. *Chroma siting* (or chroma sample location) is where each of
 those chroma samples **sits** relative to the luma samples:
 
@@ -51,8 +51,8 @@ So in FFmpeg, co-sited is usually called `left`. For 4:2:2, which has a chroma s
 instead (see [Where this is specified](ChromaSitingTests.html#where-this-is-specified)). And "left" only describes the horizontal
 position; that it also means vertically centred is FFmpeg's convention, taken from MPEG-2 and H.264.
 
-If the converter puts the chroma in one place and the player assumes another, the colour is shifted half a pixel
-against the detail. It is subtle, a fraction of a pixel on colour edges, but it is systematic, and it accumulates
+If the converter puts the chroma in one place and the player assumes another, the color is shifted half a pixel
+against the detail. It is subtle, a fraction of a pixel on color edges, but it is systematic, and it accumulates
 over round trips. For 4:2:2 the position is agreed (co-sited), so a file needs no label; it just has to be made
 that way. For 4:2:0, H.264, HEVC and AV1 can say where the chroma is, but most players ignore what they say.
 
@@ -75,7 +75,7 @@ that way. For 4:2:0, H.264, HEVC and AV1 can say where the chroma is, but most p
 * **Reading 4:2:2 or 4:2:0 back to RGB has the same problem in reverse.** `zscale` reads the file's chroma
   location and assumes co-sited when there is none. libswscale, which is what a plain `ffmpeg -i movie.mov
   frame.png` uses, assumes centred whatever the file says, up to and including 9.0, so stills from ProRes, DNxHR
-  or H.264 come out with the colour half a pixel to the right. See [Reading back to RGB](#reading-back-to-rgb).
+  or H.264 come out with the color half a pixel to the right. See [Reading back to RGB](#reading-back-to-rgb).
 * **Players disagree too**, and a test chart shows which way each one goes when you look at it from a distance:
   of those we tried, only xStudio (with a fix) and Safari for HEVC/H.264 got 4:2:2 right throughout. For
   ordinary H.264/HEVC 4:2:0, Safari, Chrome and Firefox were right and OpenRV was not, and no player besides
@@ -96,8 +96,8 @@ Lines on **odd** columns:
 
 ![Single-pixel lines on odd columns, after converting to 4:2:2 and back](static/chroma-siting/reconstruction_odd.png)
 
-With `zscale` (second column) the colour error is spread evenly either side of each line. With `scale` (third
-column) it is all on the left: the line's colour has moved half a pixel. The top row shows how subtle that is
+With `zscale` (second column) the color error is spread evenly either side of each line. With `scale` (third
+column) it is all on the left: the line's color has moved half a pixel. The top row shows how subtle that is
 at normal viewing; the difference row shows that it is there.
 
 Lines on **even** columns look the same for all three, which is why this is easy to miss:
@@ -112,18 +112,18 @@ rendered, reviewed, graded and delivered. Here a small image goes through 1, 5 a
 chroma and the player assumes co-sited. On the right the encoder writes centred chroma, as libswscale does, and the
 player still assumes co-sited, as players do for 4:2:2:
 
-![Coloured text and lines after 1, 5 and 10 round trips to 4:2:2: with the right siting the colour softens but stays on the detail; with the wrong siting it slides to the left of the text and lines, further each time](static/chroma-siting/generations.png)
+![Colored text and lines after 1, 5 and 10 round trips to 4:2:2: with the right siting the color softens but stays on the detail; with the wrong siting it slides to the left of the text and lines, further each time](static/chroma-siting/generations.png)
 
-| Round trips | Colour moved left, right siting | Colour moved left, wrong siting |
+| Round trips | Color moved left, right siting | Color moved left, wrong siting |
 | :--- | ---: | ---: |
 | 1 | 0.04 px | 0.54 px |
 | 5 | 0.03 px | 2.51 px |
 | 10 | 0.02 px | 4.00 px |
 
-Some softening is unavoidable with 4:2:2 either way: every round trip loses a little colour detail. With the wrong
-siting the colour also moves about half a pixel to the left each time, and after a few round trips it is visibly
+Some softening is unavoidable with 4:2:2 either way: every round trip loses a little color detail. With the wrong
+siting the color also moves about half a pixel to the left each time, and after a few round trips it is visibly
 off the detail. A smooth gradient, by contrast, hardly changes, because shifting it by half a pixel changes almost
-nothing. Siting errors show on sharp colour edges, fine coloured lines and coloured text. Made with
+nothing. Siting errors show on sharp color edges, fine colored lines and colored text. Made with
 `tests/chroma_siting_generations.py`; the results were identical on FFmpeg 6.1.6, 9.0.2 and a 9.1 development
 build (zoomed 3 times with nearest neighbour).
 
@@ -157,10 +157,10 @@ particular kind of device, and they do not agree:
 | Specification | Applies to | 4:2:0 siting |
 | :--- | :--- | :--- |
 | ITU-T H.264 / H.265, Annex E | Every H.264/HEVC decoder | `left` (0) when nothing is signalled. H.265 has recommended `topleft` (2) for BT.2020 and BT.2100 video since its 2018 edition, according to [Dolby](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) and 3GPP (we have not checked the ITU text) |
-| [ITU-T H.Sup19](https://www.itu.int/epublications/publication/itu-t-h-suppl-19-2021-04-usage-of-video-signal-type-code-points) / ISO/IEC TR 23091-4, typical values | Guidance, summarising the delivery specifications | `left` (0) for SD and HD, `topleft` (2) for UHD with wide colour gamut |
+| [ITU-T H.Sup19](https://www.itu.int/epublications/publication/itu-t-h-suppl-19-2021-04-usage-of-video-signal-type-code-points) / ISO/IEC TR 23091-4, typical values | Guidance, summarising the delivery specifications | `left` (0) for SD and HD, `topleft` (2) for UHD with wide color gamut |
 | [DVB, ETSI TS 101 154](https://www.etsi.org/deliver/etsi_ts/101100_101199/101154/02.09.01_60/ts_101154v020901p.pdf) V2.9.1, clause 5.14.1.5.3 (HEVC) | Broadcast receivers and set-top boxes in Europe and most of the world outside the Americas, Japan and Korea | The siting **shall** be signalled; recommends `left` (0) for progressive BT.709 and `topleft` (2) for progressive BT.2020. (For H.264 it recommends 0.) |
 | [ATSC 3.0, A/341:2024](https://www.atsc.org/wp-content/uploads/2024/04/A341-2024-04-Video-HEVC.pdf), section 6.2.3.2 | Broadcast receivers ("NextGen TV") in the US and Korea | **`topleft` (2), required for all progressive video**, including 1080p and 720p BT.709 SDR. `left` (0) for legacy SD and interlaced HD ([Amendment 1](https://www.atsc.org/wp-content/uploads/2022/09/A341-2022-03-Amendment-No-1.pdf), 2022) |
-| Blu-ray Disc (BD-ROM Part 3) | HD Blu-ray (H.264, VC-1, MPEG-2) and Ultra HD Blu-ray (HEVC) players | The specifications are not public. H.Sup19 cites BD-ROM Part 3 v3.2 for `topleft` (2) in UHD wide colour gamut, and Dolby's profile 7 (the Ultra HD Blu-ray profile) defaults to `topleft`. [Encoder users report](https://forum.doom9.org/archive/index.php/t-175042.html) that a BT.2020 disc must signal 2 and a BT.709 one may use 0 or 2. For HD Blu-ray we have found nothing beyond the H.264/MPEG-2 default, `left` |
+| Blu-ray Disc (BD-ROM Part 3) | HD Blu-ray (H.264, VC-1, MPEG-2) and Ultra HD Blu-ray (HEVC) players | The specifications are not public. H.Sup19 cites BD-ROM Part 3 v3.2 for `topleft` (2) in UHD wide color gamut, and Dolby's profile 7 (the Ultra HD Blu-ray profile) defaults to `topleft`. [Encoder users report](https://forum.doom9.org/archive/index.php/t-175042.html) that a BT.2020 disc must signal 2 and a BT.709 one may use 0 or 2. For HD Blu-ray we have found nothing beyond the H.264/MPEG-2 default, `left` |
 | [Dolby Vision profiles](https://ott.dolby.com/OnDelKits/Dolby_Vision_Online_Delivery_Kit/v1/Documentation/Specs/Visio_Profiles/help_files/topics/c_dovi_profiles_public.html) | Dolby Vision devices: profile 5 and 8.1 for streaming, 7 for Ultra HD Blu-ray, 8.4 for HLG | Either, but the VUI must say so unless it is `left`. Default `left` (0) for profile 5 ("all commercially produced profile 5 ... bitstreams have used center-left siting"), for the HDR10 base layer of profile 8.1 and for the DVB HLG base layer of 8.4; `topleft` (2) for profile 7 and for the ARIB (Japanese broadcast) HLG base layer of 8.4 |
 | [Apple HLS authoring specification](https://developer.apple.com/documentation/http-live-streaming/hls-authoring-specification-for-apple-devices) | Streaming to Apple devices | Says nothing about siting, so `left`, the H.264/HEVC default |
 
@@ -274,9 +274,9 @@ use a pixel chart to confirm the result or to show someone exactly what is wrong
 | Chart | Open | Correct | Not correct |
 | :--- | :--- | :--- | :--- |
 | 4:2:2 player chart | `chroma_siting_player_chart_422-prores.mov` or `-hevc.mp4` | Only the top band, "Co-sited", is a flat field. The other three are still checkerboards | A different band is flat: the player assumes that instead. None flat: it is doing something else. The top band changes part way across: part of the picture is wrong (xStudio 1.4.0) |
-| 4:2:0 player chart | `chroma_siting_player_chart_420-h264.mp4` or `-hevc.mp4` | Two bands are flat: "Across: co-sited" and "Down: centred". The other two are checkerboards | "Across: centred" is flat instead of "Across: co-sited": the colour is half a pixel to the right (OpenRV, xStudio 8-bit). "Down: co-sited" is flat instead of "Down: centred": the player assumes `topleft` |
-| 4:2:2 pixel chart | `chroma_siting_pixel_chart_422-10bit.mkv` | One strong column of colour directly under each long tick, with a fainter column either side | The colour is off to the right of the tick: two strong columns starting at the tick (centred, or sample repeat) |
-| 4:2:0 pixel chart | `chroma_siting_pixel_chart_420-10bit.mkv` | Across, as for 4:2:2. Down, two equally strong rows: the row of the long tick on the left and the row below it | The colour is off to the right of the top ruler's tick. Centred on the left ruler's tick row: the player assumes `topleft` |
+| 4:2:0 player chart | `chroma_siting_player_chart_420-h264.mp4` or `-hevc.mp4` | Two bands are flat: "Across: co-sited" and "Down: centred". The other two are checkerboards | "Across: centred" is flat instead of "Across: co-sited": the color is half a pixel to the right (OpenRV, xStudio 8-bit). "Down: co-sited" is flat instead of "Down: centred": the player assumes `topleft` |
+| 4:2:2 pixel chart | `chroma_siting_pixel_chart_422-10bit.mkv` | One strong column of color directly under each long tick, with a fainter column either side | The color is off to the right of the tick: two strong columns starting at the tick (centred, or sample repeat) |
+| 4:2:0 pixel chart | `chroma_siting_pixel_chart_420-10bit.mkv` | Across, as for 4:2:2. Down, two equally strong rows: the row of the long tick on the left and the row below it | The color is off to the right of the top ruler's tick. Centred on the left ruler's tick row: the player assumes `topleft` |
 
 The same pattern is correct for all the H.264, HEVC and AV1 files with no chroma location tag. The tagged 4:2:0 files
 change the answer on purpose: `-topleft` should make "Across: co-sited" and "Down: co-sited" flat, and `-center` should
@@ -286,16 +286,16 @@ Three things catch people out:
 
 * **Player charts only work at exactly 100%**, viewed from a distance. Their scale check patch, top right, should have
   two halves equally bright from a distance. If not, ignore the bands.
-* **The colour of a flat band means nothing.** Each band has its own colours; only whether it is flat matters.
+* **The color of a flat band means nothing.** Each band has its own colors; only whether it is flat matters.
 * **Pixel charts work at any zoom**, but in OpenRV stay on the default Linear filter. Flip against the matching
-  `-reference.mkv` in the same player to compare, and judge where the colour is centred, not how blocky it looks.
+  `-reference.mkv` in the same player to compare, and judge where the color is centred, not how blocky it looks.
 
-Zoomed in on one cell of a pixel chart, with lines through the long ticks. In 4:2:0 the correct colour is centred on
+Zoomed in on one cell of a pixel chart, with lines through the long ticks. In 4:2:0 the correct color is centred on
 the vertical line and straddles the row below the horizontal line:
 
 ![What correct and wrong look like on the pixel charts](static/chroma-siting/pixel_chart_guide.png)
 
-A wrong result means fine colour detail sits half a pixel to the right of the luma, or is softer than it should be.
+A wrong result means fine color detail sits half a pixel to the right of the luma, or is softer than it should be.
 It is the player, not the file: these charts decode exactly in `zscale`.
 
 ### What we found
