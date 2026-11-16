@@ -46,6 +46,11 @@ which runs each variant on the 200 Sparks frames, from the EXRs to a ProRes 422 
 `tests/resize-timing-results.json`. Run it once as it is and once with `--parallel-frames` (for oiiotool), before
 `resize-test.py`; it takes about half an hour. Without the results, the timing table is left out.
 
+The anti-ringing variant (lanczos3 clamped to the range of each 4×4 block) comes from
+[`tests/resize-antiring.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-antiring.py),
+which `resize-test.py` runs. Neither FFmpeg nor `oiiotool` can do it with floating-point images, so it uses the
+OpenImageIO Python bindings, and the timing test leaves it out.
+
 The Nuke variants (Sparks only) come from [`tests/resize-nuke.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-nuke.py): paste it into Nuke's Script
 Editor (it was run in Nuke 17.1v1) to write the EXRs to `resize-compare/nuke/`, then run `resize-test.py`. Without them,
 the Nuke variants are left out.

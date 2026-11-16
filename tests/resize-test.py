@@ -149,7 +149,8 @@ GROUPS = [
         dict(v('hdr_oiio_scene_lanczos_clamp', 'oiiotool, lanczos3 in scene-linear, clamp negatives, then OCIO',
                "Lanczos as above, then --clamp:min=0 to remove the values its ringing pushed below zero. The halos "
                "become black rather than below black: less extreme, but still there, since the ring is darker than "
-               "its surroundings either way.",
+               "its surroundings either way. (The anti-ringing variant below clamps to each block's range instead, "
+               "which removes them.)",
                f'--resize:filter=lanczos3 WxH --clamp:min=0 {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=lanczos3 {w}x{h} --clamp:min=0 " + OIIO_VIEW + " -d uint16 -o {out}"),
              only=HDR_IDS),
@@ -161,6 +162,18 @@ GROUPS = [
                f'--resize:filter=lanczos3:highlightcomp=1 WxH {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=lanczos3:highlightcomp=1 {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"),
              only=HDR_IDS),
+        dict(v('hdr_py_scene_lanczos_antiring', "lanczos3 in scene-linear, clamped to each block's range "
+               "(anti-ringing), then OCIO",
+               "Lanczos3 in scene-linear, then each output pixel is clamped, per channel, to the range of the 4×4 "
+               "source pixels it covers. Next to a highlight, a block of plain background has a single value, so the "
+               "result cannot dip below it (no halo) or rise above it (no bloom); inside a block holding the "
+               "highlight the range is wide and lanczos is untouched, so it stays sharp and keeps the highlight's "
+               "light. This is the anti-ringing of libplacebo and madVR, not the clamp-negatives variants, which "
+               "leave the halos as black. FFmpeg's erosion, dilation and maskedclamp would do it, but they do not take "
+               "float input, and oiiotool has no such option, so tests/resize-antiring.py does it with the "
+               "OpenImageIO Python bindings.",
+               'python resize-antiring.py in.exr W H out.png',
+               "python resize-antiring.py {exr} {w} {h} {out}"), only=HDR_IDS),
         dict(v('hdr_oiio_acescct_lanczos', 'oiiotool, lanczos3 in ACEScct (log), then OCIO', "Converts to ACEScct, "
                "a log encoding, resizes there, then applies the view, as Resolve does with a log timeline. Log values "
                "are bounded, so lanczos cannot ring far, but the averaging is on log values, which loses highlight "
@@ -494,6 +507,14 @@ def main():
             {'label': 'HDR: FFmpeg lanczos without and with highlightcomp, 8×', 'src': 'sparks',
              'a': 'hdr_ff_zscale_ocio', 'b': 'hdr_ff_zscale_hc_ocio', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
              'title': "OIIO's rangecompress/rangeexpand around zscale's lanczos, done with geq, removes the halos"},
+            {'label': 'HDR: highlightcomp vs anti-ringing clamp, 8×', 'src': 'sparks',
+             'a': 'hdr_oiio_scene_lanczos_hc', 'b': 'hdr_py_scene_lanczos_antiring', 'mode': 'toggle', 'zoom': 8,
+             'focus': ring, 'title': "Both remove the halos; highlightcomp also dims the sparks, the clamp keeps "
+             "their light"},
+            {'label': 'BrightRings: clamp negatives vs anti-ringing clamp, 4×', 'src': 'brightrings',
+             'a': 'hdr_oiio_scene_lanczos_clamp', 'b': 'hdr_py_scene_lanczos_antiring', 'mode': 'toggle', 'zoom': 4,
+             'focus': rings, 'title': "Clamping negatives leaves the halos black; clamping to each block's range "
+             "removes them"},
             {'label': 'highlightcomp: oiiotool vs FFmpeg', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos_hc',
              'b': 'hdr_ff_zscale_hc_ocio', 'mode': 'diff'},
             {'label': 'FFmpeg vs oiiotool, linear light', 'src': 'chart', 'a': 'zscale_lanczos_linear',
