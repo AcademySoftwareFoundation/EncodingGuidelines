@@ -1,4 +1,14 @@
+---
+layout: default
+nav_order: 6.16
+title: Piecewise sRGB or Pure Gamma 2.2?
+parent: Test Output
+---
+
 # Piecewise sRGB or Pure Gamma 2.2? A Display EOTF Test Chart
+
+{: .warning }
+This is currently actively in development. If you have any recommendations for this, do please let us know.
 
 This folder holds a generator (`make_srgb_vs_gamma22_chart.py`) and a visual test chart that tells whether a display, or the whole viewing pipeline in front of it, follows the **piecewise sRGB EOTF (IEC 61966-2-1)** or a **pure $\gamma = 2.2$ power law**.
 
@@ -23,7 +33,7 @@ If the three shadow columns disagree with each other, or the step vanishes away 
 
 ## What the Result Means
 
-The chart measures everything between the PNG and your eye: the viewer, the operating system's colour management and the panel. On a colour-managed system an sRGB-tagged image can come out as piecewise sRGB on a panel that is itself gamma 2.2, because the system converts between the two.
+The chart measures everything between the PNG and your eye: the viewer, the operating system's color management and the panel. On a color-managed system an sRGB-tagged image can come out as piecewise sRGB on a panel that is itself gamma 2.2, because the system converts between the two.
 
 The two PNGs have identical pixels. If they look different in the same viewer, that viewer treats untagged images differently from sRGB-tagged ones (for example by sending untagged pixels straight to the display).
 
@@ -69,7 +79,7 @@ python tests/srgb-vs-gamma22/make_srgb_vs_gamma22_chart.py
 
 Needs `numpy` and `Pillow`. The script checks itself before writing anything and stops if a check fails: both matches near integers, both matches inside the ladder, and, on a simulated display of each kind, the right word visible, the other word and the control column flat, and the right ladder step vanishing.
 
-- `srgb_vs_gamma22_untagged.png`: 8-bit PNG with `IHDR`, `IDAT` and `IEND` only (no colour chunks).
+- `srgb_vs_gamma22_untagged.png`: 8-bit PNG with `IHDR`, `IDAT` and `IEND` only (no color chunks).
 - `srgb_vs_gamma22_tagged_srgb.png`: identical pixels with `cICP` (`1, 13, 0, 1`) and `sRGB` chunks.
 - `simulated_on_srgb_display.png`, `simulated_on_gamma22_display.png`: the chart as the eye sees it on each display (4×4 linear-light averaging, shadow columns brightened 3.2×).
 - `view.html`: the 1:1 browser viewer (written by hand, not generated).
