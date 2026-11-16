@@ -426,7 +426,7 @@ test_proresquickstart:
   encoding_template: 'ffmpeg {input_args} -i {source} -frames:v {duration} {encoding_args}
     -y {outfile} '
   suffix: .mov
-  description: Test from ../Quickstart.md line 131
+  description: Test from ../Quickstart.md line 158
   app: ffmpeg
   wedges:
     wedge0:
@@ -511,7 +511,7 @@ test_movgama:
       string: unknown
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../WebColorPreservation.md line 123
+  description: Test from ../WebColorPreservation.md line 129
   app: ffmpeg
   wedges:
     wedge0:
@@ -774,7 +774,7 @@ test_colormatch_zscale:
       string: nclx 1/13/1 tv
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 108
+  description: Test from ../ColorPreservation.md line 114
   app: ffmpeg
   wedges:
     wedge0:
@@ -807,12 +807,12 @@ test_colormatch_libswscale:
       less: 5
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 152
+  description: Test from ../ColorPreservation.md line 158
   app: ffmpeg
   wedges:
     wedge0:
       -pix_fmt: yuv444p10le
-      -vf: scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1
+      -vf: scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv
       -c:v: libx264
       -preset: placebo
       -qp: '0'
@@ -840,7 +840,7 @@ test_colormatch_colorspace:
       less: 5
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 191
+  description: Test from ../ColorPreservation.md line 197
   app: ffmpeg
   wedges:
     wedge0:
@@ -870,7 +870,7 @@ test_colormatch_raw:
       - 12
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 229
+  description: Test from ../ColorPreservation.md line 235
   app: ffmpeg
   wedges:
     wedge0:
@@ -919,7 +919,7 @@ test_fullrange:
       string: nclx 1/13/1 pc
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 303
+  description: Test from ../ColorPreservation.md line 309
   app: ffmpeg
   wedges:
     wedge0:

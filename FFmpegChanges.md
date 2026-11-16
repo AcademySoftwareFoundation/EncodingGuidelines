@@ -67,10 +67,16 @@ ffmpeg -i input.%06d.dpx \
   is needed for many encoders; see [Some encoders only accept limited range](#limited-range-encoders-71).
 
 `zscale` needs FFmpeg built with zimg (`--enable-libzimg`). Check with `ffmpeg -filters | grep zscale`. If your
-build does not have it, `scale=out_color_matrix=bt709:out_range=tv` followed by
-`setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv`, plus the four `-color_*`
-flags, gives the same tags on every version, but with the libswscale white level error for 10-bit and higher
-sources.
+build does not have it, use:
+
+```console
+-vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv"
+```
+
+This gives the same tags on every version (6.0 to 9.0.2), for ProRes and H.264, with or without the four
+`-color_*` flags, but with the libswscale white level error for 10-bit and higher sources and centred chroma. The
+`colorspace=bt709:range=tv` in `setparams` matters: before 7.0, `scale` does not label its output frames, and
+without it ProRes writes an unspecified matrix in its frame header on 6.0 and 6.1.6, even with `-colorspace bt709`.
 
 ### Shorter form
 

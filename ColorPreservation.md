@@ -123,7 +123,7 @@ ffmpeg -y -i inputfile.png \
 ## libswscale filter
 
 ```console
--vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
+-vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv"
 ```
 
 Using the libswscale library. Seems similar to colorspace, but with image resizing, and levels built in.  [https://www.ffmpeg.org/ffmpeg-filters.html#scale-1](https://www.ffmpeg.org/ffmpeg-filters.html#scale-1)
@@ -159,7 +159,7 @@ comparisontest:
 ```console
 ffmpeg -y -i inputfile.png \
    -pix_fmt yuv444p10le \
-   -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
+   -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv" \
    -c:v libx264 -preset placebo -qp 0 -x264-params "keyint=15:no-deblock=1" \
    -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
    outputfile.mp4

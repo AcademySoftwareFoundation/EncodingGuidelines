@@ -23,7 +23,7 @@ An example of why this is important is to compare:
 <table>
 <TR><TD style='padding-top:0px; padding-bottom: 0px' >Original PNG Image</TD><TD style='padding-top:0px; padding-bottom: 0px'><IMG src="sourceimages/original-png.png" style='height:70px'/></TD><TD style='padding-top:0px; padding-bottom: 0px'></td></TR>
 <TR><TD style='padding-top:0px; padding-bottom: 0px'>Default FFmpeg conversion (before FFmpeg 7.1)</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/default-ffmpeg.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> NOTE color shift compared to original</TD></TR>
-<TR><TD style='padding-top:0px; padding-bottom: 0px'>Converting explicitly to BT.709</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/libswscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
+<TR><TD style='padding-top:0px; padding-bottom: 0px'>Converting explicitly to BT.709 with zscale</TD><TD style='padding-top:0px; padding-bottom: 0px'><img src="sourceimages/zscale-example.png" style='height:70px'/> </td><td style='padding-top:0px; padding-bottom: 0px'> Should match original</TD></TR>
 </table>
 
 You can see the default FFmpeg conversion introduces a dramatic color shift, but with the right flags you can match the original. See [RGB to YCbCr Conversion](ColorPreservation.html) for more details on this.

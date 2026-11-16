@@ -64,10 +64,10 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -pix_fmt yuv420p10le \
 > `zscale` needs an FFmpeg built with zimg (`--enable-libzimg`). Check with `ffmpeg -filters | grep zscale`. If your build does not have it, use the libswscale equivalent instead:
 >
 > ```console
-> -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
+> -vf "scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv"
 > ```
 >
-> Keep `-colorspace bt709` in the command with it: on FFmpeg 6.0 `scale` does not tag the matrix. That works on every version, but it is less accurate: from 10-bit and 16-bit sources libswscale puts white at 943 instead of 940 (at 10-bit), and it centres the 4:2:2/4:2:0 chroma rather than co-siting it. See [zscale Conversion](EncodeZscale.html) and [Chroma Siting](ChromaSiting.html) for the measurements.
+> `setparams` labels the matrix and range here as well as the primaries and transfer: before FFmpeg 7.0, `scale` does not label its output frames, and ProRes then writes an unspecified matrix in its frame header even with `-colorspace bt709` (measured on 6.0 to 9.0.2 with `tests/colour_flags_matrix.py`). That gives the right tags on every version, with or without the four `-color_*` flags, but it is less accurate: from 10-bit and 16-bit sources libswscale puts white at 943 instead of 940 (at 10-bit), and it centres the 4:2:2/4:2:0 chroma rather than co-siting it. See [zscale Conversion](EncodeZscale.html) and [Chroma Siting](ChromaSiting.html) for the measurements.
 
 | Flag | Description |
 | --- | --- |

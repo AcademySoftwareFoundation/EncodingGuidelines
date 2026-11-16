@@ -77,6 +77,8 @@ RECIPES = {
                               ["setparams"], None),
     "scale_setparams_all_flags": ("scale + setparams incl. matrix/range + colour flags",
                                   SCALE + "," + SETPARAMS_YUV, FLAGS, ["setparams"], None),
+    "scale_setparams_all_noflags": ("scale + setparams incl. matrix/range, no colour flags",
+                                    SCALE + "," + SETPARAMS_YUV, [], ["setparams"], None),
     "zscale_setparams_flags": ("zscale + setparams + colour flags", ZSCALE + "," + SETPARAMS, FLAGS,
                                ["zscale", "setparams"], None),
     "setparams_csrange": ("setparams + -colorspace/-color_range only (7.1+ form)", SETPARAMS,
