@@ -95,7 +95,7 @@ Setting the matrix is the important part. Without a filter that sets it, FFmpeg 
 
 The input side is deliberately left to zscale. Earlier versions of this page forced it (`in_color_matrix=bt709`), which made no difference to RGB images but gave JPEG sequences a visible hue and saturation shift, because JPEGs are BT.601; forcing the input range to full does the same kind of damage to video sources. See [Sources without tags](EncodeZscale.html#sources-without-tags).
 
-Separately, if you are converting from exr's in other colorspaces, **please use [OCIO](https://opencolorio.org/) to do the color space conversions.** [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this.
+Separately, if you are converting from exr's in other colorspaces, **please use [OCIO](https://opencolorio.org/) to do the color space conversions.** [oiiotool](https://openimageio.readthedocs.io/en/latest/oiiotool.html) is an excellent open-source tool for this. But there is now also an OCIO filter for FFmpeg (see [FFmpeg OCIO Filter](FfmpegOcio.html)).
 
 For more details see:
 
