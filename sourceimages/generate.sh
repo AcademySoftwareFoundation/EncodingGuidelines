@@ -174,7 +174,24 @@ ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv420p10 -strict -1 zoneplate_yuv420p10.y4m
 ffmpeg -f lavfi -i zoneplate=ku=512:kv=100:kt2=0:ky2=256:kx2=556:s=wvga:yo=0:kt=11:duration=1 -pix_fmt yuv422p10 -strict -1 zoneplate_yuv422p10.y4m
 
+# The ACES 1.x views below are in OCIO's ACES 1.3 built-in config; OpenImageIO 3.x defaults to an ACES 2.0 config
+# without them.
+export OCIO=ocio://cg-config-v1.0.0_aces-v1.3_ocio-v2.1
+
+# Sony F35 still life from the ACES reference images (ACES2065-1, 1920x1080 RGBA), used by the sws*_tests configs.
+# The same file is in the ACES 1.x reference image set (aces-dev images/ACES/).
+curl -L https://raw.githubusercontent.com/ampas/ACES_ODT_Candidates/main/images/SonyF35.StillLife.exr -o SonyF35.StillLife.exr
+oiiotool -i SonyF35.StillLife.exr --iscolorspace ACES2065-1 --ociodisplay "sRGB - Display" "ACES 1.0 - SDR Video" -d uint16 -o SonyF35.StillLife_srgb.png
+
 #curl https://raw.githubusercontent.com/AcademySoftwareFoundation/openexr-images/main/ScanLines/Tree.exr -o Tree.exr
 #oiiotool -i Tree.exr --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o tree_rec2020pq.png
 curl https://raw.githubusercontent.com/AcademySoftwareFoundation/openexr-images/main/ScanLines/StillLife.exr -o StillLife.exr
 oiiotool -i StillLife.exr --iscolorspace "ACEScg" --fit 1920x1080  --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o stilllife_rec2020pq.png
+
+# SMPTE RP 219 references (see README.md). They are stored as lossless FFV1 in rp219/; this turns them back
+# into .y4m for tools that need raw Y'CbCr. -pix_fmt is the stored format, so ffmpeg does no conversion.
+ffmpeg -y -i rp219/rp219_yuv444p10.mkv -pix_fmt yuv444p10le -strict -1 rp219/rp219_yuv444p10.y4m
+ffmpeg -y -i rp219/rp219_yuv444p12.mkv -pix_fmt yuv444p12le -strict -1 rp219/rp219_yuv444p12.y4m
+
+# OpenImageIO 2.4 wrote PNG EXIF that FFmpeg 8.1+ cannot parse, which makes the whole frame fail to decode.
+python3 strip_png_exif.py .

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OpenImageIO's rangecompress (IBA::rangecompress, src/libOpenImageIO/imagebufalgo_pixelmath.cpp, SPI's coefficients),
+  which oiiotool's resize:highlightcomp=1 applies before filtering: unchanged up to 0.18, then
+  a + b * ln(c * x + 1) with a = -0.54576885700225830078, b = 0.18351669609546661377, c = 284.3577880859375.
+  Apply with FFmpeg's ocio filter (ocio=filetransform=rangecompress.clf), and invert with inverse=1 (rangeexpand).
+  Unlike OIIO, values below -0.18 are left unchanged (OIIO mirrors the curve for negative values).
+  Used by tests/resize-test.py.
+-->
+<ProcessList id="oiio_rangecompress" compCLFversion="3.0">
+  <Description>OpenImageIO rangecompress (x1 = 0.18)</Description>
+  <Log inBitDepth="32f" outBitDepth="32f" style="cameraLinToLog">
+    <LogParams base="2.718281828459045" logSideSlope="0.18351669609546661377" logSideOffset="-0.54576885700225830078"
+               linSideSlope="284.3577880859375" linSideOffset="1.0" linSideBreak="0.18"/>
+  </Log>
+</ProcessList>

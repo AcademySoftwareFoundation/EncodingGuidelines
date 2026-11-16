@@ -1,18 +1,27 @@
 ---
 layout: default
 nav_order: 4.7
-title: JPEG2000 HTJ2K Encoding
+title: JPEG 2000 HTJ2K Encoding
 parent: Codec Comparisons
 ---
 
 # HTJ2K - High Throughput JPEG 2000
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 HTJ2K is an extremely interesting extension of the JPEG-2000 standard that is widely used in digital cinema, which promises significantly faster encoding and decoding for a small hit to compression efficiency.
 
 The key advantages of HTJ2K include:
 
 1. Visually lossless compression with high throughput.
-2. 10x-30x faster than Jpeg2000.  
+2. 10x-30x faster than JPEG 2000.  
 3. Resolution scalability, lower resolutions extracted without needing to fully decode the file.  
 4. Frame-based (intra-frame) compression. Each frame is encoded independently, which is ideal for random-access playback and scrubbing. Since each frame is encoded separately, and then stitched together into a container the compression can easily be parallelized.  
 5. Support for 10-16-bit precision, JPEG-2000 can go higher, but many of the tools do not natively support it.  
@@ -74,7 +83,7 @@ ojph_compress -i INPUTFRAME.0001.tif -o OUTPUTFRAME.0001.j2c -qstep 0.001
 
 ### OpenImageIO HTJ2K
 
-[OpenImageIO](https://openimageio.readthedocs.io/en/latest/oiiotool.html) has been updated to support HTJ2K, using the OpenJPH library. OpenJPH does need to be already built and pkg-config needs to be able to find it. Currently it is merged with the main branch, but there is not a release for it (should be later this year).  
+[OpenImageIO](https://openimageio.readthedocs.io/en/latest/oiiotool.html) has been updated to support HTJ2K, using the OpenJPH library. OpenJPH does need to be already built and pkg-config needs to be able to find it.  
 The advantage of using OIIO over ojph_compress are:
 
 * Colorspace conversion rather than requiring an additional step.  
@@ -84,17 +93,19 @@ The advantage of using OIIO over ojph_compress are:
 Creating HTJ2K files can be done on the command line with oiiotool, e.g.:
 
 ```console
-oiiotool -t STARTFRAME-ENDFRAME --parallel-frames -i INPUTFRAMESEQ.%05d.tif \
+oiiotool --frames STARTFRAME-ENDFRAME --parallel-frames -i INPUTFRAMESEQ.%05d.tif \
      --compression htj2k --attrib jph:qstep 0.001 -o OUTPUTFRAMESEQ.%05d.j2c
 ```
 
 Without the jph:qstep flag, lossless mode is used, which is typically quite a bit smaller than many other compression schemes, but not typically small enough for reviews.
 
-| *–attrib jph:qstep 0.0001* | Interval size used to quantize wavelet coefficients. There is a rough mapping between this and the meaningful bit-depth of the resulting picture, qstep \= 2^(- bit-depth)   If this is not defined, lossless compression is used. (See below). |
-| *–attrib jph:block_size 64,64* | The older JPEG2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
-| *–attrib jph:prog_order RPCL* | (see [below](#progression-order)). |
+| Flag | Description |
+| --- | --- |
+| `--attrib jph:qstep 0.001` | Interval size used to quantize wavelet coefficients. There is a rough mapping between this and the meaningful bit-depth of the resulting picture, qstep \= 2^(- bit-depth)   If this is not defined, lossless compression is used. (See below). |
+| `--attrib jph:block_size 64,64` | The older JPEG 2000 standard used to default to 32,32 but this does seem to result in a smaller file, this is the default for OIIO. |
+| `--attrib jph:prog_order RPCL` | (see [below](#progression-order)). |
 
-While JPEG2000 can support YCbCr this openimageio implementation assumes that we are only generating RGB results.
+While JPEG 2000 can support Y'CbCr this openimageio implementation assumes that we are only generating RGB results.
 
 ### HTJ2K Wrapping J2C files in container
 
@@ -104,7 +115,7 @@ There are a number of advantages to having the J2C files in a container:
 * Allows additional metadata to be stored in the container header.  
 * In some cases seek time could be improved with the right container by creating an index table to seek into the container faster, although this may require additional development to support it.
 
-FFMPEG provides the ability to add j2c files to a container with the following command:
+FFmpeg provides the ability to add j2c files to a container with the following command:
 
 ```console
 ffmpeg -f image2 -r 24 -i JPEGFILES.%05d.j2c -vcodec copy outputfile.mov
@@ -119,18 +130,18 @@ Below are some charts showing how different qstep values affect, encode time, fi
 | ![](enctests/reference-results/htj2k-qstep-test-vmaf_harmonic_mean.png) This is showing Qstep values against VMAF harmonic mean |
 | ![](enctests/reference-results/htj2k-qstep-test-psnr_y_harmonic_mean.png) This is showing Qstep values against PSNR |
 
-NOTE - qstep default = 1/(2^bit-depth) so default for above 8-bit 0.00390625, 10-bit image would be 0.000976562 and 12-bits it would need to be 0.000244. So you really want to have at least a value of .002 or less.
+NOTE - qstep maps roughly to 1/(2^bit-depth): 0.0039 for 8-bit, 0.00098 for 10-bit and 0.00024 for 12-bit.
 
-So we probably want something close to or below 0.001 as a starting value for 10-bit data or at least between 0.001 and 0.003.
+So for 10-bit data, start at about 0.001; values up to 0.003 give smaller files at some loss of quality.
 
 ## QFactor
 
 As an alternative to setting the qstep, with the [https://github.com/osamu620/OpenHTJ2K](https://github.com/osamu620/OpenHTJ2K) encoder you also have the option of setting the quality with a [QFactor](https://ds.jpeg.org/documents/jpeg2000/wg1n100430-098-COM-Guideline_on_controlling_JPEG_2000_image_quality_using_a_single_parameter.pdf) flag. This is closer to the Jpeg 0-100 quality flag. It is also a little more refined than setting qstep allowing it to use different qsteps for different sub-bands of the image.
 
-In testing it with OpenHTJ2K and it does feel nicer than the fractional qstep. However, for our needs we typically would want something between 99 and 100.
+In testing with OpenHTJ2K it does feel nicer than the fractional qstep. However, for our needs we typically would want something between 99 and 100.
 
 | ![](enctests/reference-results/htj2k-qfactor-test-encode_time.png)  This is showing QFactor values against encoding time. |
-| ![](enctests/reference-results/htj2k-qfactor-filesize.png) This is showing QFactor values against file size. |
+| ![](enctests/reference-results/htj2k-qfactor-test-filesize.png) This is showing QFactor values against file size. |
 | ![](enctests/reference-results/htj2k-qfactor-test-vmaf_harmonic_mean.png) This is showing QFactor values against VMAF harmonic mean |
 | ![](enctests/reference-results/htj2k-qfactor-test-psnr_y_harmonic_mean.png) This is showing QFactor values against psnr y harmonic mean |
 
@@ -147,7 +158,7 @@ The progression order (typically a prog_order flag in openjph, or jph:prog_order
 | RLCP | Resolution -\> Layer -\> Component -\> Position | Prioritizes lower resolutions first, allows you to load all of the layers at a lower resolution and then load in the higher resolutions |
 | RPCL | Resolution -\> Position -\> Component -\> Layer | Optimized for random access and tiling. |
 | PCRL | Position -\> Component -\> Resolution -\> Layer | Less common, spatial prioritisation, good for large images where you are viewing zoomed in sections of it. |
-| CPRL | Component -\> Position -\> Resolution -\> Layer | Used when components are needed separately, e.g. YUV where you might just want Y first, rarely used in VFX. |
+| CPRL | Component -\> Position -\> Resolution -\> Layer | Used when components are needed separately, e.g. Y'CrCb where you might just want Y first, rarely used in VFX. |
 
 Of these settings picking either RPCL or LRCP are the two most common progression orders. OIIO does not currently support layers, so really LRCP and RLCP are very similar.
 
@@ -155,7 +166,7 @@ For many cases position can be ignored, unless you start generating particularly
 
 ## HTJ2K Decoding and Playback
 
-HTJ2K decoding has already been included in the OpenJpeg 2.5 library, which is widely used by ffmpeg and OIIO. However it is using a slower older version of the code that became OpenJPH, so is not suitable for playback. Similarly, ffmpeg has its own decoder that can read htj2k files, but does not have the throughput that OpenJPH has.
+HTJ2K decoding has already been included in the OpenJpeg 2.5 library, which is widely used by FFmpeg and OIIO. However it is using a slower older version of the code that became OpenJPH, so is not suitable for playback. Similarly, FFmpeg has its own decoder that can read htj2k files, but does not have the throughput that OpenJPH has.
 
 Playback is somewhat limited, but [OpenRV](https://github.com/AcademySoftwareFoundation/OpenRV) recently added HTJ2K support both as image sequences of J2C files, as well as wrapped in MXF, MOV or MP4 containers.
 
@@ -169,7 +180,7 @@ The test was to pick a frame rate where openRV is able to load a buffer at a rat
 | HTJ2K qstep=0.002 8K | 6 fps | 11 fps |
 | HTJ2K qstep=0.002 8K loading 4K resolution | 40 fps |  |
 
-Note, the higher performance on windows is from the additional optimization on windows hardware, having said that the performance for 4k playback is acceptable for cinema content and does have quite a bit of optimization compared to OpenJPEG and FFMPEG.  
+Note, the higher performance on windows is from the additional optimization on windows hardware, having said that the performance for 4k playback is acceptable for cinema content and does have quite a bit of optimization compared to OpenJPEG and FFmpeg.  
 It's also worth pointing out that improved playback performance can be achieved using [Kakadu](https://kakadusoftware.com/) and [Comprimato](https://comprimato.com/) commercial decoders, although pure GPU based ones may not perform too well within openRV.
 
 [Blackmagic Resolve](https://www.blackmagicdesign.com/uk/products/davinciresolve) can also playback HTJ2K J2C image sequence files. It does not appear to be able to recognise J2C files in containers though.

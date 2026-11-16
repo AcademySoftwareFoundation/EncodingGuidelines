@@ -1,0 +1,193 @@
+{
+ "frames": [
+  6100,
+  6299
+ ],
+ "modes": {
+  "default": {
+   "results": {
+    "hdr_ff_ocio_zscale": {
+     "total": 69.22,
+     "tool": "ffmpeg",
+     "cpu": 640.5
+    },
+    "hdr_ff_ocio_zscale_displaylinear": {
+     "total": 68.88,
+     "tool": "ffmpeg",
+     "cpu": 643.4
+    },
+    "hdr_oiio_scene_lanczos": {
+     "oiiotool": 67.02,
+     "encode": 1.63,
+     "total": 68.64,
+     "tool": "oiiotool",
+     "cpu": 543.4
+    },
+    "hdr_oiio_scene_lanczos_clamp": {
+     "oiiotool": 66.52,
+     "encode": 1.63,
+     "total": 68.14,
+     "tool": "oiiotool",
+     "cpu": 546.1
+    },
+    "hdr_oiio_scene_lanczos_hc": {
+     "oiiotool": 66.42,
+     "encode": 1.33,
+     "total": 67.75,
+     "tool": "oiiotool",
+     "cpu": 542.2
+    },
+    "hdr_oiio_acescct_lanczos": {
+     "oiiotool": 67.67,
+     "encode": 1.34,
+     "total": 69.01,
+     "tool": "oiiotool",
+     "cpu": 557.4
+    },
+    "hdr_oiio_scene_cubic": {
+     "oiiotool": 33.94,
+     "encode": 1.38,
+     "total": 35.32,
+     "tool": "oiiotool",
+     "cpu": 214.4
+    },
+    "hdr_oiio_scene_mitchell": {
+     "oiiotool": 44.71,
+     "encode": 1.42,
+     "total": 46.12,
+     "tool": "oiiotool",
+     "cpu": 310.6
+    },
+    "hdr_oiio_scene_gaussian": {
+     "oiiotool": 38.16,
+     "encode": 1.11,
+     "total": 39.27,
+     "tool": "oiiotool",
+     "cpu": 235.9
+    },
+    "hdr_oiio_scene_box": {
+     "oiiotool": 28.53,
+     "encode": 1.39,
+     "total": 29.93,
+     "tool": "oiiotool",
+     "cpu": 163.4
+    },
+    "hdr_ff_zscale_ocio": {
+     "total": 6.81,
+     "tool": "ffmpeg",
+     "cpu": 62.6
+    },
+    "hdr_ff_zscale_mitchell_ocio": {
+     "total": 6.41,
+     "tool": "ffmpeg",
+     "cpu": 58.9
+    },
+    "hdr_ff_zscale_hermite_ocio": {
+     "total": 6.31,
+     "tool": "ffmpeg",
+     "cpu": 57.6
+    },
+    "hdr_ff_zscale_bicubic_ocio": {
+     "total": 6.47,
+     "tool": "ffmpeg",
+     "cpu": 60.1
+    },
+    "hdr_ff_zscale_clamp_ocio": {
+     "total": 7.78,
+     "tool": "ffmpeg",
+     "cpu": 69.9
+    },
+    "hdr_ff_zscale_hc_ocio": {
+     "total": 51.12,
+     "tool": "ffmpeg",
+     "cpu": 402.1
+    },
+    "hdr_ff_ocio_hc_ocio": {
+     "total": 7.95,
+     "tool": "ffmpeg",
+     "cpu": 65.6
+    },
+    "hdr_ff_acescct_ocio": {
+     "total": 8.88,
+     "tool": "ffmpeg",
+     "cpu": 73.6
+    },
+    "hdr_ff_f32_trap": {
+     "total": 9.17,
+     "tool": "ffmpeg",
+     "cpu": 79.0
+    }
+   },
+   "ffmpeg": "ffmpeg version 9.0.2",
+   "oiiotool": "3.1.12.0",
+   "machine": "Apple M2 Max (12 cores), Darwin 25.6.0",
+   "repeat": 1,
+   "date": "2026-11-15"
+  },
+  "parallel-frames": {
+   "results": {
+    "hdr_oiio_scene_lanczos": {
+     "oiiotool": 52.95,
+     "encode": 1.61,
+     "total": 54.56,
+     "tool": "oiiotool",
+     "cpu": 474.2
+    },
+    "hdr_oiio_scene_lanczos_clamp": {
+     "oiiotool": 51.78,
+     "encode": 1.56,
+     "total": 53.34,
+     "tool": "oiiotool",
+     "cpu": 471.3
+    },
+    "hdr_oiio_scene_lanczos_hc": {
+     "oiiotool": 51.97,
+     "encode": 1.33,
+     "total": 53.3,
+     "tool": "oiiotool",
+     "cpu": 469.7
+    },
+    "hdr_oiio_acescct_lanczos": {
+     "oiiotool": 53.24,
+     "encode": 1.3,
+     "total": 54.55,
+     "tool": "oiiotool",
+     "cpu": 482.1
+    },
+    "hdr_oiio_scene_cubic": {
+     "oiiotool": 14.7,
+     "encode": 1.29,
+     "total": 15.99,
+     "tool": "oiiotool",
+     "cpu": 139.8
+    },
+    "hdr_oiio_scene_mitchell": {
+     "oiiotool": 26.06,
+     "encode": 1.39,
+     "total": 27.45,
+     "tool": "oiiotool",
+     "cpu": 244.9
+    },
+    "hdr_oiio_scene_gaussian": {
+     "oiiotool": 17.54,
+     "encode": 1.05,
+     "total": 18.59,
+     "tool": "oiiotool",
+     "cpu": 167.4
+    },
+    "hdr_oiio_scene_box": {
+     "oiiotool": 7.98,
+     "encode": 1.4,
+     "total": 9.37,
+     "tool": "oiiotool",
+     "cpu": 83.2
+    }
+   },
+   "ffmpeg": "ffmpeg version 9.0.2",
+   "oiiotool": "3.1.12.0",
+   "machine": "Apple M2 Max (12 cores), Darwin 25.6.0",
+   "repeat": 1,
+   "date": "2026-11-15"
+  }
+ }
+}

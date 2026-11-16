@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Adding Timecode and Editorial Workflow
-nav_order: 5.1
+nav_order: 6
 parent: Encoding Overview
 ---
 
@@ -23,6 +23,12 @@ parent: Encoding Overview
 {:toc}
 </details>
 
+{: .highlight }
+> **In short:** give media for editorial a start timecode with `-timecode`, usually derived from the start frame
+> (frame 1001 at 24 fps is `00:00:41:17`), and for camera proxies a reel name with
+> `-metadata:s:v:0 reel_name=...`. For Avid, deliver DNxHD/DNxHR in MXF, and agree OpAtom or Op1a with editorial; see
+> [AVID Media Composer Workflows](#avid-media-composer-workflows).
+
 When delivering media to editorial, it's useful to attach a start timecode value to the media.
 
 This can be done with the -timecode flag:
@@ -31,40 +37,39 @@ E.g.
 
 ```console
 ffmpeg -r 24 -start_number <STARTFRAME> -i inputfile.%04d.png \
-        -vf "scale=in_color_matrix=bt709:out_color_matrix=bt709" \
+        -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
         -frames:v 100 -c:v libx264 -preset slow -pix_fmt yuv420p \
-        -timecode  <STARTFRAMETIMECODE>
-        outputfile.mp4
+        -timecode <STARTFRAMETIMECODE> outputfile.mp4
 ```
 
 There are three approaches for what to use for the timecode:
 
-* [Convert the start frame number](#start-frame-as-timecode) to the related timecode.
-* Use the timecode from the [original plate](#start-frame-as-original-plate-timecode)
-* A "fixed" timecode for all deliverables
+1. [Convert the start frame number](#start-frame-as-timecode) to the related timecode.
+2. Use the timecode from the [original plate](#start-frame-as-original-plate-timecode)
+3. A "fixed" timecode for all deliverables (Same as 2, but with constant timecode)
 
-## Start Frame as Timecode
+### Start Frame as Timecode
 
 It's extremely common to use a start frame of 1001 for a shot at the beginning of production, rather than frame 0. The three big reasons for this are:
 
 1. Frames are automatically padded to 4 digits (which is really common for VFX work).
-2. If you do need to add additional frames to the head of the shot, either because editorial requests it, then there is plenty of wiggle room without requiring moving animation (which can be problematic if multiple departments are involved).
+2. If you do need to add additional frames to the head of the shot, for example because editorial requests it, there is plenty of wiggle room without requiring moving animation (which can be problematic if multiple departments are involved).
 3. It's easy for simulation to have ‘pre-roll’ time without going into negative frames.
 
 It's also common for VFX shows to deliver handles on the animation, e.g. if 8 frames of handle are expected to be provided to the VFX provider, then the first frame of animation would be frame 1009. Similarly it's common to have a slate as the first frame, so assuming frame 1001 is the first frame of the handles, 1000 would be the slate.
 
-By remapping the frame number to a timecode number, e.g. frame 1001 to 00:00:41:07 if later the editor decided that the first frame of the delivery was going to be 1009 (i.e. TC 00:00:42:01) you would have an issue if no timecode existed on the clip, since they would have some versions of the clip where the frame number is 1001, and some that are 1009 (which is why burn-in frame numbers are so important). By adding the timecode, its possible to automate the process, dropping in different versions of the clip (whether the start frame is 1001 or 1009) it should conform correctly.
+By remapping the frame number to a timecode number, e.g. frame 1001 to 00:00:41:17, if later the editor decided that the first frame of the delivery was going to be 1009 (i.e. TC 00:00:42:01) you would have an issue if no timecode existed on the clip, since they would have some versions of the clip where the frame number is 1001, and some that are 1009 (which is why burn-in frame numbers are so important). By adding the timecode, its possible to automate the process, dropping in different versions of the clip (whether the start frame is 1001 or 1009) it should conform correctly.
 
 Converting the frame number to timecode can be done using OTIO:
 
-```console
+```python
 import opentimelineio as otio
 start_frame = 1001
 frame_rate = 24.0
 timecode = otio.opentime.RationalTime(start_frame, rate=frame_rate).to_timecode()
 ```
 
-## Start Frame as Original Plate Timecode
+### Start Frame as Original Plate Timecode
 
 Another scenario is that the client is delivering a single clip, that your facility is adding media to, and for a similar reason to the above, it would be helpful if the timecode of the media that you return to the client, contains the same timecode as the delivered media.
 
@@ -183,8 +188,7 @@ A simple example of this is to convert all your clips to raw DNxHD files, e.g.:
 
 ```console
 ffmpeg -y -i <INPUTFILE> -pix_fmt yuv422p \
-    -sws_flags lanczos -pix_fmt yuv422p \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=bt709" \
       -c:v dnxhd -profile:v dnxhr_sq \
       -metadata project="MY PROJECT" \
       -metadata material_package_name=$clip  -timecode 01:00:20:00 \
@@ -238,8 +242,9 @@ for filename in sys.argv[1:]:
     # mob.import_audio_essence("sample.wav", edit_rate) #Modify if you have audio too.
 ```
 
-In this simplistic example, I'm overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py).
+In this simplistic example, we are overwriting the Shot and Scene metadata columns, which should then show up in the bin, when the resulting AAF files are dragged into a bin. For a more complex version of this see: [aaf_embed_media_tool](https://github.com/markreidvfx/pyaaf2/blob/main/examples/aaf_embed_media_tool.py).
 
 ## See Also
 
+* [Adding Metadata](EncodingMetadata.html): shot, version and other metadata in MOV, MXF and MKV.
 * [Feature Turnover Guide](https://www.evanschiff.com/articles/feature-turnover-guide-vfx/)

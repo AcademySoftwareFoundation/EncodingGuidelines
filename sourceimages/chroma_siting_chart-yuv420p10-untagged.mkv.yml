@@ -1,0 +1,11 @@
+images: false
+path: chroma_siting_chart-yuv420p10-untagged.mkv
+# Lossless FFV1, BT.709 limited range 4:2:0 10-bit, subsampled in numpy with left chroma
+# (no chroma location tag); made by make_chroma_siting_sources.py
+reference: chroma_siting_chart.png
+chroma_siting: left
+width: 1920
+height: 1080
+in: 0
+duration: 1
+rate: 25.0

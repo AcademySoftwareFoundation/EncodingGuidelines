@@ -13,5 +13,5 @@ You can download the clips using the `download_media.sh` shell script. The scrip
 
 The clips that are created include:
 
-| ![sparks_srgb](thumbnails/sparks_srgb.6015.jpg) | [Sparks part 1](https://opencontent.netflix.com/#h.d0oh6u8prqhe) |  Creating both srgb and hlg color space versions for testing HDR and regular sRGB encodes |
+| ![sparks_srgb](thumbnails/sparks_srgb.06200.jpg) | [Sparks part 1](https://opencontent.netflix.com/#h.d0oh6u8prqhe) |  Creating both srgb and hlg color space versions for testing HDR and regular sRGB encodes |
 | ![sparks2_srgb](thumbnails/sparks2_srgb.06726.jpg) | [Sparks part 2](https://opencontent.netflix.com/#h.d0oh6u8prqhe) |  Creating both srgb and hlg color space versions for testing HDR and regular sRGB encodes |

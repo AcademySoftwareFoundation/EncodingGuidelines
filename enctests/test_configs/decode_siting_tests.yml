@@ -1,0 +1,62 @@
+---
+# Chroma siting in the decode direction: where FFmpeg assumes 4:2:2/4:2:0 chroma is when it converts to RGB,
+# as `ffmpeg -i movie.mov frame.png` does. The sources are the siting chart subsampled in numpy with known
+# siting, tagged left, center or topleft, or untagged (sourceimages/make_chroma_siting_sources.py); each .yml
+# gives the siting the chroma really has. The results record the siting the decoder assumed
+# (chroma_siting_assumed) and how far that moved the chroma (chroma_shift_h/_v, in luma samples: 0 is right,
+# +0.5 is co-sited chroma taken as centred). The errors against the RGB chart are large at the single-pixel
+# lines whatever the siting, since 4:2:x cannot hold them, so only the shift is asserted (within 0.15).
+# Measured on 6.1.6 to 9.1.dev: zscale follows the tag and assumes left without one. libswscale assumes centred
+# whatever the tag up to 9.0, follows it from 9.1 (chroma location negotiation), and assumes centred without one.
+test_decode_siting:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+  - testtype: assertresults
+    tests:
+    - assert: between
+      value: chroma_shift_h
+      between: [-0.15, 0.15]
+    - assert: between
+      value: chroma_shift_v
+      between: [-0.15, 0.15]
+  description: 4:2:2 and 4:2:0 to 16-bit RGB PNG, with the auto-inserted conversion, scale and zscale.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" -frames:v 1 {encoding_args} -y "{outfile}"
+  name: test_decode_siting
+  sources:
+  - ../sourceimages/chroma_siting_chart-yuv420p10-left.mkv.yml
+  - ../sourceimages/chroma_siting_chart-yuv420p10-center.mkv.yml
+  - ../sourceimages/chroma_siting_chart-yuv420p10-topleft.mkv.yml
+  - ../sourceimages/chroma_siting_chart-yuv420p10-untagged.mkv.yml
+  - ../sourceimages/chroma_siting_chart-yuv422p10-left.mkv.yml
+  - ../sourceimages/chroma_siting_chart-yuv422p10-center.mkv.yml
+  - ../sourceimages/chroma_siting_chart-yuv422p10-untagged.mkv.yml
+  suffix: .png
+  wedges:
+    auto:
+      # What most people run: no filter, FFmpeg inserts the conversion.
+      -pix_fmt: rgb48be
+      known_issue: &libswscale_siting
+      - source: "*-untagged"
+        note: "libswscale assumes centred chroma when there is no tag (H.264/HEVC 4:2:0 and 4:2:2 are co-sited)"
+      - source: ["*-left", "*-topleft"]
+        ffmpeg: "<9.0+dev"
+        note: "libswscale ignores the chroma location tag before 9.1 and assumes centred"
+    scale:
+      -vf: '"scale,format=rgb48be"'
+      known_issue: *libswscale_siting
+    scale_full_chroma_int:
+      # Interpolates the chroma instead of repeating each sample (libswscale's fast path for 4:2:x to RGB).
+      -vf: '"scale=flags=bicubic+full_chroma_int+accurate_rnd,format=rgb48be"'
+      known_issue: *libswscale_siting
+    zscale:
+      # zscale outputs planar RGB; the repack to rgb48be for PNG is lossless.
+      -vf: '"zscale,format=gbrp16le"'
+      -pix_fmt: rgb48be
+---
+reports:
+  description: Where FFmpeg assumes 4:2:2 and 4:2:0 chroma is when it converts to RGB, measured from the pixels.
+  directory: decode-siting-encode
+  name: decode-siting-tests
+  templatefile: ycbcr.html.jinja
+  title: Chroma siting when decoding

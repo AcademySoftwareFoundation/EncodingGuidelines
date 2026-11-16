@@ -1,0 +1,10 @@
+images: false
+path: chip-chart-1080-420.jpg
+# JPEG (JFIF, full range BT.601 Y'CbCr, 4:2:0) written by libjpeg from chip-chart-1080-noicc.png, quality 95.
+# Encodes are compared with what libjpeg decodes it to.
+reference: chip-chart-1080-420-libjpeg.png
+width: 1920
+height: 1080
+in: 0
+duration: 1
+rate: 25.0

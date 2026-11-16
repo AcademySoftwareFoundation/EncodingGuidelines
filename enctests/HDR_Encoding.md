@@ -1,6 +1,6 @@
 ---
 layout: default
-nav_order: 6
+nav_order: 5.5
 title: HDR Encoding
 parent: Encoding Overview
 ---
@@ -22,7 +22,7 @@ There are a lot of competing standards for [HDR](https://www.lightillusion.com/w
 2. [HDR10](https://en.wikipedia.org/wiki/HDR10)/PQ10 which uses the [PQ EOTF](https://en.wikipedia.org/wiki/Perceptual_quantizer).
 
 {:.note }  
-For VFX/Animation review we are recommending using the PQ10 standard (essentially HDR10 without the master-display/max-cll parameters). We would recommend mastering to a known max luminance such as 1000 nit, and configuring OCIO to match that value, rather than relying on the monitor to apply a tonemap, at least for internal review. This also gives you a fair degree of flexibility in terms of which codecs you can use (essentially most 10+bit codecs should work), since you can use the [PQ10 Encoding](#pq10-ffmpeg-encoding) approach.
+For VFX/Animation review we are recommending using the PQ10 standard (essentially HDR10 without the master-display/max-cll parameters). We would recommend mastering to a known max luminance such as 1000 nit, and configuring OCIO to match that value, rather than relying on the monitor to apply a tonemap, at least for internal review. This also gives you a fair degree of flexibility in terms of which codecs you can use (essentially most 10+bit codecs should work), since you can use the [PQ10 Encoding](#pq10-ffmpeg-h265-encoding) approach.
 
 ## HDR10
 
@@ -76,38 +76,51 @@ name: test_pq10
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 14
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: smpte2084
 -->
 ```console
 ffmpeg  \
     -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
     -c:v libx265   \
-    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
  -tag:v hvc1  \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
-    -pix_fmt yuv444p10le  -tag:v hvc1 \
+    -pix_fmt yuv444p10le \
     sparks2_pq1000_444.mov
 ```
 
 | :---- | :---- |
 | \-c:v libx265 | Use the h265 encoder |
 | \-tag:v hvc1 | Tag the file to enable playback with QuickTime Player |
-| \-vf "scale=in\_range=full:in\_color\_matrix=bt2020:out\_range=tv:out\_color\_matrix=bt2020" | Make sure we treat the input and output color primaries to be bt2020. Without this, FFmpeg can assume the source is different, and apply a primary that shouldn't be there. |
-| \-color\_range tv | Set the source range to be tv range. |
+| \-vf "zscale=matrix=2020\_ncl:range=limited:filter=lanczos,setparams=color\_primaries=bt2020:color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [zscale Conversion](../EncodeZscale.html). |
+| \-color\_range tv | Set the output range to be tv (limited) range. |
 | \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
 | \-color\_primaries bt2020 | Use the bt2020 color primaries |
-| \-colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| \-pix\_fmt yuv444p10le | YCbCr 444, although 422 in many cases is also fine. |
+| \-colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
+| \-pix\_fmt yuv444p10le | Y'CbCr 444, although 422 in many cases is also fine. |
 
 In many cases this may be sufficient, particularly if you are using the ACES transforms that closely map to the maximum luminance of the review monitor (e.g. the 1000 nit view-transforms). It depends on how much the monitor can take advantage of the master-display parameters (see below).
 
-This will also work for other codecs such as h264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
+This will also work for other codecs such as H.264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
 
 ### PQ 422 FFmpeg H265 encoding
 
@@ -118,24 +131,41 @@ name: test_pq1000
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 9
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: smpte2084
 -->
 ```console
 ffmpeg  \
     -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
     -c:v libx265   \
-    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
     -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
     -pix_fmt yuv422p10le  -tag:v hvc1  \
-    -x265-params "hdr-opt=1:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
+    -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
     sparks2_pq1000_422.mov
 ```
+
+x265's `hdr-opt=1` (HDR10 optimisation) is left out: x265 only applies it to 10-bit 4:2:0 with BT.2020
+primaries and matrix and PQ transfer, and otherwise disables it with a "Recommended Settings for HDR10-opt"
+error. Add it for 10-bit 4:2:0 HDR10 deliveries.
 
 The HDR metadata parameters really is what separates HDR10 from PQ10. The parameters below are:
 
@@ -183,16 +213,16 @@ master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(10000000,
 
 Reminder, this does NOT need to match the colorspace/primaries of the overall encoding container, you should not use this unless you actually Master the content on a rec2020 display. Using the P3 monitor values (or whatever display you are using) gives a clue to the display that it should not be using values outside of that gamut, this ensures that you get the colors that the creators expect. The problem is that this does assume quite a bit of the hardware interpreting these values, so in many cases it may be best to limit the source content as much as possible to a P3 gamut (or less).
 
-##### Max-cll/MaxFALL
+#### Max-cll/MaxFALL
 
 The [max-cll](https://x265.readthedocs.io/en/stable/cli.html#cmdoption-max-cll) parameter in h265 is actually two parameters:
 
 * Maximum content light level (MaxCLL) \- this is the luminance of the brightest pixel (in Nits) of the entire video stream.  
-* Maximum frame average light level (MaxFALL) \- this is the average luminance of the entire video stream (in Nits).
+* Maximum frame average light level (MaxFALL) \- this is the highest frame-average luminance in the video stream (in Nits): the average is taken over each frame, and the value is that of the brightest frame.
 
 These are defined by the [Consumer Electronics Association 861.3 spec](https://manuals.plus/m/daba89fd26a25086fa5fbb4855bca4cf77e76cfecbf8bd748a139fcbdc220332.pdf).
 
-Tools such as Resolve, provide ways to calculate these values see [here](https://www.youtube.com/watch?v=1HJi_ZP079w), but its not uncommon to use "typical" values, e.g. "1000,400". i.e. 1000 nit max brightness, 400 average brightness. Although if you really don't know, you can use 0,0 to mean unknown.
+Tools such as Resolve, provide ways to calculate these values see [here](https://www.youtube.com/watch?v=1HJi_ZP079w), but its not uncommon to use "typical" values, e.g. "1000,400". i.e. 1000 nit max brightness, 400 nit for the brightest frame's average. Although if you really don't know, you can use 0,0 to mean unknown.
 
 ### SVT-AV1
 
@@ -201,8 +231,8 @@ SVT-AV1 encoder also has command line parameters that need to be passed in:
 ```console
 ffmpeg \
     -i input.mp4 \
-    -c:v libsvtav1 -pix_fmt yuv420p10le \   
-    -svtav1-params "preset=6:crf=28:enable-hdr=1:color-primaries=9:transfer-characteristics=16:matrix-coefficients=9:mastering-display=G(0.265,0.69)B(0.15,0.06)R(0.68,0.32)WP(0.3127,0.329)L(1000,0.0001):content-light=1000,400" \ 
+    -c:v libsvtav1 -pix_fmt yuv420p10le \
+    -svtav1-params "preset=6:crf=28:enable-hdr=1:color-primaries=9:transfer-characteristics=16:matrix-coefficients=9:mastering-display=G(0.265,0.69)B(0.15,0.06)R(0.68,0.32)WP(0.3127,0.329)L(1000,0.0001):content-light=1000,400" \
     output.mov
  ```
 
@@ -243,35 +273,48 @@ We take advantage of ACES to do the initial conversion to an intermediate format
 # Assuming we are using OCIO 2.1 or higher
 export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
-      ---ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
+      --ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 ```
 
 | --- | --- |
 |--ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" | This is the core colorspace conversion, out_rec2020hlg1000nits is an output colorspace conversion for rec2020 HLG at 1000 nit display |
 | -d uint16 | Output as 16-bit file format |
 
-### HLG 444 FFMPEG encoding
+### HLG 444 FFmpeg encoding
 
 <!---
 name: test_hlg
 sources: 
 - sourceimages/smptehdbars_10.dpx.yml
 comparisontest:
-   - testtype: idiff
-     extracttemplate: "ffmpeg -y -i {newfile} -compression_level 10 -sws_flags lanczos+accurate_rnd+full_chroma_inp+full_chroma_int -pred mixed -pix_fmt rgb48be -vf scale=in_color_matrix=bt2020:out_color_matrix=bt2020  -frames:v 1 {newpngfile}"
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 14
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: arib-std-b67
 -->
 ```console
 ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
     -c:v libx265  -tag:v hvc1  \
-    -vf "scale=in_range=full:in_color_matrix=bt2020:out_range=tv:out_color_matrix=bt2020" \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=arib-std-b67" \
     -color_range tv   -color_trc arib-std-b67   -color_primaries bt2020   -colorspace bt2020nc  \
     -pix_fmt yuv444p10le   \
-    -x265-params "colorprim=bt2020:colormatrix=bt2020nc:transfer=bt2020-10:atc-sei=18:pic-struct=0" \
+    -x265-params "atc-sei=18:pic-struct=0" \
     sparks2_hlg_444.mov
 ```
 
@@ -284,26 +327,27 @@ ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
 #### Encode media definition
 
 | --- | --- |
-| -color_range tv | Set the source range to be tv range. |
+| -color_range tv | Set the output range to be tv (limited) range. |
 | -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
 | -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | Tagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| -pix_fmt yuv444p10le | YUV 444 10-bit output
+| -colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
+| -pix_fmt yuv444p10le | Y'CbCr 4:4:4 10-bit output |
 
 #### X265 parameters
 
-We explicitly define the X265 parameters (see [x265](https://x265.readthedocs.io/en/2.5/cli.html) )
+The color tags come from the filter chain (`zscale` and `setparams`), which FFmpeg passes to libx265, so they are
+not repeated in `-x265-params` (see [x265](https://x265.readthedocs.io/en/2.5/cli.html)). Setting them there as
+well can disagree with the filter chain: with `transfer=bt2020-10`, FFmpeg 6.0 wrote `bt2020-10` into the stream
+and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#hdr-and--x265-params).
 
 | --- | --- |
-| colorprim=bt2020 | Set the colorprimaries to bt2020 |
-| transfer=arib-std-b67 | Set the ETOF to HLG (aka. arib-std-bt67 ) |
-| colormatrix=bt2020nc | UTagging the YcBCr as being encoded using the BT-2020 non-constant luminance. |
-| range=limited | Set the source range to be tv range. |
+| atc-sei=18 | Adds an alternative transfer characteristics SEI saying the transfer is HLG (ARIB STD-B67). |
+| pic-struct=0 | Picture structure SEI: progressive frames. |
 
 ### cICP/mDCV/cLLI in PNG
 
 PNG files have transferable parameters for video encoding in two formats:  
-[cICP](https://w3c.github.io/png/#cICP-chunk) which has the color primaries, transfer function and matrix coefficients based on the [ITU-T-H.273](https://w3c.github.io/png/#bib-itu-t-h.273)\] spec. Further exploration is needed to see if these parameters are correctly read into ffmpeg, which potentially may reduce some of the crazy flags needed.
+[cICP](https://w3c.github.io/png/#cICP-chunk) which has the color primaries, transfer function and matrix coefficients based on the [ITU-T-H.273](https://w3c.github.io/png/#bib-itu-t-h.273) spec. FFmpeg 9.0 reads the `cICP` chunk as the frame's color tags (6.0 does not); see [Sources without tags](../EncodeZscale.html#sources-without-tags).
 
 Similarly for HDR, the Mastering display color volume can be defined with the [mDCV](https://w3c.github.io/png/#mDCV-chunk) and [cLLI](https://w3c.github.io/png/#cLLI-chunk) metadata chunks in PNG.
 
@@ -319,7 +363,7 @@ Further Reading:
 * [HDR Color Bars \- BT.2111](https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2111-3-202505-I!!PDF-E.pdf)  
 * [YouTube HDR Creators Guide](https://docs.google.com/document/u/1/d/1OHGOE4Ihv6SKazfiub_DP1lJbR9PdMMPOQYxPJQAES4/pub#h.3v06o2et6qxw)  
 * [MovieLabs \- HDR/WCG Metadata encoding best practice](https://movielabs.com/md/practices/color/ManifestPractices_HDR_v1.0.pdf)  
-* [Recommendations for Verifying HDR Subjective Testing WorkflowsRecommendations for Verifying HDR Subjective Testing Workflows](https://arxiv.org/pdf/2305.11858)
+* [Recommendations for Verifying HDR Subjective Testing Workflows](https://arxiv.org/pdf/2305.11858)
 * [ITU-T Rec.H Sup.19 \- Usage of video signal code points](https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-H.Sup19-201910-S!!PDF-E&type=items)
 
 I would like to thank Zach Lewis, Doug Walker, Michael De Caria and Vibhoothi for their help in creating this document.  

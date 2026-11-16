@@ -1,0 +1,8 @@
+{#- Site links at the top of each report. Set index_url before including to add the link back to the test index. -#}
+  <nav class="nav">
+    <a href="http://openreviewinitiative.org/">Open Review Initiative</a>
+    <a href="https://academysoftwarefoundation.github.io/EncodingGuidelines/">ORI Encoding Guidelines</a>
+    {%- if index_url %}
+    <a href="{{ index_url }}">Test Indexes</a>
+    {%- endif %}
+  </nav>

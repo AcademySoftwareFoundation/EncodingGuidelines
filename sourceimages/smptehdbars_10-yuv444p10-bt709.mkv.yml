@@ -1,0 +1,11 @@
+images: false
+path: smptehdbars_10-yuv444p10-bt709.mkv
+# Lossless FFV1, BT.709 limited range 4:4:4 10-bit, converted from smptehdbars_10.dpx with zscale, tagged BT.709. Made with:
+# ffmpeg -i smptehdbars_10.dpx -vf "zscale=matrix=709:range=limited,format=yuv444p10le,setparams=color_primaries=bt709:color_trc=bt709" -color_range tv -frames:v 1 -c:v ffv1 -level 3 smptehdbars_10-yuv444p10-bt709.mkv
+# -color_range tv is needed: from 7.1, ffmpeg converts to limited range for FFV1 unless told otherwise.
+reference: smptehdbars_10.dpx
+width: 1920
+height: 1080
+in: 0
+duration: 1
+rate: 25.0

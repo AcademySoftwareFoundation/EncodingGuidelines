@@ -1,0 +1,14 @@
+{#- Macros shared by the report templates: {% from "_macros.html.jinja" import status, num, doc_link %} -#}
+{%- macro status(r) -%}
+  {%- if r.skipped -%}skipped{%- elif r.known_issue -%}known{%- elif r.unexpected_pass -%}unexpected
+  {%- elif r.success is not defined or r.success -%}pass{%- else -%}fail{%- endif -%}
+{%- endmacro -%}
+{%- macro num(v, digits=2) -%}{%- if v is number -%}{{ "%.*f" | format(digits, v) }}{%- else -%}&ndash;{%- endif -%}{%- endmacro -%}
+{#- The documentation page a test was generated from (generatetests.py sets "Test from <file> line <n>"), or nothing. -#}
+{%- macro doc_link(r, base) -%}
+  {%- if r.test_description is string and r.test_description.startswith("Test from ") -%}
+    {%- set parts = r.test_description[10:].rsplit(" line ", 1) -%}
+    {%- set file = parts[0].lstrip("./") -%}
+    <a target="_blank" href="{{ base }}{{ file | e }}?plain=1#L{{ parts[1] | e }}">{{ file | e }}:{{ parts[1] | e }}</a>
+  {%- endif -%}
+{%- endmacro -%}

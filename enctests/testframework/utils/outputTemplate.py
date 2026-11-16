@@ -3,6 +3,7 @@
 # pip install kaleido plotly pandas jinja2
 
 import os
+import re
 import plotly.express as px
 import opentimelineio as otio
 import pandas as pd
@@ -10,6 +11,7 @@ import jinja2
 import json
 from pathlib import Path
 from ..test_suite import TestSuite, SourceConfig
+from ..capabilities import FRAMEWORK_KEYS
 
 def _exportGraph(config, reportconfig, graph, alltests):
   """
@@ -98,10 +100,10 @@ def processTemplate(config, timeline):
             merge_test_info['vmaf_mean'] = float(merge_test_info['vmaf']['mean'])
             merge_test_info['vmaf_harmonic_mean'] = float(merge_test_info['vmaf']['harmonic_mean'])
             if 'psnr_y' in merge_test_info:
-              merge_test_info['psnr_y_harmonic_mean'] = float(merge_test_info.get('psnr_y', {}).get('harmonic_mean', -1))
+              merge_test_info['psnr_y_harmonic_mean'] = float((merge_test_info.get('psnr_y') or {}).get('harmonic_mean', -1))
             if "cambi" in merge_test_info:
-              merge_test_info['cambi_harmonic_mean'] = float(merge_test_info.get('cambi', {}).get('harmonic_mean', -1))
-              merge_test_info['float_ms_ssim_harmonic_mean'] = float(merge_test_info.get('float_ms_ssim', {}).get('harmonic_mean', -1))
+              merge_test_info['cambi_harmonic_mean'] = float((merge_test_info.get('cambi') or {}).get('harmonic_mean', -1))
+              merge_test_info['float_ms_ssim_harmonic_mean'] = float((merge_test_info.get('float_ms_ssim') or {}).get('harmonic_mean', -1))
           else:
             merge_test_info['psnr_y'] = {}
             merge_test_info['psnr_cr'] = {}
@@ -119,6 +121,8 @@ def processTemplate(config, timeline):
           # We merge the arguments into the dictionary too, as well as merge it into a single string, to make the graphing simpler.
           args=[]
           for k,v in test_info.metadata['aswf_enctests']['encode_arguments'].items():
+            if k in FRAMEWORK_KEYS:
+              continue
             args.extend([k,str(v)])
             merge_test_info[k] = v 
           merge_test_info['encode_arguments'] = " ".join(args)
@@ -208,6 +212,9 @@ def outputSummaryIndex(output_dir):
                            'relativeurl': str(htmlreport.relative_to(output_dir)),
                            'error_tests': 0,
                            'success_tests': 0,
+                           'skipped_tests': 0,
+                           'known_issue_tests': 0,
+                           'unexpected_pass_tests': 0,
                            'test_start': timeline.metadata.get("test_start", "unknown"),
                            'platform': timeline.metadata.get("platform", path.parent.parent.name),
                            'applicationVersion': timeline.metadata.get("applicationVersion", path.parent.parent.parent.name),
@@ -219,7 +226,13 @@ def outputSummaryIndex(output_dir):
                     if ref_name == "DEFAULT_MEDIA":
                        continue
                     merge_test_info = test_info.metadata['aswf_enctests']['results']
-                    if merge_test_info.get('success', True):
+                    if merge_test_info.get('skipped'):
+                       results['skipped_tests'] += 1
+                    elif merge_test_info.get('known_issue'):
+                       results['known_issue_tests'] += 1
+                    elif merge_test_info.get('unexpected_pass'):
+                       results['unexpected_pass_tests'] += 1
+                    elif merge_test_info.get('success', True):
                        results['success_tests'] += 1
                     else:
                        results['error_tests'] += 1
@@ -228,22 +241,41 @@ def outputSummaryIndex(output_dir):
                     sub_test_data = {
                         'name': f"{ref_name} ({trackitem.name})",
                         'success': merge_test_info.get('success', True),
+                        'skipped': merge_test_info.get('skipped', False),
+                        'known_issue': merge_test_info.get('known_issue', ''),
+                        'unexpected_pass': merge_test_info.get('unexpected_pass', False),
                         'encode_time': merge_test_info.get('encode_time', -1),
                         'filesize': merge_test_info.get('filesize', -1)
                     }
                     if 'vmaf' in merge_test_info and merge_test_info.get('vmaf') is not None:
                         sub_test_data['vmaf_harmonic_mean'] = merge_test_info.get('vmaf', {}).get('harmonic_mean', -1)
                     if 'psnr_y' in merge_test_info and merge_test_info.get('psnr_y') is not None:
-                        sub_test_data['psnr_y_harmonic_mean'] = merge_test_info.get('psnr_y', {}).get('harmonic_mean', -1)
+                        sub_test_data['psnr_y_harmonic_mean'] = (merge_test_info.get('psnr_y') or {}).get('harmonic_mean', -1)
                     
                     results['sub_tests'].append(sub_test_data)
 
+                results['version'] = str(results['applicationVersion']).replace("ffmpeg_version_", "")
+                results['group'] = f"{results['version']}-{results['platform']}"
                 test_results.append(results)
 
     template_dir = os.path.join(os.path.dirname(__name__ if __name__ == '__main__' else __file__), "..", "templates")
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir))
 
+    def version_order(report):
+        # Releases newest first, then development builds (N-<commit count>-..., git-<date>-...) newest first.
+        version = report['version']
+        if re.fullmatch(r"\d+(\.\d+)*", version):
+            return (0, [-int(v) for v in (version.split(".") + ["0", "0"])[:3]], report['platform'])
+        numbers = [-int(v) for v in re.findall(r"\d+", version)[:3]]
+        return (1, numbers, report['platform'])
+    test_results.sort(key=version_order)
+    groups = []
+    for report in test_results:
+        if not groups or groups[-1]['id'] != report['group']:
+            groups.append({'id': report['group'], 'version': report['version'], 'platform': report['platform'], 'reports': []})
+        groups[-1]['reports'].append(report)
+
     template = environment.get_template('index.html.jinja')
     htmlreport = Path(output_dir) / "index.html"
     with htmlreport.open("w") as f:
-      f.write(template.render(results=test_results, results_json=json.dumps(test_results)))
+      f.write(template.render(results=test_results, groups=groups, results_json=json.dumps(test_results)))

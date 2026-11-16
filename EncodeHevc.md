@@ -16,13 +16,13 @@ parent: Codec Comparisons
 {:toc}
 </details>
 
-H.265 (High Efficiency Video Compression - HEVC) is one of the replacements for H.264. It allows for a reduction of file size compared to H.264 of 25-50% and supports frame formats up to 8K (UHDTV). It also has support for HDR, which we go into more [here](enctests/HDR_Encoding.html).
+H.265 (High Efficiency Video Coding - HEVC) is one of the replacements for H.264. It allows for a reduction of file size compared to H.264 of 25-50% and supports frame formats up to 8K (UHDTV). It also has support for HDR, which we go into more [here](enctests/HDR_Encoding.html).
 
-There is Browser support for H265 on Microsoft Edge, Google Chrome and Safari, but not Firefox.
+In our tests on macOS, Safari, Chrome and Firefox all played HEVC. Browsers generally rely on the operating system or GPU to decode it, so support varies from machine to machine; see the note under [Codecs reviewed](Encoding.html#encode).
 
-See [ffmpeg h265 docs](https://trac.ffmpeg.org/wiki/Encode/H.265)
+See [FFmpeg H.265 docs](https://trac.ffmpeg.org/wiki/Encode/H.265)
 
-There are four HEVC encoders available to ffmpeg:
+There are four HEVC encoders available to FFmpeg:
 
 * [libx265](#libx265)
 * [hevc_videotoolbox](#hevc_videotoolbox) - Available on MacOS via the videotoolbox library.
@@ -31,15 +31,8 @@ There are four HEVC encoders available to ffmpeg:
 
 ## libx265
 
-Supported pixel formats:
-yuv420p
-yuvj420p
-yuv422p
-yuv422p10
-yuv444p10le
-gbrp10le
-gbrp12le
-gbrp
+Supported pixel formats (FFmpeg 9.0):
+yuv420p yuvj420p yuv422p yuvj422p yuv444p yuvj444p gbrp yuv420p10le yuv422p10le yuv444p10le gbrp10le yuv420p12le yuv422p12le yuv444p12le gbrp12le gray gray10le gray12le
 
 Example encoding:
 
@@ -48,35 +41,52 @@ name: test_h265
 sources: 
 - sourceimages/chip-chart-1080-16bit-noicc.png.yml
 comparisontest:
-   - testtype: idiff
-     compare_image: ../sourceimages/chip-chart-1080-16bit-noicc-yuv420p10le.png
+   - testtype: ycbcr
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
    - testtype: assertresults
      tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
      - assert: less
-       value: max_error
-       less: 0.00195
+       value: p99_error_10bit
+       less: 8
+     - assert: less
+       value: mean_error_10bit
+       less: 1.25
+     - assert: stringmatch
+       value: color_primaries
+       string: bt709
+     - assert: stringmatch
+       value: color_transfer
+       string: iec61966-2-1
+     - assert: stringmatch
+       value: colr
+       string: nclx 1/13/1 tv
 -->
 ```console
 ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libx265 \
-    -pix_fmt yuv420p10le -crf 22 -preset slow -sws_flags spline+accurate_rnd+full_chroma_int \
-    -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" \
+    -pix_fmt yuv420p10le -crf 22 -preset slow \
+    -vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1" \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
-    -movflags faststart -y outputfile.mp4
+    -movflags +faststart -y outputfile.mp4
 ```
 
+| Flag | Description |
 | -- | -- |
-| -preset medium | Can be one of ultrafast, superfast, verfast, faster, fast, medium, slow, slower, and placebo |
-| -crf 22 | Similar to h264, default is 28 which is on the low quality side |
+| -preset slow | Can be one of ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo |
+| -crf 22 | Similar to H.264, default is 28 which is on the low quality side |
 | -x265-params lossless=1 | Does lossless encoding, -crf 0 is not required |
-| -tag:v hvc1 | To make it "Apple "Industry standard" compliant |
-| -profile main | Profile can be one of main or main10 or main12 |
-| **-movflags faststart** | This re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+| -tag:v hvc1 | Tag the file as `hvc1`, which Apple players (QuickTime Player, Safari) need to play HEVC in MP4/MOV |
+| -profile:v main | Profile can be one of main or main10 or main12 |
+| **-movflags +faststart** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
+| **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
 
 ## libx265 crf values
 
 To help pick appropriate values with the CRF flag, we have run the [Test Framework](enctests/README.html) through some of the [reference media](enctests/sources/enc_sources/README.html).
 
-If you are trying to map crf values from h264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
+If you are trying to map crf values from H.264, [VS_Fan](http://forum.doom9.net/showthread.php?p=1940750) came up with the following remapping formula:
 
 ```console
 x265_crf(x264_crf) = 1.09 * x264_crf −  4.19
@@ -89,7 +99,7 @@ x265_crf(x264_crf) = 1.09 * x264_crf −  4.19
 ## libx265 preset comparisons
 
 Below is showing a comparison of different preset values with a crf value of 18.
-Its showing that you really can just encode with -preset medium or -preset slow anything higher is really not gaining you anything.
+It shows that you really can just encode with -preset medium or -preset slow anything higher is really not gaining you anything.
 
 | ![](enctests/reference-results/hevc-test-encode_time.png)  This is showing preset values against encoding time. |
 | ![](enctests/reference-results/hevc-test-filesize.png) This is showing preset values against file size. |
@@ -97,10 +107,8 @@ Its showing that you really can just encode with -preset medium or -preset slow 
 
 ## hevc_videotoolbox
 
-Supported pixel formats:
-bgra
-p010le
-nv12
+Supported pixel formats (FFmpeg 9.0):
+nv12 yuv420p bgra ayuv p010le p210le
 
 ## hevc_nvenc
 

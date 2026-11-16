@@ -1,0 +1,186 @@
+---
+# What each way of setting the colour tags does, on each FFmpeg version (the recipes of
+# tests/colour_flags_matrix.py). Every wedge converts the untagged 16-bit chip chart to 10-bit 4:4:4.
+# The results record the tags (ffprobe, colr, bitstream_colour, prores_header), which matrix and range the
+# pixels actually match (pixels_match), and the errors against BT.709 limited range. The flags use the sRGB
+# transfer, as many guides do. Each test asserts the right result (BT.709 limited-range pixels, bt709/sRGB in
+# ffprobe and colr); the recipes that get it wrong on some versions have known_issue blocks, so a FAIL is a
+# change. Measured on 6.1.6 to 9.1.dev. Wedges merged from one with a known_issue reset it with known_issue: [].
+test_cicp_prores:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: iec61966-2-1
+    - assert: stringmatch
+      value: colr
+      string: nclc 1/13/1
+  description: Colour tag recipes, ProRes 4444 XQ in MOV.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_cicp_prores
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mov
+  wedges:
+    minimal: &prores
+      -c:v: prores_ks
+      -profile:v: 4444xq
+      -qscale:v: 1
+      -pix_fmt: yuv444p10le
+      known_issue:
+        note: "no flags: untagged, and the auto-inserted conversion uses BT.601"
+    flags: &prores_flags
+      << : *prores
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "flags only relabel before 7.1: tagged BT.709, pixels BT.601"
+      - note: "-color_primaries/-color_trc are ignored from 7.1: no primaries/transfer written"
+    setparams_flags:
+      << : *prores_flags
+      -vf: '"setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+      known_issue:
+        ffmpeg: "<7.1"
+        note: "before 7.1 -colorspace only relabels: pixels BT.601"
+    scale_flags:
+      << : *prores_flags
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv"'
+      known_issue:
+        ffmpeg: ">=7.1"
+        note: "-color_primaries/-color_trc are ignored from 7.1: no primaries/transfer written"
+    scale_setparams_flags:
+      << : *prores_flags
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+    scale_setparams_all_flags:
+      # After scale the frames are Y'CbCr, so setparams can label the matrix and range too (6.0 needs it).
+      << : *prores_flags
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv"'
+    zscale_setparams_flags:
+      << : *prores_flags
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+    setparams_csrange:
+      # The 7.1+ form: setparams for primaries/transfer, flags only for the matrix and range.
+      << : *prores
+      -vf: '"setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+      -color_range: tv
+      -colorspace: bt709
+      known_issue:
+        ffmpeg: "<7.1"
+        note: "before 7.1 -colorspace only relabels: pixels BT.601"
+    zscale_setparams_noflags:
+      << : *prores
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+---
+test_cicp_x264:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: tv
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: pixels_match
+      string: bt709 tv
+    - assert: stringmatch
+      value: color_primaries
+      string: bt709
+    - assert: stringmatch
+      value: color_transfer
+      string: iec61966-2-1
+    - assert: stringmatch
+      value: colr
+      string: nclx 1/13/1 tv
+  description: Colour tag recipes, lossless H.264 in MP4.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -y "{outfile}"
+  name: test_cicp_x264
+  sources:
+  - ../sourceimages/chip-chart-1080-16bit-noicc.png.yml
+  suffix: .mp4
+  wedges:
+    minimal: &x264
+      -c:v: libx264
+      -qp: 0
+      -movflags: +write_colr
+      -pix_fmt: yuv444p10le
+      known_issue:
+        note: "no flags: untagged, and the auto-inserted conversion uses BT.601"
+    flags: &x264_flags
+      << : *x264
+      -color_range: tv
+      -colorspace: bt709
+      -color_primaries: bt709
+      -color_trc: iec61966-2-1
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "flags only relabel before 7.1: tagged BT.709, pixels BT.601"
+      - note: "-color_primaries/-color_trc are ignored from 7.1: no primaries/transfer written"
+    flags_bsf:
+      # The bitstream filter rewrites the VUI, but not the container's colr.
+      << : *x264_flags
+      -bsf:v: h264_metadata=colour_primaries=1:transfer_characteristics=13
+      known_issue:
+      - ffmpeg: "<7.1"
+        note: "flags only relabel before 7.1: pixels BT.601"
+      - note: "h264_metadata rewrites the VUI but not colr (2/2/1); ffprobe reports unknown on 8.1 and 9.0.2"
+    setparams_flags:
+      << : *x264_flags
+      -vf: '"setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+      known_issue:
+        ffmpeg: "<7.1"
+        note: "before 7.1 -colorspace only relabels: pixels BT.601"
+    scale_flags:
+      << : *x264_flags
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv"'
+      known_issue:
+        ffmpeg: ">=7.1"
+        note: "-color_primaries/-color_trc are ignored from 7.1: no primaries/transfer written"
+    scale_setparams_flags:
+      << : *x264_flags
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+    scale_setparams_all_flags:
+      << : *x264_flags
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"scale=out_color_matrix=bt709:out_range=tv,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv"'
+    zscale_setparams_flags:
+      << : *x264_flags
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+    setparams_csrange:
+      << : *x264
+      -vf: '"setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+      -color_range: tv
+      -colorspace: bt709
+      known_issue:
+        ffmpeg: "<7.1"
+        note: "before 7.1 -colorspace only relabels: pixels BT.601"
+    zscale_setparams_noflags:
+      << : *x264
+      known_issue: []   # passes on every version; do not inherit the merged wedge's
+      -vf: '"zscale=matrix=709:range=limited,setparams=color_primaries=bt709:color_trc=iec61966-2-1"'
+---
+reports:
+  description: What each way of setting the colour tags writes, and what the pixels are, per FFmpeg version.
+  directory: cicp-flags-encode
+  name: cicp-flags-tests
+  templatefile: ycbcr.html.jinja
+  title: Colour tag recipes

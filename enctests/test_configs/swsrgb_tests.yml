@@ -189,5 +189,5 @@ reports:
   description: This is testing different sws_flags filter options for extracting from YCbCr to RGB.
   directory: swsrgb-encode
   name: swsrgb-tests
-  templatefile: colorweb.html.jinja
+  templatefile: identity.html.jinja
   title: Ffmpeg YCbCr to RGB SWS-Flags filter comparisons.

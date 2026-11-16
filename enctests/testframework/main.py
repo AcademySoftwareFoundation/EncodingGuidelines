@@ -1,5 +1,6 @@
 import os
 import sys
+import hashlib
 from copy import deepcopy
 import time
 import yaml
@@ -27,6 +28,10 @@ from .utils import (
 )
 
 from .utils.outputTemplate import processTemplate, outputSummaryIndex
+from .utils.versionChanges import outputVersionChanges
+from . import ycbcr_compare
+from .stream_metadata import stream_metadata, build_info
+from .encoders.ffmpeg_encoder import CAPABILITIES
 
 ENCODE_TEST_SUFFIX = '.yml'
 SOURCE_SUFFIX = '.yml'
@@ -559,12 +564,15 @@ def build_y4m(source_clip: dict, source_path: str, comparisontestinfo: dict, log
     env = os.environ
 
     y4m_pix_fmt = comparisontestinfo.get('pix_fmt', 'yuv444p16')
-    y4m_source = f"{source_path}-{y4m_pix_fmt}{framerange}{comparisontestinfo.get('ext', '.y4m')}"
+    # Stored as lossless FFV1 by default; raw .y4m of a 200 frame sequence is several GB.
+    y4m_ext = comparisontestinfo.get('ext', '.mkv')
+    y4m_codec = '-c:v ffv1 ' if y4m_ext == '.mkv' else ''
+    y4m_source = f"{source_path}-{y4m_pix_fmt}{framerange}{y4m_ext}"
     y4m_convert_cmd = '{ffmpeg_bin} {reference} {ffmpegflags} -sws_flags spline+accurate_rnd+full_chroma_int -vf "scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709" -y {y4m_source}'
     y4mcmd = y4m_convert_cmd.format(
-        ffmpeg_bin=FFMPEG_BIN, 
+        ffmpeg_bin=FFMPEG_BIN,
         reference=reference.replace("\\", "/"),
-        ffmpegflags=f"-strict -1 -pix_fmt {y4m_pix_fmt} ",
+        ffmpegflags=f"-strict -1 -pix_fmt {y4m_pix_fmt} {y4m_codec}",
         y4m_source=y4m_source.replace("\\", "/"))
     
     if not os.path.exists(y4m_source) or os.path.getsize(y4m_source) == 0:
@@ -925,6 +933,118 @@ def yuvdiff_compare(source_clip, test_ref, testname, comparisontestinfo, source_
     enc_meta = get_test_metadata_dict(test_ref)
     enc_meta['results'].update(result)
 
+def ycbcr_test(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
+    """
+    Compare the first frame of the encode with the ideal conversion of the source, reading the decoded
+    planes without any FFmpeg colour conversion. See ycbcr_compare.py.
+
+    comparisontestinfo options:
+    matrix -- the Y'CbCr matrix the encode should use: bt709 (default), bt2020nc, bt470bg or smpte170m,
+              or auto to use the stream's own tag (checks that the pixels match their tags).
+    range  -- the range it should use: tv (default) or pc, or auto to use the stream's tag.
+    margin -- pixels either side of an edge left out of max_error (default 8).
+    chroma_siting -- false to skip measuring where 4:2:2/4:2:0 chroma sits (about a second per encode).
+    The source is the reference, unless its .yml has "reference: <RGB image>" (for JPEG or video sources).
+    A 4:2:2/4:2:0 video source can also give "chroma_siting: <name>", where its chroma really is (left, center,
+    topleft...), so an RGB result records the siting the decoder assumed.
+
+    Results (errors are in code values at the decoded bit depth, Y'/Cb/Cr or G/B/R planes):
+    max_error, max_error_y/cb/cr (or _g/_b/_r) -- the worst error away from edges.
+    mean_error, mean_error_y/cb/cr               -- the mean error away from edges.
+    max_error_all                                -- the worst error anywhere, including edges.
+    p99_error, p99_error_y/cb/cr                 -- the 99th percentile error away from edges; use for lossy codecs.
+    white_y, white_y_ideal, white_error          -- mean Y' of the brightest areas, what it should be, and the difference.
+    pixels_match                                 -- the matrix and range the pixels match, e.g. "bt709 tv", whatever
+                                                    the tags say ("?" where the source cannot tell, "none").
+    chroma_siting_measured, chroma_offset_h/_v   -- where the subsampled chroma sits, measured from the pixels:
+                                                    a name as ffprobe's chroma_location (left, center, topleft...)
+                                                    and the offsets in luma samples (0 co-sited, 0.5 centred).
+    chroma_siting_assumed, chroma_shift_h/_v     -- RGB from a source with chroma_siting: the siting the decoder
+                                                    assumed, and how far that moved the chroma (0 is right).
+    compared_fraction                            -- the fraction of the frame away from edges (0: compared everywhere).
+    max_error_10bit, mean_error_10bit, white_error_10bit -- the same in 10-bit code values, for comparing bit depths.
+    color_range, color_space, color_primaries, color_transfer, chroma_location -- from ffprobe.
+    colr                                         -- the MOV/MP4 colr atom, e.g. "nclx 1/13/1 tv", or "none".
+    """
+    if not distorted.exists():
+        result = {'success': False, 'testresult': "No movie generated."}
+    else:
+        source_meta = get_source_metadata_dict(source_clip)
+        source_file = source_path.as_posix()
+        if source_meta.get('reference'):
+            # A source that is not RGB (JPEG, video) names the RGB image it should decode to.
+            source_file = Path(source_path.parent, source_meta['reference']).as_posix()
+        elif source_meta.get('images'):
+            source_file = source_file % int(source_meta.get('in'))
+        try:
+            result = ycbcr_compare.compare(
+                source_file, distorted,
+                ffmpeg=FFMPEG_BIN,
+                ffprobe=FFMPEG_BIN.replace("ffmpeg", "ffprobe"),
+                matrix=comparisontestinfo.get("matrix", "bt709"),
+                range_=comparisontestinfo.get("range", "tv"),
+                margin=comparisontestinfo.get("margin", 8),
+                image_path=Path(distorted.parent, distorted.stem + f".{OUTPUT_STILL_IMAGE_FORMAT}"),
+                diff_path=Path(distorted.parent, distorted.stem + f"-x20diff.{OUTPUT_STILL_IMAGE_FORMAT}"),
+                error_map_path=Path(distorted.parent, distorted.stem + f"-errormap.{OUTPUT_STILL_IMAGE_FORMAT}"),
+                error_map_limit=comparisontestinfo.get("error_map_limit", 4.0),
+                source_image_path=Path(distorted.parent, f"{source_clip.name}-source.{OUTPUT_STILL_IMAGE_FORMAT}"),
+                measure_siting=comparisontestinfo.get("chroma_siting", True),
+                source_movie=source_path.as_posix() if source_meta.get('chroma_siting') else None,
+                source_siting=source_meta.get('chroma_siting'),
+                log=log_file_object)
+        except Exception as e:
+            # Report it against this test rather than stopping the whole run.
+            result = {'success': False, 'testresult': f"Unable to compare: {e!r}"}
+    print(f"ycbcr result: {result}", file=log_file_object)
+    enc_meta = get_test_metadata_dict(test_ref)
+    enc_meta['results'].update(result)
+
+
+def framework_commit():
+    """The git commit of the test framework, with -dirty if it has uncommitted changes, or unknown."""
+    try:
+        return subprocess.run(["git", "describe", "--always", "--dirty"], cwd=Path(__file__).parent,
+                              capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+_BUILD_INFO = None
+
+
+def ffmpeg_build_info():
+    """The ffmpeg version line, configure options and linked libraries (stream_metadata.build_info), once per run,
+    so a change in a library can be told from a change in FFmpeg."""
+    global _BUILD_INFO
+    if _BUILD_INFO is None:
+        _BUILD_INFO = build_info(FFMPEG_BIN)
+    return _BUILD_INFO
+
+
+def apply_known_issue(enc_meta, test_config, source_name):
+    """
+    Mark a result covered by a `known_issue:` block (wedge or test level, see capabilities.py). On an affected
+    version a failure becomes a known issue, and a pass an unexpected pass, so an upstream fix shows up.
+    The block can be a list; the first that applies to this build, machine and source is used.
+    """
+    blocks = enc_meta['encode_arguments'].get('known_issue') or test_config.get('known_issue')
+    if hasattr(blocks, 'keys'):
+        # One block; in the OTIO metadata it is an AnyDictionary, not a dict.
+        blocks = [blocks]
+    known = next((b for b in blocks or [] if CAPABILITIES.known_issue_applies(b, source_name)), None)
+    if not known:
+        return
+    result = enc_meta['results']
+    note = known.get('note', 'known issue')
+    if result.get('success', True):
+        result['unexpected_pass'] = True
+        result['testresult'] = f"Unexpected pass, check whether this is fixed: {note}"
+    else:
+        result['known_issue'] = note
+        result['testresult'] = f"Known issue: {note} ({result.get('testresult', 'failed')})"
+
+
 def assertresults_compare(source_clip, test_ref, testname, comparisontestinfo, source_path, distorted, log_file_object):
     """
     Check the results of the tests against known values (or value ranges).
@@ -1089,8 +1209,15 @@ def run_tests(args, config_data, timeline):
                     'hostname': platform.node(),
                 }
                 distorted = Path(test_ref.target_url)
+                if enc_meta['results'].get('skipped'):
+                    # The build or machine lacks something the wedge needs; nothing was encoded.
+                    continue
 
                 print(f"Testing: {distorted.name}")
+                # What FFmpeg wrote, whatever the comparison, so a change shows up in the change report.
+                enc_meta['results'].update(stream_metadata(
+                    FFMPEG_BIN, FFMPEG_BIN.replace("ffmpeg", "ffprobe"), distorted,
+                    Path(distorted.parent, distorted.stem + ".log")))
                 # Send all the log output of the tests to a separate log file.
                 log_file = Path(distorted.parent, distorted.stem + "_tests.log")
                 with open(log_file, "w") as log_file_object:
@@ -1110,6 +1237,8 @@ def run_tests(args, config_data, timeline):
                             psnr_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "vmaf3":
                             vmaf3_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
+                        elif testtype == "ycbcr":
+                            ycbcr_test(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "idiff":
                             idiff_compare(source_clip, test_ref, test_name, test, source_path, distorted, log_file_object)
                         elif testtype == "yuvdiff":
@@ -1125,6 +1254,8 @@ def run_tests(args, config_data, timeline):
                         if enc_meta['results'].get('stopProcessing', False):
                             print("Aborting further processing due to 'stopProcessing'", file=log_file_object)
                             break
+
+                apply_known_issue(enc_meta, test_config, source_clip.name)
 
             # Update dict of references
             references.update(results)
@@ -1199,6 +1330,11 @@ def main():
         # Store results in a timeline, so we can view the results in otioview
         timeline = otio.schema.Timeline(name='aswf-encoding-tests')
         timeline.metadata['config_file'] = test_config.config_file().as_posix()
+        # So results are only compared across FFmpeg versions when they came from the same config and code
+        # (utils/versionChanges.py).
+        timeline.metadata['config_sha256'] = hashlib.sha256(test_config.config_file().read_bytes()).hexdigest()
+        timeline.metadata['framework_commit'] = framework_commit()
+        timeline.metadata.update(ffmpeg_build_info())
         timeline.metadata['test_start'] = time.strftime("%Y-%m-%d %I:%M:%S")
         t = time.time()
         # Run tests
@@ -1216,6 +1352,7 @@ def main():
     
     # Output the index of all the reports in the specified folder.
     outputSummaryIndex(args.results_folder)
+    outputVersionChanges(args.results_folder)
 
 
 if __name__== '__main__':

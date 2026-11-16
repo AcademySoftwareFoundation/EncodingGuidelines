@@ -1,0 +1,241 @@
+---
+# Y'CbCr to Y'CbCr range conversion (limited to full, and full to limited), from lossless BT.709 10-bit 4:4:4
+# sources made with zscale. Each source's .yml names the RGB image it represents, and the result is compared with
+# the ideal conversion of that. zscale must pass on every version; libswscale's default and its new code
+# (flags=unstable) are tracked with known_issue blocks, so a regression shows as a failure and a fix as an
+# unexpected pass.
+#
+# Outputs are FFV1, which only declares limited range: from 7.1 ffmpeg converts to limited for it (with
+# libswscale) unless -color_range says otherwise, so every wedge sets it.
+#
+# Results, 2026-10-30, on 6.1.6, 7.1.5, 8.0.1, 8.1 (git, n8.2-dev), 9.0.2 and master (N-127508), both charts:
+# - zscale: white 0.0, max 1, mean <= 0.26 (10-bit code values) on all of them.
+# - libswscale 10/12-bit: white 3 to 4 out, in both directions, up to 7.1. From 8.0 (384fe39623, "fix mpeg ranges
+#   in yuv range conversion for non-8-bit pixel formats") white is exact; to full at 10-bit is still max 2, mean 0.5.
+# - libswscale 8-bit: max 2 (8-bit code values) on all versions, and its mean doubled in 8.0.
+# The same commit made RGB to full range Y'CbCr worse (color_tests *_libswscale_full); see TODO.md.
+test_ycbcr_to_full:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: auto
+    # Limits (10-bit code values): just above zscale on both charts and all versions above.
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: color_range
+      string: pc
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: max_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.4
+  description: Limited range Y'CbCr to full range, 10 and 12-bit, compared with the ideal conversion of the RGB the source represents.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -c:v ffv1 -y "{outfile}"
+  name: test_ycbcr_to_full
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709.mkv.yml
+  - ../sourceimages/smptehdbars_10-yuv444p10-bt709.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale_10bit: &to_full
+      -vf: '"zscale=range=full"'
+      -pix_fmt: yuv444p10le
+      -color_range: pc
+    zscale_12bit:
+      << : *to_full
+      -pix_fmt: yuv444p12le
+    libswscale_10bit:
+      << : *to_full
+      -vf: '"scale=out_range=full"'
+      known_issue:
+        note: "libswscale: white 3 low up to 7.1; from 8.0 max 2, mean 0.5"
+    libswscale_12bit:
+      << : *to_full
+      -vf: '"scale=out_range=full"'
+      -pix_fmt: yuv444p12le
+      known_issue:
+        ffmpeg: "<8.0"
+        note: "libswscale: white 4 low (10-bit code values), fixed in 8.0 by 384fe39623"
+    libswscale_unstable_10bit:
+      << : *to_full
+      requires:
+        ffmpeg: ">=8.1"   # the unstable flag is new in 8.1
+      -vf: '"scale=out_range=full:flags=unstable"'
+      known_issue:
+        note: "libswscale new code: max 2"
+    libswscale_unstable_12bit:
+      << : *to_full
+      requires:
+        ffmpeg: ">=8.1"
+      -vf: '"scale=out_range=full:flags=unstable"'
+      -pix_fmt: yuv444p12le
+
+---
+test_ycbcr_to_full_8bit:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: auto
+    # Limits (10-bit code values): zscale is max 4 (one 8-bit code value, rounding), mean 0.35 on the chip chart.
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: color_range
+      string: pc
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: max_error_10bit
+      less: 5
+    - assert: less
+      value: mean_error_10bit
+      less: 0.45
+  description: Limited range 10-bit Y'CbCr to full range 8-bit, compared with the ideal conversion of the RGB the source represents.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -c:v ffv1 -y "{outfile}"
+  name: test_ycbcr_to_full_8bit
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709.mkv.yml
+  - ../sourceimages/smptehdbars_10-yuv444p10-bt709.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale_8bit: &to_full_8bit
+      -vf: '"zscale=range=full"'
+      -pix_fmt: yuv444p
+      -color_range: pc
+    libswscale_8bit:
+      << : *to_full_8bit
+      -vf: '"scale=out_range=full"'
+      known_issue:
+        note: "libswscale: max 2 (8-bit code values); mean 0.9 up to 7.1, 1.7 from 8.0"
+    libswscale_unstable_8bit:
+      << : *to_full_8bit
+      requires:
+        ffmpeg: ">=8.1"
+      -vf: '"scale=out_range=full:flags=unstable"'
+      known_issue:
+        note: "libswscale new code: mean 0.9 on the chip chart"
+
+---
+test_ycbcr_to_limited:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: auto
+    # Limits (10-bit code values): just above zscale on both charts and all versions above.
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: color_range
+      string: tv
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: max_error_10bit
+      less: 2
+    - assert: less
+      value: mean_error_10bit
+      less: 0.4
+  description: Full range Y'CbCr to limited range, 10 and 12-bit, compared with the ideal conversion of the RGB the source represents.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -c:v ffv1 -y "{outfile}"
+  name: test_ycbcr_to_limited
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709-full.mkv.yml
+  - ../sourceimages/smptehdbars_10-yuv444p10-bt709-full.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale_10bit: &to_limited
+      -vf: '"zscale=range=limited"'
+      -pix_fmt: yuv444p10le
+      -color_range: tv
+    zscale_12bit:
+      << : *to_limited
+      -pix_fmt: yuv444p12le
+    libswscale_10bit:
+      << : *to_limited
+      -vf: '"scale=out_range=limited"'
+      known_issue:
+        ffmpeg: "<8.0"
+        note: "libswscale: white 3 high, fixed in 8.0 by 384fe39623"
+    libswscale_12bit:
+      << : *to_limited
+      -vf: '"scale=out_range=limited"'
+      -pix_fmt: yuv444p12le
+      known_issue:
+        ffmpeg: "<8.0"
+        note: "libswscale: white 2.5 high (10-bit code values), fixed in 8.0 by 384fe39623"
+    libswscale_unstable_10bit:
+      << : *to_limited
+      requires:
+        ffmpeg: ">=8.1"   # the unstable flag is new in 8.1
+      -vf: '"scale=out_range=limited:flags=unstable"'
+    libswscale_unstable_12bit:
+      << : *to_limited
+      requires:
+        ffmpeg: ">=8.1"
+      -vf: '"scale=out_range=limited:flags=unstable"'
+      -pix_fmt: yuv444p12le
+
+---
+test_ycbcr_to_limited_8bit:
+  app: ffmpeg
+  comparisontest:
+  - testtype: ycbcr
+    matrix: bt709
+    range: auto
+    # Limits (10-bit code values): zscale is max 4 (one 8-bit code value, rounding), mean 0.16 on the chip chart.
+  - testtype: assertresults
+    tests:
+    - assert: stringmatch
+      value: color_range
+      string: tv
+    - assert: between
+      value: white_error_10bit
+      between: [-1.5, 1.5]
+    - assert: less
+      value: max_error_10bit
+      less: 5
+    - assert: less
+      value: mean_error_10bit
+      less: 0.45
+  description: Full range 10-bit Y'CbCr to limited range 8-bit, compared with the ideal conversion of the RGB the source represents.
+  encoding_template: ffmpeg -y {input_args} -i "{source}" {encoding_args} -c:v ffv1 -y "{outfile}"
+  name: test_ycbcr_to_limited_8bit
+  sources:
+  - ../sourceimages/chip-chart-1080-yuv444p10-bt709-full.mkv.yml
+  - ../sourceimages/smptehdbars_10-yuv444p10-bt709-full.mkv.yml
+  suffix: .mkv
+  wedges:
+    zscale_8bit: &to_limited_8bit
+      -vf: '"zscale=range=limited"'
+      -pix_fmt: yuv444p
+      -color_range: tv
+    libswscale_8bit:
+      << : *to_limited_8bit
+      -vf: '"scale=out_range=limited"'
+      known_issue:
+        note: "libswscale: white 3.6 high on the bars, max 2 (8-bit code values)"
+    libswscale_unstable_8bit:
+      << : *to_limited_8bit
+      requires:
+        ffmpeg: ">=8.1"
+      -vf: '"scale=out_range=limited:flags=unstable"'
+      known_issue:
+        note: "libswscale new code: mean 0.9 on the chip chart"
+
+---
+reports:
+  description: Y'CbCr range conversion (limited to full and full to limited) with zscale and libswscale, stored losslessly with FFV1. Each result is compared with the ideal BT.709 conversion of the RGB the source represents, in 10-bit code values. zscale must pass; libswscale's known issues are listed, and an unexpected pass means one may have been fixed.
+  directory: ycbcr-range-encode
+  name: ycbcr-range-tests
+  templatefile: ycbcr.html.jinja
+  title: Y'CbCr range conversion with zscale and libswscale.
