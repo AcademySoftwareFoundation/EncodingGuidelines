@@ -93,7 +93,8 @@ def run_images(root, sources, groups, unit_max=255):
     """For tests whose results are RGB images rather than encodes (the resize comparison). Each source has 'path'
     and 'reference' (a float RGB array, the size of the results), and optionally 'exr' (a scene-linear original);
     each variant has 'command', a template with {src}, {exr}, {out} (a 16-bit PNG to write), {w} and {h}, and
-    optionally 'only', the source ids it applies to. Results are compared with the reference.
+    optionally 'only', the source ids it applies to. Results are compared with the reference. A source may give
+    'params', more values for the command templates, and 'listed_only', to run only the variants whose 'only' names it.
 
     A source may give 'crop' = (x, y, w, h) in output pixels: the whole image is still resized, but only that part of
     each result (and of the reference) is kept and measured, to keep the page's files small. A resize only looks at
@@ -123,11 +124,12 @@ def run_images(root, sources, groups, unit_max=255):
             it = {'label': e['label'], 'group': glabel, 'description': e['description'], 'flags': e['flags'],
                   'layout': rgb8, 'results': {}}
             for s in out_sources:
-                if 'only' in e and s['id'] not in e['only']:
+                if s['id'] not in e.get('only', [] if s.get('listed_only') else [s['id']]):
                     continue
                 base = f"{s['id']}-{e['id']}"
                 tmp = os.path.join(root, base + "-16bit.png")
-                cmd = e['command'].format(src=s['path'], exr=s.get('exr', ''), out=tmp, w=s['out_w'], h=s['out_h'])
+                cmd = e['command'].format(src=s['path'], exr=s.get('exr', ''), out=tmp, w=s['out_w'], h=s['out_h'],
+                                       **s.get('params', {}))
                 run(cmd)
                 out = cut(read_rgb(tmp), s.get('crop'))
                 os.remove(tmp)

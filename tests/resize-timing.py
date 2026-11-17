@@ -63,7 +63,7 @@ def variants(rt):
             cmd = e['command']
             m = re.search(r'-vf "(.*)" \{out\}$', cmd)
             if m:
-                out.append(dict(id=e['id'], label=e['label'], tool='ffmpeg', vf=m.group(1).format(w=W, h=H)))
+                out.append(dict(id=e['id'], label=e['label'], tool='ffmpeg', vf=m.group(1).format(w=W, h=H, **rt.size_params(4096, W))))
                 continue
             m = re.match(r'oiiotool \{exr\} (.*) -d uint16 -o \{out\}$', cmd)
             if m:

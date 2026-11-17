@@ -16,7 +16,14 @@ on the gamma-encoded values and in linear light, compared with a reference that 
 light. Three ACES2065-1 OpenEXR images (Sparks, BrightRings and Desk), viewed through OCIO's ACES 2.0 SDR view, add
 resizing before the view transform, in scene-linear light. Wipe or flip between any two, or show their difference.
 
-The page and its images are about 40 MB, so they are not in this repository; they are hosted at
+The EXRs are also shrunk by 2.13 (Sparks from 4096 to 1920 wide), with the scene-linear variants only. At that factor
+output pixels no longer line up with source pixels, so the reference averages the source pixels each output pixel
+covers, weighting the ones at its edges by how much of them it covers. Methods built on 4×4 blocks (the anti-ringing
+clamp, highlightcomp with its light restored) use the same footprints there, and work less well: the FFmpeg clamp's
+window has to be a fixed 5×5 square, a little looser than the footprint, and restoring highlightcomp's light makes the
+highlights somewhat too bright. The cubic comes much closer to the reference at ×2.13 than at 4×.
+
+The page and its images are about 60 MB, so they are not in this repository; they are hosted at
 [encode.taurich.org](https://encode.taurich.org/tests/resize-compare/compare.html). The viewer works best
 [full screen](https://encode.taurich.org/tests/resize-compare/compare.html).
 
@@ -50,10 +57,18 @@ which runs each variant on the 200 Sparks frames, from the EXRs to a ProRes 422 
 `tests/resize-timing-results.json`. Run it once as it is and once with `--parallel-frames` (for oiiotool), before
 `resize-test.py`; it takes about half an hour. Without the results, the timing table is left out.
 
-The anti-ringing variant (lanczos3 clamped to the range of each 4×4 block) comes from
-[`tests/resize-antiring.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-antiring.py),
-which `resize-test.py` runs. Neither FFmpeg nor `oiiotool` can do it with floating-point images, so it uses the
-OpenImageIO Python bindings, and the timing test leaves it out.
+The anti-ringing variant clamps lanczos to the range of the source pixels each output pixel covers (its 4×4 block at
+4×), in a single FFmpeg command, which needs `tests/log16.clf` for the limits.
+[`tests/resize-antiring.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-antiring.py)
+does the same with the OpenImageIO Python bindings and exact limits; it is the reference the FFmpeg command was
+checked against, and is not on the page.
+
+The "light restored" highlightcomp variants come from
+[`tests/resize-highlightcomp.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-highlightcomp.py),
+run by `resize-test.py` with the OpenImageIO Python bindings (the timing test leaves them out): highlightcomp, multiplied by the ratio of the
+average of the source pixels each output pixel covers, in scene-linear, to the same average done on the compressed
+values. The footprints for both scripts and for the reference come from
+[`tests/python/resizefootprint.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/python/resizefootprint.py).
 
 The Nuke variants (Sparks only) come from [`tests/resize-nuke.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/resize-nuke.py): paste it into Nuke's Script
 Editor (it was run in Nuke 17.1v1) to write the EXRs to `resize-compare/nuke/`, then run `resize-test.py`. Without them,

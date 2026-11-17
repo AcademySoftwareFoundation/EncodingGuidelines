@@ -1,5 +1,6 @@
 """
-Compare ways of downsizing an image by 4, for tests/resize-compare/compare.html.
+Compare ways of downsizing an image by 4 (and the EXRs also by 2.133, as 4096 to 1920), for
+tests/resize-compare/compare.html.
 
 Each source is shrunk to a quarter of its width and height with FFmpeg's scale (libswscale) and zscale filters,
 with oiiotool, and with both of those in linear light. The results are compared with a reference: each output
@@ -18,6 +19,11 @@ Desk (a photograph with a backlit stained-glass window, highlights up to about 2
 first. The OpenEXR images are read from ../../openexr-images (set OPENEXR_IMAGES to change it); a missing EXR is left
 out.
 
+The EXRs are also shrunk by 32/15 = 2.133 (Sparks from 4096 to 1920 wide), with the scene-linear variants only. Each
+output pixel's footprint then cuts through source pixels, so the reference is the footprint's average with the edge
+pixels weighted by how much of them it covers (tests/python/resizefootprint.py); for a whole factor that is the same
+as the block average.
+
 Run from the tests folder, with ffmpeg (with zscale) and oiiotool on the PATH:
     python resize-test.py [--outdir ./resize-compare]
 """
@@ -30,6 +36,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "python"))
 import yuvcompare as yc  # noqa: E402
+from resizefootprint import area_resize  # noqa: E402
 
 FF = 'ffmpeg -v error -y -i {src} -frames:v 1 -vf "{vf}" {out}'
 OIIO_LIN = "--colorconvert srgb_tx lin_rec709 {resize} --colorconvert lin_rec709 srgb_tx"
@@ -38,6 +45,8 @@ SPARKS = "../enctests/sources/hdr_sources/sparks/SPARKS_ACES_06100.exr"
 # github.com/AcademySoftwareFoundation/openexr-images, checked out next to this repository (or set OPENEXR_IMAGES)
 OPENEXR_IMAGES = os.environ.get("OPENEXR_IMAGES", "../../openexr-images")
 HDR_IDS = ['sparks', 'brightrings', 'desk']
+FRACTION = 15 / 32     # the second size for the EXRs: 4096 to 1920, a factor of 2.133
+HDR_IDS += [f"{i}_frac" for i in HDR_IDS]
 # Absolute links, so the page also works when hosted on its own (it is too large to commit)
 SITE = "https://academysoftwarefoundation.github.io/EncodingGuidelines"
 REPO = "https://github.com/AcademySoftwareFoundation/EncodingGuidelines"
@@ -52,23 +61,46 @@ ZLIN = (f"zscale={Z709}:transferin=iec61966-2-1:transfer=linear,format=gbrpf32le
 # oiiotool's --resize:highlightcomp=1 is IBA::rangecompress per channel, the resize, then IBA::rangeexpand
 # (src/libOpenImageIO/imagebufalgo_pixelmath.cpp, SPI's coefficients): unchanged up to |x| = 0.18, then
 # sign(x) * (a + b * ln(c * |x| + 1)), which meets the straight part with the same value and slope.
-RC_X1, RC_A, RC_B, RC_C = 0.18, -0.54576885700225830078, 0.18351669609546661377, 284.3577880859375
-# The same curve for values >= 0, as a CLF for the ocio filter (below 0.18 it is a straight line, so it does not
-# mirror the curve for values below -0.18 as OIIO does).
+# rangecompress.clf is the same curve for values >= 0, for FFmpeg's ocio filter (below 0.18 it is a straight line,
+# so it does not mirror the curve for values below -0.18 as OIIO does).
 RC_CLF = "rangecompress.clf"
+# The anti-ringing clamp in FFmpeg: lanczos, limited to the minimum and maximum of the source pixels under each output
+# pixel. erosion/dilation (minimum/maximum) only work on integers, so the limits go through a log curve (log16.clf)
+# into 16 bits and back. Each pass looks one pixel further (coordinates=255 all round, 11 up and left, 208 down and
+# right), and zscale's point filter then picks pixel floor(c) for an output pixel centred at c in the source. The
+# passes depend on the factor (ar_window, filled in per source as {ar_erosion} and {ar_dilation}).
+# blend's lighten and darken are max and min, in float.
+AR_CLF = "log16.clf"
 
 
-def rangecompress(v):
-    return f"if(lte(abs({v}),{RC_X1}),{v},sgn({v})*({RC_A}+{RC_B}*log({RC_C}*abs({v})+1)))"
+def ar_window(f, src_w, w):
+    """The erosion or dilation passes for a resize from src_w to w pixels across. For a whole factor k, exactly the
+    k x k block around the pixel the point filter picks (4x: one pass all round, one up and left). Otherwise
+    floor(s/2) + 1 passes all round, the smallest square around that pixel that always holds the footprint
+    (5 x 5 at x2.133, where the footprint touches 3 or 4 pixels), so the limits are a little loose."""
+    s = src_w / w
+    k = round(s)
+    if abs(s - k) < 1e-9:
+        up, down = k // 2, k - 1 - k // 2
+        passes = [255] * min(up, down) + [11] * (up - min(up, down)) + [208] * (down - min(up, down))
+    else:
+        passes = [255] * (int(s // 2) + 1)
+    return ",".join(f"{f}=coordinates={c}" for c in passes)
 
 
-def rangeexpand(v):
-    return f"if(lte(abs({v}),{RC_X1}),{v},sgn({v})*(exp((abs({v})-({RC_A}))/{RC_B})-1)/{RC_C})"
+def size_params(src_w, w):
+    """Per-source values for the variant commands, beside {w} and {h}."""
+    return {'ar_erosion': ar_window('erosion', src_w, w), 'ar_dilation': ar_window('dilation', src_w, w)}
 
 
-def geq_rgb(fn):
-    """geq applying fn to each of R, G and B. geq works in float (gbrpf32le) and does not clip."""
-    return "geq=" + ":".join(f"{p}='{fn(p + '(X,Y)')}'" for p in "rgb")
+def ff_antiring():
+    def limit(f):
+        return (f"{{ar_{f}}},zscale=w={{w}}:h={{h}}:filter=point,"
+                f"format=gbrpf32le,ocio=filetransform={AR_CLF}:inverse=1:format=gbrpf32le,format=gbrpf32le")
+    return ("split[a][b];[a]zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le[L];"
+            f"[b]ocio=filetransform={AR_CLF}:format=gbrpf32le,format=gbrp16le,split[b][c];"
+            f"[b]{limit('erosion')}[lo];[c]{limit('dilation')}[hi];"
+            "[L][lo]blend=all_mode=lighten,format=gbrpf32le[t];[t][hi]blend=all_mode=darken,format=gbrpf32le")
 
 
 def ff(vf):
@@ -129,17 +161,6 @@ GROUPS = [
                '-vf "ocio=...:format=rgb48,format=rgb48le,zscale=w=W:h=H:filter=lanczos"',
                FF_EXR.replace("VF", FF_OCIO + ",format=rgb48le,zscale=w={w}:h={h}:filter=lanczos,format=gbrp16le")),
              only=HDR_IDS),
-        dict(v('hdr_ff_ocio_zscale_displaylinear', 'FFmpeg ocio, then zscale lanczos in display-linear', "The view "
-               "transform first, then zscale converts the display image to linear light (the sRGB curve, which the "
-               "ACES configs' sRGB display uses), resizes and converts back. That fixes the gamma part, but the "
-               "highlights were compressed to near white by the view transform before the resize, so their energy is "
-               "already gone.",
-               '-vf "ocio=...:format=rgb48,format=rgb48le,zscale=...:transferin=iec61966-2-1:transfer=linear,'
-               'format=gbrpf32le,zscale=w=W:h=H:filter=lanczos,zscale=...:transferin=linear:transfer=iec61966-2-1"',
-               FF_EXR.replace("VF", FF_OCIO + f",format=rgb48le,zscale={Z709}:transferin=iec61966-2-1:transfer=linear,"
-                              "format=gbrpf32le,zscale=w={w}:h={h}:filter=lanczos,"
-                              f"zscale={Z709}:transferin=linear:transfer=iec61966-2-1,format=gbrp16le")),
-             only=HDR_IDS),
         dict(v('hdr_oiio_scene_lanczos', 'oiiotool, lanczos3 in scene-linear, then OCIO', "Resizes the EXR in "
                "scene-linear light, then applies the ACES 2.0 view: the right order, and the brightness is closest to "
                "the reference. But lanczos's negative lobes ring hard around highlights a hundred or more times "
@@ -149,8 +170,8 @@ GROUPS = [
         dict(v('hdr_oiio_scene_lanczos_clamp', 'oiiotool, lanczos3 in scene-linear, clamp negatives, then OCIO',
                "Lanczos as above, then --clamp:min=0 to remove the values its ringing pushed below zero. The halos "
                "become black rather than below black: less extreme, but still there, since the ring is darker than "
-               "its surroundings either way. (The anti-ringing variant below clamps to each block's range instead, "
-               "which removes them.)",
+               "its surroundings either way. (The anti-ringing variant below clamps to the range of the pixels "
+               "each output pixel covers instead, which removes them.)",
                f'--resize:filter=lanczos3 WxH --clamp:min=0 {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=lanczos3 {w}x{h} --clamp:min=0 " + OIIO_VIEW + " -d uint16 -o {out}"),
              only=HDR_IDS),
@@ -162,18 +183,25 @@ GROUPS = [
                f'--resize:filter=lanczos3:highlightcomp=1 WxH {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=lanczos3:highlightcomp=1 {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"),
              only=HDR_IDS),
-        dict(v('hdr_py_scene_lanczos_antiring', "lanczos3 in scene-linear, clamped to each block's range "
-               "(anti-ringing), then OCIO",
-               "Lanczos3 in scene-linear, then each output pixel is clamped, per channel, to the range of the 4×4 "
-               "source pixels it covers. Next to a highlight, a block of plain background has a single value, so the "
-               "result cannot dip below it (no halo) or rise above it (no bloom); inside a block holding the "
-               "highlight the range is wide and lanczos is untouched, so it stays sharp and keeps the highlight's "
-               "light. This is the anti-ringing of libplacebo and madVR, not the clamp-negatives variants, which "
-               "leave the halos as black. FFmpeg's erosion, dilation and maskedclamp would do it, but they do not take "
-               "float input, and oiiotool has no such option, so tests/resize-antiring.py does it with the "
+        dict(v('hdr_py_scene_lanczos_hc_energy', "lanczos3 in scene-linear with highlightcomp, light restored, then OCIO",
+               "Highlightcomp, with the light it loses put back. Each output pixel of the highlightcomp result is "
+               "multiplied, per channel, by the ratio of two averages of the source pixels it covers (its 4×4 block "
+               "at 4×): the average in scene-linear (the right brightness) over the same average done the "
+               "highlightcomp way (compress, average, expand). In flat areas the ratio is 1; where bright and dark "
+               "mix it scales the result back up, so BrightRings' discs are white again. At 4× the average never "
+               "looks outside its block, so the correction does not spread a highlight into its neighbours. At "
+               "×2.13 the output pixels cut through source pixels, and one that only just touches a highlight "
+               "gets a large ratio, which also scales up lanczos's spill: the highlights come out somewhat too "
+               "bright. Highlightcomp's mild halos remain. Done by tests/resize-highlightcomp.py with the "
                "OpenImageIO Python bindings.",
-               'python resize-antiring.py in.exr W H out.png',
-               "python resize-antiring.py {exr} {w} {h} {out}"), only=HDR_IDS),
+               'python resize-highlightcomp.py in.exr W H out.png',
+               "python resize-highlightcomp.py {exr} {w} {h} {out}"), only=HDR_IDS),
+        dict(v('hdr_py_scene_lanczos_hc_energy_clamp', "lanczos3 in scene-linear with highlightcomp, light restored, "
+               "clamped to each block's range, then OCIO",
+               "The same, then each output pixel is clamped to the range of the source pixels it covers (its 4×4 "
+               "block at 4×; the anti-ringing clamp), which removes the halos highlightcomp leaves.",
+               'python resize-highlightcomp.py in.exr W H out.png --clamp',
+               "python resize-highlightcomp.py {exr} {w} {h} {out} --clamp"), only=HDR_IDS),
         dict(v('hdr_oiio_acescct_lanczos', 'oiiotool, lanczos3 in ACEScct (log), then OCIO', "Converts to ACEScct, "
                "a log encoding, resizes there, then applies the view, as Resolve does with a log timeline. Log values "
                "are bounded, so lanczos cannot ring far, but the averaging is on log values, which loses highlight "
@@ -185,16 +213,10 @@ GROUPS = [
                "same as Nuke's default Cubic (the Hermite cubic, no negative lobes).",
                f'--resize:filter=cubic WxH {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=cubic {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"), only=HDR_IDS),
-        dict(v('hdr_oiio_scene_mitchell', 'oiiotool, mitchell in scene-linear, then OCIO', "A softer filter with "
-               "only small negative lobes, so less ringing around very bright highlights than lanczos.",
-               f'--resize:filter=mitchell WxH {OIIO_VIEW}',
-               "oiiotool {exr} --resize:filter=mitchell {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"), only=HDR_IDS),
-        dict(v('hdr_oiio_scene_gaussian', 'oiiotool, gaussian in scene-linear, then OCIO', "A filter with no negative "
-               "lobes: no ringing at all, but softer.",
-               f'--resize:filter=gaussian WxH {OIIO_VIEW}',
-               "oiiotool {exr} --resize:filter=gaussian {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"), only=HDR_IDS),
         dict(v('hdr_oiio_scene_box', 'oiiotool, box in scene-linear, then OCIO', "A box over exactly 4x4 pixels in "
-               "scene-linear, then the view: the reference's method, done with oiiotool, as a check.",
+               "scene-linear, then the view: the reference's method, done with oiiotool, as a check. At ×2.13 it "
+               "is not quite the reference: oiiotool's box takes or leaves each source pixel whole instead of "
+               "weighting the ones at its edges by how much of them it covers.",
                f'--resize:filter=box WxH {OIIO_VIEW}',
                "oiiotool {exr} --resize:filter=box {w}x{h} " + OIIO_VIEW + " -d uint16 -o {out}"), only=HDR_IDS),
         dict(v('hdr_ff_zscale_ocio', 'FFmpeg zscale lanczos in scene-linear, then ocio', "zscale resizes the "
@@ -202,49 +224,17 @@ GROUPS = [
                '-vf "zscale=w=W:h=H:filter=lanczos,format=gbrpf32le,ocio=...:format=rgb48"',
                FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le," + FF_OCIO + ",format=rgb48le")),
              only=HDR_IDS),
-        dict(v('hdr_ff_zscale_mitchell_ocio', 'FFmpeg zscale mitchell in scene-linear, then ocio', "zscale's bicubic "
-               "with b = c = 1/3 is the mitchell filter: the same as oiiotool's, done in FFmpeg.",
-               '-vf "zscale=w=W:h=H:filter=bicubic:param_a=1/3:param_b=1/3,format=gbrpf32le,ocio=...:format=rgb48"',
-               FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=bicubic:param_a=0.3333333:param_b=0.3333333,"
-                              "format=gbrpf32le," + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
         dict(v('hdr_ff_zscale_hermite_ocio', "FFmpeg zscale cubic (b = c = 0, Nuke's Cubic) in scene-linear, then ocio",
                "zscale's bicubic with b = 0 and c = 0: the Hermite cubic, which has no negative lobes, so no ringing. "
                "It gives the same pixels as Nuke's default Reformat filter, Cubic, and oiiotool's cubic.",
                '-vf "zscale=w=W:h=H:filter=bicubic:param_a=0:param_b=0,format=gbrpf32le,ocio=...:format=rgb48"',
                FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=bicubic:param_a=0:param_b=0,format=gbrpf32le," + FF_OCIO
                               + ",format=rgb48le")), only=HDR_IDS),
-        dict(v('hdr_ff_zscale_bicubic_ocio', 'FFmpeg zscale bicubic in scene-linear, then ocio', "zscale's bicubic "
-               "with its default parameters, b = 0, c = 0.5 (Catmull-Rom; the same pixels as setting them explicitly), "
-               "then the view. Sharper than mitchell, with moderate negative lobes, so some ringing around the "
-               "brightest highlights, though less than lanczos.",
-               '-vf "zscale=w=W:h=H:filter=bicubic,format=gbrpf32le,ocio=...:format=rgb48"',
-               FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=bicubic,format=gbrpf32le," + FF_OCIO + ",format=rgb48le")),
-             only=HDR_IDS),
-        dict(v('hdr_ff_zscale_clamp_ocio', 'FFmpeg zscale lanczos in scene-linear, clamp negatives, then ocio',
-               "As the oiiotool clamp: geq sets anything below zero to zero, in float, so the highlights survive. "
-               "(The limiter filter does not take float input, so FFmpeg would convert to integer and lose the "
-               "image; colorlevels runs, but does not clamp float values.)",
-               '-vf "zscale=w=W:h=H:filter=lanczos,format=gbrpf32le,geq=r=\'max(r(X\\,Y)\\,0)\':...,ocio=..."',
-               FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le,"
-                              "geq=r='max(r(X\\,Y)\\,0)':g='max(g(X\\,Y)\\,0)':b='max(b(X\\,Y)\\,0)',"
-                              "format=gbrpf32le," + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
-        dict(v('hdr_ff_zscale_hc_ocio', 'FFmpeg zscale lanczos in scene-linear with highlightcomp (geq), then ocio',
-               "oiiotool's highlightcomp in FFmpeg: geq applies OIIO's rangecompress curve to each channel, zscale "
-               "resizes, and a second geq applies rangeexpand. geq matches oiiotool's curves to float precision, so "
-               "this differs from oiiotool only by the small differences between zscale's lanczos and oiiotool's "
-               "lanczos3. The first zscale (no size) converts the half-float EXR to float without clamping; geq "
-               "does not take half float, and format=gbrpf32le alone would clamp (see the last variant). geq is "
-               "slow, about 0.2 s per 4K frame.",
-               "-vf \"zscale,format=gbrpf32le,geq=r='" + rangecompress("r(X,Y)") + "':g=...:b=...,"
-               "zscale=w=W:h=H:filter=lanczos,format=gbrpf32le,geq=r='" + rangeexpand("r(X,Y)") + "':g=...:b=...,"
-               "ocio=...:format=rgb48\"",
-               FF_EXR.replace("VF", "zscale,format=gbrpf32le," + geq_rgb(rangecompress) + ","
-                              "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le," + geq_rgb(rangeexpand) + ","
-                              "format=gbrpf32le," + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
         dict(v('hdr_ff_ocio_hc_ocio', 'FFmpeg zscale lanczos in scene-linear with highlightcomp (OCIO CLF), then ocio',
-               "The same, with the rangecompress curve as a CLF Log node (cameraLinToLog, base e: logSideSlope = b, "
+               "oiiotool's highlightcomp in FFmpeg: OIIO's rangecompress curve (a + b ln(c x + 1) above 0.18) as a CLF Log "
+               "node (cameraLinToLog, base e: logSideSlope = b, "
                "logSideOffset = a, linSideSlope = c, linSideOffset = 1, linSideBreak = 0.18) applied by the ocio "
-               "filter, and inverted with inverse=1. Far faster than geq. Below the break OCIO's curve is a "
+               "filter, and inverted with inverse=1. Below the break OCIO's curve is a "
                "straight line, so values below -0.18 are not compressed (OIIO mirrors the curve for negative "
                "values). None of these sources goes below -0.18 (Desk's lowest value is -0.012), but lanczos's "
                "undershoot can, so the two versions can differ slightly next to the brightest highlights.",
@@ -254,18 +244,26 @@ GROUPS = [
                               "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le,"
                               f"ocio=filetransform={RC_CLF}:inverse=1:format=gbrpf32le,format=gbrpf32le,"
                               + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
-        dict(v('hdr_ff_acescct_ocio', 'FFmpeg ocio to ACEScct, zscale lanczos, then ocio', "The log-space route in "
-               "FFmpeg: the ocio filter converts to ACEScct, zscale resizes the log values, and a second ocio filter "
-               "applies the view. The format filter between ocio and zscale is needed: without it the filter graph "
-               "fails (8.1, 9.0.2 and 9.1-dev).",
-               '-vf "ocio=input=ACES2065-1:output=ACEScct:format=gbrpf32le,format=gbrpf32le,zscale=w=W:h=H:filter=lanczos,'
-               'ocio=input=ACEScct:display=...:view=..."',
-               FF_EXR.replace("VF", "ocio=input=ACES2065-1:output=ACEScct:format=gbrpf32le,format=gbrpf32le,"
-                              "zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le,"
-                              f"ocio=input=ACEScct:display={DISPLAY}:view={VIEW}:format=rgb48,format=rgb48le")),
-             only=HDR_IDS),
-        dict(v('hdr_ff_f32_trap', 'FFmpeg format=gbrpf32le, then zscale (wrong)', "The same, with format=gbrpf32le "
-               "first. It looks harmless, but FFmpeg converts the half-float EXR with libswscale, which clamps every "
+        dict(v('hdr_ff_antiring_ocio', "FFmpeg zscale lanczos in scene-linear, clamped to each block's range "
+               "(anti-ringing), then ocio",
+               "The anti-ringing clamp in one FFmpeg command. zscale's lanczos gives the picture. The limits are the "
+               "minimum and maximum of the source pixels under each output pixel (its 4×4 block at 4×): erosion and dilation find "
+               "them, but only work on integers, so the limits (not the picture) go through a log curve "
+               f"({AR_CLF}) into 16 bits and back. blend's lighten and darken modes, which keep float, then clamp "
+               "the picture to them. It gives the same result as tests/resize-antiring.py (exact limits) to a small fraction of a code "
+               "value on average. The limits are about 1% loose (FFmpeg's float to 16-bit conversion). The "
+               "erosion/dilation passes depend on the factor: at 4× they make exactly the 4×4 block; at ×2.13 they "
+               "make a 5×5 square, a little wider than the 3 or 4 pixels the output pixel covers, because a fixed "
+               "window cannot follow a footprint that changes from pixel to pixel.",
+               f'-vf "split[a][b];[a]zscale=w=W:h=H:filter=lanczos,format=gbrpf32le[L];'
+               f'[b]ocio=filetransform={AR_CLF}:format=gbrpf32le,format=gbrp16le,split[b][c];'
+               '[b]erosion=coordinates=255,erosion=coordinates=11 (at 4x),zscale=w=W:h=H:filter=point,'
+               f'format=gbrpf32le,ocio=filetransform={AR_CLF}:inverse=1:format=gbrpf32le,format=gbrpf32le[lo];'
+               '[c]dilation=... (the same) ...[hi];[L][lo]blend=all_mode=lighten,format=gbrpf32le[t];'
+               '[t][hi]blend=all_mode=darken,format=gbrpf32le,ocio=...:format=rgb48"',
+               FF_EXR.replace("VF", ff_antiring() + "," + FF_OCIO + ",format=rgb48le")), only=HDR_IDS),
+        dict(v('hdr_ff_f32_trap', 'FFmpeg format=gbrpf32le, then zscale (wrong)', "zscale lanczos in "
+               "scene-linear, then ocio, with format=gbrpf32le first. It looks harmless, but FFmpeg converts the half-float EXR with libswscale, which clamps every "
                "value to 0-1 (FFmpeg 8.0 and later), so the highlights are lost before the resize.",
                '-vf "format=gbrpf32le,zscale=w=W:h=H:filter=lanczos,ocio=...:format=rgb48"',
                FF_EXR.replace("VF", "format=gbrpf32le,zscale=w={w}:h={h}:filter=lanczos,format=gbrpf32le," + FF_OCIO
@@ -321,12 +319,12 @@ def linear_box_reference(img, k=4):
     return yc.linear_to_srgb(block)
 
 
-def scene_linear_reference(exr, k=4):
-    """4x4 block average of the scene-linear EXR, then OCIO's ACES 2.0 SDR view for sRGB (as display values)."""
+def scene_linear_reference(exr, w, h):
+    """The scene-linear EXR averaged over each output pixel's footprint (for a whole factor, its block), then OCIO's
+    ACES 2.0 SDR view for sRGB (as display values)."""
     import OpenImageIO as oiio
     lin = np.array(oiio.ImageBuf(exr).get_pixels(oiio.FLOAT))[..., :3].astype(np.float64)
-    h, w = lin.shape[0] // k, lin.shape[1] // k
-    block = lin[:h * k, :w * k].reshape(h, k, w, k, 3).mean((1, 3)).astype(np.float32)
+    block = area_resize(lin, w, h).astype(np.float32)
     shown = oiio.ImageBufAlgo.ociodisplay(oiio.ImageBuf(np.ascontiguousarray(block)), DISPLAY, VIEW,
                                           fromspace="ACES2065-1")
     if shown.has_error:
@@ -417,19 +415,20 @@ def main():
     exrs = [
         {'id': 'sparks', 'label': 'Sparks (HDR EXR)', 'exr': SPARKS, 'window': (512, 270),
          'description': "Netflix's Sparks, frame 6100: 4096×2160 half-float ACES2065-1 OpenEXR with highlights up to "
-                        "about 200× scene white, shrunk to 1024×540; shown and measured is the 512×270 part with the "
+                        "about 200× scene white, shrunk to SIZE; shown and measured is the 512×270 part with the "
                         "most highlights."},
         {'id': 'brightrings', 'label': 'BrightRings (EXR)', 'exr': os.path.join(OPENEXR_IMAGES, "TestImages/BrightRings.exr"),
          'description': "BrightRings.exr from the OpenEXR test images: 800×800 half-float, rings with values up to 1025 "
                         "on a grey background (0.5), made for testing how filters with negative lobes react to HDR "
-                        "values. Treated as ACES2065-1. Shrunk to 200×200."},
+                        "values. Treated as ACES2065-1. Shrunk to SIZE."},
         {'id': 'desk', 'label': 'Desk (EXR)', 'exr': desk_rgb,
          'prepare': (desk, desk_rgb, "--ch R,G,B --cut 644x872+0+0"),
          'description': "Desk.exr from the OpenEXR test images: a 644×874 half-float photograph of a desk in front of a "
                         "backlit stained-glass window, with highlights up to about 230. Treated as ACES2065-1 (the file has no chromaticities). 874 rows "
                         "is not a multiple of 4, so the bottom two rows are cut, and the alpha channel (all 1) is "
-                        "dropped: oiiotool Desk.exr --ch R,G,B --cut 644x872+0+0 -o desk-rgb.exr. Shrunk to 161×218."},
+                        "dropped: oiiotool Desk.exr --ch R,G,B --cut 644x872+0+0 -o desk-rgb.exr. Shrunk to SIZE."},
     ]
+    displays = {}
     for e in exrs:
         if 'prepare' in e:
             src, dst, prep = e.pop('prepare')
@@ -444,14 +443,27 @@ def main():
         display = os.path.join(root, f"{e['id']}-display.png")
         yc.run(f"oiiotool {e['exr']} {OIIO_VIEW} -d uint16 -o {display}")
         temps.append(display)
-        ref, lin = scene_linear_reference(e['exr'])
         window = e.pop('window', None)
-        sources.append(dict(e, path=display, reference=ref,
-                            **({'crop': brightest_window(lin, *window)} if window else {}),
-                            description=e['description'] + f" Viewed through OCIO's {VIEW} view for sRGB. The "
-                            f"display-referred variants resize the display image oiiotool makes from it "
-                            f"({e['id']}-display.png). The reference is each 4×4 block averaged in scene-linear "
-                            "light, then the view transform."))
+        sw, sh = yc.read_rgb(display).shape[1::-1]
+        # Each EXR twice: a quarter of the size (4x4 blocks), and by 2.133 (4096 to 1920), scene-linear variants only
+        for frac in (False, True):
+            w, h = (round(sw * FRACTION), round(sh * FRACTION)) if frac else (sw // 4, sh // 4)
+            ref, lin = scene_linear_reference(e['exr'], w, h)
+            if frac:
+                d = dict(e, id=e['id'] + "_frac", label=e['label'].replace(" (", f", ×{sw / w:.2f} ("),
+                         listed_only=True)
+                how = (f"The reference is the average of the {sw / w:.2f} × {sh / h:.2f} source pixels each output pixel "
+                       "covers, with the ones at its edges weighted by how much of them it covers, in scene-linear "
+                       "light, then the view transform. Only the variants that resize in scene-linear are run.")
+            else:
+                d = dict(e)
+                how = (f"The display-referred variants resize the display image oiiotool makes from it "
+                       f"({e['id']}-display.png). The reference is each 4×4 block averaged in scene-linear light, "
+                       "then the view transform.")
+            sources.append(dict(d, path=display, reference=ref, params=size_params(sw, w),
+                                **({'crop': brightest_window(lin, *window)} if window else {}),
+                                description=e['description'].replace("SIZE", f"{w}×{h}") +
+                                f" Viewed through OCIO's {VIEW} view for sRGB. " + how))
     version = yc.ffmpeg_version()
     oiio = subprocess.run(["oiiotool", "--version"], capture_output=True, text=True).stdout.strip()
     groups = GROUPS
@@ -464,6 +476,8 @@ def main():
     yc.print_table(f"{version}, OIIO {oiio}", srcs, grps, items, STATS)
     ring = worst_pixel(yc.read_rgb(os.path.join(root, "sparks-hdr_oiio_scene_lanczos.png")),
                        yc.read_rgb(os.path.join(root, "sparks-reference.png")))
+    ring_frac = worst_pixel(yc.read_rgb(os.path.join(root, "sparks_frac-hdr_oiio_scene_lanczos.png")),
+                            yc.read_rgb(os.path.join(root, "sparks_frac-reference.png")))
     rings = worst_pixel(yc.read_rgb(os.path.join(root, "brightrings-hdr_oiio_scene_lanczos.png")),
                         yc.read_rgb(os.path.join(root, "brightrings-reference.png")))
     edge = worst_pixel(yc.read_rgb(os.path.join(root, "animation-scale_lanczos.png")),
@@ -475,7 +489,7 @@ def main():
         **({'extra': extra} if extra else {}),
         'pageTitle': "Resize Compare",
         'title': "Resizing: FFmpeg, oiiotool, linear light and HDR",
-        'lede': ("Each image shrunk to a quarter of its size by FFmpeg (<code>scale</code> and <code>zscale</code>) and by <code>oiiotool</code>, on the gamma-encoded values and in linear light. The <b>reference</b> averages each 4×4 block of pixels in linear light, which gives fine detail its right brightness; for the EXR sources (Sparks, BrightRings and Desk, treated as ACES2065-1), in scene-linear light before OCIO's ACES 2.0 view, with extra variants that resize before or after the view transform. Errors are against the reference, in 8-bit code values."),
+        'lede': ("Each image shrunk to a quarter of its size by FFmpeg (<code>scale</code> and <code>zscale</code>) and by <code>oiiotool</code>, on the gamma-encoded values and in linear light. The <b>reference</b> averages each 4×4 block of pixels in linear light, which gives fine detail its right brightness; for the EXR sources (Sparks, BrightRings and Desk, treated as ACES2065-1), in scene-linear light before OCIO's ACES 2.0 view, with extra variants that resize before or after the view transform. The EXRs are also shrunk by 2.13 (Sparks from 4096 to 1920 wide), where output pixels no longer line up with source pixels; there the reference averages the source pixels each output pixel covers, weighting the ones at its edges by how much of them it covers. Errors are against the reference, in 8-bit code values."),
         'tableNote': ("Error against the reference in 8-bit code values. <b>Bright</b> is the mean signed difference: "
                       "negative means darker than the reference, which is what resizing gamma-encoded values does to "
                       "fine detail. The reference is a plain average, so sharper filters also differ from it at edges."
@@ -483,10 +497,10 @@ def main():
         'unit': '8-bit code values', 'unitName': '8-bit code', 'unitMax': 255,
         'stats': STATS, 'rankKey': 'mean', 'groups': grps, 'items': items, 'rowLabel': 'Resize',
         'sourceOption': 'Reference (4×4 average in linear light)', 'sourceLabel': 'Reference',
-        'sourceNote': ("Each pixel is the average of its 4×4 block of source pixels, in linear light: the right "
-                       "brightness. It is not the sharpest result, and a plain average still lets some fine detail "
-                       "alias (the zone plate's outer rings), so it is a reference for brightness, not an ideal "
-                       "filter."),
+        'sourceNote': ("Each pixel is the average of its 4×4 block of source pixels (at ×2.13, of the source pixels "
+                       "it covers), in linear light: the right brightness. It is not the sharpest result, and a plain "
+                       "average still lets some fine detail alias (the zone plate's outer rings, and moiré in "
+                       "BrightRings' discs at ×2.13), so it is a reference for brightness, not an ideal filter."),
         'defaults': {'src': 'sparks', 'a': 'source', 'b': 'hdr_ff_ocio_hc_ocio'},
         'presets': [
             {'label': 'Zone plate: FFmpeg default vs reference', 'src': 'zoneplate', 'a': 'source',
@@ -497,26 +511,41 @@ def main():
             {'label': 'Lanczos ringing on animation, 4×', 'src': 'animation', 'a': 'scale_area', 'b': 'scale_lanczos',
              'mode': 'toggle', 'zoom': 4, 'focus': edge},
             {'label': 'HDR: resize the display image vs scene-linear', 'src': 'sparks', 'a': 'zscale_lanczos',
-             'b': 'hdr_oiio_scene_mitchell', 'mode': 'wipe'},
+             'b': 'hdr_oiio_scene_cubic', 'mode': 'wipe'},
             {'label': 'HDR: lanczos rings around highlights, 8×', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos',
-             'b': 'hdr_oiio_scene_mitchell', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
-             'title': 'Lanczos in scene-linear leaves dark halos around very bright highlights; mitchell much less'},
+             'b': 'hdr_oiio_scene_cubic', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
+             'title': 'Lanczos in scene-linear leaves dark halos around very bright highlights; the cubic has none'},
             {'label': 'BrightRings: lanczos vs cubic in scene-linear, 4×', 'src': 'brightrings',
              'a': 'hdr_oiio_scene_lanczos', 'b': 'hdr_oiio_scene_cubic', 'mode': 'toggle', 'zoom': 4, 'focus': rings,
              'title': "Lanczos's negative lobes ring around values over 1000; the Hermite cubic has none"},
             {'label': 'HDR: FFmpeg lanczos without and with highlightcomp, 8×', 'src': 'sparks',
-             'a': 'hdr_ff_zscale_ocio', 'b': 'hdr_ff_zscale_hc_ocio', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
-             'title': "OIIO's rangecompress/rangeexpand around zscale's lanczos, done with geq, removes the halos"},
+             'a': 'hdr_ff_zscale_ocio', 'b': 'hdr_ff_ocio_hc_ocio', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
+             'title': "OIIO's rangecompress/rangeexpand around zscale's lanczos, as a CLF, removes the halos"},
             {'label': 'HDR: highlightcomp vs anti-ringing clamp, 8×', 'src': 'sparks',
-             'a': 'hdr_oiio_scene_lanczos_hc', 'b': 'hdr_py_scene_lanczos_antiring', 'mode': 'toggle', 'zoom': 8,
+             'a': 'hdr_oiio_scene_lanczos_hc', 'b': 'hdr_ff_antiring_ocio', 'mode': 'toggle', 'zoom': 8,
              'focus': ring, 'title': "Both remove the halos; highlightcomp also dims the sparks, the clamp keeps "
              "their light"},
+            {'label': 'BrightRings: highlightcomp without and with its light restored, 4×', 'src': 'brightrings',
+             'a': 'hdr_oiio_scene_lanczos_hc', 'b': 'hdr_py_scene_lanczos_hc_energy', 'mode': 'toggle', 'zoom': 4,
+             'title': "Highlightcomp dims the discs' fine rings until their colour shows; restoring the light "
+             "makes them white again"},
+            {'label': 'HDR: anti-ringing clamp vs highlightcomp with its light restored, 8×', 'src': 'sparks',
+             'a': 'hdr_ff_antiring_ocio', 'b': 'hdr_py_scene_lanczos_hc_energy', 'mode': 'toggle', 'zoom': 8,
+             'focus': ring},
             {'label': 'BrightRings: clamp negatives vs anti-ringing clamp, 4×', 'src': 'brightrings',
-             'a': 'hdr_oiio_scene_lanczos_clamp', 'b': 'hdr_py_scene_lanczos_antiring', 'mode': 'toggle', 'zoom': 4,
+             'a': 'hdr_oiio_scene_lanczos_clamp', 'b': 'hdr_ff_antiring_ocio', 'mode': 'toggle', 'zoom': 4,
              'focus': rings, 'title': "Clamping negatives leaves the halos black; clamping to each block's range "
              "removes them"},
+            {'label': 'Sparks ×2.13: lanczos vs highlightcomp, light restored and clamped', 'src': 'sparks_frac',
+             'a': 'hdr_oiio_scene_lanczos', 'b': 'hdr_py_scene_lanczos_hc_energy_clamp', 'mode': 'toggle', 'zoom': 4,
+             'focus': ring_frac, 'title': "At 4096 to 1920 lanczos still leaves halos; the restored, clamped "
+             "highlightcomp has none"},
+            {'label': 'BrightRings ×2.13: reference vs cubic', 'src': 'brightrings_frac', 'a': 'source',
+             'b': 'hdr_oiio_scene_cubic', 'mode': 'toggle', 'zoom': 2,
+             'title': "At a fractional factor the plain average shows moiré in the discs' rings; the cubic "
+             "smooths them"},
             {'label': 'highlightcomp: oiiotool vs FFmpeg', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos_hc',
-             'b': 'hdr_ff_zscale_hc_ocio', 'mode': 'diff'},
+             'b': 'hdr_ff_ocio_hc_ocio', 'mode': 'diff'},
             {'label': 'FFmpeg vs oiiotool, linear light', 'src': 'chart', 'a': 'zscale_lanczos_linear',
              'b': 'oiio_lanczos3_linear', 'mode': 'diff'},
         ],
