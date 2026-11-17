@@ -57,9 +57,9 @@ def variants(rt):
     """The HDR variants of resize-test.py, as ('ffmpeg', vf) or ('oiiotool', options)."""
     out = []
     for glabel, entries in rt.GROUPS:
-        if not glabel.startswith("HDR sources"):
-            continue
         for e in entries:
+            if not e['id'].startswith("hdr_"):
+                continue
             cmd = e['command']
             m = re.search(r'-vf "(.*)" \{out\}$', cmd)
             if m:

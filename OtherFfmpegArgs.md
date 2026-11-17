@@ -51,7 +51,7 @@ There may be reasons that you want to do any image resizing directly inside ffmp
 
 If you are down-scaling, you will get the best results with the `lanczos` filter; otherwise, the default is `bicubic`. The `lanczos` filter provides higher sharpness and reduces aliasing compared to simpler filters, making it the preferred choice for high-quality VFX delivery.
 
-For filter choice and where in the chain to resize, see [Resizing](Resizing.html). See also
+For filter choice and where in the chain to resize, see [Downscaling](Resizing.html). See also
 [https://trac.ffmpeg.org/wiki/Scaling](https://trac.ffmpeg.org/wiki/Scaling).
 
 ## Concatenation of video files

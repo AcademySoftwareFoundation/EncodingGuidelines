@@ -1,6 +1,7 @@
 """
-Compare ways of downsizing an image by 4 (and the EXRs also by 2.133, as 4096 to 1920), for
-tests/resize-compare/compare.html.
+Compare ways of downsizing an image by 4 (and the EXRs also by 2.133, as 4096 to 1920), for two pages:
+tests/resize-compare/compare.html (the 8-bit sRGB sources) and tests/resize-hdr-compare/compare.html (the
+scene-linear EXRs).
 
 Each source is shrunk to a quarter of its width and height with FFmpeg's scale (libswscale) and zscale filters,
 with oiiotool, and with both of those in linear light. The results are compared with a reference: each output
@@ -25,7 +26,7 @@ pixels weighted by how much of them it covers (tests/python/resizefootprint.py);
 as the block average.
 
 Run from the tests folder, with ffmpeg (with zscale) and oiiotool on the PATH:
-    python resize-test.py [--outdir ./resize-compare]
+    python resize-test.py [--outdir ./resize-compare] [--hdr-outdir ./resize-hdr-compare]
 """
 import argparse
 import os
@@ -50,6 +51,9 @@ HDR_IDS += [f"{i}_frac" for i in HDR_IDS]
 # Absolute links, so the page also works when hosted on its own (it is too large to commit)
 SITE = "https://academysoftwarefoundation.github.io/EncodingGuidelines"
 REPO = "https://github.com/AcademySoftwareFoundation/EncodingGuidelines"
+# The two pages link to each other where they are hosted (they are too large to commit)
+SDR_PAGE = "https://encode.taurich.org/tests/resize-compare/compare.html"
+HDR_PAGE = "https://encode.taurich.org/tests/resize-hdr-compare/compare.html"
 DISPLAY, VIEW = "sRGB - Display", "ACES 2.0 - SDR 100 nits (Rec.709)"
 OIIO_VIEW = f'--ociodisplay:from=ACES2065-1 "{DISPLAY}" "{VIEW}"'
 # FFmpeg's ocio filter reads the config from $OCIO; ocio://default is OCIO 2.5's built-in config, the one oiiotool uses.
@@ -155,7 +159,7 @@ GROUPS = [
           '--colorconvert srgb_tx lin_rec709 --resize:filter=box WxH --colorconvert lin_rec709 srgb_tx',
           "oiiotool {src} " + OIIO_LIN.format(resize="--resize:filter=box {w}x{h}") + " -d uint16 -o {out}"),
     ]),
-    ('HDR sources: resizing before or after the view transform (EXR sources only)', [
+    ('Resizing the EXR, before or after the view transform', [
         dict(v('hdr_ff_ocio_zscale', 'FFmpeg ocio, then zscale lanczos', "The view transform first, then zscale "
                "resizes the display-encoded values: the usual FFmpeg route, all in one command.",
                '-vf "ocio=...:format=rgb48,format=rgb48le,zscale=w=W:h=H:filter=lanczos"',
@@ -390,10 +394,12 @@ def timing_table(path=os.path.join(os.path.dirname(os.path.abspath(__file__)), "
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--outdir", default="./resize-compare")
+    parser.add_argument("--outdir", default="./resize-compare", help="the page for the 8-bit sRGB sources")
+    parser.add_argument("--hdr-outdir", default="./resize-hdr-compare", help="the page for the EXRs")
     args = parser.parse_args()
     root = args.outdir
     os.makedirs(root, exist_ok=True)
+    os.makedirs(args.hdr_outdir, exist_ok=True)
     zp = os.path.join(root, "zoneplate-1080.png")
     yc.write_raw_png(np.round(zone_plate() * 255).astype(np.uint8), zp)
     sources = [
@@ -411,7 +417,7 @@ def main():
     # scene-linear reference. Temporary files (the display images, the prepared Desk) are deleted afterwards.
     temps = []
     desk = os.path.join(OPENEXR_IMAGES, "ScanLines/Desk.exr")
-    desk_rgb = os.path.join(root, "desk-rgb.exr")
+    desk_rgb = os.path.join(args.hdr_outdir, "desk-rgb.exr")
     exrs = [
         {'id': 'sparks', 'label': 'Sparks (HDR EXR)', 'exr': SPARKS, 'window': (512, 270),
          'description': "Netflix's Sparks, frame 6100: 4096×2160 half-float ACES2065-1 OpenEXR with highlights up to "
@@ -440,7 +446,7 @@ def main():
         if not os.path.exists(e['exr']):
             print(f"{e['exr']} not found: leaving out {e['label']}")
             continue
-        display = os.path.join(root, f"{e['id']}-display.png")
+        display = os.path.join(args.hdr_outdir, f"{e['id']}-display.png")
         yc.run(f"oiiotool {e['exr']} {OIIO_VIEW} -d uint16 -o {display}")
         temps.append(display)
         window = e.pop('window', None)
@@ -466,42 +472,56 @@ def main():
                                 f" Viewed through OCIO's {VIEW} view for sRGB. " + how))
     version = yc.ffmpeg_version()
     oiio = subprocess.run(["oiiotool", "--version"], capture_output=True, text=True).stdout.strip()
-    groups = GROUPS
-    if not os.path.exists(os.path.join(NUKE, "nuke-cubic.exr")):
+    nuke = os.path.exists(os.path.join(NUKE, "nuke-cubic.exr"))
+    if not nuke:
         print(f"No Nuke results in {NUKE} (run tests/resize-nuke.py in Nuke): leaving out the Nuke variants")
-        groups = [g for g in GROUPS if not g[0].startswith("Nuke")]
-    srcs, grps, items = yc.run_images(root, sources, groups)
-    for f in temps:
-        os.remove(f)
+    sdr_sources = [s for s in sources if 'exr' not in s]
+    hdr_sources = [s for s in sources if 'exr' in s]
+    sdr_groups = [g for g in GROUPS if not g[0].startswith(("Resizing the EXR", "Nuke"))]
+    # The EXR page also resizes the display image, as an SDR pipeline would (quarter size only): FFmpeg's default
+    # and lanczos in display-linear light, beside the EXR variants.
+    by_id = {e['id']: e for _, es in GROUPS for e in es}
+    quarter = [s['id'] for s in hdr_sources if not s.get('listed_only')]
+    display_group = ('Resizing the display image (after the view transform)', [
+        dict(by_id['scale_bicubic'], only=quarter, label='scale, default (bicubic), on the display image',
+             description="FFmpeg's default resize, on the display image that the view transform makes: the "
+             "highlights have already been tone mapped, and the values are gamma-encoded."),
+        dict(by_id['zscale_lanczos_linear'], only=quarter, label='zscale lanczos, display-linear light',
+             description="The display image converted to linear light (the sRGB curve), resized with lanczos and "
+             "converted back. Right for an SDR image, but the highlights have already been tone mapped, so it is "
+             "still too dark around them."),
+    ])
+    hdr_groups = [display_group] + [g for g in GROUPS if g[0].startswith("Resizing the EXR")
+                                    or (nuke and g[0].startswith("Nuke"))]
+    footer = (f"<p>Made with {version} and oiiotool {oiio}. Every result is a 16-bit RGB image; nothing is encoded, "
+              "so the only difference is the resize. The images shown are 8-bit copies.</p>")
+    common = {'unit': '8-bit code values', 'unitName': '8-bit code', 'unitMax': 255, 'stats': STATS,
+              'rankKey': 'mean', 'rowLabel': 'Resize', 'sourceLabel': 'Reference'}
+    hdr_root = args.hdr_outdir
+
+    # The SDR page
+    srcs, grps, items = yc.run_images(root, sdr_sources, sdr_groups)
     yc.print_table(f"{version}, OIIO {oiio}", srcs, grps, items, STATS)
-    ring = worst_pixel(yc.read_rgb(os.path.join(root, "sparks-hdr_oiio_scene_lanczos.png")),
-                       yc.read_rgb(os.path.join(root, "sparks-reference.png")))
-    ring_frac = worst_pixel(yc.read_rgb(os.path.join(root, "sparks_frac-hdr_oiio_scene_lanczos.png")),
-                            yc.read_rgb(os.path.join(root, "sparks_frac-reference.png")))
-    rings = worst_pixel(yc.read_rgb(os.path.join(root, "brightrings-hdr_oiio_scene_lanczos.png")),
-                        yc.read_rgb(os.path.join(root, "brightrings-reference.png")))
     edge = worst_pixel(yc.read_rgb(os.path.join(root, "animation-scale_lanczos.png")),
                        yc.read_rgb(os.path.join(root, "animation-reference.png")))
-
-    extra = timing_table()
-
-    yc.write_page(root, {
-        **({'extra': extra} if extra else {}),
+    yc.write_page(root, dict(common, **{
         'pageTitle': "Resize Compare",
-        'title': "Resizing: FFmpeg, oiiotool, linear light and HDR",
-        'lede': ("Each image shrunk to a quarter of its size by FFmpeg (<code>scale</code> and <code>zscale</code>) and by <code>oiiotool</code>, on the gamma-encoded values and in linear light. The <b>reference</b> averages each 4×4 block of pixels in linear light, which gives fine detail its right brightness; for the EXR sources (Sparks, BrightRings and Desk, treated as ACES2065-1), in scene-linear light before OCIO's ACES 2.0 view, with extra variants that resize before or after the view transform. The EXRs are also shrunk by 2.13 (Sparks from 4096 to 1920 wide), where output pixels no longer line up with source pixels; there the reference averages the source pixels each output pixel covers, weighting the ones at its edges by how much of them it covers. Errors are against the reference, in 8-bit code values."),
+        'title': "Resizing: FFmpeg, oiiotool and linear light",
+        'lede': ("Each image shrunk to a quarter of its size by FFmpeg (<code>scale</code> and <code>zscale</code>) "
+                 "and by <code>oiiotool</code>, on the gamma-encoded values and in linear light. The <b>reference</b> "
+                 "averages each 4×4 block of pixels in linear light, which gives fine detail its right brightness. "
+                 "Errors are against the reference, in 8-bit code values. For scene-linear OpenEXR sources, see the "
+                 f"<a href='{HDR_PAGE}' target='_top'>EXR resize comparison</a>."),
         'tableNote': ("Error against the reference in 8-bit code values. <b>Bright</b> is the mean signed difference: "
                       "negative means darker than the reference, which is what resizing gamma-encoded values does to "
-                      "fine detail. The reference is a plain average, so sharper filters also differ from it at edges."
-),
-        'unit': '8-bit code values', 'unitName': '8-bit code', 'unitMax': 255,
-        'stats': STATS, 'rankKey': 'mean', 'groups': grps, 'items': items, 'rowLabel': 'Resize',
-        'sourceOption': 'Reference (4×4 average in linear light)', 'sourceLabel': 'Reference',
-        'sourceNote': ("Each pixel is the average of its 4×4 block of source pixels (at ×2.13, of the source pixels "
-                       "it covers), in linear light: the right brightness. It is not the sharpest result, and a plain "
-                       "average still lets some fine detail alias (the zone plate's outer rings, and moiré in "
-                       "BrightRings' discs at ×2.13), so it is a reference for brightness, not an ideal filter."),
-        'defaults': {'src': 'sparks', 'a': 'source', 'b': 'hdr_ff_ocio_hc_ocio'},
+                      "fine detail. The reference is a plain average, so sharper filters also differ from it at edges."),
+        'groups': grps, 'items': items,
+        'sourceOption': 'Reference (4×4 average in linear light)',
+        'sourceNote': ("Each pixel is the average of its 4×4 block of source pixels, in linear light: the right "
+                       "brightness. It is not the sharpest result, and a plain average still lets some fine detail "
+                       "alias (the zone plate's outer rings), so it is a reference for brightness, not an ideal "
+                       "filter."),
+        'defaults': {'src': 'zoneplate', 'a': 'source', 'b': 'scale_bicubic'},
         'presets': [
             {'label': 'Zone plate: FFmpeg default vs reference', 'src': 'zoneplate', 'a': 'source',
              'b': 'scale_bicubic', 'mode': 'wipe',
@@ -510,18 +530,62 @@ def main():
              'b': 'zscale_lanczos_linear', 'mode': 'toggle'},
             {'label': 'Lanczos ringing on animation, 4×', 'src': 'animation', 'a': 'scale_area', 'b': 'scale_lanczos',
              'mode': 'toggle', 'zoom': 4, 'focus': edge},
-            {'label': 'HDR: resize the display image vs scene-linear', 'src': 'sparks', 'a': 'zscale_lanczos',
+            {'label': 'FFmpeg vs oiiotool, linear light', 'src': 'chart', 'a': 'zscale_lanczos_linear',
+             'b': 'oiio_lanczos3_linear', 'mode': 'diff'},
+        ],
+        'footer': footer + (
+            "<p>All sources are treated as sRGB-encoded, and the linear-light versions use the sRGB curve both "
+            f"ways.</p><p>See <a href='{SITE}/Resizing.html' target='_top'>Downscaling</a> and the "
+            f"<a href='{HDR_PAGE}' target='_top'>EXR resize comparison</a>. Generated by "
+            f"<a href='{REPO}/blob/main/tests/resize-test.py' target='_top'>tests/resize-test.py</a>.</p>"),
+    }), srcs)
+
+    # The EXR page
+    srcs, grps, items = yc.run_images(hdr_root, hdr_sources, hdr_groups)
+    for f in temps:
+        os.remove(f)
+    yc.print_table(f"{version}, OIIO {oiio}", srcs, grps, items, STATS)
+    def worst(src):
+        return worst_pixel(yc.read_rgb(os.path.join(hdr_root, f"{src}-hdr_oiio_scene_lanczos.png")),
+                           yc.read_rgb(os.path.join(hdr_root, f"{src}-reference.png")))
+    ring, ring_frac, rings = worst("sparks"), worst("sparks_frac"), worst("brightrings")
+    extra = timing_table()
+    yc.write_page(hdr_root, dict(common, **{
+        **({'extra': extra} if extra else {}),
+        'pageTitle': "EXR Resize Compare",
+        'title': "Resizing scene-linear EXRs: FFmpeg, oiiotool and OCIO",
+        'lede': ("Three ACES2065-1 OpenEXR images (Sparks, BrightRings and Desk), shrunk to a quarter of their size "
+                 "and viewed through OCIO's ACES 2.0 SDR view: resized after the view transform, as an SDR "
+                 "pipeline would, or before it, in scene-linear light (or log), where highlights far brighter than "
+                 "white make filters with negative lobes ring. The <b>reference</b> averages each 4×4 block in "
+                 "scene-linear light, then applies the view. The EXRs are also shrunk by 2.13 (Sparks from 4096 to "
+                 "1920 wide), where output pixels no longer line up with source pixels; there the reference averages "
+                 "the source pixels each output pixel covers, weighting the ones at its edges by how much of them it "
+                 "covers. Errors are against the reference, in 8-bit code values. For 8-bit sRGB sources, see the "
+                 f"<a href='{SDR_PAGE}' target='_top'>resize comparison</a>."),
+        'tableNote': ("Error against the reference in 8-bit code values. <b>Bright</b> is the mean signed difference: "
+                      "negative means darker than the reference. The reference is a plain average, so sharper filters "
+                      "also differ from it at edges."),
+        'groups': grps, 'items': items,
+        'sourceOption': 'Reference (4×4 average in scene-linear light)',
+        'sourceNote': ("Each pixel is the average of its 4×4 block of source pixels (at ×2.13, of the source pixels "
+                       "it covers), in scene-linear light, then the view transform: the right brightness. It is not "
+                       "the sharpest result, and a plain average still lets some fine detail alias (moiré in "
+                       "BrightRings' discs at ×2.13), so it is a reference for brightness, not an ideal filter."),
+        'defaults': {'src': 'sparks', 'a': 'source', 'b': 'hdr_ff_ocio_hc_ocio'},
+        'presets': [
+            {'label': 'Resize the display image vs scene-linear', 'src': 'sparks', 'a': 'hdr_ff_ocio_zscale',
              'b': 'hdr_oiio_scene_cubic', 'mode': 'wipe'},
-            {'label': 'HDR: lanczos rings around highlights, 8×', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos',
+            {'label': 'Lanczos rings around highlights, 8×', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos',
              'b': 'hdr_oiio_scene_cubic', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
              'title': 'Lanczos in scene-linear leaves dark halos around very bright highlights; the cubic has none'},
             {'label': 'BrightRings: lanczos vs cubic in scene-linear, 4×', 'src': 'brightrings',
              'a': 'hdr_oiio_scene_lanczos', 'b': 'hdr_oiio_scene_cubic', 'mode': 'toggle', 'zoom': 4, 'focus': rings,
              'title': "Lanczos's negative lobes ring around values over 1000; the Hermite cubic has none"},
-            {'label': 'HDR: FFmpeg lanczos without and with highlightcomp, 8×', 'src': 'sparks',
+            {'label': 'FFmpeg lanczos without and with highlightcomp, 8×', 'src': 'sparks',
              'a': 'hdr_ff_zscale_ocio', 'b': 'hdr_ff_ocio_hc_ocio', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
              'title': "OIIO's rangecompress/rangeexpand around zscale's lanczos, as a CLF, removes the halos"},
-            {'label': 'HDR: highlightcomp vs anti-ringing clamp, 8×', 'src': 'sparks',
+            {'label': 'highlightcomp vs anti-ringing clamp, 8×', 'src': 'sparks',
              'a': 'hdr_oiio_scene_lanczos_hc', 'b': 'hdr_ff_antiring_ocio', 'mode': 'toggle', 'zoom': 8,
              'focus': ring, 'title': "Both remove the halos; highlightcomp also dims the sparks, the clamp keeps "
              "their light"},
@@ -529,7 +593,7 @@ def main():
              'a': 'hdr_oiio_scene_lanczos_hc', 'b': 'hdr_py_scene_lanczos_hc_energy', 'mode': 'toggle', 'zoom': 4,
              'title': "Highlightcomp dims the discs' fine rings until their colour shows; restoring the light "
              "makes them white again"},
-            {'label': 'HDR: anti-ringing clamp vs highlightcomp with its light restored, 8×', 'src': 'sparks',
+            {'label': 'Anti-ringing clamp vs highlightcomp with its light restored, 8×', 'src': 'sparks',
              'a': 'hdr_ff_antiring_ocio', 'b': 'hdr_py_scene_lanczos_hc_energy', 'mode': 'toggle', 'zoom': 8,
              'focus': ring},
             {'label': 'BrightRings: clamp negatives vs anti-ringing clamp, 4×', 'src': 'brightrings',
@@ -546,19 +610,16 @@ def main():
              "smooths them"},
             {'label': 'highlightcomp: oiiotool vs FFmpeg', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos_hc',
              'b': 'hdr_ff_ocio_hc_ocio', 'mode': 'diff'},
-            {'label': 'FFmpeg vs oiiotool, linear light', 'src': 'chart', 'a': 'zscale_lanczos_linear',
-             'b': 'oiio_lanczos3_linear', 'mode': 'diff'},
         ],
-        'footer': (
-            f"<p>Made with {version} and oiiotool {oiio}. Every result is a 16-bit RGB image; nothing is encoded, so "
-            "the only difference is the resize. The images shown are 8-bit copies. All sources are treated as "
-            "sRGB-encoded, and the linear-light versions use the sRGB curve both ways.</p>"
+        'footer': footer + (
             "<p>BrightRings and Desk are from the <a href='https://github.com/AcademySoftwareFoundation/openexr-images' "
-            "target='_top'>OpenEXR test images</a>; Sparks is from Netflix's open content.</p>"
-            f"<p>See <a href='{SITE}/Resizing.html' target='_top'>Resizing</a>. Generated by "
-            f"<a href='{REPO}/blob/main/tests/resize-test.py' target='_top'>tests/resize-test.py</a>.</p>"),
-    }, srcs)
-
+            "target='_top'>OpenEXR test images</a>; Sparks is from Netflix's open content. All are treated as "
+            "ACES2065-1.</p>"
+            f"<p>See <a href='{SITE}/Resizing.html#scene-linear-openexrs' target='_top'>Downscaling: "
+            f"scene-linear OpenEXRs</a> and the <a href='{SDR_PAGE}' target='_top'>resize comparison</a> for "
+            f"8-bit sRGB sources. Generated by <a href='{REPO}/blob/main/tests/resize-test.py' "
+            "target='_top'>tests/resize-test.py</a>.</p>"),
+    }), srcs)
 
 if __name__ == "__main__":
     main()

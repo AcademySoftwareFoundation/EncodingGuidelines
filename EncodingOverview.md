@@ -33,7 +33,7 @@ do it inside FFmpeg 8.1 or later with the [OCIO filter](FfmpegOcio.html). For HD
 ### 2. Resize
 
 Resizing shrinks fine detail, and the result depends on the filter and on the color space you resize in. Where in
-the chain to resize, and in which space, is covered on the [Resizing](Resizing.html) page, which is still being
+the chain to resize, and in which space, is covered on the [Downscaling](Resizing.html) page, which is still being
 updated.
 
 ### 3. Read the frames into FFmpeg

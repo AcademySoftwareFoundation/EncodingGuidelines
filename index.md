@@ -51,8 +51,8 @@ These are the problems we see most often, each with the page that explains it:
   [Color Metadata and Web Color Preservation](WebColorPreservation.html).
 * **Chroma siting is easy to get wrong in 4:2:2 and 4:2:0**, and the error grows each time a file is re-encoded. See
   [Chroma Siting](ChromaSiting.html).
-* **Resizing display-referred (gamma-encoded) images changes the brightness of fine detail.** See
-  [Resizing](Resizing.html).
+* **Shrinking display-referred (gamma-encoded) images changes the brightness of fine detail.** See
+  [Downscaling](Resizing.html).
 
 The full list of pages is in the navigation on the left. The test framework behind the measurements is described in
 [ORI Encoding Test Framework](enctests/README.html), and its results are in [Test Output](Testresults.html).
