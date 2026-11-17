@@ -186,7 +186,9 @@ sourceimages/rp219/*.y4m
 sourceimages/SonyF35.StillLife.exr
 sourceimages/SonyF35.StillLife_srgb.png
 
-# The resize comparison page and its images (about 40 MB), made by tests/resize-test.py and hosted elsewhere;
-# only resize.md is committed. nuke/ holds the Nuke results from tests/resize-nuke.py.
+# The resize comparison pages and their images, made by tests/resize-test.py and hosted elsewhere;
+# only the .md pages are committed. resize-compare/nuke/ holds the Nuke results from tests/resize-nuke.py.
 tests/resize-compare/*
 !tests/resize-compare/resize.md
+tests/resize-hdr-compare/*
+!tests/resize-hdr-compare/resize-hdr.md

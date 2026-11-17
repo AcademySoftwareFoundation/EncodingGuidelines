@@ -30,7 +30,7 @@ our tests it was the only one that was correct by default:
 See [FFmpeg Version Changes](FFmpegChanges.html#libswscale-white-level-for-high-bit-depth-input),
 [Chroma Siting](ChromaSiting.html) and [FFmpeg OCIO Filter](FfmpegOcio.html) for the measurements. libswscale is
 still useful when `zscale` is not available; see [FFmpeg swscale Filter](EncodeSwsScale.html), and for resizing see
-[Resizing](Resizing.html).
+[Downscaling](Resizing.html).
 
 ## Availability
 

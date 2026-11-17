@@ -280,11 +280,14 @@ function readHash() {
   for (const k of ["a", "b"]) if (h.get(k) && (h.get(k) === "source" || DATA.items[h.get(k)])) state[k] = h.get(k);
   if (["wipe", "toggle", "diff"].includes(h.get("mode"))) state.mode = h.get("mode");
   if (h.get("zoom") && [0, 1, 2, 4, 8].includes(+h.get("zoom"))) state.zoom = +h.get("zoom");
+  const at = (h.get("at") || "").split(",").map(Number);   // the point to centre on when zoomed, as fractions
+  if (at.length === 2 && at.every((v) => v >= 0 && v <= 1)) state.at = at;
   if (DATA.videos && h.get("show") === "browser") state.show = "browser";
 }
 function writeHash() {
   const h = new URLSearchParams({ src: state.src, a: state.a, b: state.b, mode: state.mode, zoom: state.zoom });
   if (DATA.videos) h.set("show", state.show);
+  if (state.zoom && state.at) h.set("at", state.at.map((v) => v.toFixed(3)).join(","));
   try { history.replaceState(null, "", "#" + h.toString()); } catch (e) { /* sandboxed */ }
 }
 
@@ -398,6 +401,7 @@ function setZoom(z, focus) {
   const c = $("canvas");
   stage.scrollLeft = fx * c.offsetWidth - stage.clientWidth / 2;
   stage.scrollTop = fy * c.offsetHeight - stage.clientHeight / 2;
+  state.at = [fx, fy];
   renderControls(); writeHash();
 }
 
@@ -817,7 +821,7 @@ $("footer").innerHTML = DATA.footer;
 readHash();
 buildControls(); buildTable(); bindCanvas();
 render();
-if (state.zoom) setZoom(state.zoom);
+if (state.zoom) setZoom(state.zoom, state.at);
 </script>
 </body>
 </html>

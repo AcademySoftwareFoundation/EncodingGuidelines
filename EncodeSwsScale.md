@@ -26,8 +26,8 @@ use it.
   centres the chroma when subsampling, and up to FFmpeg 9.0 assumes it is centred when converting back to RGB
   ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)). For the `zscale` options, see
   [zscale Conversion](EncodeZscale.html).
-- **Resizing**: see [Resizing](Resizing.html). Do it outside FFmpeg, or in linear light; the scaler matters much less
-  than that.
+- **Resizing**: see [Downscaling](Resizing.html). Shrink in linear light (with `zscale` or `oiiotool`); the scaler
+  matters much less than that.
 
 ## Color conversion: use zscale
 
@@ -91,7 +91,7 @@ the `zscale` equivalent is:
 ## libswscale options
 
 For when you use `scale`: an FFmpeg without `zscale`, or a resize where speed matters more than brightness (see
-[Resizing](Resizing.html)).
+[Downscaling](Resizing.html)).
 
 ### Recommended flags
 

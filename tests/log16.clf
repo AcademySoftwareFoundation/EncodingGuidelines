@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A log curve that takes 0 to 65504 (the largest half-float value) into 0 to 1, so that scene-linear values can be
+  carried in 16-bit integers: (log2(x + 1/64) + 6) / 22.0001, after clamping negative values to 0.
+  Used for the limits of the anti-ringing clamp in tests/resize-test.py: FFmpeg's erosion and dilation (the minimum
+  and maximum of each block) only work on integers. Apply with FFmpeg's ocio filter (ocio=filetransform=log16.clf)
+  and invert with inverse=1. Not for the picture itself: 16 bits of log is only precise enough for limits.
+-->
+<ProcessList id="log16" compCLFversion="3.0">
+  <Description>Scene-linear 0-65504 to 0-1, log2, for 16-bit integer limits</Description>
+  <Range inBitDepth="32f" outBitDepth="32f">
+    <minInValue>0</minInValue>
+    <minOutValue>0</minOutValue>
+  </Range>
+  <Log inBitDepth="32f" outBitDepth="32f" style="linToLog">
+    <LogParams base="2" logSideSlope="0.0454543388" logSideOffset="0.272726033" linSideSlope="1" linSideOffset="0.015625"/>
+  </Log>
+</ProcessList>

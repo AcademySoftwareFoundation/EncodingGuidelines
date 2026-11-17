@@ -11,11 +11,6 @@
      "tool": "ffmpeg",
      "cpu": 640.5
     },
-    "hdr_ff_ocio_zscale_displaylinear": {
-     "total": 68.88,
-     "tool": "ffmpeg",
-     "cpu": 643.4
-    },
     "hdr_oiio_scene_lanczos": {
      "oiiotool": 67.02,
      "encode": 1.63,
@@ -51,20 +46,6 @@
      "tool": "oiiotool",
      "cpu": 214.4
     },
-    "hdr_oiio_scene_mitchell": {
-     "oiiotool": 44.71,
-     "encode": 1.42,
-     "total": 46.12,
-     "tool": "oiiotool",
-     "cpu": 310.6
-    },
-    "hdr_oiio_scene_gaussian": {
-     "oiiotool": 38.16,
-     "encode": 1.11,
-     "total": 39.27,
-     "tool": "oiiotool",
-     "cpu": 235.9
-    },
     "hdr_oiio_scene_box": {
      "oiiotool": 28.53,
      "encode": 1.39,
@@ -77,52 +58,32 @@
      "tool": "ffmpeg",
      "cpu": 62.6
     },
-    "hdr_ff_zscale_mitchell_ocio": {
-     "total": 6.41,
-     "tool": "ffmpeg",
-     "cpu": 58.9
-    },
     "hdr_ff_zscale_hermite_ocio": {
      "total": 6.31,
      "tool": "ffmpeg",
      "cpu": 57.6
-    },
-    "hdr_ff_zscale_bicubic_ocio": {
-     "total": 6.47,
-     "tool": "ffmpeg",
-     "cpu": 60.1
-    },
-    "hdr_ff_zscale_clamp_ocio": {
-     "total": 7.78,
-     "tool": "ffmpeg",
-     "cpu": 69.9
-    },
-    "hdr_ff_zscale_hc_ocio": {
-     "total": 51.12,
-     "tool": "ffmpeg",
-     "cpu": 402.1
     },
     "hdr_ff_ocio_hc_ocio": {
      "total": 7.95,
      "tool": "ffmpeg",
      "cpu": 65.6
     },
-    "hdr_ff_acescct_ocio": {
-     "total": 8.88,
-     "tool": "ffmpeg",
-     "cpu": 73.6
-    },
     "hdr_ff_f32_trap": {
      "total": 9.17,
      "tool": "ffmpeg",
      "cpu": 79.0
+    },
+    "hdr_ff_antiring_ocio": {
+     "total": 27.57,
+     "tool": "ffmpeg",
+     "cpu": 202.3
     }
    },
    "ffmpeg": "ffmpeg version 9.0.2",
    "oiiotool": "3.1.12.0",
    "machine": "Apple M2 Max (12 cores), Darwin 25.6.0",
    "repeat": 1,
-   "date": "2026-11-15"
+   "date": "2026-11-16"
   },
   "parallel-frames": {
    "results": {
@@ -160,20 +121,6 @@
      "total": 15.99,
      "tool": "oiiotool",
      "cpu": 139.8
-    },
-    "hdr_oiio_scene_mitchell": {
-     "oiiotool": 26.06,
-     "encode": 1.39,
-     "total": 27.45,
-     "tool": "oiiotool",
-     "cpu": 244.9
-    },
-    "hdr_oiio_scene_gaussian": {
-     "oiiotool": 17.54,
-     "encode": 1.05,
-     "total": 18.59,
-     "tool": "oiiotool",
-     "cpu": 167.4
     },
     "hdr_oiio_scene_box": {
      "oiiotool": 7.98,
