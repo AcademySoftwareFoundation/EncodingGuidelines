@@ -1,0 +1,2554 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {
+        "config_file": "test_wedge_configs/hevc_tests.yml",
+        "config_sha256": "f636df1ff3405e3ed5551ad84a603b00e13e9f7dbb14cd08d443cd8dc4dff1d3",
+        "ffmpeg_configuration": "--disable-shared --enable-static --prefix=/ --bindir='${prefix}/bin' --libdir='${prefix}/lib' --pkg-config-flags=--static --disable-doc --disable-cross-compile --enable-asm --disable-shared --enable-static --enable-pic --enable-avdevice --enable-avcodec --enable-avformat --enable-swresample --enable-swscale --enable-avfilter --enable-bzlib --enable-zlib --disable-libxml2 --enable-lzma --enable-iconv --enable-libfreetype --disable-libfontconfig --disable-libfribidi --enable-libopenjpeg --enable-libopenh264 --enable-libvorbis --enable-libopus --disable-libzmq --disable-sdl2 --enable-libx264 --enable-libx265 --enable-libvpx --enable-libmp3lame --enable-libfdk-aac --enable-libwebp --enable-libvmaf --enable-libaom --enable-openssl --disable-alsa --disable-libpulse --disable-vaapi --disable-libdrm --disable-vdpau --disable-libxcb --disable-libxcb-shm --disable-libxcb-shape --disable-libxcb-xfixes --disable-libsoxr --enable-appkit --enable-avfoundation --enable-coreimage --enable-audiotoolbox --enable-videotoolbox --disable-securetransport --disable-vulkan --enable-libdav1d --disable-jni --disable-mediacodec --disable-xlib --disable-cuda --disable-cuvid --enable-nonfree --enable-gpl --enable-libzimg --enable-libopencolorio --disable-libjxl --disable-whisper --enable-liboapv --enable-libsvtav1 --enable-libharfbuzz --install-name-dir='@rpath' --arch=aarch64 --cc=clang --cxx=clang++ --pkg-config=/Users/sam/.conan2/p/pkgco01060018be6b1/p/bin/pkgconf --extra-cflags='-fPIC -O3'",
+        "ffmpeg_libraries": [
+            "libcompression.dylib 1.0.0"
+        ],
+        "ffmpeg_version_line": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+        "framework_commit": "52be11d-dirty",
+        "test_duration": 7979.464835882187,
+        "test_end": "2026-11-17 10:40:42",
+        "test_start": "2026-11-17 08:27:43"
+    },
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "color": null,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_9.0.2",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "color": null,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-fast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset fast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-fast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "fast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:28:05.866728+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 7.2021,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3604167,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.285562,
+                                                "max": 100.0,
+                                                "mean": 99.29313,
+                                                "min": 95.694571
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-fast_crf_18",
+                                        "wedge_name": "fast_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-fast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-medium_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "medium",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:27:52.426645+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 8.5536,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3639853,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.412494,
+                                                "max": 100.0,
+                                                "mean": 99.418835,
+                                                "min": 95.721449
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-medium_crf_18",
+                                        "wedge_name": "medium_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-placebo_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset placebo -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-placebo_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "placebo",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:45:08.110218+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 594.2289,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3868376,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.834575,
+                                                "max": 100.0,
+                                                "mean": 99.836391,
+                                                "min": 95.971435
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-placebo_crf_18",
+                                        "wedge_name": "placebo_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-placebo_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-slow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:28:38.605928+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 32.4482,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3759498,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.751925,
+                                                "max": 100.0,
+                                                "mean": 99.75475,
+                                                "min": 95.926799
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-slow_crf_18",
+                                        "wedge_name": "slow_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-slower_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slower",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:30:49.976439+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 131.0875,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3786730,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.804014,
+                                                "max": 100.0,
+                                                "mean": 99.80618,
+                                                "min": 95.875073
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-slower_crf_18",
+                                        "wedge_name": "slower_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryfast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset veryfast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryfast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:27:58.376806+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 5.6648,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3656355,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.195986,
+                                                "max": 100.0,
+                                                "mean": 99.204631,
+                                                "min": 95.694571
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-veryfast_crf_18",
+                                        "wedge_name": "veryfast_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryslow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T20:34:58.814094+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 248.5843,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 3704455,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.805478,
+                                                "max": 100.0,
+                                                "mean": 99.807621,
+                                                "min": 95.875073
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_cars_srgb-test_colorspace_yuv420p-veryslow_crf_18",
+                                        "wedge_name": "veryslow_crf_18"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_cars_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-fast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset fast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-fast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "fast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T20:46:03.747609+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 11.484,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7226158,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.36911,
+                                                "max": 100.0,
+                                                "mean": 99.378254,
+                                                "min": 95.11268
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-fast_crf_18",
+                                        "wedge_name": "fast_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-fast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-medium_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "medium",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T20:45:42.068946+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 14.2817,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7474394,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.526094,
+                                                "max": 100.0,
+                                                "mean": 99.534389,
+                                                "min": 95.125587
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-medium_crf_18",
+                                        "wedge_name": "medium_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-placebo_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset placebo -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-placebo_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "placebo",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:13:41.847582+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 943.6826,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7918422,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.859758,
+                                                "max": 100.0,
+                                                "mean": 99.862439,
+                                                "min": 95.383217
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-placebo_crf_18",
+                                        "wedge_name": "placebo_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-placebo_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-slow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T20:46:56.427777+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 52.4097,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7889429,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.813044,
+                                                "max": 100.0,
+                                                "mean": 99.816426,
+                                                "min": 95.392475
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-slow_crf_18",
+                                        "wedge_name": "slow_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-slower_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slower",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T20:50:43.354405+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 226.6429,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7868531,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.850466,
+                                                "max": 100.0,
+                                                "mean": 99.853281,
+                                                "min": 95.423469
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-slower_crf_18",
+                                        "wedge_name": "slower_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryfast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset veryfast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryfast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T20:45:51.988702+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 9.6371,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7191042,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.287379,
+                                                "max": 100.0,
+                                                "mean": 99.297762,
+                                                "min": 95.11268
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-veryfast_crf_18",
+                                        "wedge_name": "veryfast_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v hevc -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryslow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T20:57:57.887944+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 434.2552,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 7791248,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.853437,
+                                                "max": 100.0,
+                                                "mean": 99.856207,
+                                                "min": 95.423469
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_coaster_srgb-test_colorspace_yuv420p-veryslow_crf_18",
+                                        "wedge_name": "veryslow_crf_18"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_coaster_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-fast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset fast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-fast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "fast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:15:10.442175+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 16.5917,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 30547019,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.963734,
+                                                "max": 100.0,
+                                                "mean": 99.965528,
+                                                "min": 94.178305
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-fast_crf_18",
+                                        "wedge_name": "fast_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-fast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-medium_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "medium",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:14:37.929503+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 30.0923,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 29766200,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.969136,
+                                                "max": 100.0,
+                                                "mean": 99.970905,
+                                                "min": 94.181038
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-medium_crf_18",
+                                        "wedge_name": "medium_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-placebo_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset placebo -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-placebo_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "placebo",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T22:05:46.330472+00:00",
+                                            "decoder": "unknown (fails)",
+                                            "encode_time": 1800.046,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 28835876,
+                                            "result": "Failed to run"
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-placebo_crf_18",
+                                        "wedge_name": "placebo_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-placebo_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-slow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:17:00.295202+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 109.6289,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 32538804,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972034,
+                                                "max": 100.0,
+                                                "mean": 99.973494,
+                                                "min": 94.698855
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-slow_crf_18",
+                                        "wedge_name": "slow_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-slower_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slower",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:23:07.642050+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 367.1207,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 30612763,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972534,
+                                                "max": 100.0,
+                                                "mean": 99.973944,
+                                                "min": 94.788766
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-slower_crf_18",
+                                        "wedge_name": "slower_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryfast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset veryfast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryfast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:14:53.625038+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 15.4397,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 30642186,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.962156,
+                                                "max": 100.0,
+                                                "mean": 99.963952,
+                                                "min": 94.178305
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-veryfast_crf_18",
+                                        "wedge_name": "veryfast_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryslow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "2/2/1 tv",
+                                            "chroma_location": "left",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T21:35:45.973918+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 758.0852,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 30650537,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972534,
+                                                "max": 100.0,
+                                                "mean": 99.973944,
+                                                "min": 94.788766
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "chimera_fountains_srgb-test_colorspace_yuv420p-veryslow_crf_18",
+                                        "wedge_name": "veryslow_crf_18"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/chimera_fountains_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 6100,
+                                    "path": "sparks_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "sparks_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 6100.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 6100.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb",
+                                "name_prefix": "sparks_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 6100,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_colorspace_yuv420p-fast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset fast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-fast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "fast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:07:24.110405+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 17.1192,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 47266532,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.415228,
+                                                "max": 100.0,
+                                                "mean": 99.427713,
+                                                "min": 94.961492
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-fast_crf_18",
+                                        "wedge_name": "fast_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-fast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-fast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-medium_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset medium -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-medium_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "medium",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:06:50.436698+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 26.1191,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 40769902,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.736578,
+                                                "max": 100.0,
+                                                "mean": 99.742475,
+                                                "min": 95.142603
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-medium_crf_18",
+                                        "wedge_name": "medium_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-medium_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-medium_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-placebo_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset placebo -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-placebo_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "placebo",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:40:17.682417+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 922.4392,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 36603692,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.968774,
+                                                "max": 100.0,
+                                                "mean": 99.969813,
+                                                "min": 95.556938
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-placebo_crf_18",
+                                        "wedge_name": "placebo_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-placebo_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-placebo_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset slow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-slow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:08:35.800223+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 71.4375,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 40949893,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.963536,
+                                                "max": 100.0,
+                                                "mean": 99.964645,
+                                                "min": 95.475242
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-slow_crf_18",
+                                        "wedge_name": "slow_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-slow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-slow_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-slower_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset slower -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-slower_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "slower",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:14:52.037788+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 375.9755,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 36485729,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.972719,
+                                                "max": 100.0,
+                                                "mean": 99.973725,
+                                                "min": 95.594203
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-slower_crf_18",
+                                        "wedge_name": "slower_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-slower_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-slower_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryfast_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset veryfast -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryfast",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:07:06.751649+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 16.0324,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 47572829,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.372605,
+                                                "max": 100.0,
+                                                "mean": 99.3858,
+                                                "min": 94.953004
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-veryfast_crf_18",
+                                        "wedge_name": "veryfast_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-veryfast_crf_18.mov"
+                            },
+                            "test_colorspace_yuv420p-veryslow_crf_18": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 6100 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/hdr_sources/sparks_srgb/sparks_srgb.%05d.png\" -frames:v 200 -c:v hevc -preset veryslow -crf 18 -x264-params \"keyint=15:no-deblock=1\" -pix_fmt yuv420p -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "hevc",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-crf": 18,
+                                            "-pix_fmt": "yuv420p",
+                                            "-preset": "veryslow",
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\"",
+                                            "-x264-params": "\"keyint=15:no-deblock=1\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                        "results": {
+                                            "auto_conversions": "none",
+                                            "bitstream_chroma_loc": "not written",
+                                            "bitstream_colour": "1/13/1 tv",
+                                            "chroma_location": "left",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T22:24:54.808305+00:00",
+                                            "decoder": "hevc",
+                                            "encode_time": 568.1355,
+                                            "encoder_library": "x265 3.6+1-aa7f602f7",
+                                            "filesize": 36452101,
+                                            "pix_fmt": "yuv420p",
+                                            "profile": "Main",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.971746,
+                                                "max": 100.0,
+                                                "mean": 99.972756,
+                                                "min": 95.594203
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/hevc_tests.yml",
+                                        "test_prefix": "test_colorspace_yuv420p",
+                                        "testbasename": "sparks_srgb-test_colorspace_yuv420p-veryslow_crf_18",
+                                        "wedge_name": "veryslow_crf_18"
+                                    }
+                                },
+                                "name": "sparks_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/hevc_tests-encode/sparks_srgb-test_colorspace_yuv420p-veryslow_crf_18.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}

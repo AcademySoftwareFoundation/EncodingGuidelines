@@ -1,0 +1,106 @@
+# Where each graph in the documentation comes from.
+#
+# Each entry is the prefix of the published images (<prefix>-<graph name>.png in this folder).
+#   config:  the test config that made them (relative to enctests/).
+#   otio:    the results of that run, in this folder. The FFmpeg version and run date are read from it.
+#   report:  the config's report name, only when it differs from the prefix (the graphs were renamed when copied).
+#   note:    anything else needed to reproduce the graphs.
+#
+# update_doc_graphs.py --check checks this file against the pages, the configs and the OTIO files;
+# update_doc_graphs.py --update copies a new run in. See README.md.
+
+graphs:
+  aomav1-crf-test:
+    config: test_wedge_configs/aomav1_crf_tests.yml
+    otio: aomav1_crf_tests.otio
+  apv_bitrate:
+    config: test_wedge_configs/apv_bitrate_tests.yml
+    otio: apv_bitrate_tests.otio
+  apv_presets:
+    config: test_wedge_configs/apv_preset_tests.yml
+    otio: apv_preset_tests.otio
+  apv_qp:
+    config: test_wedge_configs/apv_qp_tests.yml
+    otio: apv_qp_tests.otio
+  apv_qp12:
+    config: test_wedge_configs/apv_qp422p12_tests.yml
+    otio: apv_qp422p12_tests.otio
+  av1-crf-test:
+    config: test_wedge_configs/av1_crf_tests.yml
+    otio: av1_crf_tests.otio
+  av1-preset-test:
+    config: test_wedge_configs/svtav1_preset_tests.yml
+    otio: svtav1_preset_tests.otio
+  codec-test:
+    config: test_wedge_configs/codec_tests.yml
+    otio: codec_tests.otio
+  dnxhd-tests:
+    config: test_wedge_configs/dnxhd_tests.yml
+    otio: dnxhd-results.otio
+  h264-crf-test:
+    config: test_wedge_configs/h264_crf_tests.yml
+    otio: h264_crf_tests.otio
+  h264-test:
+    config: test_wedge_configs/h264_tests.yml
+    otio: h264_tests.otio
+  hevc-crf-test:
+    config: test_wedge_configs/hevc_crf_tests.yml
+    otio: hevc_crf_tests.otio
+  hevc-test:
+    config: test_wedge_configs/hevc_tests.yml
+    otio: hevc_tests.otio
+  htj2k-qfactor-test:
+    config: test_wedge_configs/htj2k_qfactor_tests.yml
+    otio: htj2k_qfactor_tests.otio
+    note: Needs an oiiotool built with OpenJPH (set HTJ2K_OIIOTOOL).
+  htj2k-qstep-test:
+    config: test_wedge_configs/htj2k_qstep_tests.yml
+    otio: htj2k_qstep_tests.otio
+    note: Needs an oiiotool built with OpenJPH (set HTJ2K_OIIOTOOL).
+  intra-test422:
+    config: test_wedge_configs/intraframeonly422_tests.yml
+    otio: intraframeonly422_tests.otio
+    note: >-
+      Needs the 10-bit DPX sources (sources/enc_sources/dpx10_prep.sh) and an oiiotool built with OpenJPH
+      (set HTJ2K_OIIOTOOL). Same results as the git-2025-07-22-1ce20f55cc run.
+  intra-test444:
+    config: test_wedge_configs/intraframeonly_tests.yml
+    otio: intraframeonly_tests.otio
+    note: Needs the 10-bit DPX sources (sources/enc_sources/dpx10_prep.sh).
+  mjpeg-compression-tests:
+    config: test_wedge_configs/mjpeg_quality_tests.yml
+    otio: mjpeg_quality_tests.otio
+    report: mjpeg-qscale-tests
+    note: Only the filesize graph is used.
+  mjpeg-qscale-tests:
+    config: test_wedge_configs/mjpeg_qscale_tests.yml
+    otio: mjpeg_qscale_tests.otio
+  prores-qscale-tests:
+    config: test_wedge_configs/prores_qscale_tests.yml
+    otio: prores_qscale_tests.otio
+  prores-test:
+    config: test_wedge_configs/prores_tests.yml
+    otio: prores_tests.otio
+  rgb-tests:
+    config: test_wedge_configs/rgb_tests.yml
+    otio: rgb_tests.otio
+  vp8-crf-test:
+    config: test_wedge_configs/vp8_crf_tests.yml
+    otio: vp8_crf_tests.otio
+  vp8-speed-tests:
+    config: test_wedge_configs/vp8_speed_tests.yml
+    otio: vp8_speed_tests.otio
+  vp9-crf-test:
+    config: test_wedge_configs/vp9_crf_tests.yml
+    otio: vp9_crf_tests.otio
+  vp9-speed-tests:
+    config: test_wedge_configs/vp9_speed_tests.yml
+    otio: vp9_speed_tests.otio
+
+# Images that are not graphs of a report.
+other:
+  apv_bitrate-b250-yuvdiff.png: >-
+    Screenshot of a Y'CbCr diff from the compare pages of the git-2025-07-22-1ce20f55cc APV runs (the page is
+    linked from EncodeOpenAPV.md).
+  apv_qp16-yuvdiff.png: >-
+    Screenshot of a Y'CbCr diff from the compare pages of the git-2025-07-22-1ce20f55cc APV runs.

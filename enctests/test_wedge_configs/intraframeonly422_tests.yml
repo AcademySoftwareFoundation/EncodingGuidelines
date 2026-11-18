@@ -31,6 +31,18 @@ test_intra_mov:
             -profile:v: hq
             -pix_fmt: yuv422p10le
 
+        oapv_422p10le_qp15:
+            -c:v: liboapv
+            -preset: fast
+            -qp: 15
+            -pix_fmt: yuv422p10le
+            -sws_flags: spline+accurate_rnd+full_chroma_int
+            -vf: '"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709"'
+            -color_range: tv
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1
+
         oapv_422p10le_qp16:
             -c:v: liboapv
             -preset: fast
@@ -79,6 +91,31 @@ test_intra_mov:
             -color_primaries: bt709
             -color_trc: iec61966-2-1 
 
+
+test_intra_htj2k:
+    name: test_intra_htj2k
+    description: HTJ2K intraframe encoding (RGB, so 4:4:4) for comparison with the 4:2:2 codecs.
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+      ffmpegflags: ' -c:v png'
+    - testtype: yuvdiff
+    suffix: .mp4
+    # Needs an oiiotool built with OpenJPH; set HTJ2K_OIIOTOOL to use one elsewhere.
+    encoding_template: 'bin/htj2k_encodewrap_oiio.csh /usr/local/bin/oiiotool {input_args} -i "{source}" {encoding_args} "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_dpx_10/chimera_cars_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_coaster_srgb_dpx_10/chimera_coaster_srgb.%06d.dpx.yml
+    - sources/enc_sources/chimera_fountains_srgb_dpx_10/chimera_fountains_srgb.%05d.dpx.yml
+    - sources/enc_sources/chimera_wind_srgb_dpx_10/chimera_wind_srgb.%06d.dpx.yml
+    wedges:
+        htj2k_qs0.001:
+            -jph:qstep: 0.001
+
+        htj2k_qs0.002:
+            -jph:qstep: 0.002
 
 ---
 

@@ -52,6 +52,8 @@ def main():
 
     oiio_args = []
     launch_arg = otherargs.pop(0) # Get rid of the app to run.
+    # oiiotool needs OpenJPH support; HTJ2K_OIIOTOOL overrides the path given in the config.
+    launch_arg = os.environ.get("HTJ2K_OIIOTOOL", launch_arg)
     arg = otherargs.pop(0)
     while otherargs:
         if arg.startswith("-jph:"):

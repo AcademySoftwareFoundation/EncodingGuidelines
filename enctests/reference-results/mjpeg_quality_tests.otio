@@ -1,0 +1,886 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {
+        "config_file": "test_wedge_configs/mjpeg_quality_tests.yml",
+        "test_duration": 117.04968190193176,
+        "test_end": "2024-07-13 09:49:08",
+        "test_start": "2024-07-13 09:47:11"
+    },
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_7.0.1",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.jpg",
+                                    "pix_fmt": "rgb24be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_100",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".jpg",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_mjpeg_quality-compression_100": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -f image2 -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_100/chimera_fountains_srgb.%05d.jpg\" -vframes 200 -xerror -vcodec copy -compression 100 -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_100.mov\"",
+                                        "description": "variations of mjpeg_quality",
+                                        "encode_arguments": {
+                                            "-color_primaries": "bt709",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-compression": 100,
+                                            "-vcodec": "copy"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "MacBook-Pro-3.local",
+                                            "os": "Darwin",
+                                            "os_version": "23.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_100.mov",
+                                        "results": {
+                                            "completed_utc": "2024-07-13T20:47:12.013129+00:00",
+                                            "encode_time": 0.3179,
+                                            "filesize": 289031553,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986806,
+                                                "max": 100.0,
+                                                "mean": 99.98714,
+                                                "min": 97.428022
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/mjpeg_quality_tests.yml",
+                                        "test_prefix": "test_mjpeg_quality",
+                                        "testbasename": "chimera_fountains_srgb-test_mjpeg_quality-compression_100",
+                                        "wedge_name": "compression_100"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_mjpeg_quality-compression_100.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_100.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.jpg",
+                                    "pix_fmt": "rgb24be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_95",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".jpg",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_mjpeg_quality-compression_95": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -f image2 -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_95/chimera_fountains_srgb.%05d.jpg\" -vframes 200 -xerror -vcodec copy -compression 95 -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_95.mov\"",
+                                        "description": "variations of mjpeg_quality",
+                                        "encode_arguments": {
+                                            "-color_primaries": "bt709",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-compression": 95,
+                                            "-vcodec": "copy"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "MacBook-Pro-3.local",
+                                            "os": "Darwin",
+                                            "os_version": "23.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_95.mov",
+                                        "results": {
+                                            "completed_utc": "2024-07-13T20:47:31.824123+00:00",
+                                            "encode_time": 0.184,
+                                            "filesize": 127305212,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986806,
+                                                "max": 100.0,
+                                                "mean": 99.98714,
+                                                "min": 97.42803
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/mjpeg_quality_tests.yml",
+                                        "test_prefix": "test_mjpeg_quality",
+                                        "testbasename": "chimera_fountains_srgb-test_mjpeg_quality-compression_95",
+                                        "wedge_name": "compression_95"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_mjpeg_quality-compression_95.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_95.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.jpg",
+                                    "pix_fmt": "rgb24be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_90",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".jpg",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_mjpeg_quality-compression_90": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -f image2 -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_90/chimera_fountains_srgb.%05d.jpg\" -vframes 200 -xerror -vcodec copy -compression 90 -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_90.mov\"",
+                                        "description": "variations of mjpeg_quality",
+                                        "encode_arguments": {
+                                            "-color_primaries": "bt709",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-compression": 90,
+                                            "-vcodec": "copy"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "MacBook-Pro-3.local",
+                                            "os": "Darwin",
+                                            "os_version": "23.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_90.mov",
+                                        "results": {
+                                            "completed_utc": "2024-07-13T20:47:51.258117+00:00",
+                                            "encode_time": 0.1498,
+                                            "filesize": 86601832,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986806,
+                                                "max": 100.0,
+                                                "mean": 99.98714,
+                                                "min": 97.428043
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/mjpeg_quality_tests.yml",
+                                        "test_prefix": "test_mjpeg_quality",
+                                        "testbasename": "chimera_fountains_srgb-test_mjpeg_quality-compression_90",
+                                        "wedge_name": "compression_90"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_mjpeg_quality-compression_90.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_90.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.jpg",
+                                    "pix_fmt": "rgb24be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_80",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".jpg",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_mjpeg_quality-compression_80": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -f image2 -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_80/chimera_fountains_srgb.%05d.jpg\" -vframes 200 -xerror -vcodec copy -compression 80 -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_80.mov\"",
+                                        "description": "variations of mjpeg_quality",
+                                        "encode_arguments": {
+                                            "-color_primaries": "bt709",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-compression": 80,
+                                            "-vcodec": "copy"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "MacBook-Pro-3.local",
+                                            "os": "Darwin",
+                                            "os_version": "23.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_80.mov",
+                                        "results": {
+                                            "completed_utc": "2024-07-13T20:48:10.705743+00:00",
+                                            "encode_time": 0.1346,
+                                            "filesize": 57838105,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986806,
+                                                "max": 100.0,
+                                                "mean": 99.98714,
+                                                "min": 97.428007
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/mjpeg_quality_tests.yml",
+                                        "test_prefix": "test_mjpeg_quality",
+                                        "testbasename": "chimera_fountains_srgb-test_mjpeg_quality-compression_80",
+                                        "wedge_name": "compression_80"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_mjpeg_quality-compression_80.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_80.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.jpg",
+                                    "pix_fmt": "rgb24be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_70",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".jpg",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_mjpeg_quality-compression_70": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -f image2 -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_70/chimera_fountains_srgb.%05d.jpg\" -vframes 200 -xerror -vcodec copy -compression 70 -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_70.mov\"",
+                                        "description": "variations of mjpeg_quality",
+                                        "encode_arguments": {
+                                            "-color_primaries": "bt709",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-compression": 70,
+                                            "-vcodec": "copy"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "MacBook-Pro-3.local",
+                                            "os": "Darwin",
+                                            "os_version": "23.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_70.mov",
+                                        "results": {
+                                            "completed_utc": "2024-07-13T20:48:30.226469+00:00",
+                                            "encode_time": 0.1311,
+                                            "filesize": 46023889,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986806,
+                                                "max": 100.0,
+                                                "mean": 99.98714,
+                                                "min": 97.428032
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/mjpeg_quality_tests.yml",
+                                        "test_prefix": "test_mjpeg_quality",
+                                        "testbasename": "chimera_fountains_srgb-test_mjpeg_quality-compression_70",
+                                        "wedge_name": "compression_70"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_mjpeg_quality-compression_70.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_70.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.jpg",
+                                    "pix_fmt": "rgb24be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_60",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".jpg",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_mjpeg_quality-compression_60": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -f image2 -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb_jpg_60/chimera_fountains_srgb.%05d.jpg\" -vframes 200 -xerror -vcodec copy -compression 60 -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_60.mov\"",
+                                        "description": "variations of mjpeg_quality",
+                                        "encode_arguments": {
+                                            "-color_primaries": "bt709",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-compression": 60,
+                                            "-vcodec": "copy"
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "MacBook-Pro-3.local",
+                                            "os": "Darwin",
+                                            "os_version": "23.5.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_60.mov",
+                                        "results": {
+                                            "completed_utc": "2024-07-13T20:48:49.582000+00:00",
+                                            "encode_time": 0.1183,
+                                            "filesize": 38705153,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 60.0,
+                                                "max": 60.0,
+                                                "mean": 60.0,
+                                                "min": 60.0
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.986806,
+                                                "max": 100.0,
+                                                "mean": 99.98714,
+                                                "min": 97.428027
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/mjpeg_quality_tests.yml",
+                                        "test_prefix": "test_mjpeg_quality",
+                                        "testbasename": "chimera_fountains_srgb-test_mjpeg_quality-compression_60",
+                                        "wedge_name": "compression_60"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_mjpeg_quality-compression_60.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0.1/darwin-arm64/mjpeg_quality_tests-encode/chimera_fountains_srgb-test_mjpeg_quality-compression_60.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}

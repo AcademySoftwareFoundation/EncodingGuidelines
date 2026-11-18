@@ -150,6 +150,21 @@ class FFmpegCapabilities:
             self._lists[kind] = names
         return self._lists[kind]
 
+    def has_encoder(self, name):
+        """Whether `-c:v <name>` can encode: an encoder name, or a codec name with an encoder (FFmpeg then uses the
+        codec's first encoder, e.g. `hevc` is libx265)."""
+        if name in self._list('encoders'):
+            return True
+        if 'codecs' not in self._lists:
+            result = self._run(['-codecs'])
+            names = set()
+            for line in (result.stdout if result else '').splitlines():
+                fields = line.split()
+                if len(fields) >= 2 and re.fullmatch(r'[A-Z.]{6}', fields[0]) and fields[0][1] == 'E':
+                    names.add(fields[1])
+            self._lists['codecs'] = names
+        return name in self._lists['codecs']
+
     def encoder_works(self, encoder):
         """Encode one small frame, for hardware encoders that are built in but may have no device."""
         if encoder not in self._trials:
@@ -190,11 +205,12 @@ class FFmpegCapabilities:
 
         for kind in ('encoders', 'decoders', 'filters', 'hwaccels'):
             for name in requires.get(kind, []):
-                if name not in self._list(kind):
+                found = self.has_encoder(name) if kind == 'encoders' else name in self._list(kind)
+                if not found:
                     missing.append(f'{kind[:-1]} {name}')
 
         for encoder in requires.get('decodable', []):
-            if encoder in self._list('encoders') and not self.output_decodes(encoder):
+            if self.has_encoder(encoder) and not self.output_decodes(encoder):
                 missing.append(f'a decoder for {encoder} output')
 
         for encoder in requires.get('hardware', []):

@@ -1,0 +1,114 @@
+test_qfactor:
+    name: test_qfactor
+    description: variations of HTJ2k qfactor
+    app: ffmpeg
+    comparisontest:
+    - testtype: vmaf3
+      description: Slightly different conversion to keep it as 16-bit RGB.
+      ext: -png.mp4
+      ffmpegflags: ' -c:v png'
+    - testtype: yuvdiff
+    - testtype: frame_extract
+    suffix: .mp4
+    encoding_template: 'bin/htj2k_encodewrap.csh /Users/sam/git/OpenHTJ2K/build/bin/open_htj2k_enc {input_args} -i "{source}" {encoding_args} "{outfile}"  '
+    sources:
+    - sources/enc_sources/chimera_cars_srgb_tif_16/chimera_cars_srgb.%05d.tif.yml
+    - sources/enc_sources/chimera_coaster_srgb_tif_16/chimera_coaster_srgb.%06d.tif.yml
+    - sources/enc_sources/chimera_fountains_srgb_tif_16/chimera_fountains_srgb.%05d.tif.yml
+    - sources/enc_sources/chimera_wind_srgb_tif_16/chimera_wind_srgb.%06d.tif.yml
+    #- sources/enc_sources/chimera_coaster_srgb_dpx_16/chimera_coaster_srgb.044200.dpx
+    #- sources/enc_sources/chimera_fountains_srgb_dpx_16/chimera_fountains.05400.dpx
+    #- sources/hdr_sources/sparks_cct_tif/SPARKS_ACES_CCT.06100.tif
+    #- sources/hdr_sources/sparks2_cct_tif/SPARKS_ACES_CCT.06700.tif
+    #- sources/hdr_sources/dry_orchard_meadow_4k_cct.tif
+    wedges:
+        qfactor100: &base_args2
+            Qfactor=: 100
+            Clevels=: 5
+
+        qfactor099:
+            << : *base_args2
+            Qfactor=: 99
+
+        qfactor098:
+            << : *base_args2
+            Qfactor=: 98
+
+        qfactor096:
+            << : *base_args2
+            Qfactor=: 96
+
+        qfactor094:
+            << : *base_args2
+            Qfactor=: 94
+
+        qfactor090:
+            << : *base_args2
+            Qfactor=: 90
+
+        qfactor080:
+            << : *base_args2
+            Qfactor=: 80
+
+        qfactor070:
+            << : *base_args2
+            Qfactor=: 70
+
+        qfactor060:
+            << : *base_args2
+            Qfactor=: 60
+
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: media
+        height: 400
+        x: Qfactor=
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: -qstep
+    - args:
+        color: media
+        height: 400
+        x: Qfactor=
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: -qstep
+    - args:
+        color: media
+        height: 400
+        x: Qfactor=
+        y: encode_time
+        range_y: [0, 500]
+        markers: True
+      name: encode_time_zoom.png
+      sortby: qfactor=
+    - args:
+        color: media
+        height: 400
+        x: Qfactor=
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: qfactor=
+    - args:
+        color: media
+        height: 400
+        x: Qfactor=
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: Qfactor=
+    name: htj2k-qfactor-test
+    title: HTJ2K Comparing qfactor values for ojph for 12-bit input files.
+    description: Comparing different qfactor values using OpenHTJ2K
+    directory: htj2k-qfactor-12bit-encode
+    templatefile:
+    - basicvmafimagecompare.html.jinja
+    - compare.html.jinja
+

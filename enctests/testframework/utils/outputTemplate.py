@@ -13,12 +13,28 @@ from pathlib import Path
 from ..test_suite import TestSuite, SourceConfig
 from ..capabilities import FRAMEWORK_KEYS
 
-def _exportGraph(config, reportconfig, graph, alltests):
+def _graphStamp(config, timeline, testinfo):
+  """
+  The text stamped on each graph, so a graph copied into the docs still says what made it:
+  the FFmpeg version, the config file and the date the tests were run.
+  """
+  parts = ["FFmpeg " + testinfo['ffmpeg_version']]
+  config_file = config.config_file() if hasattr(config, "config_file") else None
+  if config_file:
+    parts.append(Path(config_file).name)
+  test_start = timeline.metadata.get('test_start')
+  if test_start:
+    parts.append(str(test_start).split(" ")[0])
+  return " \u00b7 ".join(parts)
+
+
+def _exportGraph(config, reportconfig, graph, alltests, stamp=None):
   """
   Export a graph using all the test data.
   :param reportconfig: The report configuration to output. 
   :param graph: The specific graph to output.
   :param alltest: The raw test data to use.
+  :param stamp: Text written in small type at the top right of the graph (see _graphStamp).
   """
   graphargs = graph.get("args")
 
@@ -49,6 +65,11 @@ def _exportGraph(config, reportconfig, graph, alltests):
     category_orders = {graphargs['color']: labels.keys()}
     graphargs['category_orders'] = category_orders
     fig = px.line(df, **graphargs) 
+
+  if stamp:
+    fig.add_annotation(text=stamp, xref="paper", yref="paper", x=1, y=1,
+                       xanchor="right", yanchor="bottom", yshift=4, showarrow=False,
+                       font=dict(size=10, color="#888888"))
 
   filename = Path(reportconfig['name']+"-"+graph.get("name"))
   if "directory" in reportconfig:
@@ -134,7 +155,7 @@ def processTemplate(config, timeline):
         tests[track.name] = {'results': results, 'source_info': track.metadata['aswf_enctests']['source_info'], 'default_media': default_media}
 
   for graph in reportconfig.get("graphs", []):
-    _exportGraph(config, reportconfig, graph, alltests)
+    _exportGraph(config, reportconfig, graph, alltests, stamp=_graphStamp(config, timeline, testinfo))
 
   environment = jinja2.Environment(loader=jinja2.FileSystemLoader("testframework/templates/"))
 
@@ -146,7 +167,7 @@ def processTemplate(config, timeline):
 
 
   environment.filters['regex_replace'] = regex_replace_filter
-  templates = reportconfig['templatefile']
+  templates = reportconfig.get('templatefile', [])
   if isinstance(templates, str):
       templates = [templates]  # Convert single string to list
   htmlreports = []
