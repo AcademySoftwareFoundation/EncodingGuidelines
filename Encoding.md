@@ -60,7 +60,7 @@ FFmpeg version, see [FFmpeg Version Changes](FFmpegChanges.html).
 
 \* HEVC support in browsers is a bit of a mess. It works in Safari, Firefox and Chrome on MacOS. It works in Firefox and Chrome on Linux. It works in Firefox on Windows, but not in Chrome on Windows. In many cases it needs to be supported by the GPU though and configured correctly.
 
-For a high level comparison we have encoded 4 sets of media using our recommended settings, all with the aim of getting the VMAF score > 98.  `libx264`, `libsvtav1` and `libvpx-vp9` were all encoded 4:2:0, and DNxHD and ProRes at 10-bit 4:2:2.
+For a high level comparison we have encoded 4 sets of media using our recommended settings, all with the aim of getting the VMAF score > 98 (chimera_wind, the hardest clip, gets 96.6 to 97.9 except with ProRes and DNxHD). `libx264`, `libsvtav1` and `libvpx-vp9` were all encoded 4:2:0, and DNxHD and ProRes at 10-bit 4:2:2.
 
 For details on codec flags, and how we picked the parameters, see the page for each codec.
 

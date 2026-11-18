@@ -1,0 +1,1582 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {
+        "config_file": "test_wedge_configs/prores_tests.yml",
+        "config_sha256": "4b7eb7831f143757feeb7193cadcb4f00f915f729985dcd2a9a0f390a1b4bda9",
+        "ffmpeg_configuration": "--disable-shared --enable-static --prefix=/ --bindir='${prefix}/bin' --libdir='${prefix}/lib' --pkg-config-flags=--static --disable-doc --disable-cross-compile --enable-asm --disable-shared --enable-static --enable-pic --enable-avdevice --enable-avcodec --enable-avformat --enable-swresample --enable-swscale --enable-avfilter --enable-bzlib --enable-zlib --disable-libxml2 --enable-lzma --enable-iconv --enable-libfreetype --disable-libfontconfig --disable-libfribidi --enable-libopenjpeg --enable-libopenh264 --enable-libvorbis --enable-libopus --disable-libzmq --disable-sdl2 --enable-libx264 --enable-libx265 --enable-libvpx --enable-libmp3lame --enable-libfdk-aac --enable-libwebp --enable-libvmaf --enable-libaom --enable-openssl --disable-alsa --disable-libpulse --disable-vaapi --disable-libdrm --disable-vdpau --disable-libxcb --disable-libxcb-shm --disable-libxcb-shape --disable-libxcb-xfixes --disable-libsoxr --enable-appkit --enable-avfoundation --enable-coreimage --enable-audiotoolbox --enable-videotoolbox --disable-securetransport --disable-vulkan --enable-libdav1d --disable-jni --disable-mediacodec --disable-xlib --disable-cuda --disable-cuvid --enable-nonfree --enable-gpl --enable-libzimg --enable-libopencolorio --disable-libjxl --disable-whisper --enable-liboapv --enable-libsvtav1 --enable-libharfbuzz --install-name-dir='@rpath' --arch=aarch64 --cc=clang --cxx=clang++ --pkg-config=/Users/sam/.conan2/p/pkgco01060018be6b1/p/bin/pkgconf --extra-cflags='-fPIC -O3'",
+        "ffmpeg_libraries": [
+            "libcompression.dylib 1.0.0"
+        ],
+        "ffmpeg_version_line": "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+        "framework_commit": "52be11d-dirty",
+        "test_duration": 118.43036007881165,
+        "test_end": "2026-11-17 06:42:29",
+        "test_start": "2026-11-17 06:40:31"
+    },
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "color": null,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_9.0.2",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "color": null,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 2500,
+                                    "path": "chimera_cars_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_cars_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 2500.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 2500.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb",
+                                "name_prefix": "chimera_cars_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 2500,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_profiles-4444": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v 4444 -qscale:v 10 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-4444.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": 4444,
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-4444.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv444p10le bt709 tv",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T18:40:43.502414+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 0.9489,
+                                            "filesize": 73788854,
+                                            "pix_fmt": "yuv444p12le",
+                                            "profile": "4444",
+                                            "prores_header": "1/13/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.480205,
+                                                "max": 100.0,
+                                                "mean": 99.486144,
+                                                "min": 94.480982
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_cars_srgb-test_prores_profiles-4444",
+                                        "wedge_name": 4444
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_prores_profiles-4444.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-4444.mov"
+                            },
+                            "test_prores_profiles-4444xq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v 4444xq -qscale:v 10 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-4444xq.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": "4444xq",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-4444xq.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv444p10le bt709 tv",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T18:40:44.722709+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 0.9548,
+                                            "filesize": 73788854,
+                                            "pix_fmt": "yuv444p12le",
+                                            "profile": "XQ",
+                                            "prores_header": "1/13/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.480205,
+                                                "max": 100.0,
+                                                "mean": 99.486144,
+                                                "min": 94.480982
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_cars_srgb-test_prores_profiles-4444xq",
+                                        "wedge_name": "4444xq"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_prores_profiles-4444xq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-4444xq.mov"
+                            },
+                            "test_prores_profiles-hq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v hq -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-hq.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "hq",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-hq.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T18:40:42.283984+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 0.84,
+                                            "filesize": 61577362,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "HQ",
+                                            "prores_header": "1/13/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.485086,
+                                                "max": 100.0,
+                                                "mean": 99.490965,
+                                                "min": 94.486227
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_cars_srgb-test_prores_profiles-hq",
+                                        "wedge_name": "hq"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_prores_profiles-hq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-hq.mov"
+                            },
+                            "test_prores_profiles-lt": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v lt -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-lt.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "lt",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-lt.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T18:40:40.112474+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 0.7803,
+                                            "filesize": 36149845,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "LT",
+                                            "prores_header": "1/13/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.118682,
+                                                "max": 100.0,
+                                                "mean": 98.140485,
+                                                "min": 92.583578
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_cars_srgb-test_prores_profiles-lt",
+                                        "wedge_name": "lt"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_prores_profiles-lt.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-lt.mov"
+                            },
+                            "test_prores_profiles-proxy": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v proxy -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-proxy.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "proxy",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-proxy.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T18:40:39.060558+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 0.8373,
+                                            "filesize": 28063820,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "Proxy",
+                                            "prores_header": "1/13/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 95.948975,
+                                                "max": 99.674177,
+                                                "mean": 95.976617,
+                                                "min": 90.510198
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_cars_srgb-test_prores_profiles-proxy",
+                                        "wedge_name": "proxy"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_prores_profiles-proxy.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-proxy.mov"
+                            },
+                            "test_prores_profiles-standard": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 2500 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_cars_srgb/chimera_cars_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v standard -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-standard.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "standard",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-standard.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_primaries": "bt709",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "color_transfer": "iec61966-2-1",
+                                            "colr": "nclc 1/13/1",
+                                            "completed_utc": "2026-11-17T18:40:41.168428+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 0.7879,
+                                            "filesize": 46135123,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "Standard",
+                                            "prores_header": "1/13/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.064118,
+                                                "max": 100.0,
+                                                "mean": 99.075612,
+                                                "min": 93.783876
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_cars_srgb-test_prores_profiles-standard",
+                                        "wedge_name": "standard"
+                                    }
+                                },
+                                "name": "chimera_cars_srgb-test_prores_profiles-standard.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_cars_srgb-test_prores_profiles-standard.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_profiles-4444": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v prores_ks -profile:v 4444 -qscale:v 10 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-4444.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": 4444,
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-4444.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv444p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:23.977154+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.0668,
+                                            "filesize": 77535702,
+                                            "pix_fmt": "yuv444p12le",
+                                            "profile": "4444",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.897232,
+                                                "max": 100.0,
+                                                "mean": 99.899554,
+                                                "min": 94.433788
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_coaster_srgb-test_prores_profiles-4444",
+                                        "wedge_name": 4444
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_prores_profiles-4444.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-4444.mov"
+                            },
+                            "test_prores_profiles-4444xq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v prores_ks -profile:v 4444xq -qscale:v 10 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-4444xq.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": "4444xq",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-4444xq.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv444p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:26.462207+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.1985,
+                                            "filesize": 77535702,
+                                            "pix_fmt": "yuv444p12le",
+                                            "profile": "XQ",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.897232,
+                                                "max": 100.0,
+                                                "mean": 99.899554,
+                                                "min": 94.433788
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_coaster_srgb-test_prores_profiles-4444xq",
+                                        "wedge_name": "4444xq"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_prores_profiles-4444xq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-4444xq.mov"
+                            },
+                            "test_prores_profiles-hq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v prores_ks -profile:v hq -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-hq.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "hq",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-hq.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:21.629902+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.1179,
+                                            "filesize": 65151294,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "HQ",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.897685,
+                                                "max": 100.0,
+                                                "mean": 99.900006,
+                                                "min": 94.427982
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_coaster_srgb-test_prores_profiles-hq",
+                                        "wedge_name": "hq"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_prores_profiles-hq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-hq.mov"
+                            },
+                            "test_prores_profiles-lt": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v prores_ks -profile:v lt -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-lt.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "lt",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-lt.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:16.758597+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.1904,
+                                            "filesize": 43377154,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "LT",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.261277,
+                                                "max": 100.0,
+                                                "mean": 99.272158,
+                                                "min": 92.675234
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_coaster_srgb-test_prores_profiles-lt",
+                                        "wedge_name": "lt"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_prores_profiles-lt.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-lt.mov"
+                            },
+                            "test_prores_profiles-proxy": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v prores_ks -profile:v proxy -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-proxy.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "proxy",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-proxy.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:14.296173+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.0562,
+                                            "filesize": 34687149,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "Proxy",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 97.961409,
+                                                "max": 100.0,
+                                                "mean": 97.994761,
+                                                "min": 90.661489
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_coaster_srgb-test_prores_profiles-proxy",
+                                        "wedge_name": "proxy"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_prores_profiles-proxy.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-proxy.mov"
+                            },
+                            "test_prores_profiles-standard": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -frames:v 200 -c:v prores_ks -profile:v standard -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-standard.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "standard",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-standard.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:19.237597+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.1985,
+                                            "filesize": 52848228,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "Standard",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.76827,
+                                                "max": 100.0,
+                                                "mean": 99.772353,
+                                                "min": 93.793904
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_coaster_srgb-test_prores_profiles-standard",
+                                        "wedge_name": "standard"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_prores_profiles-standard.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_coaster_srgb-test_prores_profiles-standard.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    },
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 5400,
+                                    "path": "chimera_fountains_srgb.%05d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_fountains_srgb.%05d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 5400.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "color": null,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 5400.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb",
+                                "name_prefix": "chimera_fountains_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 5400,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 5,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_prores_profiles-4444": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v 4444 -qscale:v 10 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-4444.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": 4444,
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-4444.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv444p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:42:04.277105+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.3077,
+                                            "filesize": 125864642,
+                                            "pix_fmt": "yuv444p12le",
+                                            "profile": "4444",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.967109,
+                                                "max": 100.0,
+                                                "mean": 99.969111,
+                                                "min": 93.822166
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_fountains_srgb-test_prores_profiles-4444",
+                                        "wedge_name": 4444
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_prores_profiles-4444.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-4444.mov"
+                            },
+                            "test_prores_profiles-4444xq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v 4444xq -qscale:v 10 -pix_fmt yuv444p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-4444xq.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv444p10le",
+                                            "-profile:v": "4444xq",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-4444xq.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv444p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:42:06.844143+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.311,
+                                            "filesize": 125864642,
+                                            "pix_fmt": "yuv444p12le",
+                                            "profile": "XQ",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.967109,
+                                                "max": 100.0,
+                                                "mean": 99.969111,
+                                                "min": 93.822166
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_fountains_srgb-test_prores_profiles-4444xq",
+                                        "wedge_name": "4444xq"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_prores_profiles-4444xq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-4444xq.mov"
+                            },
+                            "test_prores_profiles-hq": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v hq -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-hq.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "hq",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-hq.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:42:01.713875+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.0547,
+                                            "filesize": 107639820,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "HQ",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.967145,
+                                                "max": 100.0,
+                                                "mean": 99.969142,
+                                                "min": 93.828494
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_fountains_srgb-test_prores_profiles-hq",
+                                        "wedge_name": "hq"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_prores_profiles-hq.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-hq.mov"
+                            },
+                            "test_prores_profiles-lt": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v lt -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-lt.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "lt",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-lt.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:57.055785+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 1.9786,
+                                            "filesize": 61421544,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "LT",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.953757,
+                                                "max": 100.0,
+                                                "mean": 99.957618,
+                                                "min": 91.523676
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_fountains_srgb-test_prores_profiles-lt",
+                                        "wedge_name": "lt"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_prores_profiles-lt.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-lt.mov"
+                            },
+                            "test_prores_profiles-proxy": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v proxy -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-proxy.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "proxy",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-proxy.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:54.819784+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 1.9359,
+                                            "filesize": 46983540,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "Proxy",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.937814,
+                                                "max": 100.0,
+                                                "mean": 99.944602,
+                                                "min": 88.920311
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_fountains_srgb-test_prores_profiles-proxy",
+                                        "wedge_name": "proxy"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_prores_profiles-proxy.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-proxy.mov"
+                            },
+                            "test_prores_profiles-standard": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 5400 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_fountains_srgb/chimera_fountains_srgb.%05d.png\" -frames:v 200 -c:v prores_ks -profile:v standard -qscale:v 10 -pix_fmt yuv422p10le -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-standard.mov\"",
+                                        "description": "variations of prores profiles",
+                                        "encode_arguments": {
+                                            "-c:v": "prores_ks",
+                                            "-color_primaries": "bt709",
+                                            "-color_range": "tv",
+                                            "-color_trc": "iec61966-2-1",
+                                            "-colorspace": "bt709",
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-profile:v": "standard",
+                                            "-qscale:v": 10
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "Sams-M2-MacBook-Pro-2.local",
+                                            "os": "Darwin",
+                                            "os_version": "25.6.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-standard.mov",
+                                        "results": {
+                                            "auto_conversions": "rgb48be gbr pc -> yuv422p10le bt709 tv",
+                                            "color_range": "tv",
+                                            "color_space": "bt709",
+                                            "colr": "none",
+                                            "completed_utc": "2026-11-17T18:41:59.352113+00:00",
+                                            "decoder": "prores",
+                                            "encode_time": 2.0383,
+                                            "filesize": 79607940,
+                                            "pix_fmt": "yuv422p10le",
+                                            "profile": "Standard",
+                                            "prores_header": "2/2/1",
+                                            "psnr": null,
+                                            "psnr_cb": null,
+                                            "psnr_cr": null,
+                                            "psnr_y": null,
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.962409,
+                                                "max": 100.0,
+                                                "mean": 99.965001,
+                                                "min": 93.000237
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/prores_tests.yml",
+                                        "test_prefix": "test_prores_profiles",
+                                        "testbasename": "chimera_fountains_srgb-test_prores_profiles-standard",
+                                        "wedge_name": "standard"
+                                    }
+                                },
+                                "name": "chimera_fountains_srgb-test_prores_profiles-standard.mov",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Volumes/ExtremeSSD/wedge_results/ffmpeg_version_9.0.2/darwin-arm64/prores_tests-encode/chimera_fountains_srgb-test_prores_profiles-standard.mov"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}

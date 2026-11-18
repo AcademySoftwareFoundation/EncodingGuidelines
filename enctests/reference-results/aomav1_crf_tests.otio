@@ -1,0 +1,2114 @@
+{
+    "OTIO_SCHEMA": "Timeline.1",
+    "metadata": {
+        "config_file": "test_wedge_configs/aomav1_crf_tests.yml",
+        "test_duration": 28657.826604127884,
+        "test_end": "2024-04-15 08:27:26",
+        "test_start": "2024-04-15 12:29:48"
+    },
+    "name": "aswf-encoding-tests",
+    "global_start_time": null,
+    "tracks": {
+        "OTIO_SCHEMA": "Stack.1",
+        "metadata": {},
+        "name": "tracks",
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "children": [
+            {
+                "OTIO_SCHEMA": "Track.1",
+                "metadata": {},
+                "name": "ffmpeg_version_7.0",
+                "source_range": null,
+                "effects": [],
+                "markers": [],
+                "enabled": true,
+                "children": [
+                    {
+                        "OTIO_SCHEMA": "Clip.2",
+                        "metadata": {
+                            "aswf_enctests": {
+                                "source_info": {
+                                    "duration": 200,
+                                    "height": 1080,
+                                    "images": true,
+                                    "in": 44200,
+                                    "path": "chimera_coaster_srgb.%06d.png",
+                                    "pix_fmt": "rgb48be",
+                                    "rate": 25.0,
+                                    "width": 1920
+                                }
+                            }
+                        },
+                        "name": "chimera_coaster_srgb.%06d",
+                        "source_range": {
+                            "OTIO_SCHEMA": "TimeRange.1",
+                            "duration": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 200.0
+                            },
+                            "start_time": {
+                                "OTIO_SCHEMA": "RationalTime.1",
+                                "rate": 25.0,
+                                "value": 44200.0
+                            }
+                        },
+                        "effects": [],
+                        "markers": [],
+                        "enabled": true,
+                        "media_references": {
+                            "DEFAULT_MEDIA": {
+                                "OTIO_SCHEMA": "ImageSequenceReference.1",
+                                "metadata": {},
+                                "name": "",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 44200.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url_base": "/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb",
+                                "name_prefix": "chimera_coaster_srgb.",
+                                "name_suffix": ".png",
+                                "start_frame": 44200,
+                                "frame_step": 1,
+                                "rate": 25.0,
+                                "frame_zero_padding": 6,
+                                "missing_frame_policy": "error"
+                            },
+                            "test_crf-cpu1_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 16 -cpu-used 1 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_16.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 1,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_16.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T03:37:30.882021+00:00",
+                                            "encode_time": 5968.4165,
+                                            "filesize": 5978455,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.3035,
+                                                "max": 52.040355,
+                                                "mean": 50.316347,
+                                                "min": 48.589988
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.134511,
+                                                "max": 50.947192,
+                                                "mean": 49.148139,
+                                                "min": 47.376594
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.234018,
+                                                "max": 50.169298,
+                                                "mean": 48.246847,
+                                                "min": 45.805008
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.903086,
+                                                "max": 100.0,
+                                                "mean": 99.907617,
+                                                "min": 91.366497
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu1_crf_16",
+                                        "wedge_name": "cpu1_crf_16"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu1_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_16.mp4"
+                            },
+                            "test_crf-cpu1_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 20 -cpu-used 1 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_20.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 1,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_20.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T05:04:08.295249+00:00",
+                                            "encode_time": 5197.3883,
+                                            "filesize": 4709386,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.692159,
+                                                "max": 51.574867,
+                                                "mean": 49.70602,
+                                                "min": 47.828481
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.550353,
+                                                "max": 50.400433,
+                                                "mean": 48.565505,
+                                                "min": 46.596494
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.348232,
+                                                "max": 49.415926,
+                                                "mean": 47.362633,
+                                                "min": 44.806334
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.814947,
+                                                "max": 100.0,
+                                                "mean": 99.821084,
+                                                "min": 91.183111
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu1_crf_20",
+                                        "wedge_name": "cpu1_crf_20"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu1_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_20.mp4"
+                            },
+                            "test_crf-cpu1_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 25 -cpu-used 1 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_25.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 1,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_25.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T06:17:46.066237+00:00",
+                                            "encode_time": 4417.749,
+                                            "filesize": 3569261,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.133498,
+                                                "max": 51.096536,
+                                                "mean": 49.147599,
+                                                "min": 47.368244
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.036112,
+                                                "max": 49.995371,
+                                                "mean": 48.051349,
+                                                "min": 46.17138
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.348335,
+                                                "max": 48.468473,
+                                                "mean": 46.363108,
+                                                "min": 44.382515
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.592275,
+                                                "max": 100.0,
+                                                "mean": 99.602007,
+                                                "min": 90.82279
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu1_crf_25",
+                                        "wedge_name": "cpu1_crf_25"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu1_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_25.mp4"
+                            },
+                            "test_crf-cpu1_crf_30": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 30 -cpu-used 1 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_30.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 1,
+                                            "-crf": 30,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_30.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T07:18:59.981331+00:00",
+                                            "encode_time": 3673.8868,
+                                            "filesize": 2621879,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.490356,
+                                                "max": 50.562109,
+                                                "mean": 48.505438,
+                                                "min": 46.803812
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.460027,
+                                                "max": 49.562374,
+                                                "mean": 47.476602,
+                                                "min": 45.650574
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.186252,
+                                                "max": 47.368716,
+                                                "mean": 45.202296,
+                                                "min": 42.999832
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.926197,
+                                                "max": 100.0,
+                                                "mean": 98.945759,
+                                                "min": 90.338612
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu1_crf_30",
+                                        "wedge_name": "cpu1_crf_30"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu1_crf_30.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu1_crf_30.mp4"
+                            },
+                            "test_crf-cpu2_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 16 -cpu-used 2 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_16.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 2,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_16.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:53:25.195528+00:00",
+                                            "encode_time": 1696.03,
+                                            "filesize": 6301197,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.046664,
+                                                "max": 51.939941,
+                                                "mean": 50.060337,
+                                                "min": 48.147755
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.91766,
+                                                "max": 50.874162,
+                                                "mean": 48.932321,
+                                                "min": 46.993896
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.206275,
+                                                "max": 49.87691,
+                                                "mean": 48.219236,
+                                                "min": 45.797856
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.930974,
+                                                "max": 100.0,
+                                                "mean": 99.935259,
+                                                "min": 91.263684
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu2_crf_16",
+                                        "wedge_name": "cpu2_crf_16"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu2_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_16.mp4"
+                            },
+                            "test_crf-cpu2_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 20 -cpu-used 2 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_20.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 2,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_20.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T01:18:27.441722+00:00",
+                                            "encode_time": 1502.2263,
+                                            "filesize": 4918995,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.431084,
+                                                "max": 51.351918,
+                                                "mean": 49.446423,
+                                                "min": 47.370853
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.322844,
+                                                "max": 50.221211,
+                                                "mean": 48.339653,
+                                                "min": 46.241284
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.31001,
+                                                "max": 49.172573,
+                                                "mean": 47.324767,
+                                                "min": 44.785592
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.854643,
+                                                "max": 100.0,
+                                                "mean": 99.859913,
+                                                "min": 91.099701
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu2_crf_20",
+                                        "wedge_name": "cpu2_crf_20"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu2_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_20.mp4"
+                            },
+                            "test_crf-cpu2_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 25 -cpu-used 2 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_25.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 2,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_25.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T01:39:48.196760+00:00",
+                                            "encode_time": 1280.7316,
+                                            "filesize": 3715507,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.885761,
+                                                "max": 50.811092,
+                                                "mean": 48.900825,
+                                                "min": 46.872802
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.826173,
+                                                "max": 49.765379,
+                                                "mean": 47.842838,
+                                                "min": 45.782492
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.323476,
+                                                "max": 48.177207,
+                                                "mean": 46.338475,
+                                                "min": 44.35141
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.682489,
+                                                "max": 100.0,
+                                                "mean": 99.690264,
+                                                "min": 90.928895
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu2_crf_25",
+                                        "wedge_name": "cpu2_crf_25"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu2_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_25.mp4"
+                            },
+                            "test_crf-cpu2_crf_30": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 30 -cpu-used 2 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_30.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 2,
+                                            "-crf": 30,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_30.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T01:58:02.402854+00:00",
+                                            "encode_time": 1094.2287,
+                                            "filesize": 2711579,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.27304,
+                                                "max": 50.265118,
+                                                "mean": 48.289369,
+                                                "min": 46.299429
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.283142,
+                                                "max": 49.214566,
+                                                "mean": 47.30062,
+                                                "min": 45.294077
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.16423,
+                                                "max": 47.067086,
+                                                "mean": 45.180993,
+                                                "min": 43.047451
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.040361,
+                                                "max": 100.0,
+                                                "mean": 99.057144,
+                                                "min": 90.341356
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu2_crf_30",
+                                        "wedge_name": "cpu2_crf_30"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu2_crf_30.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu2_crf_30.mp4"
+                            },
+                            "test_crf-cpu3_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 16 -cpu-used 3 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_16.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 3,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_16.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-14T23:38:15.368991+00:00",
+                                            "encode_time": 506.6286,
+                                            "filesize": 6560274,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.963993,
+                                                "max": 51.695084,
+                                                "mean": 49.977896,
+                                                "min": 48.035643
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.850212,
+                                                "max": 50.534185,
+                                                "mean": 48.865299,
+                                                "min": 46.88136
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 48.080164,
+                                                "max": 49.634946,
+                                                "mean": 48.092919,
+                                                "min": 45.767978
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.922801,
+                                                "max": 100.0,
+                                                "mean": 99.927055,
+                                                "min": 91.363626
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu3_crf_16",
+                                        "wedge_name": "cpu3_crf_16"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu3_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_16.mp4"
+                            },
+                            "test_crf-cpu3_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 20 -cpu-used 3 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_20.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 3,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_20.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-14T23:45:52.938588+00:00",
+                                            "encode_time": 457.5691,
+                                            "filesize": 5145795,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.327569,
+                                                "max": 51.247213,
+                                                "mean": 49.342989,
+                                                "min": 47.207435
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.229502,
+                                                "max": 50.065011,
+                                                "mean": 48.246117,
+                                                "min": 46.074366
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.177446,
+                                                "max": 49.411031,
+                                                "mean": 47.192504,
+                                                "min": 44.770366
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.83516,
+                                                "max": 100.0,
+                                                "mean": 99.841045,
+                                                "min": 91.099071
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu3_crf_20",
+                                        "wedge_name": "cpu3_crf_20"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu3_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_20.mp4"
+                            },
+                            "test_crf-cpu3_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 25 -cpu-used 3 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_25.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 3,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_25.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-14T23:52:46.690049+00:00",
+                                            "encode_time": 413.7498,
+                                            "filesize": 3871782,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.791696,
+                                                "max": 50.872365,
+                                                "mean": 48.80775,
+                                                "min": 46.763988
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.738967,
+                                                "max": 49.827655,
+                                                "mean": 47.75638,
+                                                "min": 45.65033
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.12873,
+                                                "max": 48.356476,
+                                                "mean": 46.143724,
+                                                "min": 44.126727
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.626271,
+                                                "max": 100.0,
+                                                "mean": 99.635382,
+                                                "min": 90.805292
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu3_crf_25",
+                                        "wedge_name": "cpu3_crf_25"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu3_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_25.mp4"
+                            },
+                            "test_crf-cpu3_crf_30": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 30 -cpu-used 3 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_30.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 3,
+                                            "-crf": 30,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_30.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-14T23:58:55.400861+00:00",
+                                            "encode_time": 368.7074,
+                                            "filesize": 2822224,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.180177,
+                                                "max": 50.401173,
+                                                "mean": 48.19705,
+                                                "min": 46.209694
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.178952,
+                                                "max": 49.441357000000004,
+                                                "mean": 47.197124,
+                                                "min": 45.142933
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.949541,
+                                                "max": 47.231811,
+                                                "mean": 44.966461,
+                                                "min": 42.834203
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.86792,
+                                                "max": 100.0,
+                                                "mean": 98.887628,
+                                                "min": 90.022968
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu3_crf_30",
+                                        "wedge_name": "cpu3_crf_30"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu3_crf_30.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu3_crf_30.mp4"
+                            },
+                            "test_crf-cpu4_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 16 -cpu-used 4 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_16.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 4,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_16.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:12:15.181690+00:00",
+                                            "encode_time": 275.1316,
+                                            "filesize": 6702039,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 50.204983,
+                                                "max": 51.813654,
+                                                "mean": 50.219077,
+                                                "min": 48.255005
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 49.070485,
+                                                "max": 50.659713,
+                                                "mean": 49.085359,
+                                                "min": 47.084629
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.939866,
+                                                "max": 49.746042,
+                                                "mean": 47.953277,
+                                                "min": 45.608544
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.908764,
+                                                "max": 100.0,
+                                                "mean": 99.913302,
+                                                "min": 91.265263
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu4_crf_16",
+                                        "wedge_name": "cpu4_crf_16"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu4_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_16.mp4"
+                            },
+                            "test_crf-cpu4_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 20 -cpu-used 4 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_20.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 4,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_20.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:16:49.203864+00:00",
+                                            "encode_time": 274.0321,
+                                            "filesize": 5142569,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.63379,
+                                                "max": 51.390509,
+                                                "mean": 49.649143,
+                                                "min": 47.597017
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.519495,
+                                                "max": 50.202678,
+                                                "mean": 48.535507,
+                                                "min": 46.456077
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.000516,
+                                                "max": 48.915521,
+                                                "mean": 47.015798,
+                                                "min": 44.534274
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.83011,
+                                                "max": 100.0,
+                                                "mean": 99.836004,
+                                                "min": 91.094785
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu4_crf_20",
+                                        "wedge_name": "cpu4_crf_20"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu4_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_20.mp4"
+                            },
+                            "test_crf-cpu4_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 25 -cpu-used 4 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_25.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 4,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_25.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:21:09.180482+00:00",
+                                            "encode_time": 259.9754,
+                                            "filesize": 3878165,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.046594,
+                                                "max": 51.028925,
+                                                "mean": 49.061872,
+                                                "min": 47.063588
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.980603,
+                                                "max": 49.92739,
+                                                "mean": 47.997115,
+                                                "min": 45.926521
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.000776,
+                                                "max": 47.955741,
+                                                "mean": 46.017013,
+                                                "min": 43.972622
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.581786,
+                                                "max": 100.0,
+                                                "mean": 99.590988,
+                                                "min": 90.756747
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu4_crf_25",
+                                        "wedge_name": "cpu4_crf_25"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu4_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_25.mp4"
+                            },
+                            "test_crf-cpu4_crf_30": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 30 -cpu-used 4 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_30.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 4,
+                                            "-crf": 30,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_30.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:25:09.027879+00:00",
+                                            "encode_time": 239.8455,
+                                            "filesize": 2829595,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.344205,
+                                                "max": 50.360131,
+                                                "mean": 48.361378,
+                                                "min": 46.357797
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.342192,
+                                                "max": 49.338159,
+                                                "mean": 47.360796,
+                                                "min": 45.285362
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.826073,
+                                                "max": 46.817089,
+                                                "mean": 44.844376,
+                                                "min": 42.640039
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.733487,
+                                                "max": 100.0,
+                                                "mean": 98.753588,
+                                                "min": 90.02952
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu4_crf_30",
+                                        "wedge_name": "cpu4_crf_30"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu4_crf_30.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu4_crf_30.mp4"
+                            },
+                            "test_crf-cpu5_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 16 -cpu-used 5 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_16.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 5,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_16.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:00:22.649496+00:00",
+                                            "encode_time": 87.2467,
+                                            "filesize": 6158556,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.558699,
+                                                "max": 51.449126,
+                                                "mean": 49.573583,
+                                                "min": 47.751612
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.486918,
+                                                "max": 50.533821,
+                                                "mean": 48.503922,
+                                                "min": 46.588892
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.153438,
+                                                "max": 49.219668,
+                                                "mean": 47.165316,
+                                                "min": 45.337236
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.690329,
+                                                "max": 100.0,
+                                                "mean": 99.698078,
+                                                "min": 90.889887
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu5_crf_16",
+                                        "wedge_name": "cpu5_crf_16"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu5_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_16.mp4"
+                            },
+                            "test_crf-cpu5_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 20 -cpu-used 5 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_20.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 5,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_20.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:01:39.125887+00:00",
+                                            "encode_time": 76.4863,
+                                            "filesize": 4640276,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.933595,
+                                                "max": 50.86816,
+                                                "mean": 48.949104,
+                                                "min": 47.060685
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.903365,
+                                                "max": 49.918322,
+                                                "mean": 47.920847,
+                                                "min": 45.951642
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 46.062946,
+                                                "max": 48.366641,
+                                                "mean": 46.076985,
+                                                "min": 44.14987
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.140372,
+                                                "max": 100.0,
+                                                "mean": 99.156852,
+                                                "min": 90.458217
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu5_crf_20",
+                                        "wedge_name": "cpu5_crf_20"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu5_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_20.mp4"
+                            },
+                            "test_crf-cpu5_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 25 -cpu-used 5 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_25.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 5,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_25.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:02:56.282320+00:00",
+                                            "encode_time": 77.1549,
+                                            "filesize": 3366774,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.203335,
+                                                "max": 50.172337,
+                                                "mean": 48.220426,
+                                                "min": 46.294619
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.244874,
+                                                "max": 49.333326,
+                                                "mean": 47.264471,
+                                                "min": 45.277861
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.930667,
+                                                "max": 47.346233,
+                                                "mean": 44.945526,
+                                                "min": 43.027294
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 98.044034,
+                                                "max": 100.0,
+                                                "mean": 98.078091,
+                                                "min": 89.94397
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu5_crf_25",
+                                        "wedge_name": "cpu5_crf_25"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu5_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_25.mp4"
+                            },
+                            "test_crf-cpu5_crf_30": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 30 -cpu-used 5 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_30.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 5,
+                                            "-crf": 30,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_30.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:04:05.453345+00:00",
+                                            "encode_time": 69.1695,
+                                            "filesize": 2389951,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.418546,
+                                                "max": 49.488252,
+                                                "mean": 47.436181,
+                                                "min": 45.503671
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.48763,
+                                                "max": 48.659367,
+                                                "mean": 46.50791,
+                                                "min": 44.521069
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.645365,
+                                                "max": 46.204533,
+                                                "mean": 43.662887,
+                                                "min": 41.627086
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 95.879469,
+                                                "max": 100.0,
+                                                "mean": 95.940686,
+                                                "min": 88.910962
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu5_crf_30",
+                                        "wedge_name": "cpu5_crf_30"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu5_crf_30.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu5_crf_30.mp4"
+                            },
+                            "test_crf-cpu6_crf_16": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 16 -cpu-used 6 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_16.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 6,
+                                            "-crf": 16,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_16.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:05:03.621401+00:00",
+                                            "encode_time": 58.1665,
+                                            "filesize": 6422926,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 49.467932,
+                                                "max": 51.800789,
+                                                "mean": 49.482519,
+                                                "min": 47.547405
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 48.414202,
+                                                "max": 50.881663,
+                                                "mean": 48.430766,
+                                                "min": 46.457879
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 47.100025,
+                                                "max": 49.416151,
+                                                "mean": 47.112778,
+                                                "min": 44.871985
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.69057,
+                                                "max": 100.0,
+                                                "mean": 99.698754,
+                                                "min": 90.631059
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu6_crf_16",
+                                        "wedge_name": "cpu6_crf_16"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu6_crf_16.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_16.mp4"
+                            },
+                            "test_crf-cpu6_crf_20": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 20 -cpu-used 6 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_20.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 6,
+                                            "-crf": 20,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_20.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:05:55.264985+00:00",
+                                            "encode_time": 51.6419,
+                                            "filesize": 4756673,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.863037,
+                                                "max": 51.145754,
+                                                "mean": 48.878464,
+                                                "min": 46.923738
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.848058,
+                                                "max": 50.291895,
+                                                "mean": 47.865042,
+                                                "min": 45.846727
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 45.929791,
+                                                "max": 48.553886,
+                                                "mean": 45.945965,
+                                                "min": 43.781044
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 99.082038,
+                                                "max": 100.0,
+                                                "mean": 99.099824,
+                                                "min": 90.231193
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu6_crf_20",
+                                        "wedge_name": "cpu6_crf_20"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu6_crf_20.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_20.mp4"
+                            },
+                            "test_crf-cpu6_crf_25": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 25 -cpu-used 6 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_25.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 6,
+                                            "-crf": 25,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_25.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:06:49.603869+00:00",
+                                            "encode_time": 54.337,
+                                            "filesize": 3440450,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 48.135131,
+                                                "max": 50.492217,
+                                                "mean": 48.152594,
+                                                "min": 46.09297
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 47.177318,
+                                                "max": 49.679924,
+                                                "mean": 47.196652,
+                                                "min": 45.133698
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 44.801251,
+                                                "max": 47.547869,
+                                                "mean": 44.818032,
+                                                "min": 42.620049
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 97.914763,
+                                                "max": 100.0,
+                                                "mean": 97.951669,
+                                                "min": 89.682102
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu6_crf_25",
+                                        "wedge_name": "cpu6_crf_25"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu6_crf_25.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_25.mp4"
+                            },
+                            "test_crf-cpu6_crf_30": {
+                                "OTIO_SCHEMA": "ExternalReference.1",
+                                "metadata": {
+                                    "aswf_enctests": {
+                                        "command": "ffmpeg -start_number 44200 -i \"/Users/sam/git/EncodingGuidelines/enctests/sources/enc_sources/chimera_coaster_srgb/chimera_coaster_srgb.%06d.png\" -vframes 200 -c:v libaom-av1 -crf 30 -cpu-used 6 -row-mt 1 -pix_fmt yuv422p10le -sws_flags spline+accurate_rnd+full_chroma_int -vf \"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\" -color_range 1 -colorspace 1 -color_primaries 1 -color_trc 2 -y \"/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_30.mp4\"",
+                                        "description": "variations of colorspace yuv420p",
+                                        "encode_arguments": {
+                                            "-c:v": "libaom-av1",
+                                            "-color_primaries": 1,
+                                            "-color_range": 1,
+                                            "-color_trc": 2,
+                                            "-colorspace": 1,
+                                            "-cpu-used": 6,
+                                            "-crf": 30,
+                                            "-pix_fmt": "yuv422p10le",
+                                            "-row-mt": 1,
+                                            "-sws_flags": "spline+accurate_rnd+full_chroma_int",
+                                            "-vf": "\"scale=in_range=full:in_color_matrix=bt709:out_range=tv:out_color_matrix=bt709\""
+                                        },
+                                        "host_config": {
+                                            "arch": [
+                                                "64bit",
+                                                ""
+                                            ],
+                                            "hostname": "drac-dc.abcradio.disney.com",
+                                            "os": "Darwin",
+                                            "os_version": "23.3.0",
+                                            "processor": "arm"
+                                        },
+                                        "outputfile": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_30.mp4",
+                                        "results": {
+                                            "completed_utc": "2024-04-15T00:07:40.047647+00:00",
+                                            "encode_time": 50.4419,
+                                            "filesize": 2433037,
+                                            "psnr": null,
+                                            "psnr_cb": {
+                                                "harmonic_mean": 47.343272,
+                                                "max": 49.788941,
+                                                "mean": 47.361243,
+                                                "min": 45.29863
+                                            },
+                                            "psnr_cr": {
+                                                "harmonic_mean": 46.41957,
+                                                "max": 49.001983,
+                                                "mean": 46.439593,
+                                                "min": 44.364957
+                                            },
+                                            "psnr_y": {
+                                                "harmonic_mean": 43.505799,
+                                                "max": 46.41321,
+                                                "mean": 43.52563,
+                                                "min": 41.102347
+                                            },
+                                            "testresult": "Completed",
+                                            "vmaf": {
+                                                "harmonic_mean": 95.668144,
+                                                "max": 100.0,
+                                                "mean": 95.731757,
+                                                "min": 88.696676
+                                            }
+                                        },
+                                        "test_config_path": "test_wedge_configs/aomav1_crf_tests.yml",
+                                        "test_prefix": "test_crf",
+                                        "testbasename": "chimera_coaster_srgb-test_crf-cpu6_crf_30",
+                                        "wedge_name": "cpu6_crf_30"
+                                    }
+                                },
+                                "name": "chimera_coaster_srgb-test_crf-cpu6_crf_30.mp4",
+                                "available_range": {
+                                    "OTIO_SCHEMA": "TimeRange.1",
+                                    "duration": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 200.0
+                                    },
+                                    "start_time": {
+                                        "OTIO_SCHEMA": "RationalTime.1",
+                                        "rate": 25.0,
+                                        "value": 0.0
+                                    }
+                                },
+                                "available_image_bounds": null,
+                                "target_url": "/Users/sam/git/EncodingGuidelines/enctests/wedge_results/ffmpeg_version_7.0/darwin-arm64/aomav1_crf_tests-encode/chimera_coaster_srgb-test_crf-cpu6_crf_30.mp4"
+                            }
+                        },
+                        "active_media_reference_key": "DEFAULT_MEDIA"
+                    }
+                ],
+                "kind": "Video"
+            }
+        ]
+    }
+}

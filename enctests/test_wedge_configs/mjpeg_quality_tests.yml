@@ -1,0 +1,138 @@
+test_mjpeg:
+    name: test_mjpeg_quality
+    description: variations of mjpeg_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} -f image2 {input_args} -i "{source}" -frames:v {duration} -xerror {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_fountains_srgb_jpg_100/chimera_fountains_srgb.%05d.jpg.yml
+    wedges:
+        compression_100:
+            -vcodec: copy
+            -compression: 100
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+
+test_mjpeg2:
+    name: test_mjpeg_quality
+    description: variations of mjpeg_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} -f image2 {input_args} -i "{source}" -frames:v {duration} -xerror {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_fountains_srgb_jpg_95/chimera_fountains_srgb.%05d.jpg.yml
+    wedges:
+        compression_95:
+            -vcodec: copy
+            -compression: 95
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+test_mjpeg3:
+    name: test_mjpeg_quality
+    description: variations of mjpeg_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} -f image2 {input_args} -i "{source}" -frames:v {duration} -xerror {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_fountains_srgb_jpg_90/chimera_fountains_srgb.%05d.jpg.yml
+    wedges:
+        compression_90:
+            -vcodec: copy
+            -compression: 90
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+test_mjpeg4:
+    name: test_mjpeg_quality
+    description: variations of mjpeg_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} -f image2 {input_args} -i "{source}" -frames:v {duration} -xerror {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_fountains_srgb_jpg_80/chimera_fountains_srgb.%05d.jpg.yml
+    wedges:
+        compression_80: 
+            -vcodec: copy
+            -compression: 80
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+test_mjpeg5:
+    name: test_mjpeg_quality
+    description: variations of mjpeg_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} -f image2 {input_args} -i "{source}" -frames:v {duration} -xerror {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_fountains_srgb_jpg_70/chimera_fountains_srgb.%05d.jpg.yml
+    wedges:
+        compression_70: 
+            -vcodec: copy
+            -compression: 70
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+test_mjpeg6:
+    name: test_mjpeg_quality
+    description: variations of mjpeg_quality
+    app: ffmpeg
+    suffix: .mov
+    encoding_template: '{ffmpeg_bin} -f image2 {input_args} -i "{source}" -frames:v {duration} -xerror {encoding_args} -y "{outfile}"'
+    sources:
+    - sources/enc_sources/chimera_fountains_srgb_jpg_60/chimera_fountains_srgb.%05d.jpg.yml
+    wedges:
+        compression_60: 
+            -vcodec: copy
+            -compression: 60
+            -colorspace: bt709
+            -color_primaries: bt709
+            -color_trc: iec61966-2-1 
+
+---
+
+reports:
+    graphs:
+    - args:
+        color: media
+        height: 400
+        x: -compression
+        y: psnr_y_harmonic_mean
+        markers: True
+      name: psnr_y_harmonic_mean.png
+      sortby: wedge
+    - args:
+        color: media
+        height: 400
+        x: -compression
+        y: vmaf_harmonic_mean
+        markers: True
+      name: vmaf_harmonic_mean.png
+      sortby: wedge
+    - args:
+        color: media
+        height: 400
+        x: -compression
+        y: encode_time
+        markers: True
+      name: encode_time.png
+      sortby: wedge
+    - args:
+        color: media
+        height: 400
+        x: -compression
+        y: filesize
+        markers: True
+      name: filesize.png
+      sortby: wedge
+    name: mjpeg-qscale-tests
+    title: mjpeg quality comparison.
+    description: This is a comparison of different quality settings for the mjpeg encoder.
+    directory: mjpeg-qscale-encode
+    templatefile: basicmovie.html.jinja
