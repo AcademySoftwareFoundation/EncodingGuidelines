@@ -82,7 +82,7 @@ that way. For 4:2:0, H.264, HEVC and AV1 can say where the chroma is, but most p
   FFmpeg followed a chroma location tag reliably. See [Checking a player by eye](#checking-a-player).
 
 Use `zscale` for the conversion, as in the recommended commands in [FFmpeg Version Changes](FFmpegChanges.html#recommended-commands)
-and [zscale Conversion](EncodeZscale.html), and leave its chroma location at the default. The measurements for each
+and [FFmpeg zscale Filter](EncodeZscale.html), and leave its chroma location at the default. The measurements for each
 converter are in [Results by converter](ChromaSitingTests.html#results-by-converter).
 
 ## What it looks like

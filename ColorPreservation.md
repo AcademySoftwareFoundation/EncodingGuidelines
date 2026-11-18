@@ -19,7 +19,7 @@ parent: Encoding Overview
 
 {: .note }
 > This is the starting point for the color conversion pages. For the converter we recommend and its options, see
-> [zscale Conversion](EncodeZscale.html); for 4:2:2 and 4:2:0, [Chroma Siting](ChromaSiting.html); for the tags that
+> [FFmpeg zscale Filter](EncodeZscale.html); for 4:2:2 and 4:2:0, [Chroma Siting](ChromaSiting.html); for the tags that
 > tell players how to display the result, [Color Metadata and Web Color Preservation](WebColorPreservation.html); and
 > if `zscale` is not available, [FFmpeg swscale Filter](EncodeSwsScale.html).
 
@@ -70,7 +70,7 @@ the worst case over the patches, in code values, as Y'/Cb/Cr; 10-bit white shoul
 input is read from the frames (RGB is always full range, JPEG and video use their tags), so leave it alone unless
 the source has no tags; see [Sources without tags](EncodeZscale.html#sources-without-tags). `filter=lanczos` is the filter used for 4:2:2/4:2:0 chroma. `setparams` adds the
 primaries and transfer function tags, which zscale leaves alone. For all the options, see
-[zscale Conversion](EncodeZscale.html).
+[FFmpeg zscale Filter](EncodeZscale.html).
 
 We previously recommended libswscale here on the basis that it looked very slightly better. More careful measurement against a reference implementation shows the opposite: libswscale gets the white level wrong in its full-range to limited-range conversion when the source is 10-bit or higher, while zscale matches the specification exactly. The 100% white patch of the RP 219 bars, on every version from 6.0 to 9.0:
 

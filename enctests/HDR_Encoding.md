@@ -111,7 +111,7 @@ ffmpeg  \
 | :---- | :---- |
 | \-c:v libx265 | Use the h265 encoder |
 | \-tag:v hvc1 | Tag the file to enable playback with QuickTime Player |
-| \-vf "zscale=matrix=2020\_ncl:range=limited:filter=lanczos,setparams=color\_primaries=bt2020:color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [zscale Conversion](../EncodeZscale.html). |
+| \-vf "zscale=matrix=2020\_ncl:<br>range=limited:filter=lanczos,<br>setparams=color\_primaries=bt2020:<br>color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [FFmpeg zscale Filter](../EncodeZscale.html). |
 | \-color\_range tv | Set the output range to be tv (limited) range. |
 | \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
 | \-color\_primaries bt2020 | Use the bt2020 color primaries |
