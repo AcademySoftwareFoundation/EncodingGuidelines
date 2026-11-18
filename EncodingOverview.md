@@ -46,7 +46,7 @@ Image sequences have no frame rate or start frame of their own, so you have to g
 Most codecs store Y'CbCr, not RGB, and this is the step where FFmpeg most often gets the color wrong.
 
 * [RGB to Y'CbCr Conversion](ColorPreservation.html) explains the problem and compares the converters. Start here.
-* [zscale Conversion](EncodeZscale.html) covers the converter we recommend, its options, and what to check.
+* [FFmpeg zscale Filter](EncodeZscale.html) covers the converter we recommend, its options, and what to check.
 * [Chroma Siting](ChromaSiting.html) covers where the color samples go when you subsample to 4:2:2 or 4:2:0.
 * [FFmpeg swscale Filter](EncodeSwsScale.html) is for when `zscale` is not available.
 * [RGB Encoding](RGBEncoding.html) covers codecs that can skip the conversion entirely.

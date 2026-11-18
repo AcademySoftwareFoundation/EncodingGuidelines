@@ -1,7 +1,7 @@
 ---
 layout: default
 title: FFmpeg OCIO Filter
-nav_order: 5
+nav_order: 3.7
 parent: Encoding Overview
 ---
 
@@ -18,7 +18,7 @@ parent: Encoding Overview
 
 With the introduction of FFmpeg 8.1 a [OCIO](https://ocio.readthedocs.io/en/latest/) [filter](https://ffmpeg.org/ffmpeg-filters.html#ocio) has been added. This allows you to convert from EXR files directly to encoded media using an OCIO filter to convert the colorspace correctly without needing an intermediate file.
 
-If you are encoding to Y'CbCr, you should perform the OCIO conversion in an RGB colorspace first, and then convert to Y'CbCr with `zscale`, in the same way as the other pages on this site (see [zscale Conversion](EncodeZscale.html)):
+If you are encoding to Y'CbCr, you should perform the OCIO conversion in an RGB colorspace first, and then convert to Y'CbCr with `zscale`, in the same way as the other pages on this site (see [FFmpeg zscale Filter](EncodeZscale.html)):
 
 ```console
 ocio=...:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1

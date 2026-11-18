@@ -27,7 +27,7 @@ Supported pixel formats: yuv422p yuv422p10le yuv444p10le gbrp10le
 > The Y'CbCr examples on this page use `zscale` for the RGB to Y'CbCr conversion. Earlier versions used
 > `scale` (libswscale), which on every FFmpeg version centres the 4:2:2 chroma while the formats here assume it is
 > co-sited (half a pixel off, and in MXF labelled co-sited), and puts white at 943 instead of 940 from 10-bit
-> sources. See [Chroma Siting](ChromaSiting.html) and [zscale Conversion](EncodeZscale.html). If your FFmpeg has no
+> sources. See [Chroma Siting](ChromaSiting.html) and [FFmpeg zscale Filter](EncodeZscale.html). If your FFmpeg has no
 > `zscale`, see the fallback in [FFmpeg Version Changes](FFmpegChanges.html#recommended-commands).
 
 Example encoding:
