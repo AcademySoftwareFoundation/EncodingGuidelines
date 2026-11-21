@@ -43,33 +43,123 @@ So instead of specifying a gamma curve as the transfer function, the Perceptual 
 
 In practice most HDR monitors are more likely to be in the 1000-2000 nit range, and even there they often try to limit the percentage of the overall screen that is full brightness This is done to manage power consumption and prevent overheating from thermal throttling.
 
-### Frame prep
+### Choosing the OCIO display transform {#ocio-display-transform}
 
-We take advantage of ACES to do the initial conversion to an intermediate format, which we are using png as the container.
+We take advantage of ACES, through OCIO, to convert the scene-referred EXRs to the PQ display space. With FFmpeg 8.1 or later, built with OCIO support (see [FFmpeg OCIO Filter](../FfmpegOcio.html)), the `ocio` filter does this inside `ffmpeg`, so the EXRs can be read directly with no intermediate files. The examples below all start this way; if your FFmpeg has no `ocio` filter, each section ends with the same encode made from PNG files written by `oiiotool`.
+
+The filter takes three choices, and the second and third also determine what you should put in the HDR metadata (see [Master Display](#master-display) and [Max-CLL/Max-FALL](#max-cllmaxfall)):
+
+| OCIO parameter | What it does | Link to the metadata |
+| :--- | :--- | :--- |
+| `input=ACES2065-1` | The colorspace of the source EXRs, or whatever your source imagery is using, such as ACEScg. | None. |
+| `display=Rec.2100-PQ - Display` | The encoding of the output: Rec.2100 primaries with the PQ transfer function. Use `Rec.2100-HLG - Display` for [HLG](#hlg). | Sets the `-color_primaries bt2020` and `-color_trc smpte2084` tags (and `arib-std-b67` for HLG). |
+| `view=ACES 2.0 - HDR 1000 nits (P3 D65)` | The view transform, which tone maps the scene to the peak luminance and gamut of the display you are mastering for: here 1000 nits, limited to P3. The examples use the ACES 2.0 config `studio-config-v4.0.0_aces-v2.0_ocio-v2.5` (OCIO 2.5 or later), which also has 500, 2000 and 4000 nit views. | The peak is your mastering display's peak luminance, so it is the maximum in `master-display` (`L(10000000,1)` is 1000 nits) and the upper bound for `max-cll`. The gamut is P3, which is what the [Master Display](#master-display) example lists. |
+
+#### Setups for a P3 monitor {#ocio-setups}
+
+There is no P3 video container: HDR10, PQ10 and HLG all carry BT.2020 primaries, so the file is always encoded and tagged as BT.2020. But almost every HDR mastering monitor covers P3 at most, not the full BT.2020 gamut, so we limit the colors *inside* that BT.2020 container to P3. A P3 limited view does exactly that. A Rec.2020 limited view leaves colors outside P3, which a P3 monitor then clips or gamut maps in its own way, so the review no longer matches what was approved. Use the Rec.2020 views only if your monitor really covers more than P3, which is rare.
+
+View names differ between configs, so pin the config and, if you use your own, list its views first. The configs built into OCIO fall into two families, and older configs still load in newer versions of OCIO (the ACES 1.3 configs are all still built into OCIO 2.5):
+
+| Config | P3 limited PQ setup |
+| :--- | :--- |
+| ACES 2.0 (`studio-config-v4.0.0_aces-v2.0_ocio-v2.5`, OCIO 2.5 or later), as in the examples | `display=Rec.2100-PQ - Display:view=ACES 2.0 - HDR 1000 nits (P3 D65)` in one filter. For HLG, the same view on `Rec.2100-HLG - Display`. |
+| ACES 1.3 (e.g. `studio-config-v1.0.0_aces-v1.3_ocio-v2.1`, OCIO 2.1 or later) | The `P3 lim` views exist only on `ST2084-P3-D65 - Display`, which writes P3 primaries, so convert its output into the BT.2020 container with a second `ocio` filter (below). This config has no P3 limited HLG view. |
+
+With an ACES 1.3 config, the P3 version of the filter is:
+
+```console
+-vf "ocio=input=ACES2065-1:display=ST2084-P3-D65 - Display:view=ACES 1.1 - HDR Video (1000 nits & P3 lim):format=rgb48,format=rgb48le,ocio=input=ST2084-P3-D65 - Display:output=Rec.2100-PQ - Display:format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084"
+```
+
+Keep the format between the two `ocio` filters at `rgb48`: with a floating point format (`gbrpf32le`) the second filter fails with "Bit-depth mismatch" on FFmpeg 9.0.2. An earlier version of this page paired the `P3 lim` view with the `Rec.2100-PQ - Display`, which does not exist in these configs, and both `oiiotool` and the `ocio` filter reject it.
+
+Measured with saturated ACES patches, by how far the output falls outside P3 (OCIO 2.5.1, FFmpeg 8.1 and 9.0.2; the encodes worked on both):
+
+| Config and view | Colors outside P3 |
+| :--- | :--- |
+| ACES 2.0, `Rec.2100-PQ`, `HDR 1000 nits (P3 D65)` | No |
+| ACES 1.3, `ST2084-P3-D65`, `1000 nits & P3 lim`, then converted to `Rec.2100-PQ` | No |
+| ACES 2.0, `Rec.2100-PQ`, `HDR 1000 nits (Rec.2020)` | Yes |
+| ACES 1.3, `Rec.2100-PQ`, `1000 nits & Rec.2020 lim` | Yes |
+
+For PQ10, which carries no metadata, the view is simply what you tell the reviewers the content was mastered for: pick the one that matches the monitor, as the display will not tone map it for you. The rest of the filter chain is the same for every example here:
+
+| Filter | What it does |
+| :--- | :--- |
+| `format=rgb48,format=rgb48le` | Keep the OCIO output as 16-bit RGB, so there is precision to spare for a 10-bit encode. The second `format` works around a crash in the FFmpeg 9.0 release; see [FFmpeg OCIO Filter](../FfmpegOcio.html). |
+| `zscale=matrix=2020_ncl:range=limited:filter=lanczos` | Convert to limited range BT.2020 Y'CbCr; see [FFmpeg zscale Filter](../EncodeZscale.html). |
+| `setparams=color_primaries=bt2020:color_trc=smpte2084` | Tag the frames, as the OCIO filter does not. |
+
+If you also need to resize, do it before the `ocio` filter (it is the slow part), using `zscale` since `scale` clamps scene-linear values; see [Resizing before or after the OCIO filter](../FfmpegOcio.html#filter-order-resizing-before-or-after-the-ocio-filter).
+
+### PQ10 FFmpeg H265 encoding
+
+PQ10 is a simplified HDR format essentially HDR10 without the metadata. It uses the [PQ EOTF](https://en.wikipedia.org/wiki/Perceptual_quantizer) aka SMPTE ST 2084 otherwise is somewhat similar to create as HLG, but there may be different reasons for choosing each.
+
+```console
+export OCIO=ocio://studio-config-v4.0.0_aces-v2.0_ocio-v2.5
+ffmpeg -framerate 24 -start_number 6700 -i sparks2/SPARKS_ACES_%05d.exr \
+    -c:v libx265 -tag:v hvc1 \
+    -vf "ocio=input=ACES2065-1:display=Rec.2100-PQ - Display:view=ACES 2.0 - HDR 1000 nits (P3 D65):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
+    -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc \
+    -pix_fmt yuv444p10le \
+    sparks2_pq1000_444.mov
+```
+
+| :---- | :---- |
+| \-c:v libx265 | Use the h265 encoder |
+| \-tag:v hvc1 | Tag the file to enable playback with QuickTime Player |
+| \-vf "ocio=...,zscale=...,setparams=..." | Apply the display transform, convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function (see [Choosing the OCIO display transform](#ocio-display-transform)). From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file. |
+| \-color\_range tv | Set the output range to be tv (limited) range. |
+| \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
+| \-color\_primaries bt2020 | Use the bt2020 color primaries |
+| \-colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
+| \-pix\_fmt yuv444p10le | Y'CbCr 444, although 422 in many cases is also fine. |
+
+In many cases this may be sufficient, particularly if you are using the ACES transforms that closely map to the maximum luminance of the review monitor (e.g. the 1000 nit view-transforms). It depends on how much the monitor can take advantage of the master-display parameters (see below).
+
+This will also work for other codecs such as H.264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
+
+### PQ10 4:2:0 and chroma siting
+
+4:2:0 is where chroma siting matters most. BT.2020 defines its 4:2:0 chroma as co-sited with the top-left luma sample (`topleft`), whereas H.264/HEVC readers assume `left` when nothing is signalled, and `scale` always centres the chroma. For HDR 4:2:0 you should therefore ask `zscale` for `chromal=topleft`, which both places the chroma and labels the frames so that `libx265` writes the matching chroma location (type 2) into the stream. 4:2:2 does not need this: horizontally it is co-sited either way, so leave `chromal` at its default. The measurements, what the specifications say, and how to check a player are on the [Chroma Siting](../ChromaSiting.html) page.
+
+```console
+export OCIO=ocio://studio-config-v4.0.0_aces-v2.0_ocio-v2.5
+ffmpeg -framerate 24 -start_number 6700 -i sparks2/SPARKS_ACES_%05d.exr \
+    -c:v libx265 -tag:v hvc1 \
+    -vf "ocio=input=ACES2065-1:display=Rec.2100-PQ - Display:view=ACES 2.0 - HDR 1000 nits (P3 D65):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:chromal=topleft:filter=lanczos,format=yuv420p10le,setparams=color_primaries=bt2020:color_trc=smpte2084" \
+    sparks2_pq1000_420.mov
+```
+
+| --- | --- |
+| \-vf "ocio=...:format=rgb48,format=rgb48le" | Apply the display transform to the EXRs (see [Choosing the OCIO display transform](#ocio-display-transform)). |
+| zscale=...:chromal=topleft | Convert to limited range BT.2020 Y'CbCr, siting the chroma co-sited with the top-left luma sample and labelling the frames `topleft`. |
+| format=yuv420p10le | Subsample to 10-bit 4:2:0 here, after `zscale`, so the siting is applied by `zscale` rather than by a second conversion. |
+| setparams=... | Tag the BT.2020 primaries and PQ transfer function. |
+
+Check the result with `ffprobe -show_entries stream=chroma_location`, which should say `topleft` (measured on FFmpeg 9.0.2 with `libx265`). Be aware that some players ignore the tag and treat the file as `left`; see [Checking a player by eye](../ChromaSiting.html#checking-a-player). If you are delivering to a specification that asks for `left` (for example most streaming), leave `chromal` out.
+
+### PQ10 without the OCIO filter
+
+If your FFmpeg has no `ocio` filter, convert the EXRs to 16-bit PNG files first with `oiiotool`, which applies the same display transform, and encode those. Converting to PQ-1000 nits:
 
 Converting to PQ-1000 Nits.
 
 ```console
-# Assuming we are using OCIO 2.1 or higher
-export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
+# Assuming we are using OCIO 2.5 or higher
+export OCIO=ocio://studio-config-v4.0.0_aces-v2.0_ocio-v2.5
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr\
      --iscolorspace "ACES2065-1" --resize 1920x1014 \
-       --ociodisplay "Rec.2100-PQ - Display" "ACES 1.1 - HDR Video (1000 nits & P3 lim)" \
+       --ociodisplay "Rec.2100-PQ - Display" "ACES 2.0 - HDR 1000 nits (P3 D65)" \
        -d uint16 -o sparks2_pq1000/sparks2_pq1000.#.png
 ```
 
 | --- | --- |
 | \--iscolorspace "ACES2065-1" | Set the input colorspace to ACES2065-1 (or whatever your source imagery is using such as ACEScg) |
-| \--ociodisplay "Rec.2100-PQ \- Display" "ACES 1.1 \- HDR Video (1000 nits & P3 lim)" | This is the core colorspace conversion, This is using a 2100-PQ display, at 1000 nits and while it is a full rec2020 gamut (as defined by the rec.2100 spec) the gamut is limited to P3. Since few displays are currently above P3 gamut, this is a fairly typical. Its also worth noting, P3 does not exist as a "Video Gamut" hence why the larger rec2020 is used. |
+| \--ociodisplay "Rec.2100-PQ \- Display" "ACES 2.0 - HDR 1000 nits (P3 D65)" | The same display and view as the `ocio` filter above: a Rec.2100-PQ display at 1000 nits, with the gamut limited to P3. With an ACES 1.3 config, see [Setups for a P3 monitor](#ocio-setups). |
 | \-d uint16 | Output as 16-bit file format. Typically you want at least 10-bit encodes, so to get the data to FFmpeg, this is a good start. |
-
-The other option built in for PQ is a config with 2000 nits \-  
-\--ociodisplay "Rec.2100-PQ \- Display" "ACES 1.1 \- HDR Video (2000 nits & Rec.2020 lim)"  
-There is also a 4000 nit max and P3 target gamuts available in the OCIO config mentioned above. And if you are willing to use OCIO 2.5, there are improved HDR view transforms based on ACES 2.0. This has 500, 1000, 2000, 4000 nit max luminance and P3 and Rec.2020 target gamuts.
-
-### PQ10 FFmpeg H265 encoding
-
-PQ10 is a simplified HDR format essentially HDR10 without the metadata. It uses the [PQ EOTF](https://en.wikipedia.org/wiki/Perceptual_quantizer) aka SMPTE ST 2084 otherwise is somewhat similar to create as HLG, but there may be different reasons for choosing each.
 
 <!---
 name: test_pq10
@@ -111,54 +201,24 @@ ffmpeg  \
 | :---- | :---- |
 | \-c:v libx265 | Use the h265 encoder |
 | \-tag:v hvc1 | Tag the file to enable playback with QuickTime Player |
-| \-vf "zscale=matrix=2020\_ncl:range=limited:filter=lanczos,setparams=color\_primaries=bt2020:color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [zscale Conversion](../EncodeZscale.html). |
+| \-vf "zscale=matrix=2020\_ncl:<br>range=limited:filter=lanczos,<br>setparams=color\_primaries=bt2020:<br>color\_trc=smpte2084" | Convert the full range RGB to limited range Y'CbCr with the BT.2020 non-constant luminance matrix, and tag the frames with the BT.2020 primaries and PQ transfer function. From FFmpeg 7.1 the `-color_primaries` and `-color_trc` flags are ignored, so `setparams` is what tags the file; see [FFmpeg zscale Filter](../EncodeZscale.html). |
 | \-color\_range tv | Set the output range to be tv (limited) range. |
 | \-color\_trc smpte2084 | smpte2084 is the PQ reference EOTF |
 | \-color\_primaries bt2020 | Use the bt2020 color primaries |
 | \-colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
 | \-pix\_fmt yuv444p10le | Y'CbCr 444, although 422 in many cases is also fine. |
 
-In many cases this may be sufficient, particularly if you are using the ACES transforms that closely map to the maximum luminance of the review monitor (e.g. the 1000 nit view-transforms). It depends on how much the monitor can take advantage of the master-display parameters (see below).
-
-This will also work for other codecs such as H.264, vp9, ProRes, AV1, OpenAPV although you would need to change or remove the -tag:v flag.
-
 ### PQ 422 FFmpeg H265 encoding
 
 Here we are going to add the additional Mastering Display metadata, in addition to the parameters used by PQ10.
 
-<!---
-name: test_pq1000
-sources: 
-- sourceimages/smptehdbars_10.dpx.yml
-comparisontest:
-   - testtype: ycbcr
-     matrix: bt2020nc
-     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
-   - testtype: assertresults
-     tests:
-     - assert: between
-       value: white_error_10bit
-       between: [-1.5, 1.5]
-     - assert: less
-       value: p99_error_10bit
-       less: 9
-     - assert: less
-       value: mean_error_10bit
-       less: 2.0
-     - assert: stringmatch
-       value: color_primaries
-       string: bt2020
-     - assert: stringmatch
-       value: color_transfer
-       string: smpte2084
--->
 ```console
-ffmpeg  \
-    -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
-    -c:v libx265   \
-    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
-    -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
-    -pix_fmt yuv422p10le  -tag:v hvc1  \
+export OCIO=ocio://studio-config-v4.0.0_aces-v2.0_ocio-v2.5
+ffmpeg -framerate 24 -start_number 6700 -i sparks2/SPARKS_ACES_%05d.exr \
+    -c:v libx265 \
+    -vf "ocio=input=ACES2065-1:display=Rec.2100-PQ - Display:view=ACES 2.0 - HDR 1000 nits (P3 D65):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
+    -color_range tv -color_trc smpte2084 -color_primaries bt2020 -colorspace bt2020nc \
+    -pix_fmt yuv422p10le -tag:v hvc1 \
     -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
     sparks2_pq1000_422.mov
 ```
@@ -224,6 +284,47 @@ These are defined by the [Consumer Electronics Association 861.3 spec](https://m
 
 Tools such as Resolve, provide ways to calculate these values see [here](https://www.youtube.com/watch?v=1HJi_ZP079w), but its not uncommon to use "typical" values, e.g. "1000,400". i.e. 1000 nit max brightness, 400 nit for the brightest frame's average. Although if you really don't know, you can use 0,0 to mean unknown.
 
+### PQ 422 without the OCIO filter
+
+The same encode from the PNG files made with `oiiotool` in [PQ10 without the OCIO filter](#pq10-without-the-ocio-filter):
+
+<!---
+name: test_pq1000
+sources: 
+- sourceimages/smptehdbars_10.dpx.yml
+comparisontest:
+   - testtype: ycbcr
+     matrix: bt2020nc
+     # Limits (10-bit code values): just above the zscale result for this command on both test charts, FFmpeg 6.0 and 9.0, 2026-10-26. The same command with scale, or with no filter, fails white_error.
+   - testtype: assertresults
+     tests:
+     - assert: between
+       value: white_error_10bit
+       between: [-1.5, 1.5]
+     - assert: less
+       value: p99_error_10bit
+       less: 9
+     - assert: less
+       value: mean_error_10bit
+       less: 2.0
+     - assert: stringmatch
+       value: color_primaries
+       string: bt2020
+     - assert: stringmatch
+       value: color_transfer
+       string: smpte2084
+-->
+```console
+ffmpeg  \
+    -r 30 -start_number 6700 -i sparks2_pq1000/sparks2_pq1000.%05d.png   \
+    -c:v libx265   \
+    -vf "zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=smpte2084" \
+    -color_range tv   -color_trc smpte2084   -color_primaries bt2020   -colorspace bt2020nc  \
+    -pix_fmt yuv422p10le  -tag:v hvc1  \
+    -x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:range=limited:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):max-cll=1000,400" \
+    sparks2_pq1000_422.mov
+```
+
 ### SVT-AV1
 
 SVT-AV1 encoder also has command line parameters that need to be passed in:  
@@ -265,22 +366,63 @@ An example of this file is the [NAS Sole Mates ASWF DPEL HDR Production Sample](
 
 It is also designed to adapt to the surrounding room light levels, unlike PQ which is fixed. The downside is that this adaptation could affect the media in unexpected ways. For this reason (and others) we do recommend using PQ10 instead.
 
-### Frame prep
+### HLG OCIO display transform
 
-We take advantage of ACES to do the initial conversion to an intermediate format, which we are using png as the container.
+As for PQ (see [Choosing the OCIO display transform](#ocio-display-transform)), the `ocio` filter converts the EXRs to the HLG display space inside `ffmpeg`, using the same 1000 nit P3 limited view on the `Rec.2100-HLG - Display`; the `oiiotool` version is at the end of this section.
+
+### HLG 444 FFmpeg encoding
 
 ```console
-# Assuming we are using OCIO 2.1 or higher
-export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1
+export OCIO=ocio://studio-config-v4.0.0_aces-v2.0_ocio-v2.5
+ffmpeg -framerate 24 -start_number 6700 -i sparks2/SPARKS_ACES_%05d.exr \
+    -c:v libx265 -tag:v hvc1 \
+    -vf "ocio=input=ACES2065-1:display=Rec.2100-HLG - Display:view=ACES 2.0 - HDR 1000 nits (P3 D65):format=rgb48,format=rgb48le,zscale=matrix=2020_ncl:range=limited:filter=lanczos,setparams=color_primaries=bt2020:color_trc=arib-std-b67" \
+    -color_range tv -color_trc arib-std-b67 -color_primaries bt2020 -colorspace bt2020nc \
+    -pix_fmt yuv444p10le \
+    -x265-params "atc-sei=18:pic-struct=0" \
+    sparks2_hlg_444.mov
+```
+
+#### Overall encode params
+
+| --- | --- |
+| -c:v libx265 | Use the h265 encoder |
+| -tag:v hvc1 | Tag the file for playback on mac |
+
+#### Encode media definition
+
+| --- | --- |
+| -color_range tv | Set the output range to be tv (limited) range. |
+| -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
+| -color_primaries bt2020 | Use the bt2020 color primaries |
+| -colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
+| -pix_fmt yuv444p10le | Y'CbCr 4:4:4 10-bit output |
+
+#### X265 parameters
+
+The color tags come from the filter chain (`zscale` and `setparams`), which FFmpeg passes to libx265, so they are
+not repeated in `-x265-params` (see [x265](https://x265.readthedocs.io/en/2.5/cli.html)). Setting them there as
+well can disagree with the filter chain: with `transfer=bt2020-10`, FFmpeg 6.0 wrote `bt2020-10` into the stream
+and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#hdr-and--x265-params).
+
+| --- | --- |
+| atc-sei=18 | Adds an alternative transfer characteristics SEI saying the transfer is HLG (ARIB STD-B67). |
+| pic-struct=0 | Picture structure SEI: progressive frames. |
+
+### HLG without the OCIO filter
+
+Without the `ocio` filter, write 16-bit PNG files with `oiiotool` and encode those:
+
+```console
+# Assuming we are using OCIO 2.5 or higher
+export OCIO=ocio://studio-config-v4.0.0_aces-v2.0_ocio-v2.5
 oiiotool -v --framepadding 5 --frames 6700-6899 sparks2/SPARKS_ACES_#.exr --resize 1920x1014 \
-      --ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
+      --ociodisplay "Rec.2100-HLG - Display" "ACES 2.0 - HDR 1000 nits (P3 D65)" -d uint16 -o sparks2_hlg/sparks2_hlg.#.png
 ```
 
 | --- | --- |
-|--ociodisplay "Rec.2100-HLG - Display" "ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim)" | This is the core colorspace conversion, out_rec2020hlg1000nits is an output colorspace conversion for rec2020 HLG at 1000 nit display |
+| \--ociodisplay "Rec.2100-HLG \- Display" "ACES 2.0 - HDR 1000 nits (P3 D65)" | The core colorspace conversion: a Rec.2100-HLG display at 1000 nits, with the gamut limited to P3. |
 | -d uint16 | Output as 16-bit file format |
-
-### HLG 444 FFmpeg encoding
 
 <!---
 name: test_hlg
@@ -317,32 +459,6 @@ ffmpeg -r 30 -start_number 6700 -i sparks2_hlg/sparks2_hlg.%05d.png   \
     -x265-params "atc-sei=18:pic-struct=0" \
     sparks2_hlg_444.mov
 ```
-
-#### Overall encode params
-
-| --- | --- |
-| -c:v libx265 | Use the h265 encoder |
-| -tag:v hvc1 | Tag the file for playback on mac |
-
-#### Encode media definition
-
-| --- | --- |
-| -color_range tv | Set the output range to be tv (limited) range. |
-| -color_trc arib-std-b67 | ARIB STD-B67 is the HLG reference EOTF |
-| -color_primaries bt2020 | Use the bt2020 color primaries |
-| -colorspace bt2020nc | Tagging the Y'CbCr as being encoded using the BT-2020 non-constant luminance. |
-| -pix_fmt yuv444p10le | Y'CbCr 4:4:4 10-bit output |
-
-#### X265 parameters
-
-The color tags come from the filter chain (`zscale` and `setparams`), which FFmpeg passes to libx265, so they are
-not repeated in `-x265-params` (see [x265](https://x265.readthedocs.io/en/2.5/cli.html)). Setting them there as
-well can disagree with the filter chain: with `transfer=bt2020-10`, FFmpeg 6.0 wrote `bt2020-10` into the stream
-and 9.0 wrote `arib-std-b67`. See [HDR and -x265-params](../FFmpegChanges.html#hdr-and--x265-params).
-
-| --- | --- |
-| atc-sei=18 | Adds an alternative transfer characteristics SEI saying the transfer is HLG (ARIB STD-B67). |
-| pic-struct=0 | Picture structure SEI: progressive frames. |
 
 ### cICP/mDCV/cLLI in PNG
 

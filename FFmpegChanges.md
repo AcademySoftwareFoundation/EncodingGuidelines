@@ -58,7 +58,7 @@ ffmpeg -i input.%06d.dpx \
   conversion, 7.0 and earlier convert with BT.601. `zscale` was exact in all our tests; see
   [below](#libswscale-white-level-for-high-bit-depth-input) for why we do not use `scale`. `zscale` also sets the
   matrix and range on its output frames, which is what tags them. `filter=lanczos` gives sharper 4:2:0 chroma than
-  zscale's default `bilinear`; see [zscale Conversion](EncodeZscale.html#recommended-commands).
+  zscale's default `bilinear`; see [FFmpeg zscale Filter](EncodeZscale.html#recommended-commands).
 * **`setparams=color_primaries=bt709:color_trc=iec61966-2-1`** sets primaries and transfer on the frames. This is
   the only way to set them on 7.1 and later.
 * **The four `-color_*` flags** turned out to be redundant with this filter chain on every version we tested,

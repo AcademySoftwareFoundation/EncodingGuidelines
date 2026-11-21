@@ -25,9 +25,9 @@ use it.
   libswscale puts 10-bit white at 943 instead of 940 ([below](#color-conversion-use-zscale)),
   centres the chroma when subsampling, and up to FFmpeg 9.0 assumes it is centred when converting back to RGB
   ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)). For the `zscale` options, see
-  [zscale Conversion](EncodeZscale.html).
-- **Resizing**: see [Downscaling](Resizing.html). Shrink in linear light (with `zscale` or `oiiotool`); the scaler
-  matters much less than that.
+  [FFmpeg zscale Filter](EncodeZscale.html).
+- **Resizing**: see [Resizing](Resizing.html). Do it outside FFmpeg, or in linear light; the scaler matters much less
+  than that.
 
 ## Color conversion: use zscale
 
