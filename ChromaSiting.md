@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Chroma Siting
-nav_order: 3.4
+nav_order: 5.6
 parent: Encoding Overview
 ---
 

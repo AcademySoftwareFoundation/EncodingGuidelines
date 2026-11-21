@@ -962,7 +962,7 @@ test_pq10:
       string: smpte2084
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../enctests/HDR_Encoding.md line 99
+  description: Test from ../enctests/HDR_Encoding.md line 189
   app: ffmpeg
   wedges:
     wedge0:
@@ -1003,7 +1003,7 @@ test_pq1000:
       string: smpte2084
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../enctests/HDR_Encoding.md line 154
+  description: Test from ../enctests/HDR_Encoding.md line 316
   app: ffmpeg
   wedges:
     wedge0:
@@ -1045,7 +1045,7 @@ test_hlg:
       string: arib-std-b67
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../enctests/HDR_Encoding.md line 310
+  description: Test from ../enctests/HDR_Encoding.md line 452
   app: ffmpeg
   wedges:
     wedge0:
