@@ -19,7 +19,7 @@ Questions, and the files that answer them:
   6. Do the mastering display primaries change colours inside P3?                               02 vs 07
   7-10, not answered by the files alone: does it depend on the display settings (brightness/EDR headroom, TV
      picture mode, dynamic tone mapping, large bright areas)? On the player (QuickTime, Safari, Chrome, RV,
-     xStudio, mpv)? Do images and video agree (gamuttests/make_gamut_tag_test.py)? Does the metadata survive the
+     xStudio, mpv)? Do images and video agree (tests/gamuttests/make_gamut_tag_test.py)? Does the metadata survive the
      review tool's transcode (run --check on its output)?
 
   File                      Mastering display           MaxCLL           Carried in       Compare with

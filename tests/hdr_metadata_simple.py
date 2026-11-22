@@ -12,7 +12,7 @@ look at, and what each result means; Space flips between the files of a test.
   4 Does it use the mastering primaries?        prim-bt709 / prim-bt2020
   5 Where is SDR white in PQ?                   white (PQ patches against the page's white)
   6 Does honest metadata change anything?       lim-none / lim-honest / lim-md4000 (content within 1000 cd/m2, P3)
-  7 Do images and video clip the gamut alike?   gamuttests/gamut-tags PNG / HEVC (make_gamut_tag_test.py)
+  7 Do images and video clip the gamut alike?   tests/gamuttests/gamut-tags PNG / HEVC (make_gamut_tag_test.py)
   8 Are colours inside P3 changed?              edge-bt2020 / edge-p3 (the same colours, two containers)
 
 Each chart also gets a reference (refs/*.png): libplacebo with peak detection off, a player that uses all of the
@@ -248,7 +248,7 @@ VARIANTS = {v["name"]: v for v in [
     V("edge-p3", edge_chart, P3, "real", "P3-D65 container", "smpte432"),
 ]}
 
-GAMUT = "../../../gamuttests/gamut-tags/"
+GAMUT = "../../gamuttests/gamut-tags/"
 TESTS = [
     dict(title="Mastering peak", files=["clip-md1000", "clip-md4000"],
          question="Does the player or display use the mastering display peak luminance?",
@@ -335,7 +335,7 @@ maps from the HDMI/DisplayPort metadata gets one set for the whole screen, so us
 how mastering peak and MaxCLL interact, is on the expert page.</p>
 """
 FOOTER = ('<p class="note"><a href="../index.html" style="color:#99f">Expert page (12 charts)</a> &middot; '
-          '<a href="../../../gamuttests/gamut-tags/index.html" style="color:#99f">Gamut tag page</a></p>')
+          '<a href="../../gamuttests/gamut-tags/index.html" style="color:#99f">Gamut tag page</a></p>')
 
 
 def has_libplacebo():

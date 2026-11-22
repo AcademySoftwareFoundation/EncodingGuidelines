@@ -2,7 +2,7 @@
 A self-contained HTML page for comparing test patterns on a display: flip between full-screen images or videos
 (instant, as every file is loaded and stacked), or show them side by side.
 
-Used by tests/hdr_metadata_display_chart.py and gamuttests/make_gamut_tag_test.py.
+Used by tests/hdr_metadata_display_chart.py and tests/gamuttests/make_gamut_tag_test.py.
 
     write_flipbook(path, title, items, intro_html, strips=None, overlay=None, mode="flip")
 

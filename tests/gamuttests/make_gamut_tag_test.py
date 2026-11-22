@@ -30,7 +30,7 @@ BT.709 primary) is always visible. P3 and BT.709 share the same blue, so the blu
 Flip between the files on index.html: tagged versions that look different from each other mean one path handles
 colour differently; a tagged version that looks like png-untagged means its tags were ignored.
 
-    rez-env encodingguidelines_env ffmpeg-9.0.2 -- python gamuttests/make_gamut_tag_test.py
+    rez-env encodingguidelines_env ffmpeg-9.0.2 -- python tests/gamuttests/make_gamut_tag_test.py
 """
 import argparse
 import datetime
@@ -45,7 +45,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tests" / "python"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "python"))
 from flipbook import write_flipbook  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
@@ -283,7 +283,7 @@ def main():
              "read are the gamuts the screen shows (\"P3\": more than sRGB; \"BT.2020\": more than P3); faint "
              "text means the viewer compresses rather than clips. The page opens side by side; <b>Flip</b> (or a "
              "file's key) compares them one at a time, full size."
-             "</p><p>Made by <code>gamuttests/make_gamut_tag_test.py</code>.</p>")
+             "</p><p>Made by <code>tests/gamuttests/make_gamut_tag_test.py</code>.</p>")
     write_flipbook(out / "index.html", "Gamut tag test", items, intro, mode="grid")
     print(f"wrote {out / 'index.html'}")
 

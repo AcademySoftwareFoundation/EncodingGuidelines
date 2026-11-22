@@ -28,7 +28,7 @@ The pages, videos and images are not in this repository; they are hosted at enco
 | :--- | :--- |
 | [HDR display tests](https://encode.taurich.org/tests/hdr-metadata-display/simple/index.html) | Start here. Eight tests, one question each, with what to look at and what each result means. |
 | [HDR10 metadata display test (full set)](https://encode.taurich.org/tests/hdr-metadata-display/index.html) | Twelve charts for detailed checks, including which copy of the metadata a player reads (HEVC SEI or MP4 `mdcv`/`clli` boxes). |
-| [Gamut test](../../gamuttests/gamut-tags/gamut-test.html) | The same SDR picture with its colour space declared different ways (PNG ICC, cICP, both, video tags), to see which tags a viewer reads and whether it clips or compresses colour outside the screen's gamut. |
+| [Gamut test](../gamuttests/gamut-tags/gamut-test.html) | The same SDR picture with its colour space declared different ways (PNG ICC, cICP, both, video tags), to see which tags a viewer reads and whether it clips or compresses colour outside the screen's gamut. |
 
 The tests in the first page:
 
@@ -61,6 +61,6 @@ The pages and videos are made by
 [`tests/hdr_metadata_simple.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/hdr_metadata_simple.py),
 [`tests/hdr_metadata_display_chart.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/hdr_metadata_display_chart.py)
 and
-[`gamuttests/make_gamut_tag_test.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/gamuttests/make_gamut_tag_test.py).
+[`tests/gamuttests/make_gamut_tag_test.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/gamuttests/make_gamut_tag_test.py).
 The HDR charts need FFmpeg 9.0 or later with `libx265` (for `-mastering_display` and `-content_light`), and
 libplacebo for the references; the gamut test needs `oiiotool`. Each script's header says how to run it.

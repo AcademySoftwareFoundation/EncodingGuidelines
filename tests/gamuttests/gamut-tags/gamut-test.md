@@ -20,10 +20,10 @@ The same SDR picture (sRGB curve) with its colour space declared different ways,
 reads, and whether it clips or compresses colour outside the screen's gamut.
 
 The page and its images are not in this repository; they are hosted at
-[encode.taurich.org](https://encode.taurich.org/gamuttests/gamut-tags/index.html). The viewer works best
-[full screen](https://encode.taurich.org/gamuttests/gamut-tags/index.html).
+[encode.taurich.org](https://encode.taurich.org/tests/gamuttests/gamut-tags/index.html). The viewer works best
+[full screen](https://encode.taurich.org/tests/gamuttests/gamut-tags/index.html).
 
-<iframe src="https://encode.taurich.org/gamuttests/gamut-tags/index.html" title="Gamut tag test"
+<iframe src="https://encode.taurich.org/tests/gamuttests/gamut-tags/index.html" title="Gamut tag test"
   style="width:100%; height:900px; border:0;" loading="lazy" allow="fullscreen"></iframe>
 
 ## Reading the charts
@@ -60,14 +60,14 @@ On a MacBook Pro (XDR screen), macOS 26.6:
   says it should.
 * On two SDR monitors, macOS compressed rather than clipped when fitting P3 into their smaller gamuts.
 
-The HDR version of these checks, and what they mean for review, are in [HDR Display Tests](../../tests/hdr-metadata-display/hdr-display-tests.html).
+The HDR version of these checks, and what they mean for review, are in [HDR Display Tests](../../hdr-metadata-display/hdr-display-tests.html).
 
 ## Making the files
 
-[`gamuttests/make_gamut_tag_test.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/gamuttests/make_gamut_tag_test.py)
+[`tests/gamuttests/make_gamut_tag_test.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/gamuttests/make_gamut_tag_test.py)
 writes the charts, the ICC profiles (ICC v4, sRGB curve, made by the script) and this page's viewer. The PNG tags
 are written with `oiiotool` (`--iccread`, `--cicp`). `oiiotool` also writes `sRGB`/`gAMA`/`cHRM` chunks unless
 `oiio:ColorSpace` is set to a display colour space (e.g. `srgb_p3d65_display`), which *png-oiio-default* shows.
 
 This replaces an older test that tagged its videos with `-color_primaries`, which FFmpeg 7.1 and later ignore. Its
-files are still in `gamuttests/iccgamut/`, used by [Color Metadata and Web Color Preservation](../../WebColorPreservation.html).
+files are still in `tests/gamuttests/iccgamut/`, used by [Color Metadata and Web Color Preservation](../../../WebColorPreservation.html).
