@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../tests/python")
+sys.path.append("../python")
 
 from PIL import Image
 from PIL import ImageCms
@@ -14,7 +14,7 @@ source_image = "ps-combined-rec2020-g2.2.png"
 listimages = []
 
 with Image.open(source_image) as im:
-    profile = ImageCms.getOpenProfile("../ICC/rec2020.icc")
+    profile = ImageCms.getOpenProfile("../../ICC/rec2020.icc")
     im.save(os.path.join(rootpath, "combined-iccrec2020.png"), icc_profile=profile.tobytes())
 listimages.append({'label': 'REC2020 PNG file - ', 'image': os.path.basename(source_image), 'group': 'rec2020 png', 'description': 'rec2020 text should be visible only if you have a rec2020 monitor, P3-D65 only if you have a P3 monitor. (Unless the browser is broken).'})
 shutil.copyfile(source_image, os.path.join(rootpath, source_image))
@@ -25,13 +25,13 @@ shutil.copyfile(source_image_p3, os.path.join(rootpath, source_image_p3))
 listimages.append({'label': 'Display P3 PNG file ', 'image': os.path.basename(source_image_p3), 'group': 'displayp3 png', 'description': 'P3-D65 should be visible only if you have a P3-D65 monitor, (unless the browser is broken).'})
 
 with Image.open(source_image) as im:
-    profile = ImageCms.getOpenProfile("../ICC/P3D65.icc")
+    profile = ImageCms.getOpenProfile("../../ICC/P3D65.icc")
     im.save(os.path.join(rootpath, "combined-iccdisplayp3.png"), icc_profile=profile.tobytes())
 #listimages.append({'label': 'displayp3 png', 'image': "combined-iccdisplayp3.png", 'group': 'png'})
 
 #source_image = "combined-srgb.png"
 #with Image.open(source_image) as im:
-#    profile = ImageCms.getOpenProfile("../ICC/Simplified-sRGB.icc")
+#    profile = ImageCms.getOpenProfile("../../ICC/Simplified-sRGB.icc")
 #    im.save(os.path.join(rootpath, "combined-iccsRGB.png"), icc_profile=profile.tobytes())
 #listimages.append({'label': 'sRGB png', 'image': "combined-iccsRGB.png", 'group': 'png'})
 

@@ -1,0 +1,4 @@
+// just-the-docs variables, read after the theme's own defaults.
+// Wider content area for wide displays (theme default 50rem). The breakpoints are computed before this file is
+// read, so the navigation still collapses at the theme's usual widths; only the text column gets wider.
+$content-width: 75rem;

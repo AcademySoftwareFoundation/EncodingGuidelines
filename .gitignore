@@ -192,3 +192,11 @@ tests/resize-compare/*
 !tests/resize-compare/resize.md
 tests/resize-hdr-compare/*
 !tests/resize-hdr-compare/resize-hdr.md
+
+# The HDR display test and gamut test pages, videos and images, made by tests/hdr_metadata_simple.py,
+# tests/hdr_metadata_display_chart.py and tests/gamuttests/make_gamut_tag_test.py and hosted on encode.taurich.org;
+# only the .md pages are committed.
+tests/hdr-metadata-display/*
+!tests/hdr-metadata-display/hdr-display-tests.md
+tests/gamuttests/gamut-tags/*
+!tests/gamuttests/gamut-tags/gamut-test.md

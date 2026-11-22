@@ -145,7 +145,7 @@ Normally web browsers use the bt709 color gamut (which is different to the bt709
 
 <table class='compare' width='100%'>
 <TR><TH>PNG file</TH><TH>Mp4 file (which should match PNG file)</TH></TR>
-<TR><TD><img width='316' src="gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width='316'   ><source src='gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'/></video></td></TR>
+<TR><TD><img width='316' src="tests/gamuttests/iccgamut/ps-combined-rec2020-g2.2.png"/></td><td><video   width='316'   ><source src='tests/gamuttests/iccgamut/greyscale-rec2020.mp4' type='video/mp4'/></video></td></TR>
 </table>
 
 <table class='compare' width='100%'>
@@ -161,4 +161,5 @@ See:
 
 * [NCLC Testing Overview](compare.html) This is an overview of the NCLC Tag tests for web review.
 * [Comparing different outputs for -color_trc](tests/greyramp-osx/compare.html) - Showing what the -color_trc flag is doing, compared to embedding in mov and png.
-* [Comparing different outputs for the -colorprimaries](gamuttests/iccgamut/compare.html)
+* [Gamut test](tests/gamuttests/gamut-tags/gamut-test.html) - PNGs tagged with ICC profiles and cICP, and MP4s, in BT.2020 and P3
+  containers: which tags a viewer reads, and whether it clips or compresses colour outside the screen's gamut.
