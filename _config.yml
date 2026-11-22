@@ -10,7 +10,9 @@ exclude: ["ICC", "*.yml", "enctests/*/*.mov",
           "enctests/sources/1080p",
           "sourceimages/*.y4m", "sourceimages/*.dpx", "sourceimages/*.mxf",
           "sourceimages/rp219/*.dpx",
-          "tests/chroma-siting", "tests/colour-flags-matrix", "tests/rgb2ycbcr-accuracy"]
+          "tests/chroma-siting", "tests/colour-flags-matrix", "tests/rgb2ycbcr-accuracy",
+          "tests/hdr-metadata-display/*.mp4", "tests/hdr-metadata-display/*.png",
+          "gamuttests/gamut-tags/*.mp4", "gamuttests/gamut-tags/*.png"]
 
 url: "https://academysoftwarefoundation.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 # logo: https://www.aswf.io/wp-content/uploads/sites/69/2022/11/ExternalLink_openreviewinitiative-stacked-color.svg

@@ -224,6 +224,75 @@ These are defined by the [Consumer Electronics Association 861.3 spec](https://m
 
 Tools such as Resolve, provide ways to calculate these values see [here](https://www.youtube.com/watch?v=1HJi_ZP079w), but its not uncommon to use "typical" values, e.g. "1000,400". i.e. 1000 nit max brightness, 400 nit for the brightest frame's average. Although if you really don't know, you can use 0,0 to mean unknown.
 
+#### What players do with the metadata {#player-behaviour}
+
+The metadata is a description, not an instruction: what a player or display does with it varies, and it can
+change a picture that is already within a known standard. In our tests on a Mac, metadata that matched the
+content changed nothing, metadata that overstated the peak compressed the whole picture, and in the HDR Video
+display preset no metadata had any effect. Recommended setup, so that the metadata changes the result as little
+as possible:
+
+1. Limit the content to what you can review, e.g. with an OCIO view to 1000 cd/m<sup>2</sup> and P3, in a
+   BT.2020/PQ file.
+2. Write metadata that matches it: the mastering display you limited to (P3-D65, `L(10000000,1)`), and the
+   content's real MaxCLL/MaxFALL (or `0,0`). Do not overstate the peak: a player that uses it compresses the
+   whole range to make room for highlights that are not there. Players disagree about what to assume with no
+   metadata (1000 on the Mac, 10000 in libplacebo), so honest metadata is safer than none.
+3. Review on a Mac in the HDR Video (P3-ST 2084) preset. On other players and on HDR TVs (with dynamic tone
+   mapping off, e.g. HGIG), repeat the tests (below): a display that cannot reach the mastering peak has to compress
+   something.
+
+The test pages are on [HDR Display Tests](../tests/hdr-metadata-display/hdr-display-tests.html): start with
+the [HDR display tests](https://encode.taurich.org/tests/hdr-metadata-display/simple/index.html) page, eight tests with one question
+each.
+
+<details markdown="block">
+  <summary>Measurements: test charts, and what a Mac and libplacebo did</summary>
+
+Two sets of test charts check what a player does with the metadata ([simple page](https://encode.taurich.org/tests/hdr-metadata-display/simple/index.html),
+[full set](https://encode.taurich.org/tests/hdr-metadata-display/index.html)):
+
+* [`tests/hdr_metadata_simple.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/hdr_metadata_simple.py)
+  makes a page of eight tests, one question each (does the player use the mastering peak, MaxCLL, the mastering
+  primaries; where is SDR white; does honest metadata change anything; are colours inside P3 changed), with a
+  reference rendered by libplacebo for comparison.
+* [`tests/hdr_metadata_display_chart.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/hdr_metadata_display_chart.py)
+  is the full set, including whether the player reads the HEVC SEI or the MP4 `mdcv`/`clli` boxes.
+
+Both need FFmpeg 9.0 or later (`-mastering_display`, `-content_light`); the references also need libplacebo.
+Serve the output folder over HTTP (e.g. `python3 -m http.server`) and open its `index.html`, and look at the
+screen itself: tone mapping is often done after a screenshot is taken.
+
+Results on a MacBook Pro (M2 Max, XDR screen), macOS 26.6, in Safari (the colour tests also in Chrome):
+
+| Display preset | SDR white | No metadata, or mastering 1000 | Mastering 4000 | Metadata used |
+| :--- | :--- | :--- | :--- | :--- |
+| Apple XDR Display (default), below full brightness | | steps visible to about 1500 cd/m<sup>2</sup> | | |
+| Apple XDR Display (default), full brightness | PQ 160 | clips at 1000 | whole range compressed (steps visible to 3000) | mastering peak; MaxCLL and primaries ignored |
+| HDR Video (P3-ST 2084) | PQ 100 | clips at 1000 | clips at 1000 | none |
+
+* In the default preset the result depends on the brightness slider and on which window is active (it changed
+  when the browser lost focus). Metadata only made a difference when it claimed more than the content holds:
+  with honest metadata the picture was the same as with none.
+* In the HDR Video preset (System Settings &rarr; Displays &rarr; Preset, on MacBook Pros with an XDR screen and
+  the Pro Display XDR) PQ is shown at its true level up to 1000 cd/m<sup>2</sup>, and no metadata (mastering
+  peak, MaxCLL, primaries, or none at all) changed the picture.
+* Colours outside the screen's gamut are compressed, not clipped, in the video path, whatever the mastering
+  primaries say; a PNG with the same colours is clipped.
+* Colours at the very edge of P3 are not reproduced consistently. On the XDR screen (HDR Video preset), a 6%
+  step in saturation at the P3 primaries was gone in a file tagged BT.2020 in Safari, Chrome and QuickTime. In
+  the same colours tagged P3-D65 it was visible at the edge in Safari and Chrome, but in QuickTime only 5% in from
+  the edge. On two SDR monitors, where macOS has to fit P3 into a smaller gamut anyway, the step was visible in
+  both files. How far inside P3 the XDR effect reaches has not been measured; colours a little inside P3 looked
+  the same in every case. A P3-D65 PQ file helps in some players, but HDR10 specifies BT.2020 primaries, so keep
+  BT.2020 for deliverables.
+* libplacebo (FFmpeg's `libplacebo` filter, mpv) uses all of it: with no metadata it assumes 10000 cd/m<sup>2</sup>,
+  it clips at the mastering peak, it prefers the mastering peak to MaxCLL, and it uses the mastering primaries to
+  decide how much to compress colour (with BT.2020 primaries it shifts colours inside P3). Its peak detection
+  (`peak_detect`, on by default) replaces the metadata with a measured peak.
+
+</details>
+
 ### SVT-AV1
 
 SVT-AV1 encoder also has command line parameters that need to be passed in:  
