@@ -14,7 +14,10 @@ Three ACES2065-1 OpenEXR images (Sparks, BrightRings and Desk), viewed through O
 quarter of their size by FFmpeg (`zscale` and the `ocio` filter), `oiiotool` and Nuke. Each is resized either after
 the view transform, as an SDR pipeline would, or before it, in scene-linear light (or log), where highlights far
 brighter than white make filters with negative lobes ring. The reference averages each 4×4 block in scene-linear
-light, then applies the view. Wipe or flip between any two, or show their difference. For 8-bit sRGB sources, see
+light, then applies the view. Wipe or flip between any two, or show their difference. The log variants include
+lanczos with 2 lobes (Nuke's Lanczos4) in ACEScct and in RED's Log3G10/REDWideGamutRGB; in every log space,
+BrightRings' colors are outside the gamut and some of its pixels overflow, so its log results are not meaningful (see
+[which log space, and which lanczos](../../Resizing.html#which-log-space-and-which-lanczos)). For 8-bit sRGB sources, see
 [Resizing in FFmpeg vs. oiiotool vs. Linear Light](../resize-compare/resize.html), and for what we recommend,
 [Downscaling: scene-linear OpenEXRs](../../Resizing.html#scene-linear-openexrs).
 
@@ -56,7 +59,8 @@ makes this page (`tests/resize-hdr-compare/compare.html`) and the
 [8-bit sRGB page](../resize-compare/resize.html). For the EXRs it needs:
 
 - `ffmpeg` with `zscale` and the `ocio` filter (FFmpeg 8.1 or later), and `oiiotool` with OpenColorIO 2.5 or later
-  (it uses the built-in `ocio://default` config), on the `PATH`;
+  (it uses the built-in `ocio://default` config, and `ocio://studio-config-latest` for the Log3G10 variant), on the
+  `PATH`;
 - the Python packages in the repository's `requirements.txt` (including the OpenImageIO bindings);
 - the Sparks EXR: run `enctests/sources/hdr_sources/download_media.sh`;
 - the [OpenEXR test images](https://github.com/AcademySoftwareFoundation/openexr-images) checked out next to this

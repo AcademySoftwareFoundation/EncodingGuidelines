@@ -107,6 +107,24 @@ def ff_antiring():
             "[L][lo]blend=all_mode=lighten,format=gbrpf32le[t];[t][hi]blend=all_mode=darken,format=gbrpf32le")
 
 
+def ff_log(space, lobes, config="ocio://default"):
+    """FFmpeg: ACES2065-1 to a log space with the ocio filter, zscale lanczos with the given lobes (2 is Nuke's
+    Lanczos4), then the view from the log space. Camera logs need OCIO's studio config; ocio://default has only
+    ACEScct."""
+    view = f"ocio=input={space}:display={DISPLAY}:view={VIEW}:format=rgb48"
+    vf = (f"ocio=input=ACES2065-1:output={space}:format=gbrpf32le,format=gbrpf32le,"
+          f"zscale=w={{w}}:h={{h}}:filter=lanczos:param_a={lobes},format=gbrpf32le,{view},format=rgb48le")
+    return FF_EXR.replace("ocio://default", config).replace("VF", vf)
+
+
+# Colors outside a log space's gamut have a negative channel, and the log curves are straight lines below zero, so
+# they become very negative log values; lanczos's overshoot next to them can overflow to infinity in linear.
+LOG_OVERFLOW = (" BrightRings' colors are outside this gamut: they become very negative log values (log curves do not "
+                "compress values below zero), and lanczos's overshoot next to them overflows to infinity, which the "
+                "view turns into stray pixels (black from FFmpeg's ocio filter, white from oiiotool). So BrightRings "
+                "has no meaningful result here, nor in any log space we tried.")
+
+
 def ff(vf):
     return FF.replace("{vf}", vf)
 
@@ -207,9 +225,9 @@ GROUPS = [
                'python resize-highlightcomp.py in.exr W H out.png --clamp',
                "python resize-highlightcomp.py {exr} {w} {h} {out} --clamp"), only=HDR_IDS),
         dict(v('hdr_oiio_acescct_lanczos', 'oiiotool, lanczos3 in ACEScct (log), then OCIO', "Converts to ACEScct, "
-               "a log encoding, resizes there, then applies the view, as Resolve does with a log timeline. Log values "
-               "are bounded, so lanczos cannot ring far, but the averaging is on log values, which loses highlight "
-               "energy.",
+               "a log encoding, resizes there, then applies the view, as Resolve does with a log timeline. Log "
+               "compresses the highlights, so lanczos cannot ring far around them, but the averaging is on log "
+               "values, which loses highlight energy." + LOG_OVERFLOW,
                f'--colorconvert ACES2065-1 ACEScct --resize:filter=lanczos3 WxH --ociodisplay:from=ACEScct ...',
                "oiiotool {exr} --colorconvert ACES2065-1 ACEScct --resize:filter=lanczos3 {w}x{h} "
                f'--ociodisplay:from=ACEScct "{DISPLAY}" "{VIEW}" -d uint16 -o {{out}}'), only=HDR_IDS),
@@ -234,6 +252,32 @@ GROUPS = [
                '-vf "zscale=w=W:h=H:filter=bicubic:param_a=0:param_b=0,format=gbrpf32le,ocio=...:format=rgb48"',
                FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=bicubic:param_a=0:param_b=0,format=gbrpf32le," + FF_OCIO
                               + ",format=rgb48le")), only=HDR_IDS),
+        dict(v('hdr_ff_zscale_l4_ocio', "FFmpeg zscale lanczos, 2 lobes (Nuke's Lanczos4), in scene-linear, then ocio",
+               "zscale's lanczos with param_a=2: two lobes each side, which Nuke calls Lanczos4 (Nuke counts the "
+               "full width; zscale's default, 3 lobes, is Nuke's Lanczos6 and oiiotool's lanczos3). Its negative "
+               "lobes are smaller, so it rings less around the highlights than lanczos3, but still rings. oiiotool "
+               "has no 2-lobe lanczos.",
+               '-vf "zscale=w=W:h=H:filter=lanczos:param_a=2,format=gbrpf32le,ocio=...:format=rgb48"',
+               FF_EXR.replace("VF", "zscale=w={w}:h={h}:filter=lanczos:param_a=2,format=gbrpf32le," + FF_OCIO
+                              + ",format=rgb48le")), only=HDR_IDS),
+        dict(v('hdr_ff_acescct_l4_ocio', "FFmpeg zscale lanczos, 2 lobes (Nuke's Lanczos4), in ACEScct, then ocio",
+               "The ocio filter converts to ACEScct, zscale resizes with a 2-lobe lanczos (param_a=2, Nuke's "
+               "Lanczos4), and the ocio filter applies the view from ACEScct. ACEScct is the usual choice for CG; "
+               "compare the oiiotool lanczos3 variant in ACEScct." + LOG_OVERFLOW,
+               '-vf "ocio=input=ACES2065-1:output=ACEScct:format=gbrpf32le,format=gbrpf32le,'
+               'zscale=w=W:h=H:filter=lanczos:param_a=2,format=gbrpf32le,ocio=input=ACEScct:...:format=rgb48"',
+               ff_log("ACEScct", 2)), only=HDR_IDS),
+        dict(v('hdr_ff_rwg_l4_ocio', "FFmpeg zscale lanczos, 2 lobes (Nuke's Lanczos4), in Log3G10/REDWideGamutRGB, "
+               "then ocio",
+               "The same in RED's Log3G10 encoding and REDWideGamutRGB gamut, which needs OCIO's studio config "
+               "(OCIO=ocio://studio-config-latest; ocio://default has only ACEScct). Facilities resize plates in the "
+               "camera's own log, and use a very wide gamut log such as this one (or ARRI LogC4/Wide Gamut 4, which "
+               "gives nearly the same results) for ACES2065-1 plates with colors outside the ACEScct gamut. Desk "
+               "has five times fewer negative pixels here than in ACEScct." + LOG_OVERFLOW,
+               'OCIO=ocio://studio-config-latest ffmpeg ... -vf "ocio=input=ACES2065-1:output=Log3G10 '
+               'REDWideGamutRGB:...,zscale=w=W:h=H:filter=lanczos:param_a=2,...,ocio=input=Log3G10 '
+               'REDWideGamutRGB:...:format=rgb48"',
+               ff_log("Log3G10 REDWideGamutRGB", 2, "ocio://studio-config-latest")), only=HDR_IDS),
         dict(v('hdr_ff_ocio_hc_ocio', 'FFmpeg zscale lanczos in scene-linear with highlightcomp (OCIO CLF), then ocio',
                "oiiotool's highlightcomp in FFmpeg: OIIO's rangecompress curve (a + b ln(c x + 1) above 0.18) as a CLF Log "
                "node (cameraLinToLog, base e: logSideSlope = b, "
@@ -279,7 +323,7 @@ GROUPS = [
                "(cubic) give the same pixels.", 'Reformat filter=Cubic',
                "oiiotool " + NUKE + "/nuke-cubic.exr " + OIIO_VIEW + " -d uint16 -o {out}"), only=['sparks']),
         dict(v('nuke_lanczos4', 'Nuke, Lanczos4', "Nuke's Lanczos (four taps, a lanczos2): rings around the "
-               "highlights, less than Lanczos6.", 'Reformat filter=Lanczos4',
+               "highlights, less than Lanczos6. zscale's lanczos with param_a=2 is close to it, not identical.", 'Reformat filter=Lanczos4',
                "oiiotool " + NUKE + "/nuke-lanczos4.exr " + OIIO_VIEW + " -d uint16 -o {out}"), only=['sparks']),
         dict(v('nuke_lanczos6', 'Nuke, Lanczos6', "Six taps: the same as oiiotool's lanczos3, with the same halos.",
                'Reformat filter=Lanczos6',
@@ -610,6 +654,17 @@ def main():
              "smooths them"},
             {'label': 'highlightcomp: oiiotool vs FFmpeg', 'src': 'sparks', 'a': 'hdr_oiio_scene_lanczos_hc',
              'b': 'hdr_ff_ocio_hc_ocio', 'mode': 'diff'},
+            {'label': "Lanczos6 vs Lanczos4 in scene-linear, 8×", 'src': 'sparks', 'a': 'hdr_ff_zscale_ocio',
+             'b': 'hdr_ff_zscale_l4_ocio', 'mode': 'toggle', 'zoom': 8, 'focus': ring,
+             'title': "Two lobes (Nuke's Lanczos4) ring less than three (Lanczos6, lanczos3), but still ring"},
+            {'label': "Lanczos4: zscale vs Nuke", 'src': 'sparks', 'a': 'nuke_lanczos4', 'b': 'hdr_ff_zscale_l4_ocio',
+             'mode': 'diff', 'title': "zscale's lanczos with param_a=2 is close to Nuke's Lanczos4, not identical"},
+            {'label': "Desk: ACEScct lanczos3 vs Log3G10/REDWideGamutRGB Lanczos4", 'src': 'desk',
+             'a': 'hdr_oiio_acescct_lanczos', 'b': 'hdr_ff_rwg_l4_ocio', 'mode': 'toggle', 'zoom': 2,
+             'title': "Nearly the same; the camera log is slightly closer to the reference"},
+            {'label': "BrightRings in log: overflowed pixels, 4×", 'src': 'brightrings', 'a': 'source',
+             'b': 'hdr_ff_acescct_l4_ocio', 'mode': 'toggle', 'zoom': 4, 'focus': rings,
+             'title': "Colors outside the log's gamut overflow to infinity next to lanczos's overshoot"},
         ],
         'footer': footer + (
             "<p>BrightRings and Desk are from the <a href='https://github.com/AcademySoftwareFoundation/openexr-images' "
