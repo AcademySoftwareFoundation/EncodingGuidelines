@@ -10,13 +10,21 @@ parent: Test Output
 {: .warning }
 This is currently actively in development. If you have any recommendations for this, do please let us know.
 
-This folder holds a generator (`make_srgb_vs_gamma22_chart.py`) and a visual test chart that tells whether a display, or the whole viewing pipeline in front of it, follows the **piecewise sRGB EOTF (IEC 61966-2-1)** or a **pure $\gamma = 2.2$ power law**.
+This folder holds a generator ([make_srgb_vs_gamma22_chart.py](make_srgb_vs_gamma22_chart.py)) and a visual test chart that tells whether a display, or the whole viewing pipeline in front of it, follows the **piecewise sRGB EOTF (IEC 61966-2-1)** or a **pure $$\gamma = 2.2$$ power law**.
 
 The chart shows the word **`sRGB`** on a piecewise sRGB display and the word **`2.2`** on a pure gamma 2.2 display.
 
+## Get the Chart
+
+- **[Open the 1:1 test page](view.html)**: shows the chart at exactly one image pixel per device pixel, whatever the display scaling or browser zoom. This is the easiest way to run the test.
+- The image itself, 1920×1080, for a viewer or player you trust to show it unscaled:
+  - [srgb_vs_gamma22_untagged.png](srgb_vs_gamma22_untagged.png): no color information, so the viewer decides how to treat it.
+  - [srgb_vs_gamma22_tagged_srgb.png](srgb_vs_gamma22_tagged_srgb.png): identical pixels tagged as sRGB.
+- What to expect: [on a piecewise sRGB display](simulated_on_srgb_display.png) and [on a pure gamma 2.2 display](simulated_on_gamma22_display.png).
+
 ## Reading the Chart
 
-View the chart at one image pixel per device pixel (see [Viewing at 1:1](#viewing-at-11)), straight on, then work through three steps:
+View the chart at one image pixel per device pixel (the [1:1 test page](view.html) does this; see also [Viewing at 1:1](#viewing-at-11)), straight on, then work through three steps:
 
 1. **Checks (top right).** In patch **A** and in patch **B**, the fine left half and the coarse right half must look equally bright.
    - A differs: the image is being resampled. Fix the zoom or scaling.
@@ -29,7 +37,7 @@ View the chart at one image pixel per device pixel (see [Viewing at 1:1](#viewin
 
 If the three shadow columns disagree with each other, or the step vanishes away from both ticks, the display is neither curve in the shadows.
 
-`simulated_on_srgb_display.png` and `simulated_on_gamma22_display.png` show what to expect on each display (with the shadow columns brightened so they are easy to see on any screen).
+The simulated views ([sRGB](simulated_on_srgb_display.png), [gamma 2.2](simulated_on_gamma22_display.png)) show what to expect on each display, with the shadow columns brightened so they are easy to see on any screen.
 
 ## What the Result Means
 
@@ -41,24 +49,30 @@ The two PNGs have identical pixels. If they look different in the same viewer, t
 
 The dither is one pixel wide, so any scaling breaks the test. Check A catches it, but these avoid it:
 
-- **Browser:** open `view.html`. It sizes the chart to one image pixel per device pixel on 2× Retina displays, fractional scaling (such as Windows 150%) and any browser zoom, and switches between the untagged and tagged files. Do not pinch-zoom.
-- **Image viewer or player:** use 100% / actual pixels on a display with no scaling. On a 2× display, "100%" in many viewers doubles the image with smoothing; use `view.html` instead.
+- **Browser:** open the [1:1 test page](view.html). It sizes the chart to one image pixel per device pixel on 2× Retina displays, fractional scaling (such as Windows 150%) and any browser zoom, and switches between the untagged and tagged files. Do not pinch-zoom.
+- **Image viewer or player:** use 100% / actual pixels on a display with no scaling. On a 2× display, "100%" in many viewers doubles the image with smoothing; use the [1:1 test page](view.html) instead.
+
+**Prefer a display mode that does not rescale the picture.** The browser can only be 1:1 with what the operating system sends to the screen. If the panel's native resolution is lower than that, the OS shrinks the whole desktop, which can blur the dither and make check A fail. This can happen in scaled ("looks like") modes (whether a given system copes with it has not been established; check A is the test):
+
+- On macOS, a 4K monitor set to "looks like 3200×1800" is rendered at 6400×3600 and shrunk to 3840×2160, and a MacBook at a scaled setting is shrunk in the same way. Use a mode that is exactly 2× or 1× native: on a 3840×2160 monitor choose 1920×1080, on a 3024×1964 MacBook Pro choose the default (1512×982). The page shows the pixel size it is sent; compare it with the panel's native resolution (System Information, Graphics/Displays).
+- On Windows, use a scale of 100% or 200%, not 125% or 150%, or check that the resolution is native.
+- There is no chart that avoids this. A pixel-doubled "Retina" image is also shrunk, and only tests a coarser pattern, so there is no 2× version.
 
 Also view the screen straight on: VA and TN panels change gamma with viewing angle, which moves the match.
 
 ## How the Test Works
 
-A fine dither between black (`0`) and a code value $V_{\text{hi}}$ with duty cycle $d$ is averaged by the eye in **linear light**. A solid patch $V_{\text{solid}}$ matches it when
+A fine dither between black (`0`) and a code value $$V_{\text{hi}}$$ with duty cycle $$d$$ is averaged by the eye in **linear light**. A solid patch $$V_{\text{solid}}$$ matches it when
 
 $$\text{EOTF}(V_{\text{solid}}) = d \cdot \text{EOTF}(V_{\text{hi}})$$
 
-- **Pure $\gamma = 2.2$:** $V_{\text{solid}} = d^{1/2.2} \cdot V_{\text{hi}}$, a constant fraction of $V_{\text{hi}}$ ($0.7297$ for $d = 0.50$, $0.5325$ for $d = 0.25$).
-- **Piecewise sRGB:** the linear segment below 8-bit code `10.3` and the $0.055$ offset above it pull the match 3 to 5 code values lower in the shadows.
-- At $V_{\text{hi}} = 185$ the two curves give the same match (`135`), which makes it the control.
+- **Pure $$\gamma = 2.2$$:** $$V_{\text{solid}} = d^{1/2.2} \cdot V_{\text{hi}}$$, a constant fraction of $$V_{\text{hi}}$$ ($$0.7297$$ for $$d = 0.50$$, $$0.5325$$ for $$d = 0.25$$).
+- **Piecewise sRGB:** the linear segment below 8-bit code `10.3` and the $$0.055$$ offset above it pull the match 3 to 5 code values lower in the shadows.
+- At $$V_{\text{hi}} = 185$$ the two curves give the same match (`135`), which makes it the control.
 
 A black level or screen flare adds the same light to the dither and to the solid, so it does not move the match; it only lowers the contrast you see.
 
-| Column | Dither | Piecewise sRGB match | Pure $\gamma = 2.2$ match | Luminance error of the wrong match |
+| Column | Dither | Piecewise sRGB match | Pure $$\gamma = 2.2$$ match | Luminance error of the wrong match |
 | :--- | :--- | :---: | :---: | :---: |
 | **1. Deep toe** | `0 & 18` (50%) | **10** (`9.96`) | **13** (`13.14`) | 33–45% |
 | **2. Upper toe** | `0 & 26` (50%) | **16** (`15.96`) | **19** (`18.97`) | 26–31% |
@@ -79,9 +93,9 @@ python tests/srgb-vs-gamma22/make_srgb_vs_gamma22_chart.py
 
 Needs `numpy` and `Pillow`. The script checks itself before writing anything and stops if a check fails: both matches near integers, both matches inside the ladder, and, on a simulated display of each kind, the right word visible, the other word and the control column flat, and the right ladder step vanishing.
 
-- `srgb_vs_gamma22_untagged.png`: 8-bit PNG with `IHDR`, `IDAT` and `IEND` only (no color chunks).
-- `srgb_vs_gamma22_tagged_srgb.png`: identical pixels with `cICP` (`1, 13, 0, 1`) and `sRGB` chunks.
-- `simulated_on_srgb_display.png`, `simulated_on_gamma22_display.png`: the chart as the eye sees it on each display (4×4 linear-light averaging, shadow columns brightened 3.2×).
-- `view.html`: the 1:1 browser viewer (written by hand, not generated).
+- [srgb_vs_gamma22_untagged.png](srgb_vs_gamma22_untagged.png): 8-bit PNG with `IHDR`, `IDAT` and `IEND` only (no color chunks).
+- [srgb_vs_gamma22_tagged_srgb.png](srgb_vs_gamma22_tagged_srgb.png): identical pixels with `cICP` (`1, 13, 0, 1`) and `sRGB` chunks.
+- [simulated_on_srgb_display.png](simulated_on_srgb_display.png), [simulated_on_gamma22_display.png](simulated_on_gamma22_display.png): the chart as the eye sees it on each display (4×4 linear-light averaging, shadow columns brightened 3.2×).
+- [view.html](view.html): the 1:1 browser viewer (written by hand, not generated).
 
 To change the test levels, edit `COLUMNS` in the script; labels, ticks and the ladder follow from it, but update the table above by hand from the script's printed output.
