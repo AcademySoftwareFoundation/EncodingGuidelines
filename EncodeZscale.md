@@ -1,11 +1,11 @@
 ---
 layout: default
-title: zscale Conversion
-nav_order: 3.2
+title: FFmpeg zscale Filter
+nav_order: 3.5
 parent: Encoding Overview
 ---
 
-# zscale Conversion
+# FFmpeg zscale Filter
 
 <details open markdown="block">
   <summary>

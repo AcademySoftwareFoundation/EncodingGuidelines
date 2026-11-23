@@ -70,7 +70,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png \
 ```
 
 {: .note }
-> These examples convert with `zscale`, which needs FFmpeg built with zimg; see [zscale Conversion](EncodeZscale.html). The `scale` filter (libswscale) puts white at 943 instead of 940 when converting a 10-bit or higher source to limited range. ProRes takes its color tags from the frames, so `setparams` sets the primaries and transfer function; the `-color_*` flags are harmless but not needed. The automated comparison results further down this page were made with `scale`.
+> These examples convert with `zscale`, which needs FFmpeg built with zimg; see [FFmpeg zscale Filter](EncodeZscale.html). The `scale` filter (libswscale) puts white at 943 instead of 940 when converting a 10-bit or higher source to limited range. ProRes takes its color tags from the frames, so `setparams` sets the primaries and transfer function; the `-color_*` flags are harmless but not needed. The automated comparison results further down this page were made with `scale`.
 
 Options that can be used include:
 

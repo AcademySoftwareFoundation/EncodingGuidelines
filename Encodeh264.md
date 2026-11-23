@@ -78,7 +78,7 @@ ffmpeg -r 24 -start_number 100 -i inputfile.%04d.png -frames:v 200 -c:v libx264 
 | **-pix_fmt yuv420p10le** | 10-bit 4:2:0; see [H.264 Bitdepth](#h264-bitdepth). |
 | **-preset slow** | [https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ](https://trac.ffmpeg.org/wiki/Encode/H.264#FAQ); see the [preset comparison](#libx264-preset-comparisons) below. |
 | **-movflags +faststart** | `faststart` re-organizes the mp4 file, so that it doesn't have to read the whole file to start playback, useful for streaming. It can add a second or so to do this, since it does require re-writing the file. |
-| **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [zscale Conversion](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
+| **-vf "zscale=...,setparams=..."** | Convert the RGB images to BT.709 Y'CbCr with zscale and tag the result; see [FFmpeg zscale Filter](EncodeZscale.html). The `-color_*` flags are then not needed, but are harmless. |
 
 ### Tune Parameter
 
