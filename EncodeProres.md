@@ -76,7 +76,7 @@ Options that can be used include:
 
 | --- | --- |
 | -profile:v 4444xq | Which ProRes encoding profile to use, see below |
-| -qscale:v 3 | A fixed quantiser for the whole frame, 1 (highest quality) to 64; above 64 the encoder stops with "too large quantiser, maximum is 64". 0, or leaving it out, uses the profile's rate control instead (see below). |
+| -qscale:v 3 | A fixed quantizer for the whole frame, 1 (highest quality) to 64; above 64 the encoder stops with `too large quantiser, maximum is 64`. 0, or leaving it out, uses the profile's rate control instead (see below). |
 | -vendor apl0 | tricks the codec into believing its from an Apple codec. |
 | -alpha_bits 16 | Allows you to specify how many bits to use for the alpha channel (default 16) |
 
@@ -133,10 +133,10 @@ To compare them:
 
 ### Prores_ks -qscale:v comparison
 
-Without `-qscale:v`, `prores_ks` aims at a data rate set by the profile, and picks a quantiser for each slice (for
+Without `-qscale:v`, `prores_ks` aims at a data rate set by the profile, and picks a quantizer for each slice (for
 422 HQ and above it starts in the range 1-6, and goes higher only where a slice would not otherwise fit). With
-`-qscale:v N` it uses quantiser N everywhere and ignores the profile's data rate, so the profile then only chooses
-the quantisation matrix and what the file says it is. N is 1 to 64, and higher values are coarser.
+`-qscale:v N` it uses quantizer N everywhere and ignores the profile's data rate, so the profile then only chooses
+the quantization matrix and what the file says it is. N is 1 to 64, and higher values are coarser.
 
 Single 1920x1080 frames from two of the Chimera clips, with the data rate as it would be at 24 fps and the PSNR of
 Y' (FFmpeg 9.0.2; 6.1.6 gave the same):

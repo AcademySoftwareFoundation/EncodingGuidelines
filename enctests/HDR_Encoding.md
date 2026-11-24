@@ -223,7 +223,7 @@ ffmpeg -framerate 24 -start_number 6700 -i sparks2/SPARKS_ACES_%05d.exr \
     sparks2_pq1000_422.mov
 ```
 
-x265's `hdr-opt=1` (HDR10 optimisation) is left out: x265 only applies it to 10-bit 4:2:0 with BT.2020
+x265's `hdr-opt=1` (HDR10 optimization) is left out: x265 only applies it to 10-bit 4:2:0 with BT.2020
 primaries and matrix and PQ transfer, and otherwise disables it with a "Recommended Settings for HDR10-opt"
 error. Add it for 10-bit 4:2:0 HDR10 deliveries.
 
@@ -314,7 +314,7 @@ Two sets of test charts check what a player does with the metadata ([simple page
 
 * [`tests/hdr_metadata_simple.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/hdr_metadata_simple.py)
   makes a page of eight tests, one question each (does the player use the mastering peak, MaxCLL, the mastering
-  primaries; where is SDR white; does honest metadata change anything; are colours inside P3 changed), with a
+  primaries; where is SDR white; does honest metadata change anything; are colors inside P3 changed), with a
   reference rendered by libplacebo for comparison.
 * [`tests/hdr_metadata_display_chart.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/hdr_metadata_display_chart.py)
   is the full set, including whether the player reads the HEVC SEI or the MP4 `mdcv`/`clli` boxes.
@@ -323,7 +323,7 @@ Both need FFmpeg 9.0 or later (`-mastering_display`, `-content_light`); the refe
 Serve the output folder over HTTP (e.g. `python3 -m http.server`) and open its `index.html`, and look at the
 screen itself: tone mapping is often done after a screenshot is taken.
 
-Results on a MacBook Pro (M2 Max, XDR screen), macOS 26.6, in Safari (the colour tests also in Chrome):
+Results on a MacBook Pro (M2 Max, XDR screen), macOS 26.6, in Safari (the color tests also in Chrome):
 
 | Display preset | SDR white | No metadata, or mastering 1000 | Mastering 4000 | Metadata used |
 | :--- | :--- | :--- | :--- | :--- |
@@ -337,18 +337,18 @@ Results on a MacBook Pro (M2 Max, XDR screen), macOS 26.6, in Safari (the colour
 * In the HDR Video preset (System Settings &rarr; Displays &rarr; Preset, on MacBook Pros with an XDR screen and
   the Pro Display XDR) PQ is shown at its true level up to 1000 cd/m<sup>2</sup>, and no metadata (mastering
   peak, MaxCLL, primaries, or none at all) changed the picture.
-* Colours outside the screen's gamut are compressed, not clipped, in the video path, whatever the mastering
-  primaries say; a PNG with the same colours is clipped.
-* Colours at the very edge of P3 are not reproduced consistently. On the XDR screen (HDR Video preset), a 6%
+* Colors outside the screen's gamut are compressed, not clipped, in the video path, whatever the mastering
+  primaries say; a PNG with the same colors is clipped.
+* Colors at the very edge of P3 are not reproduced consistently. On the XDR screen (HDR Video preset), a 6%
   step in saturation at the P3 primaries was gone in a file tagged BT.2020 in Safari, Chrome and QuickTime. In
-  the same colours tagged P3-D65 it was visible at the edge in Safari and Chrome, but in QuickTime only 5% in from
+  the same colors tagged P3-D65 it was visible at the edge in Safari and Chrome, but in QuickTime only 5% in from
   the edge. On two SDR monitors, where macOS has to fit P3 into a smaller gamut anyway, the step was visible in
-  both files. How far inside P3 the XDR effect reaches has not been measured; colours a little inside P3 looked
+  both files. How far inside P3 the XDR effect reaches has not been measured; colors a little inside P3 looked
   the same in every case. A P3-D65 PQ file helps in some players, but HDR10 specifies BT.2020 primaries, so keep
   BT.2020 for deliverables.
 * libplacebo (FFmpeg's `libplacebo` filter, mpv) uses all of it: with no metadata it assumes 10000 cd/m<sup>2</sup>,
   it clips at the mastering peak, it prefers the mastering peak to MaxCLL, and it uses the mastering primaries to
-  decide how much to compress colour (with BT.2020 primaries it shifts colours inside P3). Its peak detection
+  decide how much to compress color (with BT.2020 primaries it shifts colors inside P3). Its peak detection
   (`peak_detect`, on by default) replaces the metadata with a measured peak.
 
 </details>

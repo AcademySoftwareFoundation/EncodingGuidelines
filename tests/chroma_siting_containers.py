@@ -132,7 +132,7 @@ def part1(available, tmp):
 def part2(available, tmp):
     lines = ["", "## DNxHR HQX 4:2:2 in MXF", "",
              "Label is the MXF `ColorSiting`; position is where the chroma actually is in the decoded DNxHR "
-             "(0 = co-sited, as the label 0 says; 0.5 = centred), from the chart's single-pixel lines (the mean of "
+             "(0 = co-sited, as the label 0 says; 0.5 = centered), from the chart's single-pixel lines (the mean of "
              "the even- and odd-column results). At 10-bit the tent measurement is only good to about +/-0.05 and "
              "DNxHR compression noise adds to that, so the lines are used here.", "",
              "| Wrapper | Command | MXF ColorSiting | Chroma position | Lines |",

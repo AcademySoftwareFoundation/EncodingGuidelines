@@ -6,7 +6,7 @@ nav_order: 8
 
 # FFmpeg Version Changes
 
-FFmpeg changes behaviour between releases, sometimes without any warning, and the same command line can produce
+FFmpeg changes behavior between releases, sometimes without any warning, and the same command line can produce
 different pixels or different color tags depending on the version you run it with. This page lists the changes
 we have found that affect the recommendations in these guidelines, which versions they apply to, and a set of
 commands that give the right result on all of them.
@@ -37,7 +37,7 @@ commands that give the right result on all of them.
 | [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
 | [libswscale ignores the chroma location when converting to RGB](#ycbcr-to-rgb) | 9.0 and earlier | Stills from co-sited 4:2:2/4:2:0 (ProRes, DNxHR, H.264) come out with the color half a pixel to the right. Use `zscale`. |
 | [Untagged Y'CbCr is converted to RGB as BT.601](#ycbcr-to-rgb) | All | libswscale assumes BT.601; `zscale` refuses. Give the matrix explicitly. |
-| [Chroma location reaches the filter graph](#chroma-location-91) | 9.1 development builds | `-chroma_sample_location`, and the file's chroma location when decoding, now steer libswscale. Untagged files are still taken as centred. |
+| [Chroma location reaches the filter graph](#chroma-location-91) | 9.1 development builds | `-chroma_sample_location`, and the file's chroma location when decoding, now steer libswscale. Untagged files are still taken as centered. |
 
 ## Recommended commands
 
@@ -74,7 +74,7 @@ build does not have it, use:
 ```
 
 This gives the same tags on every version (6.0 to 9.0.2), for ProRes and H.264, with or without the four
-`-color_*` flags, but with the libswscale white level error for 10-bit and higher sources and centred chroma. The
+`-color_*` flags, but with the libswscale white level error for 10-bit and higher sources and centered chroma. The
 `colorspace=bt709:range=tv` in `setparams` matters: before 7.0, `scale` does not label its output frames, and
 without it ProRes writes an unspecified matrix in its frame header on 6.0 and 6.1.6, even with `-colorspace bt709`.
 
@@ -282,7 +282,7 @@ Errors against the ideal BT.709 conversion of the SMPTE bars, in 10-bit code val
 | 10-bit full to limited-range Y'CbCr | **+3.0 / 3** | 0 / 1 | 0.1 / 1 | 0 / 1 |
 | 12-bit full to limited-range Y'CbCr | **+2.5 / 2.75** | -0.75 / 0.75 | -0.25 / 0.5 | 0 / 0.5 |
 
-* **RGB to full range, 8.0 and later:** the luma gain is too high. A 10-bit grey of 1019 comes out as 1022 instead
+* **RGB to full range, 8.0 and later:** the luma gain is too high. A 10-bit gray of 1019 comes out as 1022 instead
   of 1019, 851 as 854, and the brightest values clip at 1023. The 8.1 fix for the same commit's green tint on greys
   ([ticket 11646](https://trac.ffmpeg.org/ticket/11646)) did not change our results.
   8-bit output is affected less: the largest error went from 1 to 2 (8-bit) code values.
@@ -416,7 +416,7 @@ the RGB they were made from (errors in 10-bit code values, away from edges):
   `scale=flags=accurate_rnd+full_chroma_int` gave the same as plain `scale`.
 * For an untagged file, say what it is: `zscale=matrixin=709:rangein=limited` gives the same result as for the
   tagged file.
-* **Chroma siting:** for 4:2:2 and 4:2:0 sources, libswscale also assumes the chroma is centred, whatever the
+* **Chroma siting:** for 4:2:2 and 4:2:0 sources, libswscale also assumes the chroma is centered, whatever the
   file says, on every release up to 9.0, so co-sited material (ProRes, DNxHR, most H.264/HEVC) comes out with the
   color half a pixel to the right. `zscale` follows the file's chroma location and assumes co-sited when there is
   none. Details in [Chroma Siting](ChromaSiting.html#reading-back-to-rgb).
@@ -437,10 +437,10 @@ the matrix and range (commits `02abeae2c7`, "fftools/ffmpeg: add chroma location
 "avfilter/vf_scale: convert to the negotiated chroma location"). Measured on N-127508-ga2cfa47aec:
 
 * **Encoding:** with no conversion filter, `-chroma_sample_location left` now makes the inserted conversion
-  co-site the chroma (measured -0.03 of a pixel; 0.5, centred, on 9.0 and earlier). Explicit `scale` without
+  co-site the chroma (measured -0.03 of a pixel; 0.5, centered, on 9.0 and earlier). Explicit `scale` without
   `out_chroma_loc` still centres it.
-* **Decoding to RGB:** libswscale now follows a file's chroma location instead of assuming centred. A file with
-  no chroma location is still taken as centred, so co-sited material that does not say so, which includes all
+* **Decoding to RGB:** libswscale now follows a file's chroma location instead of assuming centered. A file with
+  no chroma location is still taken as centered, so co-sited material that does not say so, which includes all
   ProRes and DNxHR, is still converted half a pixel off.
 
 This is not in a release yet; recheck when 9.1 is released. `zscale` is unaffected.

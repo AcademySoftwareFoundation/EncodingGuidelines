@@ -1,0 +1,105 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en-US",
+  "files": [
+    "**/*.md"
+  ],
+  "ignorePaths": [
+    "_site/**",
+    ".jekyll-cache/**",
+    "node_modules/**",
+    ".venv/**",
+    "vendor/**",
+    "EncodeOpenAPV.md",
+    "SAMTODO.md",
+    "TODO.md",
+    "DONE.md",
+    "AGENTS.md",
+    "tests/*/summary.md",
+    "enctests/results/**",
+    "enctests/playback/**",
+    "conan/build-*/**",
+    "**/licenses/**"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": "./.cspell/project-words.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": [
+    "project-words"
+  ],
+  "flagWords": [
+    "colour",
+    "colours",
+    "behaviour",
+    "behaviours",
+    "artefact",
+    "artefacts",
+    "greyscale",
+    "quantiser",
+    "favour",
+    "centre",
+    "centred",
+    "analyse",
+    "licence",
+    "grey",
+    "colourspace",
+    "colourspaces",
+    "neighbour",
+    "neighbours",
+    "neighbouring",
+    "analysed",
+    "recognise",
+    "organise",
+    "organises",
+    "optimisation",
+    "prioritisation",
+    "quantisation",
+    "summarising"
+  ],
+  "ignoreRegExpList": [
+    "frontmatter",
+    "fenced-code",
+    "inline-code",
+    "html-comment",
+    "markdown-link-target",
+    "Urls",
+    "Email",
+    "html-attr",
+    "heading-id"
+  ],
+  "patterns": [
+    {
+      "name": "frontmatter",
+      "pattern": "/^---$[\\s\\S]*?^---$/m"
+    },
+    {
+      "name": "fenced-code",
+      "pattern": "/^\\s*(```|~~~)[\\s\\S]*?^\\s*\\1/gm"
+    },
+    {
+      "name": "inline-code",
+      "pattern": "/`[^`\\n]+`/g"
+    },
+    {
+      "name": "html-comment",
+      "pattern": "/<!--[\\s\\S]*?-->/g"
+    },
+    {
+      "name": "markdown-link-target",
+      "pattern": "/\\]\\([^)]*\\)/g"
+    },
+    {
+      "name": "html-attr",
+      "pattern": "/\\b(src|href|id|class)=(\"[^\"]*\"|'[^']*')/g"
+    },
+    {
+      "name": "heading-id",
+      "pattern": "/\\{#[^}]*\\}/g"
+    }
+  ]
+}

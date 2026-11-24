@@ -30,14 +30,14 @@ plates, ACEScct for CG), which gives up a little brightness to avoid halos aroun
 
 ## Why shrinking dims fine detail
 
-Shrinking averages neighbouring pixels. SDR code values are gamma-encoded, not proportional to light, so averaging
+Shrinking averages neighboring pixels. SDR code values are gamma-encoded, not proportional to light, so averaging
 them gives the wrong brightness: a fine black-and-white pattern gives off half the light of white, which is code 188 in
 sRGB, but averaging the codes gives 128. Every resize filter in FFmpeg and in `oiiotool` works on the values it is
 given, so unless the image is converted to linear light first, fine detail comes out too dark.
 
 The filter makes no difference to the brightness; only shrinking in linear light fixes it. It matters most for fine,
 high-contrast detail: test charts, text, thin lines, hair and fabric, CG and graphics. On a zone plate FFmpeg's default
-resize comes out 30 codes too dark; on an animation frame, which is mostly flat colour, it is under one code.
+resize comes out 30 codes too dark; on an animation frame, which is mostly flat color, it is under one code.
 
 <details markdown="block">
   <summary>Measurements: three sRGB images</summary>
@@ -57,13 +57,13 @@ were the same on FFmpeg 6.1.6, 8.1 and 9.0.2, with `oiiotool` 3.1.
 </details>
 
 Part of the zone plate (enlarged 2×). The coarse rings on the left come out the same in all three; to the right they
-get finer until they average to grey, which is much darker after FFmpeg's default resize (the faint rings at the right
+get finer until they average to gray, which is much darker after FFmpeg's default resize (the faint rings at the right
 of the reference are aliasing from its simple 4×4 average). Click an image to compare it with the reference in the
 [resize comparison](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=scale_bicubic&mode=toggle&zoom=4&at=0.671,0.500) (click the image there, or press Space, to switch between them):
 
 | Reference (averaged in linear light) | FFmpeg's default `scale`, on the sRGB values | `zscale` lanczos, in linear light |
 | :---: | :---: | :---: |
-| [![Zone plate rings fading to an even mid grey, averaged in linear light](static/resizing/zoneplate-reference.png)](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=scale_bicubic&mode=toggle&zoom=4&at=0.671,0.500) | [![The same after FFmpeg's default resize: the rings fade to a much darker grey](static/resizing/zoneplate-scale_bicubic.png)](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=scale_bicubic&mode=toggle&zoom=4&at=0.671,0.500) | [![The same resized in linear light: the same grey as the reference](static/resizing/zoneplate-zscale_lanczos_linear.png)](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=zscale_lanczos_linear&mode=toggle&zoom=4&at=0.671,0.500) |
+| [![Zone plate rings fading to an even mid gray, averaged in linear light](static/resizing/zoneplate-reference.png)](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=scale_bicubic&mode=toggle&zoom=4&at=0.671,0.500) | [![The same after FFmpeg's default resize: the rings fade to a much darker gray](static/resizing/zoneplate-scale_bicubic.png)](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=scale_bicubic&mode=toggle&zoom=4&at=0.671,0.500) | [![The same resized in linear light: the same gray as the reference](static/resizing/zoneplate-zscale_lanczos_linear.png)](https://encode.taurich.org/tests/resize-compare/compare.html#src=zoneplate&a=source&b=zscale_lanczos_linear&mode=toggle&zoom=4&at=0.671,0.500) |
 
 The source is sRGB-encoded (close to a gamma of 2.2); any gamma-encoded source behaves the same way.
 
@@ -85,7 +85,7 @@ oiiotool --frames 1-200 input.%04d.png --colorconvert srgb_tx lin_rec709 --resiz
     --colorconvert lin_rec709 srgb_tx -d uint16 -o resized.%04d.png
 ```
 
-Both assume an sRGB-encoded source; for another curve, change `transferin` and `transfer` (or the `oiiotool` colour
+Both assume an sRGB-encoded source; for another curve, change `transferin` and `transfer` (or the `oiiotool` color
 spaces) to match. In the FFmpeg chain, the overshoot of the lanczos filter at bright edges survives into the headroom
 above limited-range white rather than being clipped.
 
@@ -97,7 +97,7 @@ transform the highlights have already been tone mapped, so even a resize in disp
 
 But scene-linear values have no upper limit, and sharp filters ring around highlights far above white. We tested two
 ACES2065-1 OpenEXRs with extreme highlights: Netflix's Sparks (up to about 200 times scene white) and BrightRings from
-the OpenEXR test images (fine rings up to 1025 on grey, made for testing filters). Each was shrunk by 4 and viewed
+the OpenEXR test images (fine rings up to 1025 on gray, made for testing filters). Each was shrunk by 4 and viewed
 through OCIO's "ACES 2.0 - SDR 100 nits (Rec.709)" view, against a reference that averages each 4×4 block in
 scene-linear light and then applies the view.
 
@@ -180,7 +180,7 @@ OpenImageIO 3.1.12 Python bindings and OCIO 2.5 (mean difference from the refere
   photographs, but several codes on fine, high-contrast detail, and a colorful highlight that should average to near
   white keeps its color. Which log, from the facilities we asked:
   - **Plates:** the camera's own log encoding and gamut, such as Log3G10/REDWideGamutRGB for RED or LogC4/ARRI Wide
-    Gamut 4 for ARRI. Cameras can record colors outside AP1, the gamut of ACEScct, and those can leave artefacts when
+    Gamut 4 for ARRI. Cameras can record colors outside AP1, the gamut of ACEScct, and those can leave artifacts when
     resized in ACEScct.
   - **CG:** ACEScct.
   - **ACES2065-1 plates from many cameras**, where tracking each camera's format is not practical: ACEScct in most
@@ -190,7 +190,7 @@ OpenImageIO 3.1.12 Python bindings and OCIO 2.5 (mean difference from the refere
   - For VFX plates, Nuke's Lanczos4 (`zscale`'s `filter=lanczos:param_a=2`; `oiiotool` has no equivalent), which rings
     a little less. Lanczos6 (`oiiotool`'s `lanczos3`, `zscale`'s default) is sharper, which some shots call for.
 - **A cubic with no negative lobes, in scene-linear**, measures closest to the reference and has no halos, but it is
-  softer and spreads a little of each very bright highlight into its neighbours (a slight bloom). We have not seen it
+  softer and spreads a little of each very bright highlight into its neighbors (a slight bloom). We have not seen it
   recommended for this.
 - **Lanczos in scene-linear** is accurate except around highlights far above white, where it leaves dark halos. It is
   fine for material without them.
@@ -308,7 +308,7 @@ For highlight compensation, use OIIO's curve as a CLF file
 
 ### Background
 
-Ringing around HDR highlights is an old problem, and the usual remedies all trade sharpness, energy or colour:
+Ringing around HDR highlights is an old problem, and the usual remedies all trade sharpness, energy or color:
 
 - [Cinematic Color](https://www.imageworks.com/sites/default/files/2023-10/Cinematic-Color-imageworks-library-cinematic_color_0.pdf#page=37)
   (Jeremy Selan, SIGGRAPH 2012 course notes), page 37, gives three remedies: roll off the highlights, filter and
@@ -323,15 +323,15 @@ Ringing around HDR highlights is an old problem, and the usual remedies all trad
   [tone mapping before averaging](https://graphicrants.blogspot.com/2013/12/tone-mapping.html) and Timothy Lottes's
   [reversible tonemapper for MSAA resolve](https://gpuopen.com/learn/optimized-reversible-tonemapper-for-resolve/).
 - ImageMagick's examples compare
-  [resizing in different colourspaces](https://usage.imagemagick.org/resize/#resize_colorspace): linear light
+  [resizing in different color spaces](https://usage.imagemagick.org/resize/#resize_colorspace): linear light
   exaggerates dark halos, perceptual spaces exaggerate light ones, and a
-  [sigmoidal colourspace](https://usage.imagemagick.org/resize/#resize_sigmoidal) reduces both.
+  [sigmoidal color space](https://usage.imagemagick.org/resize/#resize_sigmoidal) reduces both.
 - FFmpeg's [`libplacebo` filter](https://ffmpeg.org/ffmpeg-filters.html#libplacebo) has an `antiringing` strength. It
   runs on the GPU through Vulkan; we have not tested it on HDR sources.
 
 ## Choosing a filter
 
-The filter controls sharpness and artefacts, whichever space you resize in. For live action the consensus is
+The filter controls sharpness and artifacts, whichever space you resize in. For live action the consensus is
 typically lanczos. Sharp filters can ring, leaving light and dark halos along hard edges, which is often given as a
 reason to use a softer filter for animation and motion graphics. When shrinking SDR material the ringing is subtle: on
 our animation frame, 99% of pixels are within 5 code values of the area filter, which cannot ring (see them in the

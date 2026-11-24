@@ -8,8 +8,8 @@ Source images for tests.
      (https://github.com/ampas/ACES_ODT_Candidates/blob/main/images/SonyF35.StillLife.exr) through the ACES 1.0 sRGB
      output transform. Not committed: run generate.sh before the sws*_tests configs. Not the same image as the openexr-images StillLife.exr, nor
      ACES_OT_VWG_SampleFrames.0002.exr in ampas/ACES_ODT_SampleFrames (the same scene, reframed, with a caption).
-   * rp219/ - SMPTE RP 219 reference bars for the colour tests - see below.
-   * greyramp-16bit.png, radialgrad-16bit.png - 16-bit untagged gradients for the range and dither comparison
+   * rp219/ - SMPTE RP 219 reference bars for the color tests - see below.
+   * `greyramp-16bit.png`, `radialgrad-16bit.png` - 16-bit untagged gradients for the range and dither comparison
      (tests/icctest-fulltv.py): a continuous black-to-white ramp, and radialgrad.png's gradient (an 8-bit image of
      unknown origin) made from a formula at 16-bit, so neither has banding of its own. Made by make_gradients_16bit.py.
    * original-png.png, default-ffmpeg.png, zscale-example.png - the gradient comparison on the front page (index.md).
@@ -23,7 +23,7 @@ Source images for tests.
      a 4:2:2 chart for checking by eye where a player or browser puts the chroma (ChromaSiting.md, "Checking a
      player by eye"): FFV1, ProRes 422 HQ (one frame), HEVC 4:2:2 10-bit, lossless H.264 4:2:2 10-bit and DNxHR HQX
      (one frame), all BT.709 limited range with co-sited chroma. chroma_siting_player_chart_422-labelled-center.mkv
-     and -dnxhr-labelled-center.mxf have the same pixels with a label that says centred, to show whether a player
+     and -dnxhr-labelled-center.mxf have the same pixels with a label that says centered, to show whether a player
      reads the label. Made by make_chroma_siting_player_chart.py; measured by tests/chroma_siting_player_chart.py.
    * chroma_siting_player_chart_420-lossless.mkv, chroma_siting_player_chart_420-{hevc,hevc-topleft,hevc-center,hevc-8bit,
      h264,h264-topleft,h264-center,h264-10bit,h264-10bit-topleft,h264-10bit-center}.mp4 - the 4:2:0 version, which
@@ -33,9 +33,9 @@ Source images for tests.
    * chroma_siting_player_chart_420-pq-lossless.mkv, chroma_siting_player_chart_420-hevc-pq{,-left,-topleft}.mp4 - the
      4:2:0 chart as HDR10 (BT.2020, PQ, HEVC Main 10 with mastering display and content light level SEI), every
      pixel between 1 and 100 cd/m^2. The same pixels in each; the VUI chroma location is absent, left (0) or
-     topleft (2). Colours from chroma_siting_420_colours.py; made with make_chroma_siting_player_chart_420.py
+     topleft (2). Colors from `chroma_siting_420_colours.py`; made with make_chroma_siting_player_chart_420.py
      (--hdr10-only writes just these).
-   * chroma_siting_pixel_chart_{422,420}-{10bit,8bit,reference}.mkv - tiny 64x64 FFV1 charts to zoom in on: flat grey
+   * chroma_siting_pixel_chart_{422,420}-{10bit,8bit,reference}.mkv - tiny 64x64 FFV1 charts to zoom in on: flat gray
      luma with single raised chroma samples and luma rulers, and 4:4:4 references holding the expected pixels. Made
      by make_chroma_siting_pixel_chart.py; measured by tests/chroma_siting_pixel_chart.py.
    * Y'CbCr sources, for checking that commands read the input's own tags (`enctests/test_configs/input_tags_tests.yml`).
@@ -65,7 +65,7 @@ and FFmpeg 8.1 and later fail to decode the image (see FFmpegChanges.md). `gener
 ## SMPTE RP 219 reference bars (`rp219/`)
 
 These are the reference images for testing RGB to Y'CbCr conversion. The aim is a reference that does not
-depend on any ffmpeg colour conversion, so that ffmpeg's conversions can be tested against it.
+depend on any ffmpeg color conversion, so that ffmpeg's conversions can be tested against it.
 
 | File | What it is | Made with |
 | :--- | :--- | :--- |
@@ -111,7 +111,7 @@ vspipe -c y4m -a bits=12 rp219_reference.vpy - | ffmpeg -i - \
 
 The references are stored as lossless FFV1 in Matroska (about 65 KB each, rather than 12 MB as `.y4m`), tagged
 BT.709 limited range. Read them by decoding at their own pixel format (`-f rawvideo -pix_fmt yuv444p10le` or
-`yuv444p12le`), so FFmpeg does no colour conversion; `validate_reference.py` shows how. If a tool needs them as
+`yuv444p12le`), so FFmpeg does no color conversion; `validate_reference.py` shows how. If a tool needs them as
 `.y4m`, `generate.sh` converts them.
 
 To validate:
@@ -135,7 +135,7 @@ The 12-bit reference is only checked through the formula, not against the RP 219
 
 `smptehdbars_10_resolve.dpx` and `smptehdbars_16_resolve.dpx` are an independent RGB rendering of the same
 bars, generated in DaVinci Resolve. Both are full range: 75% is 767 (0.75 x 1023) at 10-bit and 49151
-(0.75 x 65535) at 16-bit, and 40% grey is 409 and 26214.
+(0.75 x 65535) at 16-bit, and 40% gray is 409 and 26214.
 
 This was generated with Resolve 21, using the SMPTE Color Bar generator using the DaVinci YRGB colorspace. The timeline colorspace was Rec.709 (Scene) and written out with the RGB 10-bit and 16-bit.
 
@@ -159,7 +159,7 @@ how it handles 10-bit input.
 A 16-bit RGB chart for checking chroma siting (chroma sample location): where each subsampled chroma sample
 sits relative to the luma samples when converting to 4:2:2 or 4:2:0. Professional 4:2:2 (SDI, ProRes, DNxHD)
 and H.264/HEVC 4:2:0 expect the chroma co-sited horizontally with the even luma samples; JPEG/MPEG-1 style
-centres it between two luma samples. Getting it wrong shifts the colour half a pixel against the luma, with
+centres it between two luma samples. Getting it wrong shifts the color half a pixel against the luma, with
 nothing in the file to show it.
 
 It is generated, so its values are exact, by:
@@ -168,14 +168,14 @@ It is generated, so its values are exact, by:
 python sourceimages/make_chroma_siting_chart.py
 ```
 
-1920x1080, full range, untagged (the PNG has no colour chunks, so FFmpeg reads nothing from it as frame
-properties), mid grey with four bands of 270 rows:
+1920x1080, full range, untagged (the PNG has no color chunks, so FFmpeg reads nothing from it as frame
+properties), mid gray with four bands of 270 rows:
 
 | Rows | Content | Used for |
 | :--- | :--- | :--- |
 | 0-269 | Blue "tent": rises linearly to a peak exactly between columns 959 and 960, then falls. | Measuring horizontal chroma position. |
 | 270-539 | The same, vertically, peaking between rows 404 and 405. | Measuring vertical chroma position (4:2:0). |
-| 540-809 | Single-pixel vertical blue lines every 16 pixels: even columns in the left half, odd columns in the right half. | Checking the filter treats even and odd columns consistently; zoomed in, wrong siting shows as lopsided colour fringes. |
+| 540-809 | Single-pixel vertical blue lines every 16 pixels: even columns in the left half, odd columns in the right half. | Checking the filter treats even and odd columns consistently; zoomed in, wrong siting shows as lopsided color fringes. |
 | 810-1079 | Single-pixel horizontal blue lines every 16 rows: even rows in the left half, odd rows in the right half. | The same, vertically. |
 
 `tests/chroma_siting.py` converts it with each FFmpeg converter and reports where the chroma ended up; see the

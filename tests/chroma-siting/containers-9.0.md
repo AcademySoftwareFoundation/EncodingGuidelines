@@ -84,16 +84,16 @@ Frames carry the chroma location in the first column (set with `zscale ... chrom
 
 ## DNxHR HQX 4:2:2 in MXF
 
-Label is the MXF `ColorSiting`; position is where the chroma actually is in the decoded DNxHR (0 = co-sited, as the label 0 says; 0.5 = centred), from the chart's single-pixel lines (the mean of the even- and odd-column results). At 10-bit the tent measurement is only good to about +/-0.05 and DNxHR compression noise adds to that, so the lines are used here.
+Label is the MXF `ColorSiting`; position is where the chroma actually is in the decoded DNxHR (0 = co-sited, as the label 0 says; 0.5 = centered), from the chart's single-pixel lines (the mean of the even- and odd-column results). At 10-bit the tent measurement is only good to about +/-0.05 and DNxHR compression noise adds to that, so the lines are used here.
 
 | Wrapper | Command | MXF ColorSiting | Chroma position | Lines |
 | :--- | :--- | :--- | :--- | :--- |
-| mxf | `scale (EncodeDNXHD.md before Oct 2026)` | 0 co-sited | centre | **pair-averaged** (0 / 1) |
+| mxf | `scale (EncodeDNXHD.md before Oct 2026)` | 0 co-sited | center | **pair-averaged** (0 / 1) |
 | mxf | `scale + out_chroma_loc=left + full_chroma_inp` | 6 vertical midpoint | co-sited | consistent (0 / 0) |
 | mxf | `zscale` | 0 co-sited | co-sited | consistent (0 / 0) |
 | mxf | `zscale chromal=left` | 6 vertical midpoint | co-sited | consistent (0 / 0) |
 | mxf | `zscale chromal=topleft` | 0 co-sited | co-sited | consistent (0 / 0) |
-| mxf_opatom | `scale (EncodeDNXHD.md before Oct 2026)` | 0 co-sited | centre | **pair-averaged** (0 / 1) |
+| mxf_opatom | `scale (EncodeDNXHD.md before Oct 2026)` | 0 co-sited | center | **pair-averaged** (0 / 1) |
 | mxf_opatom | `scale + out_chroma_loc=left + full_chroma_inp` | 6 vertical midpoint | co-sited | consistent (0 / 0) |
 | mxf_opatom | `zscale` | 0 co-sited | co-sited | consistent (0 / 0) |
 | mxf_opatom | `zscale chromal=left` | 6 vertical midpoint | co-sited | consistent (0 / 0) |

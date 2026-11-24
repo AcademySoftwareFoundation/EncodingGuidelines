@@ -9,7 +9,7 @@ parent: Encoding Overview
 
 If you need a static build of ffmpeg, and do not need OpenColorIO, you may be quite happy with the [BtbN builds](https://github.com/BtbN/FFmpeg-Builds/releases/tag/latest).
 
-[Conan](https://conan.io) is a multi-platform C/C++ package manager. While its typically used to help build applications, it does provide a nice way to build mutiple versions of applications that can easily be run side by side. For example, you can have multiple versions of ffmpeg installed, and you can switch between them by running the conanrun.bat script in a shell.
+[Conan](https://conan.io) is a multi-platform C/C++ package manager. While its typically used to help build applications, it does provide a nice way to build multiple versions of applications that can easily be run side by side. For example, you can have multiple versions of ffmpeg installed, and you can switch between them by running the conanrun.bat script in a shell.
 
 We have build profiles for MacOS, Linux and Windows.
 
@@ -44,7 +44,7 @@ source ffmpeg-8.1-rhel9-build.sh # Runs the conan build.
 
 The resulting build should be in `build-rhel9/full_deploy/host/ffmpeg/8.1/Release/armv8/bin/ffmpeg`. It should be statically linked so that it can be run on other macs without conan installed.
 
-I think this should work on other varients of linux, but I haven't tested it.
+I think this should work on other variants of linux, but I haven't tested it.
 
 If you do choose to use the dynamic build, you can create a standalone bundle that can be run on other macs without conan installed by running the following script:
 
@@ -62,7 +62,7 @@ What we have found that works is using the [msys2](https://www.msys2.org/) envir
 
 Note, this build does not include x265 or aom (AV1). Sadly there are unresolved issues building x265 and aom on Windows so they are currently disabled, although they will be built on linux and MacOS.
 
-zimg is now enabled by default (`with_zimg=True`), which provides the `zscale` filter. This matters for colour accuracy: swscale's `scale` filter has a systematic bias in its full-range to limited-range conversion, so `zscale` is the recommended filter for colour space and range conversions. See [FFmpeg swscale Filter](../EncodeSwsScale.html) for the measurements. If zimg causes problems in your environment you can still turn it off with `-o with_zimg=False`.
+zimg is now enabled by default (`with_zimg=True`), which provides the `zscale` filter. This matters for color accuracy: swscale's `scale` filter has a systematic bias in its full-range to limited-range conversion, so `zscale` is the recommended filter for color space and range conversions. See [FFmpeg swscale Filter](../EncodeSwsScale.html) for the measurements. If zimg causes problems in your environment you can still turn it off with `-o with_zimg=False`.
 
 Start by downloading msys2, once its installed, you will be presented with a number of different launch environments. You want to use the one that has "mingw" in the name, e.g. "MSYS2 MinGW 64-bit".
 

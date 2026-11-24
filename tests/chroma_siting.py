@@ -198,7 +198,7 @@ def describe(offset):
     if abs(offset) < 0.1:
         name = "co-sited"
     elif abs(offset - 0.5) < 0.1:
-        name = "centre"
+        name = "center"
     else:
         return f"{offset:g}"
     exact = abs(offset) < 0.01 or abs(offset - 0.5) < 0.01
@@ -219,13 +219,13 @@ def summarize(outdir):
     out = ["# Chroma siting when converting RGB to 4:2:2 and 4:2:0", "",
            "Each converter converts `sourceimages/chroma_siting_chart.png` (16-bit RGB, untagged) to 16-bit "
            "4:2:2 or 4:2:0. Positions are in luma samples: **co-sited** (0) means the chroma sample sits on the "
-           "even luma sample, as professional 4:2:2 and H.264/HEVC 4:2:0 expect (`left`); **centre** (0.5) means "
+           "even luma sample, as professional 4:2:2 and H.264/HEVC 4:2:0 expect (`left`); **center** (0.5) means "
            "half way between two luma samples (JPEG/MPEG-1 style). H.264/HEVC 4:2:0 (`left`) is co-sited "
-           "horizontally and centred vertically. Each cell has these lines:", "",
+           "horizontally and centered vertically. Each cell has these lines:", "",
            "| Line | Example | What it is | Correct for pro 4:2:2 / H.264 4:2:0 |",
            "| :--- | :--- | :--- | :--- |",
-           "| Position | `co-sited` / `centre` | Measured from the chart's tents: where the chroma samples "
-           "actually are. For 4:2:0, horizontal / vertical. | `co-sited` (4:2:0: `co-sited / centre`) |",
+           "| Position | `co-sited` / `center` | Measured from the chart's tents: where the chroma samples "
+           "actually are. For 4:2:0, horizontal / vertical. | `co-sited` (4:2:0: `co-sited / center`) |",
            "| Lines | `consistent (0 / 0)` | The position measured from single-pixel lines on even and on odd "
            "columns (rows). A correct filter gives the same for both. **pair-averaged** means they differ by "
            "about 1: the converter averaged pairs of pixels before filtering, which loses the real siting "

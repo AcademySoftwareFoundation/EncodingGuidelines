@@ -23,7 +23,7 @@ use it.
 
 - **Color conversion** (RGB to and from Y'CbCr, range, and chroma subsampling to 4:2:2 or 4:2:0): use `zscale`.
   libswscale puts 10-bit white at 943 instead of 940 ([below](#color-conversion-use-zscale)),
-  centres the chroma when subsampling, and up to FFmpeg 9.0 assumes it is centred when converting back to RGB
+  centres the chroma when subsampling, and up to FFmpeg 9.0 assumes it is centered when converting back to RGB
   ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)). For the `zscale` options, see
   [FFmpeg zscale Filter](EncodeZscale.html).
 - **Resizing**: see [Resizing](Resizing.html). Do it outside FFmpeg, or in linear light; the scaler matters much less
@@ -68,7 +68,7 @@ with the pixel probe on the 100% white patch.
   filter itself, as `scale=…:flags=unstable`; the global `-sws_flags unstable` has no effect on this.
 
 These measurements were taken against a float64 reference implementation of the BT.709 conversion, and cross-checked
-against uncompressed reference renders from Nuke. The behaviour is the same on FFmpeg 8.1 and on a 9.1 development
+against uncompressed reference renders from Nuke. The behavior is the same on FFmpeg 8.1 and on a 9.1 development
 build, so the libswscale rewrite in FFmpeg 9 does not change it.
 
 ### Replacing scale with zscale
@@ -113,9 +113,9 @@ For converting from 4:2:2 or 4:2:0 to RGB (or to another Y'CbCr format):
 -sws_flags spline+full_chroma_int+accurate_rnd
 ```
 
-This avoids visible artefacts, but in our measurements these flags did not make the Y'CbCr to RGB conversion more
+This avoids visible artifacts, but in our measurements these flags did not make the Y'CbCr to RGB conversion more
 accurate (for 4:2:2 ProRes they were worse than no flags; see [ProRes](EncodeProres.html#prores_ks)), and libswscale
-assumes the chroma is centred whatever the flags. `zscale` is the better choice for this direction too; see
+assumes the chroma is centered whatever the flags. `zscale` is the better choice for this direction too; see
 [Reading back to RGB](ChromaSiting.html#reading-back-to-rgb).
 
 You can also enable the flags all the time, since they rarely do much harm:
@@ -156,7 +156,7 @@ scalers trouble at 4:2:2; the `area` filter did best on them, but is not a good 
 
 When converting files that are already Y'CbCr (for example ProRes to DNxHR or H.264), note that libswscale centres
 the chroma when it subsamples to 4:2:2 or 4:2:0, where professional 4:2:2 and H.264/HEVC 4:2:0 expect it co-sited,
-and that converting 4:2:0 or 4:2:2 back to RGB it assumes the chroma is centred whatever the file says, on every
+and that converting 4:2:0 or 4:2:2 back to RGB it assumes the chroma is centered whatever the file says, on every
 release up to 9.0; see [Chroma Siting](ChromaSiting.html).
 
 ## See also

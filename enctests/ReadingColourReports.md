@@ -35,7 +35,7 @@ directly. One 8-bit code value is 4; one 12-bit code value is 0.25.
 | Max per plane | Max for Y'/Cb/Cr (or G/B/R). | Which plane is wrong. |
 | Range tag | The stream's range tag, tv (limited) or pc (full). | Checking the tag matches the pixels. |
 
-All of these leave out the areas near edges (see [the grey areas](#the-grey-areas)).
+All of these leave out the areas near edges (see [the gray areas](#the-grey-areas)).
 
 ## The error map
 
@@ -51,16 +51,16 @@ Each panel is the whole frame, showing for each pixel how far the encode is from
 * **Dim color**: within rounding, meaning one code value of the encode, or one 10-bit code value for 12-bit and
   above. These errors are too small to matter on their own, but their pattern can still tell you something (see
   [a rounding bias](#a-rounding-bias)).
-* **Grey**: left out of the comparison (see below).
+* **Gray**: left out of the comparison (see below).
 
 The panels are drawn at half size. Each pixel of the map is a 2&times;2 block of the frame, showing the largest
 error in that block with its sign, so single-pixel errors still show. For 4:2:2 and 4:2:0 encodes the chroma
 panels are scaled up to the full frame, so the three panels line up.
 
-### The grey areas
+### The gray areas {#the-grey-areas}
 
-Grey marks the areas left out of every number on the report: anything within 8 pixels of an edge in the ideal
-image. An edge is a step of more than 4 8-bit code values (16 at 10-bit) between neighbouring pixels, in any
+Gray marks the areas left out of every number on the report: anything within 8 pixels of an edge in the ideal
+image. An edge is a step of more than 4 8-bit code values (16 at 10-bit) between neighboring pixels, in any
 plane.
 
 These areas are left out because the result there depends on things other than the color conversion:
@@ -69,15 +69,15 @@ These areas are left out because the result there depends on things other than t
   the edges of colored patches are expected, and different converters put them in different places.
 * For lossy codecs, ringing at sharp edges.
 
-Smooth gradients, such as the grey ramps, are not edges, so they are compared in full. On the chip chart about
-18% of the frame is grey, as every chip has a border; on the SMPTE bars about 10%. The margin can be changed with
+Smooth gradients, such as the gray ramps, are not edges, so they are compared in full. On the chip chart about
+18% of the frame is gray, as every chip has a border; on the SMPTE bars about 10%. The margin can be changed with
 `margin` in the comparison config.
 
 ## The level plot
 
 Beside each map is a plot of the **mean signed error against the ideal level**, one line per plane (white Y' or
 G, blue Cb or B, red Cr or R). The level is in 10-bit code values: 64 to 940 for limited-range Y', with chroma
-centred on 512. Each point is the mean over the pixels at that level, so noise averages out and a systematic error
+centered on 512. Each point is the mean over the pixels at that level, so noise averages out and a systematic error
 stands out. The vertical scale fits the largest error, from &plusmn;2 up to &plusmn;64.
 
 What the shapes mean:
@@ -100,7 +100,7 @@ top. Cmd- or Ctrl-click the map to open the image on its own instead.
 
 ![The compare viewer, with the Cb error map over the decoded chip chart](../static/colour-reports/viewer.png)
 
-Comparing the source with the decoded frame shows compression artefacts, but not color errors of a few code
+Comparing the source with the decoded frame shows compression artifacts, but not color errors of a few code
 values, which are far too small to see. The error map is what shows those.
 
 ## Examples
@@ -112,7 +112,7 @@ All from FFmpeg 9.0.2.
 ![zscale converting the SMPTE bars to 10-bit limited range](../static/colour-reports/exact.png)
 
 zscale converting the 10-bit SMPTE bars to 10-bit 4:4:4 limited range. Every number is 0, the panels are black
-apart from the grey edges, and every line in the plot is flat on 0. This is what a correct lossless conversion
+apart from the gray edges, and every line in the plot is flat on 0. This is what a correct lossless conversion
 looks like.
 
 ### A white level error
@@ -164,7 +164,7 @@ set by a few pixels.
 libx265 at 10-bit 4:2:0, converted with zscale. The Y' panel is black. The Cb and Cr panels have thin lines of
 error at some chip edges: these are steps too small to count as edges (4 8-bit code values or less), so they are
 not masked, and the 4:2:0 chroma filter softens them by up to half the step. That is where the max of 8 comes
-from; p99 is 1 and the plot is flat. Larger steps are inside the grey areas.
+from; p99 is 1 and the plot is flat. Larger steps are inside the gray areas.
 
 ## Other files
 
@@ -175,6 +175,6 @@ Each wedge also has, next to the report:
   for the viewer.
 * `<source>-source.png`: the source, for the viewer.
 * `<test>_tests.log`: the numbers in full, including per-plane max, mean and p99 in the encode's own code values,
-  and `compared_fraction` (the fraction of the frame outside the grey areas).
+  and `compared_fraction` (the fraction of the frame outside the gray areas).
 
 The test options are described in the [test framework README](README.html).

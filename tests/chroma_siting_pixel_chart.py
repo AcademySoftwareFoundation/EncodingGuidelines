@@ -99,7 +99,7 @@ def sample(path):
 
 def correct_frame(ref, c420):
     """What a correct player shows for the test file: the reference with its correct cell repeated in every position.
-    That cell is the first in both directions: co-sited, and in 4:2:0 co-sited across and centred down."""
+    That cell is the first in both directions: co-sited, and in 4:2:0 co-sited across and centered down."""
     out, s = ref.copy(), chart.SITES[0]
     for sx in chart.SITES:
         for sy in chart.SITES:
@@ -136,7 +136,7 @@ def images():
         good = good.resize((chart.SIZE * zoom,) * 2, Image.NEAREST)
         out = Image.new("RGB", (good.width, good.height + top), (32, 32, 32))
         out.paste(good, (0, top))
-        label = "Correct: co-sited across, centred down" if c420 else "Correct: co-sited"
+        label = "Correct: co-sited across, centered down" if c420 else "Correct: co-sited"
         ImageDraw.Draw(out).text((0, 8), label, fill="white", font=font)
         out.save(HERE.parent / "static" / "chroma-siting" / f"pixel_chart{suffix}_correct.png")
 
@@ -146,9 +146,9 @@ def guide_image():
     here from the chart's definition."""
     zoom, n, left, top, gap = 11, 26, 110, 34, 14
     font = ImageFont.load_default(size=14)
-    rows = [("4:2:2", False, [("Correct: co-sited", "co-sited", None), ("Wrong: centred", "centred", None),
+    rows = [("4:2:2", False, [("Correct: co-sited", "co-sited", None), ("Wrong: centered", "centered", None),
                               ("Wrong: sample repeat", "repeat", None)]),
-            ("4:2:0", True, [("Correct: co-sited across,", "co-sited", "centred"), ("Wrong: centred both ways", "centred", "centred"),
+            ("4:2:0", True, [("Correct: co-sited across,", "co-sited", "centered"), ("Wrong: centered both ways", "centered", "centered"),
                              ("Wrong: repeated both ways", "repeat", "repeat")])]
     size = n * zoom
     out = Image.new("RGB", (left + 3 * (size + gap), 2 * (size + top + gap)), (32, 32, 32))
@@ -172,7 +172,7 @@ def guide_image():
             d.line([(x0 + (s + 0.5) * zoom, y0), (x0 + (s + 0.5) * zoom, y0 + size - 1)], fill=line)
             if c420:
                 d.line([(x0, y0 + (s + 0.5) * zoom), (x0 + size - 1, y0 + (s + 0.5) * zoom)], fill=line)
-            text = label + (" centred down" if c420 and c == 0 else "")
+            text = label + (" centered down" if c420 and c == 0 else "")
             d.text((x0, y0 - 20), text, fill="white", font=font)
     out.save(HERE.parent / "static" / "chroma-siting" / "pixel_chart_guide.png")
 
