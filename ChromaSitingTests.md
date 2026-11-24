@@ -117,11 +117,11 @@ interpolate the chroma instead of repeating each sample across two pixels, which
 ## The 4:2:2 player chart
 
 Players and browsers make the same choice when they display 4:2:2, and most of them cannot be measured from a
-script. For those there is a chart you look at instead: `sourceimages/chroma_siting_player_chart_422-prores.mov`
-(ProRes 422 HQ), `-hevc.mp4` (HEVC 4:2:2 10-bit, which browsers play), `-h264.mp4` (lossless H.264 4:2:2
-10-bit) and `-dnxhr.mxf` (DNxHR HQX), with a lossless FFV1 copy in `chroma_siting_player_chart_422-lossless.mkv`, and two
+script. For those there is a chart you look at instead: [chroma_siting_player_chart_422-prores.mov](sourceimages/chroma_siting_player_chart_422-prores.mov)
+(ProRes 422 HQ), [-hevc.mp4](sourceimages/chroma_siting_player_chart_422-hevc.mp4) (HEVC 4:2:2 10-bit, which browsers play), [-h264.mp4](sourceimages/chroma_siting_player_chart_422-h264.mp4) (lossless H.264 4:2:2
+10-bit) and [-dnxhr.mxf](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/raw/main/sourceimages/chroma_siting_player_chart_422-dnxhr.mxf) (DNxHR HQX), with a lossless FFV1 copy in [chroma_siting_player_chart_422-lossless.mkv](sourceimages/chroma_siting_player_chart_422-lossless.mkv), and two
 deliberately mislabelled files (see [Does the player read the label?](#reading-the-label)). They are made by
-`sourceimages/make_chroma_siting_player_chart.py`. The chroma in every file is co-sited, and the encodes keep the
+[make_chroma_siting_player_chart.py](sourceimages/make_chroma_siting_player_chart.py). The chroma in every file is co-sited, and the encodes keep the
 pattern intact (`zscale` decodes all of them exactly), so a wrong band is the player, not the file. Do not
 re-encode them: heavier compression blurs the one-pixel stripes. For 4:2:0 there is a second chart, which tests
 across and down separately; see [The 4:2:0 chart](#chart-420). To look at the pixels themselves, see [Checking the pixels](#pixel-chart).
@@ -234,8 +234,8 @@ which is what the table above shows. Matroska and MXF can record it (see
 [What each format records](#recorded-details)). To see whether a player reads that label,
 there is a second copy of each with the same co-sited pixels and a label that says centered:
 
-* `chroma_siting_player_chart_422-lossless.mkv` is labelled `left` (co-sited); `-labelled-center.mkv` is labelled `center`.
-* `-dnxhr.mxf` has `ColorSiting` 0 (co-sited); `-dnxhr-labelled-center.mxf` has `ColorSiting` 1 (horizontal
+* [chroma_siting_player_chart_422-lossless.mkv](sourceimages/chroma_siting_player_chart_422-lossless.mkv) is labelled `left` (co-sited); [-labelled-center.mkv](sourceimages/chroma_siting_player_chart_422-labelled-center.mkv) is labelled `center`.
+* [-dnxhr.mxf](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/raw/main/sourceimages/chroma_siting_player_chart_422-dnxhr.mxf) has `ColorSiting` 0 (co-sited); [-dnxhr-labelled-center.mxf](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/raw/main/sourceimages/chroma_siting_player_chart_422-dnxhr-labelled-center.mxf) has `ColorSiting` 1 (horizontal
   mid-point, ST 377-1's value for centered 4:2:2). FFmpeg cannot write 1 (it writes 3 for `center`, a 4:2:0
   value), so the generator patches that byte.
 
@@ -261,9 +261,9 @@ measure a browser; use screenshots, or your eyes.
 ## The 4:2:0 chart {#chart-420}
 
 4:2:0 halves the chroma down as well as across, and the two can be wrong independently, so its chart has two
-pairs of bands. It is `sourceimages/chroma_siting_player_chart_420-hevc.mp4` (HEVC Main 10, which browsers play)
-and `-h264.mp4` (8-bit H.264 High, the most common delivery format), with a lossless FFV1 copy in
-`chroma_siting_player_chart_420-lossless.mkv`, made by `sourceimages/make_chroma_siting_player_chart_420.py`. Read it the
+pairs of bands. It is [chroma_siting_player_chart_420-hevc.mp4](sourceimages/chroma_siting_player_chart_420-hevc.mp4) (HEVC Main 10, which browsers play)
+and [-h264.mp4](sourceimages/chroma_siting_player_chart_420-h264.mp4) (8-bit H.264 High, the most common delivery format), with a lossless FFV1 copy in
+[chroma_siting_player_chart_420-lossless.mkv](sourceimages/chroma_siting_player_chart_420-lossless.mkv), made by [make_chroma_siting_player_chart_420.py](sourceimages/make_chroma_siting_player_chart_420.py). Read it the
 same way (exactly 100%, the same scale check, from a distance), but expect two uniform bands, one per pair:
 
 | Band | Uniform when the player treats the chroma as | Right for |
@@ -293,10 +293,10 @@ has its own colors, so a uniform band's color means nothing; only which bands ar
 
 The chroma in these files has no true position: the bands show what the player assumes, and which is right
 depends on the label. In 4:2:0, H.264 and HEVC can carry a chroma location in the VUI, so there are deliberately
-tagged copies with the same pixels: `-hevc-topleft.mp4`, `-hevc-center.mp4`, `-h264-topleft.mp4` and
-`-h264-center.mp4`. A player that reads the tag should switch to "Down: co-sited" for `topleft`, and to "Across:
-centered" for `center`. The H.264 files are 8-bit, so that browsers play them; `-h264-10bit.mp4` (High 10, with
-`-topleft` and `-center` copies) and `-hevc-8bit.mp4` separate the codec from the bit depth in a player that
+tagged copies with the same pixels: [-hevc-topleft.mp4](sourceimages/chroma_siting_player_chart_420-hevc-topleft.mp4), [-hevc-center.mp4](sourceimages/chroma_siting_player_chart_420-hevc-center.mp4), [-h264-topleft.mp4](sourceimages/chroma_siting_player_chart_420-h264-topleft.mp4) and
+[-h264-center.mp4](sourceimages/chroma_siting_player_chart_420-h264-center.mp4). A player that reads the tag should switch to "Down: co-sited" for `topleft`, and to "Across:
+centered" for `center`. The H.264 files are 8-bit, so that browsers play them; [-h264-10bit.mp4](sourceimages/chroma_siting_player_chart_420-h264-10bit.mp4) (High 10, with
+[-topleft](sourceimages/chroma_siting_player_chart_420-h264-10bit-topleft.mp4) and [-center](sourceimages/chroma_siting_player_chart_420-h264-10bit-center.mp4) copies) and [-hevc-8bit.mp4](sourceimages/chroma_siting_player_chart_420-hevc-8bit.mp4) separate the codec from the bit depth in a player that
 treats them differently.
 
 Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2. Each file should be shown as its tag
@@ -343,15 +343,15 @@ FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/ch
 HDR video often takes a different path through a player (tone mapping, macOS EDR, a TV's HDR mode), so the SDR
 results above do not necessarily carry over, and HDR10 is where the specifications disagree most (see
 [What specifications ask for](ChromaSiting.html#what-specifications-ask-for)). There is an HDR10 version of the 4:2:0 chart with
-the same bands: `sourceimages/chroma_siting_player_chart_420-hevc-pq.mp4` (HEVC Main 10, BT.2020, PQ, with
-mastering display and content light level SEI), with a lossless FFV1 copy in `-pq-lossless.mkv`. There are three
+the same bands: [chroma_siting_player_chart_420-hevc-pq.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq.mp4) (HEVC Main 10, BT.2020, PQ, with
+mastering display and content light level SEI), with a lossless FFV1 copy in [-pq-lossless.mkv](sourceimages/chroma_siting_player_chart_420-pq-lossless.mkv). There are three
 HEVC files with the same pixels; only the VUI differs:
 
 | File | VUI chroma location | Should show |
 | :--- | :--- | :--- |
-| `-hevc-pq.mp4` | None (so `left`, the default) | Across: co-sited, Down: centered |
-| `-hevc-pq-left.mp4` | 0 (`left`), written explicitly | Across: co-sited, Down: centered |
-| `-hevc-pq-topleft.mp4` | 2 (`topleft`), as Ultra HD Blu-ray, ATSC 3.0 and DVB BT.2020 use | Across: co-sited, **Down: co-sited** |
+| [-hevc-pq.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq.mp4) | None (so `left`, the default) | Across: co-sited, Down: centered |
+| [-hevc-pq-left.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq-left.mp4) | 0 (`left`), written explicitly | Across: co-sited, Down: centered |
+| [-hevc-pq-topleft.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq-topleft.mp4) | 2 (`topleft`), as Ultra HD Blu-ray, ATSC 3.0 and DVB BT.2020 use | Across: co-sited, **Down: co-sited** |
 
 A player that shows `-hevc-pq-topleft.mp4` the same as the other two ignores the tag, and would show `topleft`
 HDR10 material with the color half a line too low.
@@ -359,7 +359,7 @@ HDR10 material with the color half a line too low.
 The colors had to be chosen again for PQ. Every pixel is between 1 and 100 cd/m<sup>2</sup> (MaxCLL 100, MaxFALL
 31) and inside the BT.709 gamut. So no display tone maps it, gamut maps it, or crushes it into its black level, and
 a screenshot does not clip it. The wrong band differs by at least 0.071 in Oklab, against 0.065 for the SDR chart.
-`sourceimages/chroma_siting_420_colours.py` checks both sets of colors with the same player models, and found the
+[`chroma_siting_420_colours.py`](sourceimages/chroma_siting_420_colours.py) checks both sets of colors with the same player models, and found the
 PQ ones (`--search --seed 3`).
 
 **Viewing it:**
@@ -444,8 +444,8 @@ These are the exact pixels, enlarged without smoothing. They match the test file
 development build, N-127508).
 
 The files are in `sourceimages/`, lossless FFV1 in Matroska, so they are for desktop players and not browsers:
-`chroma_siting_pixel_chart_422-10bit.mkv`, `_422-8bit.mkv`, `_420-10bit.mkv`, `_420-8bit.mkv`, and
-`_422-reference.mkv`, `_420-reference.mkv`.
+[_422-10bit.mkv](sourceimages/chroma_siting_pixel_chart_422-10bit.mkv), [_422-8bit.mkv](sourceimages/chroma_siting_pixel_chart_422-8bit.mkv), [_420-10bit.mkv](sourceimages/chroma_siting_pixel_chart_420-10bit.mkv), [_420-8bit.mkv](sourceimages/chroma_siting_pixel_chart_420-8bit.mkv), and
+[_422-reference.mkv](sourceimages/chroma_siting_pixel_chart_422-reference.mkv), [_420-reference.mkv](sourceimages/chroma_siting_pixel_chart_420-reference.mkv).
 
 How a player zooms matters:
 
@@ -479,7 +479,7 @@ chroma in the right place for H.264 and HEVC (centered between the rows) but wit
 
 ## How this was tested
 
-* `sourceimages/chroma_siting_chart.png`, generated by `sourceimages/make_chroma_siting_chart.py` and described
+* [chroma_siting_chart.png](sourceimages/chroma_siting_chart.png), generated by [make_chroma_siting_chart.py](sourceimages/make_chroma_siting_chart.py) and described
   in `sourceimages/README.md`, has linear "tents" in blue that peak exactly between two columns (rows), and
   single-pixel lines on even and odd columns (rows).
 * The chroma position is where the two sides of the tent meet in the converted chroma plane: a symmetric filter
@@ -503,7 +503,7 @@ and the OpenImageIO Python bindings (`requirements.txt`).
 
 The same measurements, and the reverse direction, are also part of the encoding test framework, so they are re-run
 for each FFmpeg version (`enctests/test_configs/chroma_siting_tests.yml` and `decode_siting_tests.yml`). For the
-reverse direction, `sourceimages/make_chroma_siting_sources.py` subsamples the chart in numpy at a known siting
+reverse direction, [make_chroma_siting_sources.py](sourceimages/make_chroma_siting_sources.py) subsamples the chart in numpy at a known siting
 and stores it as FFV1 in Matroska. The decoded RGB is converted back to full-resolution chroma, and compared with
 the ideal chroma of the chart shifted by a fraction of a pixel; the shift that matches best is how far the
 decoder moved the chroma. Both are blurred first, so the converter's own filter does not affect the result.
