@@ -5,7 +5,7 @@ A small RGB test image (coloured text and single-pixel coloured lines on grey) g
 generations of RGB -> Y'CbCr 4:2:2 10-bit -> RGB, all with zscale, so the only difference is the siting:
 
   * right: the encoder writes co-sited chroma (zscale's default) and the player assumes co-sited.
-  * wrong: the encoder writes centred chroma (chromal=center, which is where libswscale puts it) and the
+  * wrong: the encoder writes centered chroma (chromal=center, which is where libswscale puts it) and the
     player assumes co-sited, as players do for 4:2:2.
 
 The decoder is bilinear, as in most players. Using zscale for both keeps libswscale's other errors (for
@@ -99,7 +99,7 @@ def main():
     tw, th, pad, left, top = W * ZOOM, H * ZOOM, 16, 150, 36
     fig = np.full((top + (len(GENERATIONS) + 1) * (th + pad), left + 2 * tw + pad, 3), 0.12)
     fig = label(fig, "Right: co-sited", left, 24)
-    fig = label(fig, "Wrong: centred, read as co-sited", left + tw + pad, 24)
+    fig = label(fig, "Wrong: centered, read as co-sited", left + tw + pad, 24)
     y = top
     fig[y:y + th, left:left + tw] = tile(src)
     fig = label(fig, "Source", 12, y + th // 2 + 6)

@@ -124,7 +124,7 @@ FFmpeg has its own EXR reader and writer rather than using the OpenEXR library, 
 
 The `format` you give the OCIO filter decides whether out-of-range values reach the file. An integer format such as `rgb48` clamps to 0.0 - 1.0 inside the filter. A float format such as `gbrpf32le` (or leaving `format` unset with a float source) keeps them, and `zscale` then writes them into the Y'CbCr as luma outside the 64-940 range (at 10-bit). It only clips at the ends of the code range, 0 and 1023. The encoder will not clamp them either: 0 to 1023 are all valid values in a 10-bit bitstream, and the 64-940 range is a signalling convention rather than something the codec enforces.
 
-Grey float RGB converted to 10-bit limited range with `zscale`, then back to 16-bit RGB with `zscale` as a player would (FFmpeg 7.1 and 8.1):
+Gray float RGB converted to 10-bit limited range with `zscale`, then back to 16-bit RGB with `zscale` as a player would (FFmpeg 7.1 and 8.1):
 
 | RGB in | -0.1 | -0.05 | 0.0 | 0.5 | 1.0 | 1.05 | 1.1 | 1.5 |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -176,7 +176,7 @@ Builds carrying the negotiation rework (see [below](#building-ffmpeg-with-ocio-s
 
 ### Resampling filter choice
 
-Lanczos is the usual choice. Note that resampling scene-linear data rings against highlights before the transform compresses them — a frame with a scene-linear peak of 231.0 rings down to -5.4 in display-referred units after the transform. This is expected behaviour rather than a fault, but it makes the filter width worth thinking about: a 4-tap lanczos rings noticeably less than a 6-tap one.
+Lanczos is the usual choice. Note that resampling scene-linear data rings against highlights before the transform compresses them — a frame with a scene-linear peak of 231.0 rings down to -5.4 in display-referred units after the transform. This is expected behavior rather than a fault, but it makes the filter width worth thinking about: a 4-tap lanczos rings noticeably less than a 6-tap one.
 
 If you are matching Nuke, its `Lanczos4` and `Lanczos6` are named by tap count and correspond to `zscale`'s `param_a=2` and `param_a=3` respectively. `zscale`'s default lanczos is `param_a=3`, so it matches Nuke's `Lanczos6`. Note that FFmpeg's help text describes `param_a` as "the number of filter taps", but it is actually the lobe count, with taps being twice that.
 

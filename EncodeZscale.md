@@ -23,7 +23,7 @@ our tests it was the only one that was correct by default:
 | | `zscale` | `scale` (libswscale) |
 | :--- | :--- | :--- |
 | White level, 10-bit or higher RGB to limited range | 940 at 10-bit, as specified | 943 at 10-bit, 3774 at 12-bit, on every version up to 9.x |
-| Chroma siting, 4:2:2 and 4:2:0 | Co-sited, as professional 4:2:2 and H.264/HEVC/AV1 expect | Centred by default; co-sited only with two extra options |
+| Chroma siting, 4:2:2 and 4:2:0 | Co-sited, as professional 4:2:2 and H.264/HEVC/AV1 expect | Centered by default; co-sited only with two extra options |
 | Scene-linear (float) EXR | Handled, including values above 1.0 | Clamped to 0.0 - 1.0 |
 | Accuracy against the ideal conversion | Exact in all our tests (8, 10 and 12-bit; 4:4:4, 4:2:2, 4:2:0) | Up to 4 code values off at 10-bit, 14 at 12-bit |
 
@@ -197,12 +197,12 @@ fit into 220 (Y′ 16 to 235). Dithering trades the bands for fine noise.
 
 We measured each dither mode on H.264 4:2:0 at limited range, encoded as for web review (`-crf 18`), with
 [CAMBI](https://github.com/Netflix/vmaf/blob/master/resource/doc/cambi.md), Netflix's banding index
-from libvmaf (`libvmaf=feature=name=cambi`): 0 is no banding, higher is more visible banding. The sources are a grey
+from libvmaf (`libvmaf=feature=name=cambi`): 0 is no banding, higher is more visible banding. The sources are a gray
 ramp and a radial gradient, each made at 16-bit (no banding of their own) and as an 8-bit image, and a photograph: a
 640×360 part of the Kodak Digital LAD scan (Marcie), a genuine high bit depth image (about 30,000 distinct values in
 its 16-bit PNG). The results were the same on FFmpeg 6.1.6 and 9.0.2.
 
-| `dither=` | Grey ramp, 16-bit | Radial gradient, 16-bit | Grey ramp, 8-bit | Radial gradient, 8-bit | Photograph, 16-bit |
+| `dither=` | Gray ramp, 16-bit | Radial gradient, 16-bit | Gray ramp, 8-bit | Radial gradient, 8-bit | Photograph, 16-bit |
 | :--- | ---: | ---: | ---: | ---: | ---: |
 | The source itself | 0.0 | 5.5 | 10.9 | 15.2 | 0.0 |
 | 8-bit `none` | 13.5 | 22.4 | 13.0 | 22.0 | 0.0 |

@@ -7,18 +7,18 @@ held exactly. Instead each band compares a striped pattern with its mirror image
 (vertical stripes test the siting across, horizontal stripes the siting down), so the other direction does not
 matter. Mirror the pattern through a chroma sample, and any player that treats the samples as co-sited, with any
 symmetric filter, rebuilds the mirror block as the mirror image of the original: the two contain the same pixels,
-and the band looks like a uniform field. A player that thinks the samples are centred pairs luma and chroma
+and the band looks like a uniform field. A player that thinks the samples are centered pairs luma and chroma
 differently in the two blocks, and the checkerboard shows. Mirror it between two pixels instead and it is the
 other way round. So each direction has two bands, and a player makes exactly one of them uniform:
 
   Across: co-sited    uniform when the player treats the chroma as co-sited across (H.264, HEVC, AV1, BT.2020)
-  Across: centred     uniform when it treats it as centred (JPEG, MPEG-1; also sample repeat)
-  Down: centred       uniform when it treats it as centred down: FFmpeg's "left", the H.264/HEVC/AV1 default
+  Across: centered     uniform when it treats it as centered (JPEG, MPEG-1; also sample repeat)
+  Down: centered       uniform when it treats it as centered down: FFmpeg's "left", the H.264/HEVC/AV1 default
   Down: co-sited      uniform when it treats it as co-sited down: "topleft", BT.2020
 
 The pattern is a four-pixel cycle, luma Y0..Y3, chroma samples X and Z. The colours were chosen so that the wrong
 band differs by at least 0.065 in Oklab (linear-light means, display gamma 2.4) for co-sited players (interpolating
-or smoothing) and centred ones (linear to sample repeat), with every pixel in gamut, so the result comes from
+or smoothing) and centered ones (linear to sample repeat), with every pixel in gamut, so the result comes from
 display gamma alone, and so that the bands' uniform colours are at least 0.12 apart. As with the 4:2:2 chart, it only works at exactly 100%, and has the same scale check.
 
 Writes 10-bit (and 8-bit H.264) BT.709 limited range 4:2:0. The chroma has no true position here: the bands say
@@ -68,16 +68,16 @@ from make_chroma_siting_player_chart import BLOCK, H, LABEL, TOP, W, annotate
 HERE = Path(__file__).resolve().parent
 NAME = "chroma_siting_player_chart_420"
 # Luma order in the mirror block: through a chroma sample (co-sited players see a mirror image), or between two
-# pixels (centred players do).
-MIRROR = {"co-sited": [0, 3, 2, 1], "centred": [1, 0, 3, 2]}
+# pixels (centered players do).
+MIRROR = {"co-sited": [0, 3, 2, 1], "centered": [1, 0, 3, 2]}
 # label, note, direction the stripes vary in, mirror, and the pattern: chroma X, chroma Z (Cb, Cr), luma of the four
 # pixels in the cycle. Each band has its own colours, so that two uniform bands never look alike by accident.
 BANDS = [
     ("Across: co-sited", "H.264, HEVC, AV1, BT.2020", "x", "co-sited",
      ((0.147, 0.173), (-0.139, -0.164), (0.108, 0.728, 0.258, 0.258))),
-    ("Across: centred", "JPEG, MPEG-1; sample repeat", "x", "centred",
+    ("Across: centered", "JPEG, MPEG-1; sample repeat", "x", "centered",
      ((0.266, 0.317), (-0.108, -0.127), (0.198, 0.501, 0.850, 0.200))),
-    ('Down: centred ("left")', "H.264, HEVC, AV1 default", "y", "centred",
+    ('Down: centered ("left")', "H.264, HEVC, AV1 default", "y", "centered",
      ((0.299, 0.352), (-0.320, -0.377), (0.445, 0.221, 0.594, 0.763))),
     ('Down: co-sited ("topleft")', "BT.2020", "y", "co-sited",
      ((-0.095, -0.112), (0.229, 0.290), (0.177, 0.179, 0.179, 0.535))),
@@ -111,7 +111,7 @@ def chart(hdr10=False):
         lo, hi = float(pq_oetf(PQ_MIN_NITS)), float(pq_oetf(PQ_MAX_NITS))
         title = [
             "4:2:0 chroma siting, HDR10 (BT.2020, PQ): which bands are uniform fields?",
-            "Untagged, or tagged left: Across: co-sited and Down: centred (\"left\"). Tagged topleft: Across: co-sited "
+            "Untagged, or tagged left: Across: co-sited and Down: centered (\"left\"). Tagged topleft: Across: co-sited "
             "and Down: co-sited.",
             "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
             "the viewer is scaling: ignore the bands."]
@@ -120,7 +120,7 @@ def chart(hdr10=False):
     else:
         y, cb, cr = annotate(y, cb, cr, [
             "4:2:0 chroma siting: which bands are uniform fields?",
-            "Across: co-sited is right for H.264, HEVC and AV1. Down: centred (\"left\") is their default; "
+            "Across: co-sited is right for H.264, HEVC and AV1. Down: centered (\"left\") is their default; "
             "co-sited (\"topleft\") is BT.2020.",
             "View at exactly 100%. If the two halves of the patch on the right are not equally bright, "
             "the viewer is scaling: ignore the bands."], [band[:2] for band in bands])

@@ -7,9 +7,24 @@ parent: Test Output
 
 # 10-Bit vs 8-Bit Signal Path & Encoding Test Chart
 
-This folder contains `make_bitdepth_chart.py` and 16-bit RGB / 10-bit video test patterns designed to visually tell whether an encoding pipeline, video player, GPU compositor, or display signal path is **true 10-bit** or **quantized to 8-bit**.
+This folder contains [`make_bitdepth_chart.py`](make_bitdepth_chart.py) and 16-bit RGB / 10-bit video test patterns designed to visually tell whether an encoding pipeline, video player, GPU compositor, or display signal path is **true 10-bit** or **quantized to 8-bit**.
 
 Unlike traditional smooth gradient ramps—which require squinting for faint Mach bands and are easily fooled by spatial/temporal dithering—this chart uses **three gamma-independent optical mechanisms**.
+
+---
+
+## Downloads
+
+| File | What it is |
+| :--- | :--- |
+| [bitdepth_8vs10_16bit_untagged.png](bitdepth_8vs10_16bit_untagged.png) | 16-bit RGB chart, no color tags |
+| [bitdepth_8vs10_16bit_tagged_srgb.png](bitdepth_8vs10_16bit_tagged_srgb.png) | The same chart tagged sRGB |
+| [bitdepth_test_10bit_hevc.mp4](bitdepth_test_10bit_hevc.mp4) | 10-bit HEVC video |
+| [bitdepth_test_10bit_prores.mov](bitdepth_test_10bit_prores.mov) | 10-bit ProRes video |
+| [bitdepth_test_8bit_hevc.mp4](bitdepth_test_8bit_hevc.mp4) | 8-bit HEVC video, for comparison |
+| [simulated_10bit_path.png](simulated_10bit_path.png) | What a true 10-bit path looks like |
+| [simulated_8bit_rounded_path.png](simulated_8bit_rounded_path.png) | What an 8-bit nearest-rounded path looks like |
+| [simulated_8bit_truncated_path.png](simulated_8bit_truncated_path.png) | What an 8-bit truncated path looks like |
 
 ---
 

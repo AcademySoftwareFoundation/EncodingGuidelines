@@ -157,7 +157,7 @@ The progression order (typically a prog_order flag in openjph, or jph:prog_order
 | LRCP | Layer -\> Resolution -\> Component -\> Position | Good for progressive quality over full image, particularly useful if you have multiple layers (not currently supported by OIIO). |
 | RLCP | Resolution -\> Layer -\> Component -\> Position | Prioritizes lower resolutions first, allows you to load all of the layers at a lower resolution and then load in the higher resolutions |
 | RPCL | Resolution -\> Position -\> Component -\> Layer | Optimized for random access and tiling. |
-| PCRL | Position -\> Component -\> Resolution -\> Layer | Less common, spatial prioritisation, good for large images where you are viewing zoomed in sections of it. |
+| PCRL | Position -\> Component -\> Resolution -\> Layer | Less common, spatial prioritization, good for large images where you are viewing zoomed in sections of it. |
 | CPRL | Component -\> Position -\> Resolution -\> Layer | Used when components are needed separately, e.g. Y'CrCb where you might just want Y first, rarely used in VFX. |
 
 Of these settings picking either RPCL or LRCP are the two most common progression orders. OIIO does not currently support layers, so really LRCP and RLCP are very similar.
@@ -183,7 +183,7 @@ The test was to pick a frame rate where openRV is able to load a buffer at a rat
 Note, the higher performance on windows is from the additional optimization on windows hardware, having said that the performance for 4k playback is acceptable for cinema content and does have quite a bit of optimization compared to OpenJPEG and FFmpeg.  
 It's also worth pointing out that improved playback performance can be achieved using [Kakadu](https://kakadusoftware.com/) and [Comprimato](https://comprimato.com/) commercial decoders, although pure GPU based ones may not perform too well within openRV.
 
-[Blackmagic Resolve](https://www.blackmagicdesign.com/uk/products/davinciresolve) can also playback HTJ2K J2C image sequence files. It does not appear to be able to recognise J2C files in containers though.
+[Blackmagic Resolve](https://www.blackmagicdesign.com/uk/products/davinciresolve) can also playback HTJ2K J2C image sequence files. It does not appear to be able to recognize J2C files in containers though.
 
 ## Future work
 

@@ -34,8 +34,8 @@ HERE = Path(__file__).resolve().parent
 CHART = HERE.parent / "sourceimages" / "chroma_siting_player_chart_422-lossless.mkv"
 FFMPEG = os.getenv("FFMPEG_BIN", "ffmpeg")
 W, H = 1920, 1080
-BANDS = ["co-sited", "centred linear", "centred bicubic", "sample repeat"]
-BANDS_420 = ["across co-sited", "across centred", "down centred", "down co-sited"]
+BANDS = ["co-sited", "centered linear", "centered bicubic", "sample repeat"]
+BANDS_420 = ["across co-sited", "across centered", "down centered", "down co-sited"]
 DECODES = {  # name: ffmpeg output arguments; the output is read as 16-bit RGB, packed (rgb48le) or planar (gbrp16le)
     "zscale": ["-vf", "zscale,format=gbrp16le"],
     "no filter, to packed RGB": ["-pix_fmt", "rgb48le"],

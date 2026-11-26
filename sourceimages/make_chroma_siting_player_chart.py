@@ -4,7 +4,7 @@ chroma. See ChromaSitingTests.md.
 
 Four bands, each a checkerboard of 120x120 blocks. Test blocks have vertical stripes with a four-pixel cycle,
 the chroma samples X and Z on the even (co-sited) columns. How a player fills in the odd columns depends on where
-it thinks the chroma is: co-sited, the odd columns get the average of X and Z; centred, each pixel pair shares
+it thinks the chroma is: co-sited, the odd columns get the average of X and Z; centered, each pixel pair shares
 one value, mid +- a*(X-Z)/2, where a is 0.5 for linear interpolation (GPU texture sampling, libswscale bilinear),
 about 0.7 for bicubic/lanczos (libswscale's default, measured 0.67-0.71) and 1 for sample repeat. Reference
 blocks have horizontal stripes, which 4:2:2 holds exactly whatever the player does, set to the pixels one kind of
@@ -34,7 +34,7 @@ labelled co-sited, and two files carry a wrong label on purpose, to show whether
 
 (The .mkv names must not end in a digit: xStudio would read one as a single frame of a sequence.)
 
-A player that ignores the label shows the same band for both files of a pair; one that reads it shows a centred
+A player that ignores the label shows the same band for both files of a pair; one that reads it shows a centered
 band for the "labelled-center" file. FFmpeg cannot write ColorSiting 1 (it maps center to 3, a 4:2:0 value), so
 that byte is patched after encoding.
 
@@ -54,14 +54,14 @@ HERE = Path(__file__).resolve().parent
 NAME = "chroma_siting_player_chart_422"
 W, H, BLOCK, TOP, LABEL = 1920, 1080, 120, 120, 480
 CHECK = (1560, 10, 1900, 110)       # scale check: x0, y0, x1, y1; fine checkerboard left, coarse right
-# label, note, centred strength a (None = co-sited), chroma X, chroma Z (Cb, Cr), luma of the four pixels in the
+# label, note, centered strength a (None = co-sited), chroma X, chroma Z (Cb, Cr), luma of the four pixels in the
 # cycle. Found by searching for the largest smallest difference between the right band and the others.
 BANDS = [
     ("Co-sited (correct)", "interpolates co-sited chroma", None,
      (0.233, 0.175), (-0.218, -0.191), (0.351, 0.126, 0.404, 0.870)),
-    ("Centred, linear", "e.g. GPU texture sampling", 0.5,
+    ("Centered, linear", "e.g. GPU texture sampling", 0.5,
      (-0.340, -0.401), (0.369, 0.435), (0.631, 0.631, 0.315, 0.315)),
-    ("Centred, bicubic", "e.g. FFmpeg's default (libswscale)", 0.69,
+    ("Centered, bicubic", "e.g. FFmpeg's default (libswscale)", 0.69,
      (0.345, 0.407), (-0.297, -0.350), (0.360, 0.256, 0.551, 0.577)),
     ("Sample repeat", "each chroma sample used for two pixels", 1.0,
      (0.348, 0.421), (-0.101, -0.120), (0.262, 0.262, 0.189, 0.188)),

@@ -259,7 +259,7 @@ range:
 
 {: .important }
 We recommend 10-bit limited range over 8-bit full range. The file size is comparable, if not a little smaller than
-8-bit, and it removes most of the quantisation problems seen at 8-bit. Whichever you use, check playback on your
+8-bit, and it removes most of the quantization problems seen at 8-bit. Whichever you use, check playback on your
 target players (e.g. browsers, VLC, RV, QuickTime Player).
 
 If you have to stay at 8-bit, you can encode full range by setting the output range in the zscale filter:
