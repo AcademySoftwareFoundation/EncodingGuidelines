@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chroma siting check, 1:1 pixels</title>
+<style>
+  /* The video sits at the page origin with no margin so its pixels land on the device pixel grid. */
+  html, body { margin: 0; background: #262626; color: #bbb; font: 14px/1.5 system-ui, sans-serif; }
+  #video { display: block; background: #000; }
+  #video.pixelated { image-rendering: crisp-edges; image-rendering: pixelated; }
+  #bar { padding: 12px 16px; max-width: 980px; }
+  h1 { font-size: 18px; color: #eee; margin: 0 0 4px; }
+  a { color: #5ac8f0; }
+  button { font: inherit; padding: 4px 12px; margin-right: 6px; border-radius: 4px; border: 1px solid #666;
+           background: #333; color: #eee; cursor: pointer; }
+  button.blank { border-color: #4a4; }
+  button.word { border-color: #c44; }
+  button.chosen { background: #555; font-weight: 600; }
+  #expect { color: #ddd; }
+  #warn, #error { color: #ebaf46; }
+  table { border-collapse: collapse; margin-top: 8px; }
+  td, th { border: 1px solid #444; padding: 2px 8px; text-align: left; }
+  tr.current { background: #3a3a3a; }
+  td.blank { color: #6c6; }
+  td.word { color: #e66; }
+  #summary { width: 100%; height: 9em; background: #1b1b1b; color: #ccc; border: 1px solid #444;
+             font: 12px ui-monospace, monospace; }
+  .small { color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+<video id="video" muted loop autoplay playsinline></video>
+<div id="bar">
+  <h1 id="title"></h1>
+  <div id="expect"></div>
+  <div id="error"></div>
+  <div id="answers"></div>
+  <p class="small">
+    <b>How to read it:</b> the page shows the video at exactly one video pixel per screen pixel. Step back, or look
+    from across the room. If you can read <b>WRONG</b> in a panel, the browser put the chroma somewhere other than
+    where the file says; if the panel looks like a flat field, it got it right. Close up the word is always faintly
+    visible as a change of texture; judge it from a distance. First check the patch at the top right of the video:
+    its two halves must look equally bright from a distance, or the picture is being scaled and the result means
+    nothing.
+    Keys: <b>&larr;</b>/<b>&rarr;</b> previous/next file, <b>1</b>/<b>2</b> first panel blank/word,
+    <b>3</b>/<b>4</b> second panel blank/word.
+  </p>
+  <p class="small">
+    Rendering, to find out what changes the result:
+    <label><input type="checkbox" id="pixelated"> nearest-neighbour (<code>image-rendering: pixelated</code>)</label>
+    <label><input type="checkbox" id="controls"> show controls</label>
+    <a id="alone" target="_blank">open this file on its own</a>
+  </p>
+  <div id="status" class="small"></div>
+  <div id="mode" class="small"></div>
+  <div id="warn"></div>
+  <table id="list"><thead><tr><th>File</th><th>Label</th><th>Panel 1</th><th>Panel 2</th></tr></thead>
+    <tbody></tbody></table>
+  <p>Results, to copy (kept in this browser):</p>
+  <textarea id="summary" readonly></textarea>
+  <p><button id="clear">Clear results</button></p>
+  <p class="small">The lossless FFV1 (.mkv) and MXF files are for desktop players, not browsers:
+    <a href="chroma_siting_check_420-lossless-left.mkv">420 left</a>,
+    <a href="chroma_siting_check_420-lossless-topleft.mkv">420 topleft</a>,
+    <a href="chroma_siting_check_420-lossless-center.mkv">420 center</a>,
+    <a href="chroma_siting_check_422-lossless-left.mkv">422 left</a>,
+    <a href="chroma_siting_check_422-lossless-center.mkv">422 center</a>,
+    <a href="chroma_siting_check_422-dnxhr-untagged.mxf">422 DNxHR (ColorSiting 0)</a>,
+    <a href="chroma_siting_check_422-dnxhr-center.mxf">422 DNxHR (ColorSiting 1)</a>.
+    See <a href="../../ChromaSitingTests.html">Chroma Siting Tests</a>.</p>
+</div>
+<script>
+  // name, what the label says, displayed height (all 640 wide), panels top to bottom
+  const FILES = [
+    ['420-hevc-untagged.mp4', 'HEVC 10-bit 4:2:0, no label (= left)', 360, ['Across', 'Down']],
+    ['420-hevc-left.mp4', 'HEVC 10-bit 4:2:0, left', 360, ['Across', 'Down']],
+    ['420-hevc-topleft.mp4', 'HEVC 10-bit 4:2:0, topleft', 360, ['Across', 'Down']],
+    ['420-hevc-center.mp4', 'HEVC 10-bit 4:2:0, center', 360, ['Across', 'Down']],
+    ['420-h264-untagged.mp4', 'H.264 8-bit 4:2:0, no label (= left)', 360, ['Across', 'Down']],
+    ['420-h264-topleft.mp4', 'H.264 8-bit 4:2:0, topleft', 360, ['Across', 'Down']],
+    ['420-h264-center.mp4', 'H.264 8-bit 4:2:0, center', 360, ['Across', 'Down']],
+    ['422-hevc-untagged.mp4', 'HEVC 10-bit 4:2:2, no label (= co-sited)', 216, ['Across']],
+    ['422-prores-untagged.mov', 'ProRes 422 HQ, no label (= co-sited); Safari only', 216, ['Across']],
+    ['420-hevc-left-rot90.mp4', 'HEVC 10-bit 4:2:0, left, stored sideways, rotated 90', 360, ['Across', 'Down']],
+    ['420-hevc-topleft-rot90.mp4', 'HEVC 10-bit 4:2:0, topleft, rotated 90', 360, ['Across', 'Down']],
+    ['420-h264-untagged-rot90.mp4', 'H.264 8-bit 4:2:0, no label, rotated 90', 360, ['Across', 'Down']],
+    ['420-h264-topleft-rot90.mp4', 'H.264 8-bit 4:2:0, topleft, rotated 90', 360, ['Across', 'Down']],
+    ['422-hevc-untagged-rot90.mp4', 'HEVC 10-bit 4:2:2, no label, rotated 90', 216, ['Down']],
+    ['422-prores-untagged-rot90.mov', 'ProRes 422 HQ, no label, rotated 90; Safari only', 216, ['Down']],
+  ];
+  const PREFIX = 'chroma_siting_check_';
+  const KEY = 'chroma_siting_check_results';
+  const video = document.getElementById('video');
+  let index = 0;
+  let results = JSON.parse(localStorage.getItem(KEY) || '{}');
+
+  // Size the video so one video pixel covers exactly one device pixel, whatever the display scaling (2x Retina,
+  // Windows 150%) or browser zoom. The size comes from the list, not videoWidth, which not every browser reports
+  // after applying a rotation.
+  function fit() {
+    const [, , h] = FILES[index];
+    const dpr = window.devicePixelRatio || 1;
+    video.style.width = (640 / dpr) + 'px';
+    video.style.height = (h / dpr) + 'px';
+    const vw = video.videoWidth, vh = video.videoHeight;
+    document.getElementById('status').textContent =
+      `640x${h} video pixels, device pixel ratio ${dpr}, shown 1:1.` +
+      (vw ? ` The browser reports the video as ${vw}x${vh}.` : '');
+    // What the OS sends to this screen. If the panel's native resolution is lower, the OS shrinks it (a macOS
+    // "looks like" mode, Windows scaling on some setups) and the picture is no longer 1:1.
+    const fbW = Math.round(screen.width * dpr), fbH = Math.round(screen.height * dpr);
+    document.getElementById('mode').textContent =
+      `This screen is sent ${fbW}x${fbH} pixels. Your panel's native resolution must be exactly that, or the OS ` +
+      `is rescaling the picture (the scale check in the video will say). Reload after moving the window to ` +
+      `another screen.`;
+    const pinch = window.visualViewport ? window.visualViewport.scale : 1;
+    // Panel widths that exist. A framebuffer width that is not one of them (6400 for a 4K screen in macOS's
+    // "looks like 3200x1800" mode) is being shrunk or stretched to fit the panel.
+    const PANELS = [1280, 1366, 1440, 1600, 1680, 1920, 2048, 2160, 2256, 2560, 2880, 2940, 3000, 3024, 3072,
+                    3200, 3440, 3456, 3840, 4096, 4480, 5120, 6016, 7680];
+    const warns = [];
+    if (Math.abs(pinch - 1) > 0.001) warns.push('Pinch zoom is active: zoom back out, or the video is resampled.');
+    if (!PANELS.includes(fbW))
+      warns.push(`No screen has ${fbW} pixels across, so the OS is almost certainly rescaling this screen and ` +
+                 'the results here are not valid. Pick a display mode at the native resolution or exactly half ' +
+                 'of it (for a 3840x2160 panel, "looks like" 1920x1080 or 3840x2160).');
+    document.getElementById('warn').textContent = warns.join(' ');
+    matchMedia(`(resolution: ${dpr}dppx)`).addEventListener('change', fit, { once: true });
+  }
+
+  function answerCell(name, k) {
+    const r = (results[name] || [])[k];
+    return r ? `<td class="${r}">${r}</td>` : '<td></td>';
+  }
+
+  function render() {
+    const [name, label, , panels] = FILES[index];
+    document.getElementById('title').textContent = `${index + 1}/${FILES.length}: ${PREFIX}${name}`;
+    document.getElementById('expect').textContent = `Label: ${label}. ` +
+      'Every panel should be a flat field (blank).';
+    const box = document.getElementById('answers');
+    box.innerHTML = '';
+    panels.forEach((p, k) => {
+      const div = document.createElement('div');
+      div.style.margin = '6px 0';
+      div.append(`${p} panel: `);
+      for (const kind of ['blank', 'word']) {
+        const b = document.createElement('button');
+        b.className = kind + (((results[name] || [])[k] === kind) ? ' chosen' : '');
+        b.textContent = kind === 'blank' ? `Blank (${2 * k + 1})` : `WRONG visible (${2 * k + 2})`;
+        b.onclick = () => answer(k, kind);
+        div.append(b);
+      }
+      box.append(div);
+    });
+    const body = document.querySelector('#list tbody');
+    body.innerHTML = '';
+    FILES.forEach(([n, l, , ps], i) => {
+      const tr = document.createElement('tr');
+      if (i === index) tr.className = 'current';
+      tr.innerHTML = `<td><a href="#${n}">${n}</a></td><td>${l}</td>` +
+        ps.map((p, k) => answerCell(n, k).replace('<td', `<td title="${p}"`)).join('') +
+        (ps.length < 2 ? '<td></td>' : '');
+      body.append(tr);
+    });
+    const lines = [`Browser: ${navigator.userAgent}`, `Device pixel ratio: ${window.devicePixelRatio}`];
+    for (const [n, , , ps] of FILES) {
+      const r = results[n];
+      if (r) lines.push(`${n}: ` + ps.map((p, k) => `${p} ${r[k] || '?'}`).join(', '));
+    }
+    document.getElementById('summary').value = lines.join('\n');
+  }
+
+  function answer(k, kind) {
+    const [name, , , panels] = FILES[index];
+    if (k >= panels.length) return;
+    results[name] = results[name] || [];
+    results[name][k] = kind;
+    localStorage.setItem(KEY, JSON.stringify(results));
+    render();
+  }
+
+  function pick() {
+    const i = FILES.findIndex(f => '#' + f[0] === decodeURIComponent(location.hash));
+    index = i >= 0 ? i : 0;
+    document.getElementById('error').textContent = '';
+    video.src = PREFIX + FILES[index][0];
+    document.getElementById('alone').href = video.src;
+    fit();
+    render();
+  }
+
+  function go(step) {
+    location.hash = FILES[(index + step + FILES.length) % FILES.length][0];
+  }
+
+  video.addEventListener('error', () => {
+    document.getElementById('error').textContent = 'This browser cannot play this file.';
+  });
+  video.addEventListener('loadedmetadata', fit);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1);
+    else if (e.key === 'ArrowLeft') go(-1);
+    else if ('1234'.includes(e.key) && e.key.length === 1) {
+      const n = Number(e.key) - 1;
+      answer(Math.floor(n / 2), n % 2 ? 'word' : 'blank');
+    }
+  });
+  document.getElementById('clear').onclick = () => {
+    results = {};
+    localStorage.removeItem(KEY);
+    render();
+  };
+  for (const [id, apply] of [['pixelated', on => video.classList.toggle('pixelated', on)],
+                             ['controls', on => { video.controls = on; }]]) {
+    const box = document.getElementById(id);
+    box.checked = localStorage.getItem(KEY + '_' + id) === '1';
+    apply(box.checked);
+    box.onchange = () => { localStorage.setItem(KEY + '_' + id, box.checked ? '1' : '0'); apply(box.checked); };
+  }
+  // Clicking the video plays or pauses it; the result should not change between the two.
+  video.addEventListener('click', () => { if (video.paused) video.play(); else video.pause(); });
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', pick);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+  setInterval(fit, 1000);   // catches the window being moved to a screen with another scale
+  pick();
+</script>
+</body>
+</html>

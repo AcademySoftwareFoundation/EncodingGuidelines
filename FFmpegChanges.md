@@ -37,7 +37,7 @@ commands that give the right result on all of them.
 | [PNGs with bad EXIF data no longer decode](#png-exif-81) | 8.1 and later | The whole frame fails, not just the metadata. Seen with PNGs from OpenImageIO 2.4. Remove the EXIF with `exiftool -EXIF=`. |
 | [libswscale ignores the chroma location when converting to RGB](#ycbcr-to-rgb) | 9.0 and earlier | Stills from co-sited 4:2:2/4:2:0 (ProRes, DNxHR, H.264) come out with the color half a pixel to the right. Use `zscale`. |
 | [Untagged Y'CbCr is converted to RGB as BT.601](#ycbcr-to-rgb) | All | libswscale assumes BT.601; `zscale` refuses. Give the matrix explicitly. |
-| [Chroma location reaches the filter graph](#chroma-location-91) | 9.1 development builds | `-chroma_sample_location`, and the file's chroma location when decoding, now steer libswscale. Untagged files are still taken as centered. |
+| [Chroma location reaches the filter graph](#chroma-location-91) | 9.1 | `-chroma_sample_location`, and the file's chroma location when decoding, now steer libswscale. Untagged files are still taken as centered. |
 
 ## Recommended commands
 
@@ -125,8 +125,12 @@ FFmpeg version with `--label`, then `--summarize` combines the runs into the scr
 setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
 and the OpenImageIO Python bindings (`requirements.txt`).
 
+The full results for every version are on their own pages: [Color Flags by Version](FFmpegChangesColorFlags.html),
+[RGB to Y'CbCr Accuracy by Version](FFmpegChangesRGBToYCbCr.html) and, for `tests/chroma_siting.py`,
+[Chroma Siting by Version](FFmpegChangesChromaSiting.html).
+
 The same checks are also in the encoding test framework, which is run on each FFmpeg version (6.1.6, 7.0, 7.1.5,
-8.0.1, 8.1, 9.0.2 and a 9.1 development build so far) and reports what changed between versions:
+8.0.1, 8.1, 9.0.2 and 9.1 so far) and reports what changed between versions:
 `enctests/test_configs/cicp_flags_tests.yml` (the tag recipes), `chroma_siting_tests.yml`, `decode_tests.yml` and
 `decode_siting_tests.yml`. See `enctests/README.md`.
 
@@ -158,7 +162,7 @@ Two consequences:
 * **On a source that is already Y'CbCr, `-colorspace` now converts.** Before 7.1, transcoding a BT.709 file with
   `-colorspace bt2020nc` just relabelled it, leaving BT.709 pixels tagged as BT.2020. From 7.1 the pixels are
   re-matrixed to BT.2020, and the file still decodes to the same RGB (measured on 6.1.6, 7.0, 7.1.5, 9.0.2 and
-  9.1.dev; `-color_range` behaves the same way). Neither is a retag. To change the label without touching the pixels, use `setparams`; see
+  9.1; `-color_range` behaves the same way). Neither is a retag. To change the label without touching the pixels, use `setparams`; see
   [Relabelling a file](#relabelling-a-file).
 
 The inserted `scale` uses libswscale's defaults (bicubic, no `accurate_rnd`). `-sws_flags` still applies to it.
@@ -291,12 +295,12 @@ Errors against the ideal BT.709 conversion of the SMPTE bars, in 10-bit code val
 * **RGB to limited-range Y'CbCr** (the usual case) is unchanged; see
   [above](#libswscale-white-level-for-high-bit-depth-input).
 * `flags=unstable` (libswscale's new conversion code, 8.1 and later) gets close to `zscale` in all of these. We
-  tested 4:4:4 only. On the development branch after 9.0, some format pairs (e.g. 10-bit RGB to 12-bit Y'CbCr) log
+  tested 4:4:4 only. From 9.1, some format pairs (e.g. 10-bit RGB to 12-bit Y'CbCr) log
   "No backend found for operations" and silently fall back to the old code.
 
 `zscale` gave the same results on every version, so it remains the recommendation for any range conversion.
 
-Tested on 6.1.6, 7.1.5, 8.0.1, 8.1 (git build), 9.0.2 and the development branch (N-127508). The tests that
+Tested on 6.1.6, 7.1.5, 8.0.1, 8.1 (git build), 9.0.2 and 9.1. The tests that
 measure this are `color_tests.yml` and `ycbcr_range_tests.yml` in `enctests/test_configs`; they mark the
 libswscale results as known issues, so a run on a new version reports whether they have been fixed.
 
@@ -304,7 +308,7 @@ libswscale results as known issues, so a run on a new version reports whether th
 
 FFmpeg 8.0 stopped converting half-float EXRs to 32-bit float in the decoder (commit `0e917389fe`), so they now
 decode as `gbrpf16le`. 32-bit float EXRs are still `gbrpf32le`. Measured with an EXR holding -2.0 to 300.0, on 6.1.6, 7.0,
-7.1.5, 8.0.1, 8.1, 9.0.2 and a 9.1 development build:
+7.1.5, 8.0.1, 8.1, 9.0.2 and 9.1:
 
 * **From 8.0, asking for 32-bit float clamps.** `-pix_fmt gbrpf32le` now needs a conversion, libswscale does it, and
   the values are limited to 0.0 - 1.0 (-2.0 becomes 0, 300.0 becomes 1). The same command on 7.1.5 and earlier keeps them.
@@ -312,7 +316,7 @@ decode as `gbrpf16le`. 32-bit float EXRs are still `gbrpf32le`. Measured with an
 * **`scale` clamps floating point on every version**, for both half-float and 32-bit float EXRs.
 * **`zscale` keeps the full range on every version.** `zscale,format=gbrpf32le` is the safe way to get 32-bit float.
   To read the true values from 8.0 on, use `-pix_fmt gbrpf16le`.
-* **The `ocio` filter** keeps the full range with a float `format` (8.1, 9.0.2 and the 9.1 development build, the builds
+* **The `ocio` filter** keeps the full range with a float `format` (8.1, 9.0.2 and 9.1, the builds
   here that have it), unless `format=gbrpf32le` comes before it. See [FFmpeg OCIO](FfmpegOcio.html#working-with-exr-files-and-ffmpeg).
 
 ## HDR and `-x265-params` {#hdr-and--x265-params}
@@ -395,7 +399,7 @@ exiftool -overwrite_original -EXIF= image.png
 Re-saving with a current `oiiotool` also works, but it adds `sRGB`, `gAMA` and `cHRM` chunks, which FFmpeg reads
 as color tags.
 
-* Tested on 6.0, 7.1.5, 8.0.1 (decode), and 8.1, 9.0.2 and 9.1-dev (fail).
+* Tested on 6.0, 7.1.5, 8.0.1 (decode), and 8.1, 9.0.2 and 9.1 (fail).
 * Introduced by FFmpeg commit `44af382979` ("avcodec/pngdec: support reading EXIF profiles"), first in 8.1.
 
 ## Converting Y'CbCr to RGB {#ycbcr-to-rgb}
@@ -412,7 +416,7 @@ the RGB they were made from (errors in 10-bit code values, away from edges):
 | BT.709 full range, RP 219 bars | 1.4 max, 0.4 mean | 1.0 max, 0.1 mean |
 | Untagged (BT.709 limited range pixels) | **146 max**: converted as BT.601 | No output: `zscale` will not guess the matrix |
 
-* The results were identical on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1, 9.0.2 and a 9.1 development build;
+* The results were identical on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1, 9.0.2 and 9.1;
   `scale=flags=accurate_rnd+full_chroma_int` gave the same as plain `scale`.
 * For an untagged file, say what it is: `zscale=matrixin=709:rangein=limited` gives the same result as for the
   tagged file.
@@ -432,18 +436,19 @@ Tested with `enctests/test_configs/decode_tests.yml` and `decode_siting_tests.ym
 
 ## Chroma location reaches the filter graph (9.1) {#chroma-location-91}
 
-FFmpeg development builds after 9.0 pass the chroma location through the filter graph, as 7.1 started doing for
+FFmpeg 9.1 passes the chroma location through the filter graph, as 7.1 started doing for
 the matrix and range (commits `02abeae2c7`, "fftools/ffmpeg: add chroma location support", and `950fe27d23`,
-"avfilter/vf_scale: convert to the negotiated chroma location"). Measured on N-127508-ga2cfa47aec:
+"avfilter/vf_scale: convert to the negotiated chroma location"). Measured on 9.1:
 
 * **Encoding:** with no conversion filter, `-chroma_sample_location left` now makes the inserted conversion
-  co-site the chroma (measured -0.03 of a pixel; 0.5, centered, on 9.0 and earlier). Explicit `scale` without
+  co-site the chroma (measured -0.05 of a pixel; 0.5, centered, on 9.0 and earlier). Explicit `scale` without
   `out_chroma_loc` still centres it.
-* **Decoding to RGB:** libswscale now follows a file's chroma location instead of assuming centered. A file with
+* **Decoding to RGB:** libswscale now follows a file's chroma location instead of assuming centered (to packed RGB
+  such as PNG, only for coarse detail; see [ChromaSitingTests.md](ChromaSitingTests.html#reading-back-results)). A file with
   no chroma location is still taken as centered, so co-sited material that does not say so, which includes all
   ProRes and DNxHR, is still converted half a pixel off.
 
-This is not in a release yet; recheck when 9.1 is released. `zscale` is unaffected.
+`zscale` is unaffected.
 
 ## Relabelling a file
 
@@ -466,7 +471,7 @@ Before 7.1, `-colorspace` and `-color_range` also relabelled, which is how files
 BT.601 pixels in them. From 7.1 they convert, even when the source is already Y'CbCr and tagged. Transcoding a
 10-bit BT.709 limited-range FFV1 file to FFV1, and comparing the decoded pixels with the source's:
 
-| Command line | 6.1.6, 7.0 | 7.1.5, 9.0.2, 9.1.dev |
+| Command line | 6.1.6, 7.0 | 7.1.5, 9.0.2, 9.1 |
 | :--- | :--- | :--- |
 | `-colorspace bt2020nc` | Tagged BT.2020, pixels unchanged | **Re-matrixed to BT.2020** (up to 44 codes different) |
 | `-color_range pc` | Tagged full range, pixels unchanged | **Expanded to full range** (Y' 103–877 became 45–947) |
@@ -483,10 +488,11 @@ rewrites the stream's VUI but not the container's `colr` atom:
 * If the source has a `colr` atom, it is copied with the old values, so the stream and the container disagree.
   What `ffprobe` shows depends on the version: for the stream, 6.1.6 to 8.0.1 show the new VUI values and 8.1
   and later show the old `colr` values; the decoded frames (`-show_frames`) have the new values on every version.
-  Changing only the transfer function of a BT.709 file to sRGB, 8.1 and later report it as unchanged.
+  Changing only the transfer function of a BT.709 file to sRGB, 8.1 and later report it as unchanged. Where the
+  `colr` values are unspecified (2), 9.1 shows the new VUI values again; 8.1 and 9.0.2 show them as unspecified.
 * If the source has no `colr` atom (it is only written when primaries, transfer and matrix are all set), the
   output has none either, and `ffprobe` shows the new values. With `-movflags +write_colr` the muxer writes one
   with the old values (unspecified).
 
 Wherever there is a `colr` atom, a player that reads it sees the old tags. Tested on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1, 9.0.2 and
-9.1.dev. Re-encoding with `setparams`, as above, sets both.
+9.1. Re-encoding with `setparams`, as above, sets both.

@@ -68,8 +68,7 @@ with the pixel probe on the 100% white patch.
   filter itself, as `scale=…:flags=unstable`; the global `-sws_flags unstable` has no effect on this.
 
 These measurements were taken against a float64 reference implementation of the BT.709 conversion, and cross-checked
-against uncompressed reference renders from Nuke. The behavior is the same on FFmpeg 8.1 and on a 9.1 development
-build, so the libswscale rewrite in FFmpeg 9 does not change it.
+against uncompressed reference renders from Nuke. The behavior is the same on FFmpeg 8.1 and on 9.1, so the libswscale rewrite in FFmpeg 9 does not change it.
 
 ### Replacing scale with zscale
 

@@ -23,7 +23,7 @@ work, what each player and FFmpeg version did, and how it was measured. If you o
 ## Results by converter
 
 Converting RGB to 4:2:2 and 4:2:0. Positions are in luma samples: 0 is co-sited, 0.5 is centered. The results
-were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and a 9.1 development build, except where noted.
+were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and 9.1, except where noted.
 
 | Converter | 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | 4:2:0 (horizontal / vertical),<br>should be co-sited / centered ([H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default) | Correct? |
 | :--- | :--- | :--- | :--- |
@@ -33,7 +33,7 @@ were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and a 9.1 development build, exc
 | `scale=...:flags=unstable` (8.1+) | centered, pair-averaged | centered / centered | **No**, the same as `scale` |
 | `scale=...:out_chroma_loc=left` (7.1+) or `out_h_chr_pos=0` | -0.05, pair-averaged | -0.05 / centered | Close, not exact |
 | as above, plus `-sws_flags +full_chroma_inp` | co-sited | co-sited / centered | Yes |
-| no filter, `-chroma_sample_location left` | centered; **co-sited (-0.05) in 9.1.dev** | the same | Not in any release yet |
+| no filter, `-chroma_sample_location left` | centered; **co-sited (-0.05) from 9.1** | the same | From 9.1: close, not exact |
 
 "Pair-averaged" means the converter averaged each pair of RGB pixels into one chroma value before filtering:
 a line on an even column and a line on the following odd column give exactly the same chroma. libswscale does
@@ -42,7 +42,7 @@ co-sited without that flag only gets to within 0.05 of a pixel. Note that this c
 (including earlier versions of [FFmpeg swscale Filter](EncodeSwsScale.html)) that `full_chroma_inp` does nothing
 for RGB input.
 
-The last row is a change that is coming: in FFmpeg development builds after 9.0, `-chroma_sample_location` is
+The last row is new in FFmpeg 9.1: `-chroma_sample_location` is now
 passed into the filter graph, the way 7.1 started doing for `-colorspace`, so the conversion FFmpeg inserts
 follows it. In 9.0 and earlier it does not affect the conversion.
 
@@ -106,9 +106,9 @@ centered.
 | :--- | :--- | :--- | :--- |
 | `zscale` | Correct | Correct | Assumes co-sited: correct |
 | `scale`, or no filter, 6.1 to 9.0 | **Assumes centered: chroma 0.5 to the right** | Correct | **Assumes centered: 0.5 to the right** |
-| `scale`, or no filter, 9.1.dev | Follows the tag (within 0.07) | Correct | **Assumes centered: 0.5 to the right** |
+| `scale`, or no filter, 9.1 | Follows the tag (within 0.07) | Correct | **Assumes centered: 0.5 to the right** |
 
-The results were the same on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1 and 9.0.2; the 9.1 development build (N-127508) is
+The results were the same on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1 and 9.0.2; 9.1 is
 the only one that differs, and only for coarse detail when converting to packed RGB such as PNG: the finest
 chroma detail still comes out as if centered (see [How it works](#how-it-works)). `-sws_flags +full_chroma_int` (or `scale=flags=...+full_chroma_int`) makes libswscale
 interpolate the chroma instead of repeating each sample across two pixels, which it otherwise does when converting
@@ -175,7 +175,7 @@ same reason. The colors were chosen so that each wrong band differs from the rig
 depend on clipping.
 
 The chart tests the finest chroma detail 4:2:2 can hold. A player can place coarse color correctly and still
-fail here: FFmpeg 9.1.dev, decoding to packed RGB, puts a slow chroma sine within 0.03 pixel of the right place
+fail here: FFmpeg 9.1, decoding to packed RGB, puts a slow chroma sine within 0.03 pixel of the right place
 but rebuilds the finest detail as a centered filter would, so the chart shows it as centered bicubic, while the
 decode test in [Reading back to RGB](#reading-back-results), which blurs before it measures, sees it as co-sited.
 
@@ -194,7 +194,7 @@ Measured on macOS 26 (Apple M2), from window screenshots at 1:1 (`screencapture 
 
 FFmpeg, measured on the FFV1 copy with `python tests/chroma_siting_player_chart.py`:
 
-| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
+| Conversion | 6.1.6 and 9.0.2 | 9.1 |
 | :--- | :--- | :--- |
 | `zscale` | Co-sited | Co-sited |
 | No filter, to packed RGB (PNG, `rgb24`, `rgb48`) | **Sample repeat** | **Centered, bicubic** (finest detail only, see above) |
@@ -244,9 +244,9 @@ band for the mislabelled file, which is the right thing to do with a label even 
 
 | Player | MKV `left` / `center` | MXF `ColorSiting` 0 / 1 |
 | :--- | :--- | :--- |
-| FFmpeg `zscale` (9.0.2, 9.1.dev) | Co-sited / centered linear: **reads it** | Co-sited / co-sited: does not read it |
+| FFmpeg `zscale` (9.0.2, 9.1) | Co-sited / centered linear: **reads it** | Co-sited / co-sited: does not read it |
 | FFmpeg, no filter, to planar RGB, 9.0.2 | Centered bicubic / centered bicubic: ignores it | Centered bicubic / centered bicubic |
-| FFmpeg, no filter, to planar RGB, 9.1.dev | Co-sited / centered bicubic: **reads it** | Centered bicubic / centered bicubic: no label, so assumes centered |
+| FFmpeg, no filter, to planar RGB, 9.1 | Co-sited / centered bicubic: **reads it** | Centered bicubic / centered bicubic: no label, so assumes centered |
 | OpenRV 3.1.0 | Centered linear / centered linear: ignores it | Centered linear / centered linear: ignores it |
 
 FFmpeg does not read MXF's `ColorSiting` at all, so neither does anything built on it. An MXF reader that does,
@@ -331,11 +331,11 @@ built-in screen; Chrome 157 gave the same results as 156 for the untagged and `t
 
 FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-...`:
 
-| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
+| Conversion | 6.1.6 and 9.0.2 | 9.1 |
 | :--- | :--- | :--- |
 | `zscale` | Follows the tag (`left`, `topleft`, `center`) | Follows the tag |
 | No filter, to planar RGB | **Centered both ways**, whatever the tag | Follows the tag |
-| No filter, to packed RGB (PNG) | **Centered both ways**, whatever the tag | **Centered both ways**, whatever the tag (the finest detail; see [How it works](#how-it-works)) |
+| No filter, to packed RGB (PNG) | **Centered both ways**, whatever the tag | **Centered across**, whatever the tag (the finest detail; see [How it works](#how-it-works)); down, follows the tag at 10-bit but **centered** at 8-bit |
 | `scale=flags=...+full_chroma_int` | **Centered both ways** | Follows the tag |
 
 ### The HDR10 copies {#chart-420-hdr10}
@@ -376,10 +376,10 @@ PQ ones (`--search --seed 3`).
   what you want to test.
 
 FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-hevc-pq...`
-(the script uses the PQ EOTF for files with `-pq` in the name), on 6.1.6, 9.0.2 and 9.1.dev, gives the same
+(the script uses the PQ EOTF for files with `-pq` in the name), on 6.1.6, 9.0.2 and 9.1, gives the same
 answers as for the SDR chart:
 
-| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
+| Conversion | 6.1.6 and 9.0.2 | 9.1 |
 | :--- | :--- | :--- |
 | `zscale` | Follows the tag (`left`, `topleft`) | Follows the tag |
 | No filter, to planar RGB | **Centered both ways**, whatever the tag | Follows the tag |
@@ -440,8 +440,7 @@ file look like that:
 | ![Every 4:2:2 cell co-sited: three columns wide, the brightest on the tick](static/chroma-siting/pixel_chart_422_correct.png) | ![All nine 4:2:0 cells co-sited across and centered down](static/chroma-siting/pixel_chart_420_correct.png) |
 
 These are the exact pixels, enlarged without smoothing. They match the test files decoded with `zscale` to within about
-1 code value in 10 bits, or about one 8-bit code for the 8-bit files (FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and the 9.1
-development build, N-127508).
+1 code value in 10 bits, or about one 8-bit code for the 8-bit files (FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and 9.1).
 
 The files are in `sourceimages/`, lossless FFV1 in Matroska, so they are for desktop players and not browsers:
 [_422-10bit.mkv](sourceimages/chroma_siting_pixel_chart_422-10bit.mkv), [_422-8bit.mkv](sourceimages/chroma_siting_pixel_chart_422-8bit.mkv), [_420-10bit.mkv](sourceimages/chroma_siting_pixel_chart_420-10bit.mkv), [_420-8bit.mkv](sourceimages/chroma_siting_pixel_chart_420-8bit.mkv), and
@@ -459,20 +458,20 @@ How a player zooms matters:
 
 Players were measured on macOS 26 (Apple M2) from window screenshots, sampled at the center of each image pixel, with
 `tests/chroma_siting_pixel_chart.py --capture`. FFmpeg was measured by the same script on 6.1.6, 7.1.5, 8.1, 9.0.2 and
-the 9.1 development build (N-127508); the results are the same on all of them except where a row says so:
+9.1; the results are the same on all of them except where a row says so:
 
 | Player or conversion | 4:2:2 10-bit | 4:2:2 8-bit | 4:2:0 10-bit | 4:2:0 8-bit |
 | :--- | :--- | :--- | :--- | :--- |
 | `zscale` | Co-sited | Co-sited | Co-sited across, centered down | Co-sited across, centered down |
 | No filter, to planar RGB, up to 9.0.2 | **Centered** | **Centered** | **Centered both ways** | **Centered both ways** |
-| No filter, to planar RGB, 9.1.dev (the files are tagged `left`) | Co-sited | Co-sited | Co-sited across, centered down | Co-sited across, centered down |
-| No filter, to packed RGB | **Sample repeat** (see below for 9.1.dev) | **Sample repeat** | **Repeat across**, centered down (see below for 9.1.dev) | **Repeat both ways** |
+| No filter, to planar RGB, 9.1 (the files are tagged `left`) | Co-sited | Co-sited | Co-sited across, centered down | Co-sited across, centered down |
+| No filter, to packed RGB | **Sample repeat** (see below for 9.1) | **Sample repeat** | **Repeat across**, centered down (see below for 9.1) | **Repeat both ways** |
 | OpenRV 3.1.0 (Linear) | **Centered** | **Centered** | **Centered both ways** | **Centered both ways** |
 | xStudio, with the 4:2:2 fix | Co-sited | **Sample repeat** | Co-sited across, repeat down | **Repeat both ways** |
 | xStudio 1.4.0 | **Co-sited at x=16, mixed at 32, repeat at 48** | **Sample repeat** | **Across as for 4:2:2**, repeat down | **Repeat both ways** |
 
 Wherever a larger chart covers the same case the two agree, so each confirms the other (the 4:2:2 chart has no
-8-bit version, so 8-bit 4:2:2 is only measured here). 10-bit to packed RGB is the exception on 9.1.dev: sample repeat
+8-bit version, so 8-bit 4:2:2 is only measured here). 10-bit to packed RGB is the exception on 9.1: sample repeat
 is still the nearest of the patterns this chart models, but it is a poor match, and the 4:2:2 player chart reads that
 conversion as centered bicubic. "Repeat down" puts the 4:2:0
 chroma in the right place for H.264 and HEVC (centered between the rows) but without interpolating it.
@@ -500,6 +499,7 @@ Each script measures whichever `ffmpeg` is on the `PATH` (or `FFMPEG_BIN` and `F
 FFmpeg version with `--label`, then `--summarize` combines the runs into the script's `summary.md`. With a rez
 setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
 and the OpenImageIO Python bindings (`requirements.txt`).
+The combined results for every version are on [Chroma Siting by Version](FFmpegChangesChromaSiting.html).
 
 The same measurements, and the reverse direction, are also part of the encoding test framework, so they are re-run
 for each FFmpeg version (`enctests/test_configs/chroma_siting_tests.yml` and `decode_siting_tests.yml`). For the

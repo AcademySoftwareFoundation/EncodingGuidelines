@@ -95,7 +95,7 @@ edges; `prores_ks` at `-qscale:v 1`, tagged BT.709):
 | `scale=in_color_matrix=bt709:out_color_matrix=bt709`, with `-sws_flags spline+accurate_rnd+full_chroma_int` | 19.6 max, 1.27 mean | 7.8 max, 1.27 mean |
 | `zscale,format=gbrp16le` | 5.5 max, 0.35 mean | 4.1 max, 0.35 mean |
 
-The results were identical on 6.1.6, 7.0, 7.1.5, 8.1, 9.0.2 and a 9.1 development build. Telling `scale` the matrix gains nothing for a tagged file, and libswscale also
+The results were identical on 6.1.6, 7.0, 7.1.5, 8.1, 9.0.2 and 9.1. Telling `scale` the matrix gains nothing for a tagged file, and libswscale also
 puts the chroma of 4:2:2 ProRes in the wrong place ([Chroma Siting](ChromaSiting.html#reading-back-to-rgb)).
 
 `zscale` needs the file to say what its matrix is, and gives no output for a file with no tags. You can add them to

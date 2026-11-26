@@ -58,10 +58,10 @@ that way. For 4:2:0, H.264, HEVC and AV1 can say where the chroma is, but most p
 
 ## Summary
 
-* **`zscale` gets it right by default**, on every FFmpeg version we tested (6.0 to 9.1.dev): co-sited
+* **`zscale` gets it right by default**, on every FFmpeg version we tested (6.0 to 9.1): co-sited
   horizontally, centered vertically for 4:2:0.
 * **`scale` (libswscale), and the conversion FFmpeg inserts when there is no filter, center the chroma** on every
-  version, including the new libswscale code (`flags=unstable`) and the current development build. 4:2:2 and
+  version, including the new libswscale code (`flags=unstable`) and 9.1. 4:2:2 and
   H.264/HEVC/AV1 4:2:0 made this way are half a pixel off, and are read by players as co-sited.
 * libswscale can be made to co-site, on 7.1 and later, with `out_chroma_loc=left` **and**
   `-sws_flags +full_chroma_inp`. Without `full_chroma_inp` it averages pairs of RGB pixels before filtering, and
@@ -124,8 +124,7 @@ Some softening is unavoidable with 4:2:2 either way: every round trip loses a li
 siting the color also moves about half a pixel to the left each time, and after a few round trips it is visibly
 off the detail. A smooth gradient, by contrast, hardly changes, because shifting it by half a pixel changes almost
 nothing. Siting errors show on sharp color edges, fine colored lines and colored text. Made with
-`tests/chroma_siting_generations.py`; the results were identical on FFmpeg 6.1.6, 9.0.2 and a 9.1 development
-build (zoomed 3 times with nearest neighbor).
+`tests/chroma_siting_generations.py`; the results were identical on FFmpeg 6.1.6, 9.0.2 and 9.1 (zoomed 3 times with nearest neighbor).
 
 ## Where chroma siting is recorded
 
@@ -205,8 +204,7 @@ BT.2020, use the matching `matrix` and primaries as well):
 ffmpeg -i input.%04d.png -vf "zscale=matrix=709:range=limited:chromal=left:filter=lanczos,format=yuv420p10le,setparams=color_primaries=bt709:color_trc=iec61966-2-1" -c:v libx265 -crf 18 -colorspace bt709 output.mp4
 ```
 
-What we measured, with `libx265` and `libx264` 4:2:0 on FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and a 9.1 development
-build:
+What we measured, with `libx265` and `libx264` 4:2:0 on FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and 9.1:
 
 | Command | Pixels | What is written |
 | :--- | :--- | :--- |
@@ -219,7 +217,7 @@ The options that only set the label do not move the chroma, so with `scale`, or 
 a `topleft` label, they give a file whose label is wrong:
 
 * **`-chroma_sample_location`** relabelled the frames without converting on 6.1.6, 8.1 and 9.0.2, was ignored on
-  7.1.5, and on the 9.1 development build made `zscale` convert to it. Do not rely on it.
+  7.1.5, and from 9.1 makes `zscale` convert to it. Do not rely on it.
 * **`setparams=chroma_location=`** (FFmpeg 7.1 and later) only relabels.
 * **`-x265-params chromaloc=`** overrides what `libx265` writes, whatever the pixels are.
 
@@ -243,11 +241,11 @@ also the value that gives the correct `ColorSiting` (see [DNxHR in MXF](ChromaSi
 When FFmpeg converts 4:2:2 or 4:2:0 to RGB, for example to make review stills from a ProRes or H.264 file, it has
 to decide where the chroma samples are before it can interpolate them. `zscale` reads the file's chroma location and
 assumes co-sited when there is none, which is correct. libswscale (`scale`, or no filter) assumes centered whatever
-the file says, on every release tested (6.1 to 9.0). The 9.1 development build follows the tag if there is one, and
+the file says, on every release up to 9.0 (tested from 6.1). From 9.1 it follows the tag if there is one, and
 still assumes centered if there is not ([measurements](ChromaSitingTests.html#reading-back-results)).
 
 So a co-sited file, which is every ProRes, DNxHR and 4:2:2 H.264/HEVC file and most H.264/HEVC 4:2:0, converted
-to RGB without a filter comes out half a pixel off on every released version. With 9.1 that will only be fixed
+to RGB without a filter comes out half a pixel off on every version. From 9.1 that is fixed only
 for files that carry a chroma location, which in MOV and MP4 is only 4:2:0 H.264/HEVC with a non-default
 location (see [Where chroma siting is recorded](#where-chroma-siting-is-recorded)). Use `zscale`:
 
