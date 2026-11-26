@@ -267,7 +267,10 @@ in `sourceimages/`. How they work, and the results in detail, are on the separat
 
 There are two kinds of chart. The **player charts** are full HD: you look at them from a distance, and a whole band
 changes appearance. The **pixel charts** are 64x64: you zoom in and look at single pixels. Start with a player chart;
-use a pixel chart to confirm the result or to show someone exactly what is wrong.
+use a pixel chart to confirm the result or to show someone exactly what is wrong. For a quick yes or no per file,
+including rotated video, the [check files](sourceimages/chroma_siting_check/README.html) show the word WRONG when the player
+does not follow the label; open them in a browser with
+[the viewer page](sourceimages/chroma_siting_check/view.html).
 
 | Chart | Open | Correct | Not correct |
 | :--- | :--- | :--- | :--- |

@@ -138,7 +138,7 @@ across and down separately; see [The 4:2:0 chart](#chart-420). To look at the pi
 
 | Band | Uniform when the player | Typical of |
 | :--- | :--- | :--- |
-| Co-sited (correct) | treats the chroma as co-sited and interpolates it | `zscale`; xStudio with the fix below |
+| Co-sited (correct) | treats the chroma as co-sited and interpolates it | `zscale`; xStudio with its 4:2:2 fix |
 | Centered, linear | treats it as centered, linear interpolation | GPU texture sampling (RV); libswscale `bilinear` |
 | Centered, bicubic | treats it as centered, bicubic or lanczos | libswscale to planar RGB, or with `full_chroma_int` |
 | Sample repeat | uses each chroma sample for two pixels | libswscale to packed RGB (e.g. writing a PNG), up to 9.0 |
@@ -217,15 +217,9 @@ Notes on the players:
 * **Firefox** keeps the horizontal siting but smears the chroma vertically, so the reference blocks are wrong too.
 * **OpenRV** stores the file's chroma placement but does not use it: its shader samples the half-width chroma
   texture with linear filtering, which is centered.
-* **xStudio** interpolates 10/12-bit 4:2:2 chroma correctly, but a bounds check in its YUV shader stopped it at
-  the middle of the picture, and the right half repeats each sample. The same happens with VideoToolbox and with
-  FFmpeg decoding. A [fix](https://github.com/AcademySoftwareFoundation/xstudio/pull/361) has been made (`image_coord.x*2 < frame_width_pixels` becomes `image_coord.x + 1 <
-  frame_width_pixels` in `src/plugin/media_reader/ffmpeg/src/ffmpeg.cpp`) but is not yet merged. Its 8-bit path
+* **xStudio** 1.4.0 stops interpolating half way across the picture; a
+  [fix](https://github.com/AcademySoftwareFoundation/xstudio/pull/361) is waiting to be merged. Its 8-bit path
   always repeats each sample.
-
-  | xStudio 1.4.0: the top band changes half way across | With the fix |
-  | :--- | :--- |
-  | ![xStudio before the fix, from a distance](static/chroma-siting/player_chart_distance_xstudio_before.png) | ![xStudio after the fix, from a distance](static/chroma-siting/player_chart_distance_xstudio_after.png) |
 
 ### Does the player read the label? {#reading-the-label}
 
@@ -405,6 +399,14 @@ same way, came out right, and the SDR `topleft` file followed its tag (QuickTime
 HDR10 tagged `topleft` is shown as intended by these three, and HDR10 at the H.264/HEVC default is not. Firefox is
 the opposite: it shows HDR10 as `left` whatever the tag, which is right for the untagged and `left` files and wrong
 for `topleft`. In SDR, Firefox also ignored the HEVC `center` and 10-bit H.264 `topleft` and `center` tags.
+
+## The check files {#check-files}
+
+The player charts tell you what a player assumes, and you work out from the label which band should be flat. The
+[Chroma Siting Check](sourceimages/chroma_siting_check/README.html) files turn that into a yes or no: each is made for its own
+label (left, topleft, center, or none), and shows the word **WRONG** when the player does not follow it. There are
+also copies stored rotated 90 degrees, which FFmpeg's autorotate gets wrong. They come with a
+[viewer page](sourceimages/chroma_siting_check/view.html) that shows them at 1:1 in a browser.
 
 ## Checking the pixels {#pixel-chart}
 
