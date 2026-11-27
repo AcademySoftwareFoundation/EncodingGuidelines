@@ -18,9 +18,12 @@ parent: Encoding Overview
 
 {: .highlight }
 > **In short:** convert with `zscale` and leave its chroma location at the default. That co-sites the chroma
-> horizontally (and centres it vertically for 4:2:0), which is what 4:2:2 and SDR H.264/HEVC/AV1 4:2:0 expect.
-> `scale` (libswscale) centres it, half a pixel off, on every FFmpeg version we tested. For BT.2020/HDR 4:2:0 the
+> horizontally (and centers it vertically for 4:2:0), which is what 4:2:2 and SDR H.264/HEVC/AV1 4:2:0 expect.
+> `scale` (libswscale) centers it, half a pixel off, on every FFmpeg version we tested. For BT.2020/HDR 4:2:0 the
 > choice is less clear; see the [Summary](#summary).
+>
+> That so many players get this wrong without anyone noticing suggests the effect on the picture is subtle. It is
+> still worth getting right, and following the practices on this page removes the errors you control.
 
 When an image is converted to 4:2:2 or 4:2:0, there is only one chroma (color) sample for every two luma samples
 across, and for 4:2:0 also for every two down. *Chroma siting* (or chroma sample location) is where each of
@@ -67,7 +70,7 @@ that way. For 4:2:0, H.264, HEVC and AV1 can say where the chroma is, but most p
   `-sws_flags +full_chroma_inp`. Without `full_chroma_inp` it averages pairs of RGB pixels before filtering, and
   the result is only approximately co-sited.
 * **4:2:2 needs no label**: every standard says co-sited, so the conversion just has to co-site it, and a player
-  that centres it is simply wrong. ProRes, DNxHR and 4:2:2 H.264/HEVC have no field for it, and do not need one.
+  that centers it is simply wrong. ProRes, DNxHR and 4:2:2 H.264/HEVC have no field for it, and do not need one.
 * **4:2:0 is where the choice is**, between `left` (the H.264/HEVC/AV1 default) and `topleft` (BT.2020). H.264,
   HEVC and AV1 have a field for it, but only some players read it. For SDR use `left`, which is the default and
   needs no label. For BT.2020/HDR the specifications mostly point to `topleft`, which must then be signalled, and
