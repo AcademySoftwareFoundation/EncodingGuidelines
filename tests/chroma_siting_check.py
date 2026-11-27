@@ -22,6 +22,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "sourceimages"))
+from chroma_siting_420_colours import BT2020_TO_709, pq_eotf  # noqa: E402
 from make_chroma_siting_check import CAPTION, LABEL, OUT, ROW, W, panel_mask, panels  # noqa: E402
 
 FFMPEG = os.getenv("FFMPEG_BIN", "ffmpeg")
@@ -54,16 +55,18 @@ def grow(m, n):
 
 
 def info(name):
-    """The panels (as displayed) and whether the file is rotated, from its name."""
-    sub, rest = name.split("_")[-1].split("-", 1)
-    label = rest.split("-")[1].split(".")[0]
-    rotated = "-rot90" in name
-    return panels(sub, label, rotated), rotated
+    """The panels (as displayed), whether the file is rotated, and whether it is HDR10 (PQ), from its name:
+    chroma_siting_check_<sub>-<codec>-<label>[-rot90].<ext>, where the codec may itself contain a hyphen."""
+    sub, *parts = name.split("_")[-1].split(".")[0].split("-")
+    rotated = parts[-1] == "rot90"
+    label = parts[-2] if rotated else parts[-1]
+    return panels(sub, label, rotated), rotated, "pq" in parts
 
 
-def measure(rgb, pans):
-    """rgb: R'G'B' 0..1, the chart only. Returns [(panel, word contrast, edge)] and the simulated view."""
-    lin = np.clip(rgb, 0, 1) ** 2.4
+def measure(rgb, pans, pq=False):
+    """rgb: R'G'B' 0..1, the chart only (PQ and BT.2020 if pq, as FFmpeg decodes an HDR10 file; a screenshot is
+    already display-referred). Returns [(panel, word contrast, edge)] and the simulated view, in linear light."""
+    lin = pq_eotf(np.clip(rgb, 0, 1)) / 100 @ BT2020_TO_709.T if pq else np.clip(rgb, 0, 1) ** 2.4
     view = blur(lin)
     lab = np.cbrt(view @ M1.T) @ M2.T
     out = []
@@ -122,17 +125,17 @@ def main():
     args = parser.parse_args()
     if args.capture:
         rgb = np.asarray(Image.open(args.capture).convert("RGB")).astype(float) / 255
-        results, _ = measure(rgb, info(args.file)[0])
+        results, _ = measure(rgb, info(args.file)[0])     # a screenshot is display-referred, so never PQ
         show(args.capture.name, results)
         return
     if args.images:
         args.images.mkdir(parents=True, exist_ok=True)
-    for path in args.files or sorted(OUT.glob("chroma_siting_check_*")):
+    for path in args.files or sorted(p for p in OUT.glob("chroma_siting_check_*") if p.suffix != ".md"):
         print(path.name)
-        pans, rotated = info(path.name)
+        pans, rotated, pq = info(path.name)
         decodes = dict(DECODES, **({"reference (rotate in RGB)": "reference"} if rotated else {}))
         for name, dec in decodes.items():
-            results, view = measure(decode(path, dec, rotated), pans)
+            results, view = measure(decode(path, dec, rotated), pans, pq)
             show(name, results)
             if args.images:
                 tag = name.split(" (")[0].replace(", ", "-").replace(" ", "")

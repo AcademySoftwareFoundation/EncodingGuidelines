@@ -113,7 +113,7 @@ It shows that you really can just encode with -preset medium or -preset slow any
 
 By default, H.264 is created as yuv420p (8-bit 4:2:0), which is the most widely supported format. We recommend 10-bit 4:2:0 (`-pix_fmt yuv420p10le`) where your players allow it, since it avoids most of the banding of 8-bit at a similar file size.
 
-In our tests on macOS 26, Safari, Chrome and Firefox all played 10-bit H.264, although Chrome placed its chroma half a pixel off (see [Chroma Siting Tests](ChromaSitingTests.html#chart-420)). Browsers on other platforms, and hardware players, have not been retested. Where a file has to play everywhere, use `-pix_fmt yuv420p`.
+In our tests on macOS 26, Safari, Chrome and Firefox all played 10-bit H.264, although Chrome placed its chroma half a pixel off (see [Chroma Siting Check](sourceimages/chroma_siting_check/README.html#players)). Browsers on other platforms, and hardware players, have not been retested. Where a file has to play everywhere, use `-pix_fmt yuv420p`.
 
 The H.264 codec also supports other formats, selected with the `-pix_fmt` flag.
 

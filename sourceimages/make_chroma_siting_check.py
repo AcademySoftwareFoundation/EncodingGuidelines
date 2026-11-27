@@ -1,7 +1,7 @@
 """
 Generate the chroma siting check files: small charts that show the word WRONG when a player rebuilds the chroma
 somewhere other than where the file's label says it is, and a blank field when it gets it right. See
-ChromaSitingTests.md.
+sourceimages/chroma_siting_check/README.md.
 
 Each file is designed for its own label (or, untagged, for the default of its format), so the rule is the same for
 every file: blank means the player followed the label. A 4:2:0 file has two panels, Across and Down, which can be
@@ -24,11 +24,15 @@ Writes 10-bit (8-bit for the 8-bit codecs) BT.709 limited range into chroma_siti
 
   chroma_siting_check_420-<codec>-<label>.<ext>   4:2:0, labelled left, topleft, center, or untagged (= left)
   chroma_siting_check_422-<codec>-<label>.<ext>   4:2:2, untagged (= co-sited), left, or center
+  chroma_siting_check_420-hevc-pq-<label>.mp4     HDR10 (BT.2020, PQ), untagged, left or topleft
+  ...-rot90.<ext>                                 stored turned 90 degrees, with a display matrix to turn it back
 
 Needs ffmpeg with libx264 and libx265 on the PATH (or FFMPEG_BIN), numpy and Pillow.
 
-    python sourceimages/make_chroma_siting_check.py
+    python sourceimages/make_chroma_siting_check.py            # all of them
+    python sourceimages/make_chroma_siting_check.py hevc-pq    # only the files with hevc-pq in the name
 """
+import argparse
 import os
 import subprocess
 import tempfile
@@ -37,8 +41,9 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+from chroma_siting_420_colours import PQ_MAX_NITS, PQ_MIN_NITS, pq_oetf
 from make_chroma_siting_player_chart import set_mxf_color_siting
-from make_chroma_siting_player_chart_420 import BANDS, MIRROR
+from make_chroma_siting_player_chart_420 import BANDS, BANDS_PQ, MIRROR, light_levels
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "chroma_siting_check"
@@ -49,6 +54,7 @@ UNIT = 16                               # size of one block of the 5x7 font
 STAGGER = np.array([0, 5, 2, 7, 4, 1, 6, 3])
 CHECK = (488, 8, 632, 64)               # scale check: one-pixel checkerboard left, eight-pixel right
 BAND = {band[0].split(" (")[0]: band for band in BANDS}
+BAND_PQ = {band[0].split(" (")[0]: band for band in BANDS_PQ}     # the same bands, colours for HDR10
 # What a player should do for each label: the band whose mirror matches it, across and down.
 EXPECT = {
     "untagged": ("Across: co-sited", "Down: centered"),
@@ -116,15 +122,21 @@ def coded_coords(yy, xx, rotated):
     return (W - 1 - xx, yy) if rotated else (yy, xx)
 
 
-def chart(sub, label, caption, rotated=False):
+def chart(sub, label, caption, rotated=False, hdr10=False):
     """Y, Cb, Cr as 10-bit codes in the stored orientation, Cb and Cr subsampled for sub ("420" or "422"), and the
-    stored frame's size (width, height)."""
+    stored frame's size (width, height). With hdr10, the 4:2:0 chart's PQ colours (BT.2020), and the text and scale
+    check kept between 1 and 100 cd/m^2 like them, so no display tone maps any of it."""
     pans = panels(sub, label, rotated)
     H = CAPTION + ROW * len(pans)
-    y = np.full((H, W), 0.45)
+    if hdr10:
+        bands, (ink0, ink1) = BAND_PQ, (float(pq_oetf(10)), float(pq_oetf(PQ_MAX_NITS)))
+        check = (float(pq_oetf(PQ_MIN_NITS)), float(pq_oetf(PQ_MAX_NITS)))
+    else:
+        bands, (ink0, ink1), check = BAND, (0.15, 0.85), (0.0, 1.0)
+    y = np.full((H, W), ink0)
     cb, cr = np.zeros((H, W)), np.zeros((H, W))
     for k, (name, axis, _) in enumerate(pans):
-        _, _, coded_axis, mirror, (X, Z, lumas) = BAND[name]
+        _, _, coded_axis, mirror, (X, Z, lumas) = bands[name]
         r0 = CAPTION + k * ROW
         yy, xx = np.mgrid[r0:r0 + ROW, LABEL:W]
         cy, cx = coded_coords(yy, xx, rotated)
@@ -146,13 +158,13 @@ def chart(sub, label, caption, rotated=False):
     text = np.zeros((H, W), bool)
     text[:CAPTION] = True
     text[:, :LABEL] = True
-    y = np.where(text, 0.15 + 0.7 * np.asarray(img) / 255.0, y)
+    y = np.where(text, ink0 + (ink1 - ink0) * np.asarray(img) / 255.0, y)
     cb[text], cr[text] = 0, 0
     x0, y0, x1, y1 = CHECK
     xm = (x0 + x1) // 2
     yy, xx = np.mgrid[y0:y1, x0:x1]
     on = np.where(xx < xm, (yy + xx) % 2, ((yy - y0) // 8 + (xx - xm) // 8) % 2)
-    y[y0:y1, x0:x1] = on
+    y[y0:y1, x0:x1] = np.where(on == 1, check[1], check[0])
     planes = [np.round(y * 876 + 64), np.round(cb * 896 + 512), np.round(cr * 896 + 512)]
     planes = [np.clip(p, 4, 1019).astype("<u2") for p in planes]
     if rotated:
@@ -198,21 +210,33 @@ ROTATED = [
 ]
 
 
+# HDR10 (BT.2020, PQ, HEVC Main 10 with mastering display and light level SEI), 4:2:0 only, as the 4:2:0 chart's
+# HDR10 copies: untagged, and left and topleft written explicitly.
+HDR10 = [("420", "hevc-pq", label, 10, LOOP + HEVC, "mp4", "HDR10 HEVC") for label in ("untagged", "left", "topleft")]
+HDR10_TAGS = "setparams=range=tv:color_primaries=bt2020:color_trc=smpte2084:colorspace=bt2020nc"
+
+
 def file_name(sub, codec, label, ext, rotated=False):
     return f"{NAME}_{sub}-{codec}-{label}{'-rot90' if rotated else ''}.{ext}"
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("only", nargs="*", help="Write only the files whose names contain one of these")
+    args = parser.parse_args()
     ffmpeg = os.environ.get("FFMPEG_BIN", "ffmpeg")
     OUT.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         for (sub, codec, label, bits, enc, ext, codec_name), rotated in \
-                [(job, False) for job in JOBS] + [(job, True) for job in ROTATED]:
+                [(job, False) for job in JOBS + HDR10] + [(job, True) for job in ROTATED]:
+            if args.only and not any(o in file_name(sub, codec, label, ext, rotated) for o in args.only):
+                continue
+            hdr10 = codec.endswith("-pq")
             sub_name = "4:2:0" if sub == "420" else "4:2:2"
             caption = f"{sub_name}  {codec_name}  " + ("no label" if label == "untagged" else f"labelled {label}")
             if rotated:
                 caption += ", rotated 90"
-            planes, (w, h) = chart(sub, label, caption, rotated)
+            planes, (w, h) = chart(sub, label, caption, rotated, hdr10)
             raw = Path(tmp) / "chart.yuv"
             if bits == 8:
                 # 8-bit from the 10-bit codes here, so FFmpeg does not dither and break the mirror symmetry.
@@ -225,6 +249,15 @@ def main():
             src = ["-f", "rawvideo", "-pix_fmt", pix, "-s", f"{w}x{h}", "-r", "25", "-color_range", "tv",
                    "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709"]
             loc = [] if label == "untagged" or ext == "mxf" else ["-chroma_sample_location", label]
+            if hdr10:
+                # As the 4:2:0 chart's HDR10 copies: the tags and the chroma location set on the frames.
+                src = src[:-8]
+                max_cll, max_fall = light_levels(planes)
+                x265 = ("log-level=error:hdr10=1:repeat-headers=1:"
+                        "master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,1):"
+                        f"max-cll={max_cll},{max_fall}")
+                enc = enc[:-1] + [x265, "-vf", HDR10_TAGS + ("" if label == "untagged" else f":chroma_location={label}")]
+                loc = []
             # The loop must come before -i; the encoder arguments after it.
             pre = LOOP if enc[:2] == LOOP else []
             post = enc[2:] if pre else enc

@@ -174,7 +174,7 @@ Where they disagree:
   is. A player that ignores the VUI treats `topleft` material as `left`, and puts the chroma half a line too
   low, as Firefox does. The reverse also happens: on a Mac, Safari 26.6, Chrome 157 and QuickTime Player showed
   HDR10 HEVC tagged `topleft` exactly right, but untagged or `left` HDR10 neither centered nor co-sited down, though
-  the same SDR files were right ([measured](ChromaSitingTests.html#chart-420-hdr10)). So on a Mac no choice is
+  the same SDR files were right ([measured](sourceimages/chroma_siting_check/README.html#players)). So on a Mac no choice is
   right in every player. To check a player or TV, there are HDR10 copies of the
   4:2:0 chart with and without the `topleft` tag.
 
@@ -260,34 +260,27 @@ untagged files, are covered in [FFmpeg Version Changes](FFmpegChanges.html#ycbcr
 
 ## Checking a player by eye {#checking-a-player}
 
-Most players and browsers cannot be measured from a script, so there are test charts you can look at instead. They are
-in `sourceimages/`. How they work, and the results in detail, are on the separate [Chroma Siting Tests](ChromaSitingTests.html) page.
+Most players and browsers cannot be measured from a script, so there are test files you look at instead. Each set has
+its own page with the files, how they work and the results.
 
 ### Quick guide: what should I see? {#quick-guide}
 
-There are two kinds of chart. The **player charts** are full HD: you look at them from a distance, and a whole band
-changes appearance. The **pixel charts** are 64x64: you zoom in and look at single pixels. Start with a player chart;
-use a pixel chart to confirm the result or to show someone exactly what is wrong. For a quick yes or no per file,
-including rotated video, the [check files](sourceimages/chroma_siting_check/README.html) show the word WRONG when the player
-does not follow the label; open them in a browser with
-[the viewer page](sourceimages/chroma_siting_check/view.html).
+Start with the [Chroma Siting Check](sourceimages/chroma_siting_check/README.html) files: one small file per label,
+codec and orientation, including HDR10 and rotated video. In a browser, open them with
+[the viewer page](sourceimages/chroma_siting_check/view.html). Use the other two to find out more.
 
-| Chart | Open | Correct | Not correct |
+| Test | Open | Correct | Not correct |
 | :--- | :--- | :--- | :--- |
-| 4:2:2 player chart | `chroma_siting_player_chart_422-prores.mov` or `-hevc.mp4` | Only the top band, "Co-sited", is a flat field. The other three are still checkerboards | A different band is flat: the player assumes that instead. None flat: it is doing something else. The top band changes part way across: part of the picture is wrong (xStudio 1.4.0) |
-| 4:2:0 player chart | `chroma_siting_player_chart_420-h264.mp4` or `-hevc.mp4` | Two bands are flat: "Across: co-sited" and "Down: centered". The other two are checkerboards | "Across: centered" is flat instead of "Across: co-sited": the color is half a pixel to the right (OpenRV, xStudio 8-bit). "Down: co-sited" is flat instead of "Down: centered": the player assumes `topleft` |
-| 4:2:2 pixel chart | `chroma_siting_pixel_chart_422-10bit.mkv` | One strong column of color directly under each long tick, with a fainter column either side | The color is off to the right of the tick: two strong columns starting at the tick (centered, or sample repeat) |
-| 4:2:0 pixel chart | `chroma_siting_pixel_chart_420-10bit.mkv` | Across, as for 4:2:2. Down, two equally strong rows: the row of the long tick on the left and the row below it | The color is off to the right of the top ruler's tick. Centered on the left ruler's tick row: the player assumes `topleft` |
-
-The same pattern is correct for all the H.264, HEVC and AV1 files with no chroma location tag. The tagged 4:2:0 files
-change the answer on purpose: `-topleft` should make "Across: co-sited" and "Down: co-sited" flat, and `-center` should
-make "Across: centered" and "Down: centered" flat, if the player reads the tag ([details](ChromaSitingTests.html#chart-420)).
+| [Check files](sourceimages/chroma_siting_check/README.html) | `chroma_siting_check_420-hevc-left.mp4`, or any other | Every panel is a flat field from a distance | The word **WRONG** shows: the player does not follow the label. Across: the color is half a pixel to the right (or left). Down: half a line up or down |
+| [4:2:2 player chart](ChromaSitingPlayerChart.html) | `chroma_siting_player_chart_422-prores.mov` or `-hevc.mp4` | Only the top band, "Co-sited", is a flat field | A different band is flat: the player assumes that instead. None flat: it is doing something else |
+| [4:2:2 pixel chart](ChromaSitingPixelChart.html) | `chroma_siting_pixel_chart_422-10bit.mkv` | One strong column of color directly under each long tick, with a fainter column either side | The color is off to the right of the tick: two strong columns starting at the tick (centered, or sample repeat) |
+| [4:2:0 pixel chart](ChromaSitingPixelChart.html) | `chroma_siting_pixel_chart_420-10bit.mkv` | Across, as for 4:2:2. Down, two equally strong rows: the row of the long tick on the left and the row below it | The color is off to the right of the top ruler's tick. Centered on the left ruler's tick row: the player assumes `topleft` |
 
 Three things catch people out:
 
-* **Player charts only work at exactly 100%**, viewed from a distance. Their scale check patch, top right, should have
-  two halves equally bright from a distance. If not, ignore the bands.
-* **The color of a flat band means nothing.** Each band has its own colors; only whether it is flat matters.
+* **The check files and player chart only work at exactly 100%**, viewed from a distance. Their scale check patch,
+  top right, should have two halves equally bright from a distance. If not, ignore the result.
+* **The color of a flat field means nothing.** Only whether it is flat matters.
 * **Pixel charts work at any zoom**, but in OpenRV stay on the default Linear filter. Flip against the matching
   `-reference.mkv` in the same player to compare, and judge where the color is centered, not how blocky it looks.
 
@@ -301,8 +294,9 @@ It is the player, not the file: these charts decode exactly in `zscale`.
 
 ### What we found
 
-Measured on macOS 26 (Apple M2), at one image pixel per screen pixel. The [test page](ChromaSitingTests.html) has the
-results per codec and FFmpeg version, and how the charts work.
+Measured on macOS 26 (Apple M2), at one image pixel per screen pixel. The [Chroma Siting Check](sourceimages/chroma_siting_check/README.html#players)
+page has the results per file, and the [4:2:2 player chart](ChromaSitingPlayerChart.html#results) and
+[pixel charts](ChromaSitingPixelChart.html#results) pages have theirs.
 
 | Player or conversion | 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | Ordinary H.264/HEVC 4:2:0,<br>should be `left`: co-sited across, centered down ([H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default) | Reads the chroma location tag? |
 | :--- | :--- | :--- | :--- |
