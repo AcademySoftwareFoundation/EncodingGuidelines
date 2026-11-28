@@ -152,7 +152,8 @@ probably the macOS HDR video path the three share (not confirmed). Safari's ProR
 from the nearest sample, and rounding decides which, so it is close to right over an area but every odd pixel is
 wrong. The rotated files have not been tried in any player yet.
 
-If you go through the files, the summary from the viewer page is welcome as an issue on the repository.
+If you go through the files, please press **Submit results** on the [viewer page](view.html): it sends your answers,
+the browser and display details to the project's results sheet. Or copy the summary into an issue on the repository.
 
 ### FFmpeg
 

@@ -58,7 +58,12 @@
     <tbody></tbody></table>
   <p>Results, to copy (kept in this browser):</p>
   <textarea id="summary" readonly></textarea>
-  <p><button id="clear">Clear results</button></p>
+  <p><label>Optional note about this setup (for example "Dell U2720Q at 3840x2160, 100% scaling"). Do not include
+    personal details.<br><input id="note" type="text" maxlength="200" size="80"></label></p>
+  <p><button id="submit">Submit results</button> <button id="clear">Clear results</button> <span id="sendstate"></span></p>
+  <p class="small">Submitting sends your answers, the rendering switches and display scale you used for each, your
+    browser's user agent and GPU name, and your note, to a Google Sheet kept by the ORI Encoding Guidelines project.
+    Submit again after answering more files: each submission is kept.</p>
   <p class="small">The lossless FFV1 (.mkv) and MXF files are for desktop players, not browsers:
     <a href="chroma_siting_check_420-lossless-left.mkv">420 left</a>,
     <a href="chroma_siting_check_420-lossless-topleft.mkv">420 topleft</a>,
@@ -93,9 +98,19 @@
   ];
   const PREFIX = 'chroma_siting_check_';
   const KEY = 'chroma_siting_check_results';
+  const PAGE_VERSION = '2026-11-28a';
+  // The Google Apps Script web app that collects results; the same one as the codec test page
+  // (tests/codec_web_tests/build_page.py SUBMIT_URL, tests/codec_web_tests/google_sheet_collector.gs).
+  const SUBMIT_URL = 'https://script.google.com/macros/s/AKfycbx0a7Sw_PghFrpIfH_8VUYp9HKEm1SiXgMTVtIC-eY8LM-XibRefOnWWRpXXSELt2Mw/exec';
   const video = document.getElementById('video');
   let index = 0;
-  let results = JSON.parse(localStorage.getItem(KEY) || '{}');
+  let display = {};
+  // localStorage can be unavailable (private windows, blocked site data): the page still works without it.
+  const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || d); } catch (e) { return JSON.parse(d); } };
+  const save = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* not kept */ } };
+  let results = load(KEY, '{}');
+  // How each file was viewed when it was answered: the rendering switches and the display scale.
+  let details = load(KEY + '_details', '{}');
 
   // Size the video so one video pixel covers exactly one device pixel, whatever the display scaling (2x Retina,
   // Windows 150%) or browser zoom. The size comes from the list, not videoWidth, which not every browser reports
@@ -128,6 +143,7 @@
                  'the results here are not valid. Pick a display mode at the native resolution or exactly half ' +
                  'of it (for a 3840x2160 panel, "looks like" 1920x1080 or 3840x2160).');
     document.getElementById('warn').textContent = warns.join(' ');
+    display = { dpr, framebuffer: `${fbW}x${fbH}`, rescaled: !PANELS.includes(fbW), pinch: +pinch.toFixed(3) };
     matchMedia(`(resolution: ${dpr}dppx)`).addEventListener('change', fit, { once: true });
   }
 
@@ -179,7 +195,10 @@
     if (k >= panels.length) return;
     results[name] = results[name] || [];
     results[name][k] = kind;
-    localStorage.setItem(KEY, JSON.stringify(results));
+    details[name] = Object.assign({ pixelated: video.classList.contains('pixelated'), controls: video.controls,
+                                    time: new Date().toISOString() }, display);
+    save(KEY, JSON.stringify(results));
+    save(KEY + '_details', JSON.stringify(details));
     render();
   }
 
@@ -211,15 +230,75 @@
   });
   document.getElementById('clear').onclick = () => {
     results = {};
-    localStorage.removeItem(KEY);
+    details = {};
+    try { localStorage.removeItem(KEY); localStorage.removeItem(KEY + '_details'); } catch (e) { /* nothing kept */ }
     render();
+  };
+
+  function browserName(ua) {
+    let m;
+    if ((m = ua.match(/Edg\/([\d.]+)/))) return ['Edge', m[1]];
+    if ((m = ua.match(/OPR\/([\d.]+)/))) return ['Opera', m[1]];
+    if ((m = ua.match(/Firefox\/([\d.]+)/))) return ['Firefox', m[1]];
+    if ((m = ua.match(/Chrome\/([\d.]+)/))) return ['Chrome', m[1]];
+    if ((m = ua.match(/Version\/([\d.]+).*Safari/))) return ['Safari', m[1]];
+    return ['Unknown', ''];
+  }
+  // The same description of the machine as the codec test page (tests/codec_web_tests/web_compatibility_template.html).
+  async function environment() {
+    const ua = navigator.userAgent;
+    const [name, version] = browserName(ua);
+    const env = { browser: name, browserVersion: version, userAgent: ua, platform: navigator.platform };
+    if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+      try {
+        const h = await navigator.userAgentData.getHighEntropyValues(['platform', 'platformVersion', 'architecture', 'fullVersionList']);
+        env.os = h.platform; env.osVersion = h.platformVersion; env.architecture = h.architecture;
+        const full = (h.fullVersionList || []).find(b => b.brand === name || (name === 'Edge' && /Edge/.test(b.brand)));
+        if (full) env.browserVersion = full.version;
+      } catch (e) { /* not available */ }
+    }
+    if (!env.os) {
+      env.os = /Windows/.test(ua) ? 'Windows' : /iPhone|iPad/.test(ua) ? 'iOS' : /Mac OS X/.test(ua) ? 'macOS'
+        : /Android/.test(ua) ? 'Android' : /Linux/.test(ua) ? 'Linux' : 'Unknown';
+    }
+    try {
+      const gl = document.createElement('canvas').getContext('webgl');
+      const ext = gl && gl.getExtension('WEBGL_debug_renderer_info');
+      env.gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : (gl ? gl.getParameter(gl.RENDERER) : 'unknown');
+    } catch (e) { env.gpu = 'unknown'; }
+    env.colorGamut = ['rec2020', 'p3', 'srgb'].find(g => matchMedia('(color-gamut: ' + g + ')').matches) || 'unknown';
+    env.dynamicRange = matchMedia('(dynamic-range: high)').matches ? 'high' : 'standard';
+    return env;
+  }
+  async function report() {
+    return {
+      kind: 'chroma_siting_check', pageVersion: PAGE_VERSION, page: location.href.split('#')[0],
+      time: new Date().toISOString(), note: document.getElementById('note').value.trim(),
+      environment: await environment(), display,
+      answers: FILES.filter(([n]) => results[n]).map(([n, l, , ps]) => ({
+        file: n, label: l, panels: ps.map((p, k) => ({ panel: p, answer: results[n][k] || null })),
+        viewed: details[n] || null })),
+    };
+  }
+  const submit = document.getElementById('submit'), sendstate = document.getElementById('sendstate');
+  submit.onclick = async () => {
+    const r = await report();
+    if (!r.answers.length) { sendstate.textContent = 'Answer at least one file first.'; return; }
+    submit.disabled = true; sendstate.textContent = 'Sending…';
+    try {
+      // text/plain avoids a CORS preflight; Apps Script sends no CORS headers, so the reply cannot be read.
+      await fetch(SUBMIT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(r) });
+      sendstate.textContent = `Sent ${r.answers.length} file${r.answers.length === 1 ? '' : 's'}. Thank you.`;
+    } catch (e) { sendstate.textContent = 'Could not send: ' + e.message; }
+    submit.disabled = false;
   };
   for (const [id, apply] of [['pixelated', on => video.classList.toggle('pixelated', on)],
                              ['controls', on => { video.controls = on; }]]) {
     const box = document.getElementById(id);
-    box.checked = localStorage.getItem(KEY + '_' + id) === '1';
+    box.checked = load(KEY + '_' + id, '0') === 1;
     apply(box.checked);
-    box.onchange = () => { localStorage.setItem(KEY + '_' + id, box.checked ? '1' : '0'); apply(box.checked); };
+    box.onchange = () => { save(KEY + '_' + id, box.checked ? '1' : '0'); apply(box.checked); };
   }
   // Clicking the video plays or pauses it; the result should not change between the two.
   video.addEventListener('click', () => { if (video.paused) video.play(); else video.pause(); });
