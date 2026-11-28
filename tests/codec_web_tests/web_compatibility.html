@@ -1,160 +1,526 @@
 <!DOCTYPE html>
+<!-- Template for web_compatibility.html: edit this, then run build_page.py. No // comments in the script:
+     the site compresses the page onto one line. -->
 <html lang='en'>
 <head>
   <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
   <title>Codec Browser Comparison</title>
   <style>
-    body {
-	font-family: system-ui,-apple-system,blinkmacsystemfont,'Segoe UI',roboto,'Helvetica Neue',arial,sans-serif,'Segoe UI Emoji';
-	font-size: inherit;
-	line-height: 1.4;
-	color: #e6e1e8;
-	overflow-wrap: break-word;
-}
-
-    :root {color-scheme: dark;}
-    body {background-color: #27262b; color: #e6e1e8;}
-    th {
-    display: table-cell;
-    vertical-align: inherit;
-    font-weight: bold;
-    text-align: -internal-center;
-    unicode-bidi: isolate;
+:root { color-scheme: dark; }
+body {
+  font-family: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, 'Helvetica Neue', arial, sans-serif;
+  line-height: 1.4; background-color: #27262b; color: #e6e1e8; overflow-wrap: break-word;
 }
 th, td {
-    font-size: .75rem !important;
-    min-width: 7.5rem;
-    padding: .5rem .75rem;
-    background-color: #302d36;
-    border-bottom: 1px solid rgba(68,67,77,0.5);
-    border-left: 1px solid #44434d;
+  font-size: .75rem !important; padding: .4rem .6rem; background-color: #302d36;
+  border-bottom: 1px solid rgba(68,67,77,0.5); border-left: 1px solid #44434d; vertical-align: top;
 }
-h2, .text-beta, #toctitle {
-    font-size: 1.1rem !important;
-    line-height: .5em;
+h2 { font-size: 1.1rem !important; margin-top: 1.5rem; }
+.video-container { position: relative; width: 128px; height: 84px; display: flex; align-items: center; justify-content: center; }
+.video-container video { width: 100%; height: 100%; object-fit: contain; }
+.fallback-text, .note {
+  position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center;
+  font-size: 0.7rem; background-color: #1a1a1a; padding: 0.25rem;
 }
-.video-container {
-    position: relative;
-    width: 128px;
-    height: 72px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.video-container video {
-    width: 100%;
-    height: 100%;
-}
-.fallback-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 0.7rem;
-    color: #ff6b6b;
-    background-color: #1a1a1a;
-    padding: 0.25rem;
-}
-.video-container.error .fallback-text {
-    display: flex;
-}
-.video-container.error video {
-    display: none;
-}
+.note { display: flex; color: inherit; }
+.fallback-text { color: #ff6b6b; }
+.video-container.error .fallback-text { display: flex; }
+.video-container.error video { display: none; }
+.status { font-size: 0.7rem; margin-top: 0.2rem; min-height: 1em; }
+.status.ok { color: #7bd88f; }
+.status.bad { color: #ff6b6b; }
+.status.info { color: #9ecbff; }
+  .status.warn { color: #ffcc66; }
+.status .claim { color: #9e9aa6; display: block; }
+#report { margin-top: 2rem; padding: 1rem; background: #302d36; border: 1px solid #44434d; max-width: 60rem; }
+#report button { font: inherit; padding: .35rem .8rem; margin: .25rem .4rem .25rem 0; background: #44434d; color: inherit; border: 1px solid #5c5b66; border-radius: 4px; cursor: pointer; }
+#report button:disabled { opacity: .5; cursor: default; }
+#report input { font: inherit; width: 100%; max-width: 30rem; padding: .3rem; background: #1a1a1a; color: inherit; border: 1px solid #5c5b66; }
+#summary { font-weight: bold; }
+#env { font-size: .75rem; color: #9e9aa6; white-space: pre-wrap; }
+#sendstate { font-size: .8rem; }
   </style>
 </head>
-
 <body>
-    <H1>Codec browser compatibility</H1>
-<H2>8-Bit</H2>
+<h1>Codec browser compatibility</h1>
+<p>Each cell shows the movie itself, played by this browser, with whether it plays and whether its colors match the
+source (a few patches of each frame are compared with the source image, two ways: the decoder's own output, read through
+WebCodecs and converted here with the matrix the browser reports, or, where the browser does not give the decoded
+samples (hardware-decoded frames, for example), a copy of the frame drawn to a canvas, marked "(canvas copy)". A
+browser's canvas copy is not always what it shows: Chrome's is off for software-decoded 4:2:2 and 4:4:4, though the
+screen is right. Firefox's copies have the same error (blue off by up to about 9, from BT.601's Cb coefficient) for every Y'CbCr
+movie, and it too shows them correctly, so a copy with exactly that error counts as OK. "Reduced chroma" means the
+colors are right but the browser shows the movie with less chroma resolution than the file has (Firefox shows HEVC
+4:4:4 as 4:2:2); compare by eye with the viewer made by <a href="https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/codec-color-compare.py"><code>tests/codec-color-compare.py</code></a>. Hover over a result for every number; "Wrong colors" means the browser decoded it but
+interpreted it wrongly). The gray line under each result is what the browser <em>claims</em> through
+<code>MediaCapabilities</code>: "hw" when it reports power-efficient (usually hardware) decoding. Y'CbCr files are
+converted from RGB with <code>zscale</code> (BT.709, limited range); all are tagged BT.709 primaries, sRGB transfer.</p>
+<h2>8-bit Y'CbCr</h2>
 <table>
-    <tbody>
-<TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
-<TR>
-<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test420-test_8_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-</TR><TR>
-<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test422-test_8_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-</TR><TR>
-<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-<td><div class="video-container"><video><source type='video/mp4' src='test444-test_8_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-</TR></tbody>
-</TABLE>
-<h2>10-bit</h2>
+<tr><th></th><th>H.264</th><th>HEVC/H.265</th><th>VP9</th><th>AV1</th></tr>
+<tr><th>4:2:0</th><td><div class='video-container' data-info='{"file": "test420-test_8_420-libx264.mp4", "url": "test420-test_8_420-libx264.mp4?v=98a6fd23b2", "codec": "H.264", "depth": 8, "layout": "4:2:0", "codecs": "avc1.640015", "bitrate": 1012800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_8_420-libx265.mp4", "url": "test420-test_8_420-libx265.mp4?v=56db4d8f2e", "codec": "HEVC", "depth": 8, "layout": "4:2:0", "codecs": "hvc1.1.6.L63.90", "bitrate": 1261800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_8_420-vp9.mp4", "url": "test420-test_8_420-vp9.mp4?v=02d9c5d040", "codec": "VP9", "depth": 8, "layout": "4:2:0", "codecs": "vp09.00.21.08.01.01.13.01.00", "bitrate": 1283800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_8_420-libsvtav1.mp4", "url": "test420-test_8_420-libsvtav1.mp4?v=9593dd2514", "codec": "AV1", "depth": 8, "layout": "4:2:0", "codecs": "av01.0.00M.08.0.110.01.13.01.0", "bitrate": 689400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>4:2:2</th><td><div class='video-container' data-info='{"file": "test422-test_8_422-libx264.mp4", "url": "test422-test_8_422-libx264.mp4?v=c6c1035503", "codec": "H.264", "depth": 8, "layout": "4:2:2", "codecs": "avc1.7A0015", "bitrate": 1120200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_8_422-libx265.mp4", "url": "test422-test_8_422-libx265.mp4?v=d13aa6bebd", "codec": "HEVC", "depth": 8, "layout": "4:2:2", "codecs": "hvc1.4.10.L63.9D.08", "bitrate": 1316800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_8_422-vp9.mp4", "url": "test422-test_8_422-vp9.mp4?v=f8da0644f3", "codec": "VP9", "depth": 8, "layout": "4:2:2", "codecs": "vp09.01.21.08.02.01.13.01.00", "bitrate": 1422200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_8_422-libaom-av1.mp4", "url": "test422-test_8_422-libaom-av1.mp4?v=acd33d203c", "codec": "AV1", "depth": 8, "layout": "4:2:2", "codecs": "av01.2.00M.08.0.100.01.13.01.0", "bitrate": 495800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>4:4:4</th><td><div class='video-container' data-info='{"file": "test444-test_8_444-libx264.mp4", "url": "test444-test_8_444-libx264.mp4?v=f03e5f37b9", "codec": "H.264", "depth": 8, "layout": "4:4:4", "codecs": "avc1.F40015", "bitrate": 784600, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_8_444-libx265.mp4", "url": "test444-test_8_444-libx265.mp4?v=19c9656222", "codec": "HEVC", "depth": 8, "layout": "4:4:4", "codecs": "hvc1.4.10.L63.9E.08", "bitrate": 1165000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_8_444-vp9.mp4", "url": "test444-test_8_444-vp9.mp4?v=eb02903651", "codec": "VP9", "depth": 8, "layout": "4:4:4", "codecs": "vp09.01.21.08.03.01.13.01.00", "bitrate": 1227400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_8_444-libaom-av1.mp4", "url": "test444-test_8_444-libaom-av1.mp4?v=38967c9664", "codec": "AV1", "depth": 8, "layout": "4:4:4", "codecs": "av01.1.00M.08.0.000.01.13.01.0", "bitrate": 367400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+</table>
+
+<h2>10-bit Y'CbCr</h2>
 <table>
-    <TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
-    <TR>
-    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test420-test_10_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    </TR><TR>
-    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test422-test_10_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    </TR><TR>
-    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-libx264.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    <td><div class="video-container"><video><source type='video/mp4' src='test444-test_10_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-    </TR>
-    </TABLE>
-    <h2>12-bit</h2>
+<tr><th></th><th>H.264</th><th>HEVC/H.265</th><th>VP9</th><th>AV1</th></tr>
+<tr><th>4:2:0</th><td><div class='video-container' data-info='{"file": "test420-test_10_420-libx264.mp4", "url": "test420-test_10_420-libx264.mp4?v=6a5662b7c6", "codec": "H.264", "depth": 10, "layout": "4:2:0", "codecs": "avc1.6E0015", "bitrate": 1013000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_10_420-libx265.mp4", "url": "test420-test_10_420-libx265.mp4?v=dfd4100cb6", "codec": "HEVC", "depth": 10, "layout": "4:2:0", "codecs": "hvc1.2.4.L63.90", "bitrate": 1252400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_10_420-vp9.mp4", "url": "test420-test_10_420-vp9.mp4?v=bc831392a2", "codec": "VP9", "depth": 10, "layout": "4:2:0", "codecs": "vp09.02.21.10.01.01.13.01.00", "bitrate": 1261400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_10_420-libsvtav1.mp4", "url": "test420-test_10_420-libsvtav1.mp4?v=9efa41a2a5", "codec": "AV1", "depth": 10, "layout": "4:2:0", "codecs": "av01.0.00M.10.0.110.01.13.01.0", "bitrate": 1036200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>4:2:2</th><td><div class='video-container' data-info='{"file": "test422-test_10_422-libx264.mp4", "url": "test422-test_10_422-libx264.mp4?v=aa9607044f", "codec": "H.264", "depth": 10, "layout": "4:2:2", "codecs": "avc1.7A0015", "bitrate": 1123000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_10_422-libx265.mp4", "url": "test422-test_10_422-libx265.mp4?v=f22a0873ea", "codec": "HEVC", "depth": 10, "layout": "4:2:2", "codecs": "hvc1.4.10.L63.9D.08", "bitrate": 1327200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_10_422-vp9.mp4", "url": "test422-test_10_422-vp9.mp4?v=0f67acc8d7", "codec": "VP9", "depth": 10, "layout": "4:2:2", "codecs": "vp09.03.21.10.02.01.13.01.00", "bitrate": 1387400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_10_422-libaom-av1.mp4", "url": "test422-test_10_422-libaom-av1.mp4?v=ef0ea3fab1", "codec": "AV1", "depth": 10, "layout": "4:2:2", "codecs": "av01.2.00M.10.0.100.01.13.01.0", "bitrate": 518800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>4:4:4</th><td><div class='video-container' data-info='{"file": "test444-test_10_444-libx264.mp4", "url": "test444-test_10_444-libx264.mp4?v=8eaee26907", "codec": "H.264", "depth": 10, "layout": "4:4:4", "codecs": "avc1.F40015", "bitrate": 781400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_10_444-libx265.mp4", "url": "test444-test_10_444-libx265.mp4?v=79fb34e7de", "codec": "HEVC", "depth": 10, "layout": "4:4:4", "codecs": "hvc1.4.10.L63.9C.08", "bitrate": 1158000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_10_444-vp9.mp4", "url": "test444-test_10_444-vp9.mp4?v=61432dad71", "codec": "VP9", "depth": 10, "layout": "4:4:4", "codecs": "vp09.03.21.10.03.01.13.01.00", "bitrate": 1205400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_10_444-libaom-av1.mp4", "url": "test444-test_10_444-libaom-av1.mp4?v=4648aab9c7", "codec": "AV1", "depth": 10, "layout": "4:4:4", "codecs": "av01.1.00M.10.0.000.01.13.01.0", "bitrate": 381200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+</table>
 
-    <table>
-        <TR><TH>H264</TH><TH>H265</TH><TH>VP9</TH><TH>AV1</TH></TR>
-        <TR>
-        <td><div class="video-container"><div class="fallback-text" style="display:flex;color:inherit">libx264 has no 12-bit</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test420-test_12_420-libsvtav1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        </TR><TR>
-        <td><div class="video-container"><div class="fallback-text" style="display:flex;color:inherit">libx264 has no 12-bit</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test422-test_12_422-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        </TR><TR>
-        <td><div class="video-container"><div class="fallback-text" style="display:flex;color:inherit">libx264 has no 12-bit</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libx265.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-vp9.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        <td><div class="video-container"><video><source type='video/mp4' src='test444-test_12_444-libaom-av1.mp4'/></video><div class="fallback-text">Not Supported</div></div></td>
-        </TR>
-        </TABLE>
+<h2>12-bit Y'CbCr</h2>
+<table>
+<tr><th></th><th>H.264</th><th>HEVC/H.265</th><th>VP9</th><th>AV1</th></tr>
+<tr><th>4:2:0</th><td><div class='video-container'><div class='note'>libx264 has no 12-bit</div></div><div class='status'></div></td><td><div class='video-container' data-info='{"file": "test420-test_12_420-libx265.mp4", "url": "test420-test_12_420-libx265.mp4?v=559659f5ac", "codec": "HEVC", "depth": 12, "layout": "4:2:0", "codecs": "hvc1.4.10.L63.99.88", "bitrate": 1241200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_12_420-vp9.mp4", "url": "test420-test_12_420-vp9.mp4?v=02e3fe4a0d", "codec": "VP9", "depth": 12, "layout": "4:2:0", "codecs": "vp09.02.21.12.01.01.13.01.00", "bitrate": 1251000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test420-test_12_420-libaom-av1.mp4", "url": "test420-test_12_420-libaom-av1.mp4?v=a9c85a1d8d", "codec": "AV1", "depth": 12, "layout": "4:2:0", "codecs": "av01.2.00M.12.0.110.01.13.01.0", "bitrate": 485800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test420.png?v=172f48bd9d"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>4:2:2</th><td><div class='video-container'><div class='note'>libx264 has no 12-bit</div></div><div class='status'></div></td><td><div class='video-container' data-info='{"file": "test422-test_12_422-libx265.mp4", "url": "test422-test_12_422-libx265.mp4?v=a6513f32e1", "codec": "HEVC", "depth": 12, "layout": "4:2:2", "codecs": "hvc1.4.10.L63.99.08", "bitrate": 1295400, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_12_422-vp9.mp4", "url": "test422-test_12_422-vp9.mp4?v=47a3f0a788", "codec": "VP9", "depth": 12, "layout": "4:2:2", "codecs": "vp09.03.21.12.02.01.13.01.00", "bitrate": 1380600, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test422-test_12_422-libaom-av1.mp4", "url": "test422-test_12_422-libaom-av1.mp4?v=25785c748d", "codec": "AV1", "depth": 12, "layout": "4:2:2", "codecs": "av01.2.00M.12.0.100.01.13.01.0", "bitrate": 501200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test422.png?v=7d3d89d6a2"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>4:4:4</th><td><div class='video-container'><div class='note'>libx264 has no 12-bit</div></div><div class='status'></div></td><td><div class='video-container' data-info='{"file": "test444-test_12_444-libx265.mp4", "url": "test444-test_12_444-libx265.mp4?v=8ee8d94962", "codec": "HEVC", "depth": 12, "layout": "4:4:4", "codecs": "hvc1.4.10.L63.98.08", "bitrate": 1145600, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_12_444-vp9.mp4", "url": "test444-test_12_444-vp9.mp4?v=1d199bd04c", "codec": "VP9", "depth": 12, "layout": "4:4:4", "codecs": "vp09.03.21.12.03.01.13.01.00", "bitrate": 1198800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "test444-test_12_444-libaom-av1.mp4", "url": "test444-test_12_444-libaom-av1.mp4?v=341570433d", "codec": "AV1", "depth": 12, "layout": "4:4:4", "codecs": "av01.2.00M.12.0.000.01.13.01.0", "bitrate": 385000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-test444.png?v=8ef998238b"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+</table>
 
+<h2>RGB (no Y'CbCr conversion)</h2>
+<p>RGB (<code>gbrp</code>, <code>gbrp10le</code>, <code>gbrp12le</code>), tagged BT.709 primaries, sRGB transfer, matrix RGB. H.264 uses <code>libx264rgb</code>; AV1 uses <code>libaom-av1</code>, since <code>libsvtav1</code> has no RGB. See <a href="../../RGBEncoding.html">RGB Encoding</a>.</p>
+<table>
+<tr><th></th><th>H.264</th><th>HEVC/H.265</th><th>VP9</th><th>AV1</th></tr>
+<tr><th>8-bit</th><td><div class='video-container' data-info='{"file": "testrgb-test_8_rgb-libx264rgb.mp4", "url": "testrgb-test_8_rgb-libx264rgb.mp4?v=0bbbf21666", "codec": "H.264", "depth": 8, "layout": "RGB", "codecs": "avc1.F40015", "bitrate": 1230800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_8_rgb-libx265.mp4", "url": "testrgb-test_8_rgb-libx265.mp4?v=10ecdbb5ce", "codec": "HEVC", "depth": 8, "layout": "RGB", "codecs": "hvc1.4.10.L63.9E.08", "bitrate": 1265000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_8_rgb-vp9.mp4", "url": "testrgb-test_8_rgb-vp9.mp4?v=e32aa97ade", "codec": "VP9", "depth": 8, "layout": "RGB", "codecs": "vp09.01.21.08.03.01.13.00.01", "bitrate": 2051600, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_8_rgb-libaom-av1.mp4", "url": "testrgb-test_8_rgb-libaom-av1.mp4?v=6f45c94070", "codec": "AV1", "depth": 8, "layout": "RGB", "codecs": "av01.1.00M.08.0.000.01.13.00.1", "bitrate": 770000, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>10-bit</th><td><div class='video-container'><div class='note'>libx264rgb is 8-bit only</div></div><div class='status'></div></td><td><div class='video-container' data-info='{"file": "testrgb-test_10_rgb-libx265.mp4", "url": "testrgb-test_10_rgb-libx265.mp4?v=d7f2f2b84c", "codec": "HEVC", "depth": 10, "layout": "RGB", "codecs": "hvc1.4.10.L63.9C.08", "bitrate": 1262200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_10_rgb-vp9.mp4", "url": "testrgb-test_10_rgb-vp9.mp4?v=1a1efa3e79", "codec": "VP9", "depth": 10, "layout": "RGB", "codecs": "vp09.03.21.10.03.01.13.00.01", "bitrate": 2040600, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_10_rgb-libaom-av1.mp4", "url": "testrgb-test_10_rgb-libaom-av1.mp4?v=b6713c2b65", "codec": "AV1", "depth": 10, "layout": "RGB", "codecs": "av01.1.00M.10.0.000.01.13.00.1", "bitrate": 802200, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+<tr><th>12-bit</th><td><div class='video-container'><div class='note'>libx264rgb is 8-bit only</div></div><div class='status'></div></td><td><div class='video-container' data-info='{"file": "testrgb-test_12_rgb-libx265.mp4", "url": "testrgb-test_12_rgb-libx265.mp4?v=b78a90da35", "codec": "HEVC", "depth": 12, "layout": "RGB", "codecs": "hvc1.4.10.L63.98.08", "bitrate": 1255800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_12_rgb-vp9.mp4", "url": "testrgb-test_12_rgb-vp9.mp4?v=77ed1c6775", "codec": "VP9", "depth": 12, "layout": "RGB", "codecs": "vp09.03.21.12.03.01.13.00.01", "bitrate": 2018800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td><td><div class='video-container' data-info='{"file": "testrgb-test_12_rgb-libaom-av1.mp4", "url": "testrgb-test_12_rgb-libaom-av1.mp4?v=dc9a242f8c", "codec": "AV1", "depth": 12, "layout": "RGB", "codecs": "av01.2.00M.12.0.000.01.13.00.1", "bitrate": 780800, "expect": {"gray": [189, 189, 189], "yellow": [189, 188, 0], "green": [0, 189, 0], "red": [189, 0, 0], "blue": [0, 0, 189]}, "source": "source-testrgb.png?v=f7f8e6adce"}'><video preload='auto' muted playsinline></video><div class='fallback-text'></div></div><div class='status'>Waiting</div></td></tr>
+</table>
+
+<div id='report'>
+  <div id='summary'>Testing…</div>
+  <div id='env'></div>
+  <p><label>Optional note about this machine (for example "MacBook Air M2, macOS 15.6"). Do not include personal details.<br>
+  <input id='note' type='text' maxlength='200'></label></p>
+  <button id='copy' disabled>Copy results (JSON)</button>
+  <button id='download' disabled>Download results</button>
+  <button id='screen' disabled>Measure the screen</button>
+  <button id='submit' disabled hidden>Submit results</button>
+  <div id='sendstate'></div>
+  <p style='font-size:.75rem;color:#9e9aa6'>"Measure the screen" asks to share this tab (choose this tab), then scrolls
+  through the page and records each movie as the browser draws it, compared with the other movies and with the
+  source image in the same capture. The numbers are added to the results (hover over a cell) but do not change
+  them: a tab capture can draw video differently from the screen. Nothing leaves your computer. Best in Chrome or Edge, which can
+  share a single tab.</p>
+  <p id='submitinfo' hidden style='font-size:.75rem;color:#9e9aa6'>Submitting sends the results above, your browser's
+  user agent and GPU name, and your note, to a Google Sheet kept by the ORI Encoding Guidelines project.</p>
+</div>
+<img id='screenref' alt='' src='reference.png?v=8ef998238b' style='display:none;position:fixed;right:12px;top:12px;width:128px;height:84px;object-fit:contain;z-index:10;outline:2px solid #ffcc66'>
 <script>
-// Detect video loading errors and show fallback text
-document.addEventListener('DOMContentLoaded', function() {
-    const containers = document.querySelectorAll('.video-container');
-    
-    containers.forEach(container => {
-        const video = container.querySelector('video');
-        if (!video) return;  // cells with a note instead of a video
-
-        video.addEventListener('error', function() {
-            container.classList.add('error');
-        });
-        
-        // Also check if video can't load after a short timeout
-        setTimeout(() => {
-            if (video.readyState === 0) {
-                container.classList.add('error');
-            }
-        }, 1000);
+(function () {
+  'use strict';
+  const PATCHES = {"gray": [0.5, 0.88], "yellow": [0.08, 0.2], "green": [0.42, 0.2], "red": [0.75, 0.2], "blue": [0.92, 0.2]};
+  const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbx0a7Sw_PghFrpIfH_8VUYp9HKEm1SiXgMTVtIC-eY8LM-XibRefOnWWRpXXSELt2Mw/exec";
+  const TOLERANCE = 8;          /* code values; the Y'CbCr round trip and compression stay within this */
+  const LOAD_TIMEOUT = 8000;    /* ms before a movie that has not loaded is reported as "Did not load" */
+  const PAGE_VERSION = '2026-11-28l';
+  const CONCURRENCY = 3;        /* movies tested at once: browsers cap active players, and the rest silently get no source */
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  function browserName(ua) {
+    let m;
+    if ((m = ua.match(/Edg\/([\d.]+)/))) return ['Edge', m[1]];
+    if ((m = ua.match(/OPR\/([\d.]+)/))) return ['Opera', m[1]];
+    if ((m = ua.match(/Firefox\/([\d.]+)/))) return ['Firefox', m[1]];
+    if ((m = ua.match(/Chrome\/([\d.]+)/))) return ['Chrome', m[1]];
+    if ((m = ua.match(/Version\/([\d.]+).*Safari/))) return ['Safari', m[1]];
+    return ['Unknown', ''];
+  }
+  async function environment() {
+    const ua = navigator.userAgent;
+    const [name, version] = browserName(ua);
+    const env = { browser: name, browserVersion: version, userAgent: ua, platform: navigator.platform };
+    if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+      try {
+        const h = await navigator.userAgentData.getHighEntropyValues(['platform', 'platformVersion', 'architecture', 'fullVersionList']);
+        env.os = h.platform; env.osVersion = h.platformVersion; env.architecture = h.architecture;
+        const full = (h.fullVersionList || []).find(b => b.brand === name || (name === 'Edge' && /Edge/.test(b.brand)));
+        if (full) env.browserVersion = full.version;
+      } catch (e) { /* not available */ }
+    }
+    if (!env.os) {
+      env.os = /Windows/.test(ua) ? 'Windows' : /iPhone|iPad/.test(ua) ? 'iOS' : /Mac OS X/.test(ua) ? 'macOS'
+        : /Android/.test(ua) ? 'Android' : /Linux/.test(ua) ? 'Linux' : 'Unknown';
+    }
+    try {
+      const gl = document.createElement('canvas').getContext('webgl');
+      const ext = gl && gl.getExtension('WEBGL_debug_renderer_info');
+      env.gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : (gl ? gl.getParameter(gl.RENDERER) : 'unknown');
+    } catch (e) { env.gpu = 'unknown'; }
+    env.colorGamut = ['rec2020', 'p3', 'srgb'].find(g => matchMedia('(color-gamut: ' + g + ')').matches) || 'unknown';
+    env.dynamicRange = matchMedia('(dynamic-range: high)').matches ? 'high' : 'standard';
+    return env;
+  }
+  async function claims(info, video) {
+    const type = 'video/mp4; codecs="' + info.codecs + '"';
+    const out = { canPlayType: video.canPlayType(type) || 'no' };
+    if (navigator.mediaCapabilities) {
+      try {
+        /* With a timeout: a browser whose media process is stuck may never answer. */
+        const r = await Promise.race([navigator.mediaCapabilities.decodingInfo({ type: 'file', video: {
+          contentType: type, width: 456, height: 300, bitrate: info.bitrate, framerate: 25 } }),
+          sleep(3000).then(() => { throw new Error('timeout'); })]);
+        out.supported = r.supported; out.smooth = r.smooth; out.powerEfficient = r.powerEfficient;
+      } catch (e) { out.supported = e.message === 'timeout' ? 'no answer' : 'error: ' + e.name; }
+    }
+    return out;
+  }
+  function waitFor(video, events, ms) {
+    return new Promise(resolve => {
+      let done = false;
+      const finish = what => { if (done) return; done = true; resolve(what); };
+      events.forEach(ev => video.addEventListener(ev, () => finish(ev), { once: true }));
+      video.querySelectorAll('source').forEach(s => s.addEventListener('error', () => finish('error'), { once: true }));
+      setTimeout(() => finish('timeout'), ms);
     });
-});
+  }
+  function sample(video) {
+    const w = video.videoWidth, h = video.videoHeight;
+    if (!w || !h) return null;
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const ctx = cv.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(video, 0, 0, w, h);
+    const out = {};
+    let sum = 0;
+    for (const [name, [fx, fy]] of Object.entries(PATCHES)) {
+      const x = Math.round(w * fx), y = Math.round(h * fy);
+      const d = ctx.getImageData(x - 1, y - 1, 3, 3).data;   /* 3x3 average */
+      const rgb = [0, 1, 2].map(c => Math.round((d[c] + d[c + 4] + d[c + 8] + d[c + 12] + d[c + 16] + d[c + 20] + d[c + 24] + d[c + 28] + d[c + 32]) / 9));
+      out[name] = rgb; sum += rgb[0] + rgb[1] + rgb[2];
+    }
+    return sum > 0 ? { patches: out, canvas: cv } : null;   /* an all-black frame means nothing was painted yet */
+  }
+  /* The decoder's own output: the frame's samples as decoded, through WebCodecs, converted to RGB here with the
+     matrix and range the browser says the frame has. This does not depend on how the browser copies frames to a
+     canvas (Chrome converts software-decoded 4:2:2 and 4:4:4 frames with the wrong blue coefficient there, though
+     it shows them correctly), and it shows whether the browser read the file's tags correctly. */
+  const MATRICES = { bt709: [0.2126, 0.0722], bt470bg: [0.299, 0.114], smpte170m: [0.299, 0.114], 'bt2020-ncl': [0.2627, 0.0593] };
+  async function decoderCheck(video, info) {
+    if (typeof VideoFrame === 'undefined') return { error: 'no WebCodecs' };
+    let frame;
+    try { frame = new VideoFrame(video); } catch (e) { return { error: 'VideoFrame: ' + e.name }; }
+    try {
+      const fmt = frame.format, cs = frame.colorSpace || {};
+      const out = { format: fmt, matrix: cs.matrix, fullRange: cs.fullRange, primaries: cs.primaries, transfer: cs.transfer };
+      const m = /^(I420|I422|I444|NV12)(P10|P12)?$/.exec(fmt || '');
+      if (!m) { out.error = fmt ? 'format ' + fmt + ' not readable' : 'hardware frame, not readable'; return out; }
+      /* Without the matrix the samples cannot be interpreted. Chrome reports none for RGB frames: those are read as
+         G, B, R planes when the file is tagged RGB (its canvas copy of 10-bit RGB is wrong, though it draws it right). */
+      let matrix = cs.matrix;
+      if (!matrix && info.layout === 'RGB' && m[1] === 'I444') { matrix = 'rgb'; out.note = 'no matrix reported; read as RGB, as tagged'; }
+      if (!matrix) { out.error = 'browser does not report the matrix'; return out; }
+      const bits = m[2] === 'P12' ? 12 : m[2] === 'P10' ? 10 : 8, hi = bits > 8;
+      const buf = new ArrayBuffer(frame.allocationSize());
+      const layout = await frame.copyTo(buf);
+      const arr = hi ? new Uint16Array(buf) : new Uint8Array(buf), bpe = hi ? 2 : 1;
+      const cw = m[1] === 'I444' ? 1 : 2, ch = m[1] === 'I420' || m[1] === 'NV12' ? 2 : 1;
+      const at = (p, x, y) => arr[(layout[p].offset + y * layout[p].stride) / bpe + x];
+      const W = frame.visibleRect.width, H = frame.visibleRect.height, scale = 1 << (bits - 8);   /* copyTo copies the visible rect */
+      const full = cs.fullRange === true;
+      const pixel = (x, y) => {
+        const yv = at(0, x, y) / scale;
+        let u, v;
+        if (m[1] === 'NV12') { const cx = Math.floor(x / 2) * 2, cy = Math.floor(y / 2); u = at(1, cx, cy) / scale; v = at(1, cx + 1, cy) / scale; }
+        else { u = at(1, Math.floor(x / cw), Math.floor(y / ch)) / scale; v = at(2, Math.floor(x / cw), Math.floor(y / ch)) / scale; }
+        if (matrix === 'rgb') return [v, yv, u];   /* planes hold G, B, R */
+        const k = MATRICES[matrix] || MATRICES.bt709;
+        const Y = full ? yv / 255 : (yv - 16) / 219, Cb = full ? (u - 128) / 255 : (u - 128) / 224, Cr = full ? (v - 128) / 255 : (v - 128) / 224;
+        const R = Y + 2 * (1 - k[0]) * Cr, B = Y + 2 * (1 - k[1]) * Cb, G = (Y - k[0] * R - k[1] * B) / (1 - k[0] - k[1]);
+        return [R, G, B].map(q => Math.min(255, Math.max(0, q * 255)));
+      };
+      out.samples = {};
+      for (const [name, [fx, fy]] of Object.entries(PATCHES)) {
+        const cx = Math.round(W * fx), cy = Math.round(H * fy), acc = [0, 0, 0];
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) pixel(cx + dx, cy + dy).forEach((q, c) => { acc[c] += q; });
+        out.samples[name] = acc.map(q => Math.round(q / 9));
+      }
+      if (!MATRICES[matrix] && matrix !== 'rgb') { out.error = 'matrix ' + matrix + ' not handled'; delete out.samples; return out; }
+      out.maxError = Math.max(...Object.keys(PATCHES).map(k => Math.max(...out.samples[k].map((q, c) => Math.abs(q - info.expect[k][c])))));
+      return out;
+    } catch (e) {
+      return { error: e.name + ': ' + e.message };
+    } finally {
+      frame.close();
+    }
+  }
+  /* What a canvas copy shows when the browser converts BT.709 with a Cb-to-B coefficient of 1.772 (BT.601's) instead
+     of 1.856, as Chrome (software-decoded frames) and Firefox do: only blue moves, by up to about 9. Seen only in
+     copies so far; Chrome draws the same frames correctly on screen. */
+  function blueCoefficientError(rgb) {
+    const kr = 0.2126, kb = 0.0722, [r, g, b] = rgb.map(q => q / 255);
+    const y = kr * r + (1 - kr - kb) * g + kb * b;
+    const Y = (Math.round(16 + 219 * y) - 16) / 219, Cb = (Math.round(128 + 224 * (b - y) / (2 * (1 - kb))) - 128) / 224;
+    const B = Math.min(1, Math.max(0, Y + 1.772 * Cb));
+    return [rgb[0], rgb[1], Math.round(B * 255)];
+  }
+  /* Chroma resolution: the error at the source's edges, across (columns) and down (rows), from the canvas copy.
+     Color is right away from edges either way; halved chroma shows only at edges, as about 20-25 code values
+     where full chroma gives under 5. A 4:4:4 movie shown as 4:2:2 (Firefox's HEVC) fails across; down is recorded but
+     not tested. */
+  const CHROMA_LIMIT = 10;
+  const images = {};
+  function loadImage(url) {
+    return images[url] || (images[url] = new Promise((ok, bad) => { const im = new Image(); im.onload = () => ok(im); im.onerror = bad; im.src = url; }));
+  }
+  function pixels(el, w, h) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(el, 0, 0, w, h);
+    return x.getImageData(0, 0, w, h).data;
+  }
+  async function chromaCheck(video, info) {
+    const w = video.videoWidth, h = video.videoHeight;
+    const src = await loadImage(info.source);
+    if (src.naturalWidth !== w || src.naturalHeight !== h) return { error: 'source size differs' };
+    const A = pixels(video, w, h), R = pixels(src, w, h);
+    const edge = (dx, dy) => {
+      let sum = 0, n = 0;
+      for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+        const i = (y * w + x) * 4, j0 = ((y - dy) * w + x - dx) * 4, j1 = ((y + dy) * w + x + dx) * 4;
+        let grad = 0, r0 = 0, r1 = 0;
+        for (let c = 0; c < 3; c++) { grad += Math.abs(R[j1 + c] - R[j0 + c]); }
+        if (grad < 60) continue;
+        /* only edges where color changes, not just brightness: those are the ones chroma resolution affects */
+        const lum = q => 0.2126 * R[q] + 0.7152 * R[q + 1] + 0.0722 * R[q + 2];
+        if (Math.abs(lum(j1) - lum(j0)) > 0.8 * grad / 3) continue;
+        for (let c = 0; c < 3; c++) sum += Math.abs(A[i + c] - R[i + c]);
+        n += 3;
+      }
+      return n ? +(sum / n).toFixed(1) : undefined;
+    };
+    return { across: edge(1, 0), down: edge(0, 1) };
+  }
+  async function testOne(container) {
+    const info = JSON.parse(container.dataset.info);
+    const video = container.querySelector('video');
+    const result = { file: info.file, codec: info.codec, depth: info.depth, layout: info.layout, codecs: info.codecs };
+    Object.assign(result, await claims(info, video));
+    container.parentNode.querySelector('.status').textContent = 'Testing…';
+    const loading = waitFor(video, ['loadeddata', 'error'], LOAD_TIMEOUT);
+    video.src = info.url || info.file;
+    const state = await loading;
+    if (state === 'loadeddata') {
+      let samples = null;
+      const deadline = Date.now() + 4000;
+      for (let i = 0; i < 10 && !samples && Date.now() < deadline; i++) {
+        if (i === 0) { video.currentTime = 0.001; await waitFor(video, ['seeked'], 1000); }
+        await sleep(150);
+        try { const s = sample(video); if (s) samples = s.patches; } catch (e) { result.sampleError = String(e); break; }
+      }
+      if (video.error) {
+        result.status = 'Decode error';
+      } else if (!samples) {
+        result.status = result.sampleError ? 'Could not read frame' : 'No frame';
+      } else {
+        result.samples = samples;
+        result.maxError = Math.max(...Object.keys(PATCHES).map(k =>
+          Math.max(...samples[k].map((v, c) => Math.abs(v - info.expect[k][c])))));
+        result.decoder = await decoderCheck(video, info);
+        const dec = result.decoder.maxError, copy = result.maxError;
+        /* The decoder output decides when it can be read; the canvas copy is only a fallback (Chrome's copy of
+           software-decoded 4:2:2/4:4:4 frames is off by about 9 even though the screen is right). */
+        result.measuredBy = dec === undefined ? 'canvas copy' : 'decoder';
+        result.status = (dec === undefined ? copy : dec) <= TOLERANCE ? 'OK' : 'Wrong colors';
+        if (result.status === 'Wrong colors' && dec === undefined && !/RGB/.test(info.layout)) {
+          result.blueError = Math.max(...Object.keys(PATCHES).map(k => {
+            const want = blueCoefficientError(info.expect[k]); return Math.max(...samples[k].map((v, c) => Math.abs(v - want[c])));
+          }));
+          /* Chrome and Firefox both draw these correctly on screen (checked by eye, November 2026). */
+          if (result.blueError <= 5) result.status = 'OK';
+        }
+        /* The edges are measured on the canvas copy, so only when its colors can be trusted. */
+        if (copy <= TOLERANCE || result.blueError <= 5) {
+          try { result.chroma = await chromaCheck(video, info); } catch (e) { result.chroma = { error: String(e) }; }
+        } else result.chroma = { error: 'canvas copy colors are wrong' };
+        /* Only across is tested: the image has too few horizontal color edges to tell 4:2:2 from 4:2:0 down. */
+        if (/4:4:4|RGB/.test(info.layout) && result.chroma.across > CHROMA_LIMIT && result.status === 'OK') {
+          result.status = 'Reduced chroma';
+        }
+      }
+    } else if (state === 'error' || video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+      result.status = video.error && video.error.code === MediaError.MEDIA_ERR_DECODE ? 'Decode error' : 'Not supported';
+    } else {
+      result.status = 'Did not load';
+    }
+    if (video.error) { result.errorCode = video.error.code; result.errorMessage = video.error.message || ''; }
+    /* The cell keeps showing the movie itself, paused on its frame, so a screenshot of the page shows what the
+       browser displays; the canvas copy was only used for the measurement. */
+    video.pause();
+    show(container, result);
+    return result;
+  }
+  function show(container, r) {
+    const status = container.parentNode.querySelector('.status');
+    const cls = r.status === 'OK' ? 'ok'
+      : r.status === 'Wrong colors' || r.status === 'Reduced chroma' || r.status === 'Did not load' ? 'warn' : 'bad';
+    status.className = 'status ' + cls;
+    const d = r.decoder || {}, sc = r.screen || {};
+    let text = r.status;
+    if (r.status === 'Reduced chroma') text += ' (halved across)';
+    else if (r.status === 'Wrong colors') text += ' (off by ' + (d.maxError !== undefined ? d.maxError : r.maxError) + ')';
+    status.textContent = text;
+    status.title = 'Decoded: ' + (d.maxError !== undefined ? 'off by ' + d.maxError + ' (' + d.format + ', ' + d.matrix + (d.fullRange ? ', full' : ', limited') + ')' : (d.error || 'not checked'))
+      + '\nCanvas copy: ' + (r.maxError !== undefined ? 'off by ' + r.maxError : 'none')
+      + (r.blueError !== undefined ? ' (within ' + r.blueError + ' of the BT.601 blue coefficient error, which only the copy has)' : '')
+      + (r.chroma && r.chroma.across !== undefined ? '\nChroma edges: ' + r.chroma.across + ' across, ' + r.chroma.down + ' down (full chroma is under ' + CHROMA_LIMIT + ' across)' : '')
+      + '\nScreen: ' + (sc.maxError !== undefined ? 'off by ' + sc.relError + ' from the other movies, ' + sc.maxError + ' from the reference image' : 'not measured');
+    if (r.measuredBy === 'canvas copy') {
+      const c = document.createElement('span'); c.className = 'claim'; c.textContent = '(canvas copy)'; status.appendChild(c);
+    }
+    const claim = document.createElement('span');
+    claim.className = 'claim';
+    claim.textContent = 'claims: ' + (r.supported === true ? 'yes' : r.supported === false ? 'no' : '?') + (r.powerEfficient ? ', hw' : '');
+    status.appendChild(claim);
+    if (r.status !== 'OK' && r.status !== 'Wrong colors' && r.status !== 'Reduced chroma') {
+      container.classList.add('error');
+      container.querySelector('.fallback-text').textContent = r.status;
+    }
+  }
+  /* Measure the screen: capture this tab, and compare each movie with the reference image in the same capture, so
+     whatever the capture does to colors applies to both and cancels out. */
+  function patchesAt(ctx, rect, sx, sy) {
+    const out = {};
+    for (const [name, [fx, fy]] of Object.entries(PATCHES)) {
+      const x = Math.round((rect.left + rect.width * fx) * sx), y = Math.round((rect.top + rect.height * fy) * sy);
+      const d = ctx.getImageData(x - 1, y - 1, 3, 3).data, acc = [0, 0, 0];
+      for (let i = 0; i < 9; i++) for (let c = 0; c < 3; c++) acc[c] += d[i * 4 + c];
+      out[name] = acc.map(q => Math.round(q / 9));
+    }
+    return out;
+  }
+  const inside = (r, w, h) => r.top >= 0 && r.left >= 0 && r.bottom <= h && r.right <= w && r.width > 0;
+  const overlaps = (a, b) => !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+  async function measureScreen(containers, results, say) {
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: 'browser', frameRate: 10 },
+      audio: false, preferCurrentTab: true, selfBrowserSurface: 'include', surfaceSwitching: 'exclude' });
+    const track = stream.getVideoTracks()[0];
+    const surface = (track.getSettings() || {}).displaySurface;
+    const ref = document.getElementById('screenref');
+    const cap = document.createElement('video');
+    const startY = scrollY;
+    try {
+      if (surface && surface !== 'browser') throw new Error('please share this tab, not a window or screen');
+      cap.muted = true; cap.srcObject = stream; await cap.play();
+      ref.style.display = 'block';
+      await new Promise(r => ref.complete ? r() : ref.addEventListener('load', r, { once: true }));
+      const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const nextFrame = () => new Promise(r => cap.requestVideoFrameCallback ? cap.requestVideoFrameCallback(() => r()) : setTimeout(r, 200));
+      const pending = new Set(containers.map((c, i) => i).filter(i => results[i].samples && !containers[i].classList.contains('error')));
+      const total = pending.size;
+      for (let y = 0; pending.size && y < document.documentElement.scrollHeight; y += Math.max(200, Math.floor(innerHeight * 0.6))) {
+        scrollTo(0, y);
+        await sleep(350); await nextFrame(); await nextFrame();
+        canvas.width = cap.videoWidth; canvas.height = cap.videoHeight;
+        ctx.drawImage(cap, 0, 0);
+        const sx = cap.videoWidth / innerWidth, sy = cap.videoHeight / innerHeight;
+        if (Math.abs(sx - sy) > 0.05 * sx) throw new Error('the capture is not this tab (its shape does not match)');
+        const refRect = ref.getBoundingClientRect();
+        const refSamples = patchesAt(ctx, refRect, sx, sy);
+        for (const i of [...pending]) {
+          const v = containers[i].querySelector('video');
+          const rect = v.getBoundingClientRect();
+          if (!inside(rect, innerWidth, innerHeight) || overlaps(rect, refRect)) continue;
+          const samples = patchesAt(ctx, rect, sx, sy);
+          const maxError = Math.max(...Object.keys(PATCHES).map(k => Math.max(...samples[k].map((q, c) => Math.abs(q - refSamples[k][c])))));
+          const r = results[i];
+          results[i].screen = { samples, reference: refSamples, maxError, scale: +sx.toFixed(3) };
+          pending.delete(i);
+        }
+        say('Measuring the screen… ' + (total - pending.size) + ' of ' + total);
+      }
+      /* Relative to the median of all the movies in the capture: most are right, so this cancels whatever the
+         capture does to video. It is recorded, not used for the status: the decoded frame (or, for hardware
+         frames, the copy) decides that. */
+      const screened = results.filter(r => r.screen);
+      const median = {};
+      for (const k of Object.keys(PATCHES)) median[k] = [0, 1, 2].map(c => {
+        const v = screened.map(r => r.screen.samples[k][c]).sort((a, b) => a - b); return v[v.length >> 1];
+      });
+      screened.forEach(r => {
+        r.screen.median = median;
+        r.screen.relError = Math.max(...Object.keys(PATCHES).map(k => Math.max(...r.screen.samples[k].map((q, c) => Math.abs(q - median[k][c])))));
+      });
+      containers.forEach((c, i) => { if (results[i].screen) show(c, results[i]); });
+      return total - pending.size;
+    } finally {
+      track.stop(); ref.style.display = 'none'; scrollTo(0, startY);
+    }
+  }
+  function summarize(results) {
+    const counts = {};
+    results.forEach(r => { counts[r.status] = (counts[r.status] || 0) + 1; });
+    const screened = results.filter(r => r.screen).length;
+    document.getElementById('summary').textContent = 'Results: ' + Object.entries(counts).map(([k, v]) => v + ' ' + k).join(', ')
+      + (screened ? ' (' + screened + ' measured on screen)' : '');
+  }
+  async function run() {
+    const env = await environment();
+    document.getElementById('env').textContent = env.browser + ' ' + env.browserVersion + ' on ' + env.os +
+      (env.osVersion ? ' ' + env.osVersion : '') + ' | GPU: ' + env.gpu + ' | display: ' + env.colorGamut + ', ' + env.dynamicRange + ' range';
+    const containers = [...document.querySelectorAll('.video-container[data-info]')];
+    const summary = document.getElementById('summary');
+    const results = new Array(containers.length);
+    let next = 0, finished = 0;
+    async function worker() {
+      while (next < containers.length) {
+        const i = next++, c = containers[i];
+        results[i] = await testOne(c).catch(e => {
+          const info = JSON.parse(c.dataset.info);
+          const r = { file: info.file, codec: info.codec, depth: info.depth, layout: info.layout, codecs: info.codecs,
+            status: 'Script error', errorMessage: String(e) };
+          show(c, r);
+          return r;
+        });
+        summary.textContent = 'Testing… ' + (++finished) + ' of ' + containers.length;
+      }
+    }
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    summarize(results);
+    const report = () => ({ pageVersion: PAGE_VERSION, page: location.href.split('#')[0], time: new Date().toISOString(),
+      note: document.getElementById('note').value.slice(0, 200), tolerance: TOLERANCE, environment: env, results: results });
+    window.codecTestReport = report;
+    const copy = document.getElementById('copy'), download = document.getElementById('download'), submit = document.getElementById('submit');
+    const sendstate = document.getElementById('sendstate');
+    copy.disabled = download.disabled = false;
+    const screenBtn = document.getElementById('screen');
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      screenBtn.disabled = false;
+      screenBtn.onclick = async () => {
+        screenBtn.disabled = true;
+        try {
+          const n = await measureScreen(containers, results, t => { sendstate.textContent = t; });
+          sendstate.textContent = 'Measured ' + n + ' movies on screen.';
+          summarize(results);
+        } catch (e) { sendstate.textContent = 'Screen measurement stopped: ' + e.message; }
+        screenBtn.disabled = false;
+      };
+    } else { screenBtn.title = 'This browser cannot capture a tab'; }
+    copy.onclick = async () => {
+      try { await navigator.clipboard.writeText(JSON.stringify(report(), null, 1)); sendstate.textContent = 'Copied.'; }
+      catch (e) { sendstate.textContent = 'Could not copy: ' + e.message; }
+    };
+    download.onclick = () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(report(), null, 1)], { type: 'application/json' }));
+      a.download = ('codec-results-' + env.os + '-' + env.browser + '-' + env.browserVersion + '.json').replace(/[^\w.-]+/g, '_');
+      a.click();
+    };
+    if (SUBMIT_URL) {
+      submit.hidden = false; submit.disabled = false;
+      document.getElementById('submitinfo').hidden = false;
+      submit.onclick = async () => {
+        submit.disabled = true; sendstate.textContent = 'Sending…';
+        try {
+          /* text/plain avoids a CORS preflight; Apps Script does not send CORS headers, so the reply is opaque. */
+          await fetch(SUBMIT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(report()) });
+          sendstate.textContent = 'Sent. Thank you.';
+        } catch (e) { sendstate.textContent = 'Could not send: ' + e.message; submit.disabled = false; }
+      };
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
 </script>
 </body>
 </html>

@@ -247,7 +247,8 @@ const DATA = /*DATA*/null;
 
 const $ = (id) => document.getElementById(id);
 const state = { src: (DATA.defaults.src && DATA.sources.some((s) => s.id === DATA.defaults.src)) ? DATA.defaults.src : DATA.sources[0].id, a: DATA.defaults.a, b: DATA.defaults.b, mode: "wipe", zoom: 0,
-                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null, show: "measured" };
+                gain: 64, pos: 0.5, shown: "a", flicker: false, probe: false, pin: null,
+                show: DATA.videos && DATA.defaults.show === "browser" ? "browser" : "measured" };
 let flickerTimer = null;
 
 const item = (id) => DATA.items[id];
@@ -802,8 +803,16 @@ function loadVideo(side) {
   const src = item(id).results[state.src].video;
   if (v.dataset.src === src) return;
   v.dataset.src = src; videoState[side] = "loading";
-  v.onloadeddata = () => { videoState[side] = "ok"; v.play().catch(() => {}); };
-  v.onerror = () => { videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]); };
+  /* Ignore events from a file this element no longer shows (switching files aborts the old load). */
+  v.onloadeddata = () => {
+    if (v.dataset.src !== src) return;
+    const was = videoState[side]; videoState[side] = "ok"; v.play().catch(() => {});
+    if (was === "fail") { renderView(); renderCard($("card" + S), side, state[side]); }
+  };
+  v.onerror = () => {
+    if (v.dataset.src !== src) return;
+    videoState[side] = "fail"; renderView(); renderCard($("card" + S), side, state[side]);
+  };
   v.src = src; v.load();
   setTimeout(() => {
     if (v.dataset.src === src && videoState[side] === "loading" && v.readyState < 2) {
