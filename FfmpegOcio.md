@@ -26,7 +26,7 @@ ocio=...:format=rgb48,format=rgb48le,zscale=matrix=709:range=limited:filter=lanc
 
 * **`setparams` is essential here.** The OCIO filter changes the pixels but not the frame's color tags, and FFmpeg 9.0 tags EXR frames as linear. Without `setparams`, the file is labelled with a linear transfer function and no primaries, whatever display transform you applied. The earlier examples on this page did exactly that.
 * **`zscale` rather than `scale`.** libswscale puts white about 3 code values (10-bit) too high, as on the other pages; see [Color range accuracy](EncodeSwsScale.html#color-conversion-use-zscale).
-* **`format=rgb48le` between the two filters** works around a crash in the FFmpeg 9.0 release, which segfaults when `zscale` follows the OCIO filter directly. It changes nothing (`rgb48` already is `rgb48le`), and builds with the format negotiation rework (our 8.1 build, and 9.1-dev) do not need it; see [Building ffmpeg with OCIO support](#building-ffmpeg-with-ocio-support).
+* **`format=rgb48le` between the two filters** works around a crash in the FFmpeg 9.0 release, which segfaults when `zscale` follows the OCIO filter directly. It changes nothing (`rgb48` already is `rgb48le`), and builds with the format negotiation rework (9.1, and our patched 8.1 build) do not need it; see [Building ffmpeg with OCIO support](#building-ffmpeg-with-ocio-support).
 
 Measured on 9.0 against the OCIO filter's own RGB output (ACES sRGB display transform, H.264 4:2:0 10-bit, `-crf 18`): the earlier `scale` version was white +3.0, mean error 1.7, tagged linear transfer with no `colr` atom; the `zscale` version is white 0.0, mean error 1.3, tagged BT.709/sRGB (`colr` `nclc 1/13/1`).
 
@@ -85,7 +85,7 @@ Then we can convert it back to EXR's:
 ffmpeg -y -i sparks_lossless_h265.mov -threads 0 -vf "zscale=filter=lanczos,format=gbrpf32le,ocio=input=ACEScg:display=Rec.2100-PQ - Display:view=ACES 1.1 - HDR Video (1000 nits & Rec.2020 lim):inverse=1:format=gbrpf32le"  testoutput/testoutput.%04d.exr
 ```
 
-`zscale` converts the Y'CbCr to floating point RGB before the OCIO filter, reading the matrix and range from the file's tags. The earlier version of this command left that conversion to libswscale and put `scale` after the OCIO filter, where it clamps the scene-linear values. Converting a lossless 12-bit PQ movie of an ACEScg frame back (9.0 and 9.1-dev), the median error against the original EXR went from 1.0% to 0.12%, and the brightest value kept from 299 to 707 (the source peaks at 2100; the 1000 nit display transform cannot carry all of it).
+`zscale` converts the Y'CbCr to floating point RGB before the OCIO filter, reading the matrix and range from the file's tags. The earlier version of this command left that conversion to libswscale and put `scale` after the OCIO filter, where it clamps the scene-linear values. Converting a lossless 12-bit PQ movie of an ACEScg frame back (9.0 and 9.1), the median error against the original EXR went from 1.0% to 0.12%, and the brightest value kept from 299 to 707 (the source peaks at 2100; the 1000 nit display transform cannot carry all of it).
 
 So while this will limit the max luminance to 1000 nits, it will give you a wide gamut with a higher dynamic range that you can convert back into a linear range which will be hugely superior to rec709 or Display P3. Obviously this is not as good as using the original EXR files, but it is certainly an improvement over rec709, giving you the ability to change the exposure.
 
@@ -116,8 +116,8 @@ ffmpeg -y -i INPUT_REC2100.%04d.exr -vf "ocio=input=ACEScg:display=Rec.2100-PQ -
 
 FFmpeg has its own EXR reader and writer rather than using the OpenEXR library, and this can lead to some differences in how it handles EXR files. For example, some of the newer features (such as HTJ2K compression) may not be supported. Also floating point may not be supported in all filters, so you should test your pipelines to ensure that they are working as expected. Things to watch out for include:
 
-* **`scale` clamps floating point.** Whatever float format it is given, `scale` limits the values to 0.0 - 1.0: a half-float EXR holding -2.0 to 300.0 comes out as 0.0 to 1.0, so every highlight above 1.0 is lost. Converting to 32-bit float first does **not** help. `zscale` keeps the full range for both half-float and 32-bit float (FFmpeg 6.1.6 to a 9.1 development build), so use it to resize.
-* **From FFmpeg 8.0, converting half-float to 32-bit float clamps too.** Half-float EXRs now decode as `gbrpf16le` (`gbrpf32le` up to 7.1), so `-pix_fmt gbrpf32le` or `format=gbrpf32le` goes through libswscale, with the same clamp. Use `zscale,format=gbrpf32le` when you need 32-bit float, and `-pix_fmt gbrpf16le` to read the true values. The `ocio` filter itself is fine with a float `format` (values kept on 8.1, 9.0.2 and a 9.1 development build), as long as you do not put `format=gbrpf32le` in front of it. See [FFmpeg Version Changes](FFmpegChanges.html#exr-half-float-80).
+* **`scale` clamps floating point.** Whatever float format it is given, `scale` limits the values to 0.0 - 1.0: a half-float EXR holding -2.0 to 300.0 comes out as 0.0 to 1.0, so every highlight above 1.0 is lost. Converting to 32-bit float first does **not** help. `zscale` keeps the full range for both half-float and 32-bit float (FFmpeg 6.1.6 to 9.1), so use it to resize.
+* **From FFmpeg 8.0, converting half-float to 32-bit float clamps too.** Half-float EXRs now decode as `gbrpf16le` (`gbrpf32le` up to 7.1), so `-pix_fmt gbrpf32le` or `format=gbrpf32le` goes through libswscale, with the same clamp. Use `zscale,format=gbrpf32le` when you need 32-bit float, and `-pix_fmt gbrpf16le` to read the true values. The `ocio` filter itself is fine with a float `format` (values kept on 8.1, 9.0.2 and 9.1), as long as you do not put `format=gbrpf32le` in front of it. See [FFmpeg Version Changes](FFmpegChanges.html#exr-half-float-80).
 * While FFmpeg can write exr files, we would recommend using tools such as oiiotool that do use OpenEXR library to ensure that all features of the library are supported.
 
 ### What happens to out-of-range values if you do not clamp
@@ -198,7 +198,7 @@ We do also want to flag a patch that didn't make it into the ffmpeg 8.1 release 
 The following filters could not choose their formats: Parsed_ocio_1
 ```
 
-With the patch, those chains negotiate without needing an explicit `format=` to force the issue. Hopefully this will make it into the following release. The above build recipes do include this patch.
+With the patch, those chains negotiate without needing an explicit `format=` to force the issue. It is in FFmpeg 9.1 (commit `26a05be656`, "avfilter/vf_opencolorio: negotiate the output format properly"), where both orderings work without the extra `format=`; 9.0.2 still fails. The above build recipes do include this patch.
 
 {: .note }
 > We have measured the difference between the 8.1 release and a development build carrying this rework, and the resize-before-OCIO chain goes from failing outright to working. Strictly speaking the two builds differ by more than this one patch, so we describe the fix as being in the development build rather than attributing it to the patch alone.

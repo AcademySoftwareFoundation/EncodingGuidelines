@@ -73,7 +73,7 @@ the muxer leaves out the primaries and transfer as well, and without `setparams`
 6.1.6, 7.1.5 and 9.0.2). The JPEG data itself always says full range BT.601.
 
 Leave `-pix_fmt` off, as above, or use a `yuvj` format such as `-pix_fmt yuvj444p`. Both give correct full range
-files on 6.1.6, 7.0, 7.1.5, 8.1, 9.0.2 and a 9.1 development build. On 7.0 and earlier, a plain `-pix_fmt yuv444p` does not encode, and adding `-color_range pc` to make it
+files on 6.1.6, 7.0, 7.1.5, 8.1, 9.0.2 and 9.1. On 7.0 and earlier, a plain `-pix_fmt yuv444p` does not encode, and adding `-color_range pc` to make it
 encode writes limited range pixels into a file tagged full range. From 7.1 it is converted correctly.
 
 ## Recommended Flags

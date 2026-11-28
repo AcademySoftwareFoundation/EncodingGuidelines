@@ -14,6 +14,31 @@ We welcome suggestions and improvements.
 {: .highlight }
 We recommend [VP9](EncodeVP9.html) and [AV1](EncodeAv1.html) over H.264 and HEVC/H.265 where your review tools and browsers support them, to encourage the use of patent-free codecs; see the white-paper [Next-gen codecs for VFX Community](https://docs.google.com/document/d/1EJ7Q_HhjL0ELNdjz5AgnPrraUvy7XCo52LL08WxgjtA/edit#heading=h.9rkn78tjmq48). The [Encoding Cheatsheet](Quickstart.html) still starts with H.264, because it plays almost everywhere.
 
+## What changed in late 2026
+
+{: .important }
+> **We now recommend `zscale` rather than `scale` for the RGB to Y'CbCr conversion.** Earlier versions of these
+> guidelines recommended FFmpeg's `scale` filter (libswscale). More careful measurement, against an independent
+> reference rather than by comparing the filters with each other, showed that libswscale puts white slightly too
+> high (943 instead of 940 at 10-bit) for 10-bit and higher sources, and centres the chroma in 4:2:2 and 4:2:0
+> where co-sited chroma is expected. We are sorry this was not caught earlier. The error is small in a single
+> pass, but it is systematic, and it builds up when files are re-encoded. See
+> [RGB to Y'CbCr Conversion](ColorPreservation.html) and [FFmpeg swscale Filter](EncodeSwsScale.html).
+
+libswscale is being rewritten, and its new code (`scale=...:flags=unstable`, FFmpeg 8.1 and later) already gets
+the white level right for 4:4:4. We are tracking each FFmpeg release with a test suite, and once the new code has
+settled down we hope to bring the recommendation back to the built-in `scale` filter, which every FFmpeg build has.
+
+Also new:
+
+* [FFmpeg Version Changes](FFmpegChanges.html): FFmpeg 7.1 changed what the color flags do, and other changes up to
+  9.1 that alter the output of existing command lines, measured on each version.
+* [FFmpeg zscale Filter](EncodeZscale.html): the options, tags and pitfalls of `zscale`.
+* [Chroma Siting](ChromaSiting.html): where 4:2:2 and 4:2:0 chroma should sit, and which tools get it right.
+* [Downscaling](Resizing.html): shrinking in linear light, and the choices for scene-linear EXRs.
+* [Preparing Frames with oiiotool](OiiotoolConversion.html): the color management before FFmpeg, and tagging the
+  frames it writes.
+
 ## Why is this needed
 
 There are a lot of excellent guides out there. But few addressing the needs of the VFX community.

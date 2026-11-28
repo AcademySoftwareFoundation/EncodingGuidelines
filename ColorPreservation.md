@@ -55,8 +55,12 @@ the worst case over the patches, in code values, as Y'/Cb/Cr; 10-bit white shoul
 | :--- | :--- | :--- | :--- | :--- |
 | [zscale](#zscale-filter) | 940 | 0 / 0 / 0 | 0 / 0 / 0 | Recommended |
 | [scale (libswscale)](#libswscale-filter) | 943 | 3 / 2 / 2 | 2 / 1 / 1 | Also centres 4:2:2/4:2:0 chroma |
-| [colorspace](#colorspace-filter) | 943 | 3 / 2 / 2 | 2 / 1 / 1 | libswscale does the RGB conversion before it |
-| [colormatrix](#colormatrix-filter) | 940 | 10 / 5 / 4 | 3 / 1 / 1, 25 / 13 / 8 on 9.0 | 8-bit only; converts twice from 7.1 |
+| [scale with `flags=unstable`](#the-new-libswscale-code-flagsunstable) (8.1+) | 940 | 1 / 1 / 1 | 1 / 1 / 1 | 4:4:4 only; 4:2:2/4:2:0 are the same as `scale` |
+| [colorspace](#older-filters-colorspace-and-colormatrix) | 943 | 3 / 2 / 2 | 2 / 1 / 1 | libswscale does the RGB conversion before it |
+| [colormatrix](#older-filters-colorspace-and-colormatrix) | 940 | 10 / 5 / 4 | 3 / 1 / 1, 25 / 13 / 8 on 9.0 | 8-bit only; converts twice from 7.1 |
+
+The `flags=unstable` row is from FFmpeg 8.1, 9.0.2 and 9.1. For the white level at every bit depth, see
+[FFmpeg swscale Filter](EncodeSwsScale.html#color-conversion-use-zscale).
 
 ## zscale filter
 
@@ -72,17 +76,14 @@ the source has no tags; see [Sources without tags](EncodeZscale.html#sources-wit
 primaries and transfer function tags, which zscale leaves alone. For all the options, see
 [FFmpeg zscale Filter](EncodeZscale.html).
 
-We previously recommended libswscale here on the basis that it looked very slightly better. More careful measurement against a reference implementation shows the opposite: libswscale gets the white level wrong in its full-range to limited-range conversion when the source is 10-bit or higher, while zscale matches the specification exactly. The 100% white patch of the RP 219 bars, on every version from 6.0 to 9.0:
-
-| Source | Output | scale (libswscale) | zscale | BT.709 specification |
-| :--- | :--- | :--- | :--- | :--- |
-| 8-bit | 8-bit | 235 | 235 | 235 |
-| 10-bit | 10-bit | 943 | 940 | 940 |
-| 16-bit | 10-bit | 943 | 940 | 940 |
-| 10-bit | 12-bit | 3770 | 3760 | 3760 |
-| 16-bit | 12-bit | 3774 | 3760 | 3760 |
-
-The error is largest in luma, but not limited to it: from a 16-bit source the worst errors are 3 / 2 / 2 code values (Y'/Cb/Cr) at 10-bit and 14 / 7 / 7 at 12-bit. It is small in absolute terms, but it is systematic and it accumulates across round trips. libswscale also centres the chroma when subsampling to 4:2:2 or 4:2:0, where professional formats and H.264/HEVC expect it co-sited; zscale co-sites it. For the full measurements see [Color range accuracy](EncodeSwsScale.html#color-conversion-use-zscale) and [Chroma Siting](ChromaSiting.html).
+We previously recommended libswscale here on the basis that it looked very slightly better. More careful
+measurement against a reference implementation shows the opposite: libswscale gets the white level wrong in its
+full-range to limited-range conversion when the source is 10-bit or higher (943 instead of 940 at 10-bit, 3774
+instead of 3760 at 12-bit), while zscale matches the specification exactly. The error is small in absolute terms,
+but it is systematic and it accumulates across round trips. libswscale also centres the chroma when subsampling to
+4:2:2 or 4:2:0, where professional formats and H.264/HEVC expect it co-sited; zscale co-sites it. For the full
+measurements see [FFmpeg swscale Filter](EncodeSwsScale.html#color-conversion-use-zscale) and
+[Chroma Siting](ChromaSiting.html).
 
 More detailed docs are in the [FFmpeg filter documentation](https://ffmpeg.org/ffmpeg-filters.html#zscale).
 
@@ -167,17 +168,49 @@ ffmpeg -y -i inputfile.png \
 
 Note, there are a lot of other flags often used with the swscale filter (such as -sws_flags spline+full_chroma_int+accurate_rnd ) which really have minimal impact in the RGB to Y'CbCr conversion, if you are not resizing the image. For more details on this see [SWS Flags](EncodeSwsScale.html) section.
 
-## colorspace filter
+### The new libswscale code (`flags=unstable`) {#the-new-libswscale-code-flagsunstable}
+
+libswscale is being rewritten. From FFmpeg 8.1 the new conversion code can be turned on with the `unstable` flag
+("allow experimental new code"), set on the filter itself:
 
 ```console
- -vf "colorspace=bt709:iall=bt601-6-625:fast=1"
- ```
+-vf "scale=out_color_matrix=bt709:out_range=tv:flags=unstable,setparams=color_primaries=bt709:color_trc=iec61966-2-1:colorspace=bt709:range=tv"
+```
 
-The colorspace filter is a better quality filter than colormatrix, with SIMD so faster too, and supports 10-bit. `colorspace=bt709` converts to, and tags, BT.709. `iall=bt601-6-625` says to treat all the input (colorspace, primaries and transfer function) as BT.601-6-625, and `fast=1` skips the gamma/primary conversion. See: [https://ffmpeg.org/ffmpeg-filters.html#colorspace](https://ffmpeg.org/ffmpeg-filters.html#colorspace)
+For 4:4:4 output it puts white where it should be (940 at 10-bit, 3760 at 12-bit), within one code value of
+`zscale` (FFmpeg 8.1, 9.0.2 and 9.1). For 4:2:2 and 4:2:0, which most delivery formats use, it makes no difference
+yet: the output is identical to plain `scale`, white level and centered chroma included. The global
+`-sws_flags unstable` has no effect on this, and on 9.1 some format pairs (for example 10-bit RGB to 12-bit Y'CbCr)
+log "No backend found for operations" and silently fall back to the old code.
 
-It only converts between Y'CbCr formats, so it does not avoid libswscale: FFmpeg inserts libswscale before it to convert the RGB to BT.601 Y'CbCr, and colorspace then re-matrixes that to BT.709. The result has libswscale's errors (white at 943 at 10-bit), so we do not recommend it for RGB sources. It also tags its output with the BT.709 transfer function, which from FFmpeg 7.1 `-color_trc` cannot override: on 9.0 the example below is tagged `bt709` rather than sRGB.
+It is not ready to replace `zscale`, but it is where libswscale is heading; once the new code is the default, and
+covers subsampled formats, we expect to revisit this recommendation. The test configs for it are in
+`enctests/test_configs/color_tests.yml`.
 
-Example:
+## Older filters: colorspace and colormatrix {#older-filters-colorspace-and-colormatrix}
+
+FFmpeg also has two older filters that change the matrix of Y'CbCr video, `colorspace` and `colormatrix`. You will
+find them in older command lines, but we do not recommend either for RGB sources:
+
+* **Neither converts from RGB.** Both only convert between Y'CbCr matrices, so FFmpeg inserts libswscale before
+  them to convert the RGB to Y'CbCr first, and the result has at least libswscale's errors (white at 943 at 10-bit).
+* **`colormatrix` is 8-bit only**, so a 10-bit encode goes through 8-bit (errors of up to 10 code values at 10-bit),
+  and from FFmpeg 7.1 the `-colorspace bt709` flag makes libswscale convert to BT.709 first, so it converts twice
+  (up to 25 code values out at 8-bit on 9.0).
+* **They tag the output their own way.** `colorspace` tags the BT.709 transfer function, which from FFmpeg 7.1
+  `-color_trc` cannot override; `colormatrix` sets neither primaries nor transfer function.
+
+Use `zscale` instead. If you are converting video that is already Y'CbCr from one matrix to another,
+`zscale=matrix=709` does that too.
+
+<details markdown="block">
+  <summary>The tested commands for colorspace and colormatrix</summary>
+
+These commands are kept so the test suite keeps checking the errors above.
+
+`colorspace=bt709` converts to, and tags, BT.709; `iall=bt601-6-625` treats all the input (matrix, primaries and
+transfer function) as BT.601-6-625, and `fast=1` skips the gamma/primary conversion. See the
+[colorspace documentation](https://ffmpeg.org/ffmpeg-filters.html#colorspace).
 
 <!---
 name: test_colormatch_colorspace
@@ -203,22 +236,8 @@ ffmpeg -y -i inputfile.png \
    outputfile.mp4
 ```
 
-## colormatrix filter
-
-```console
--vf "colormatrix=bt470bg:bt709"
-```
-
-This is the most basic colorspace filtering, and we do not recommend it. bt470bg is essentially part of the bt601 spec.  See: [https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix](https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix)
-
-There are a few issues with this filter:
-
-* It only supports 8bpc (8-bit per component) pixel formats, so a 10-bit encode goes through 8-bit; in our tests that left errors of up to 10 code values at 10-bit.
-* It assumes it is given BT.601 Y'CbCr, which it relies on libswscale to produce from RGB first. From FFmpeg 7.1, the `-colorspace bt709` flag in the example below makes libswscale convert to BT.709 instead, so colormatrix converts a second time: on 9.0 the 8-bit result was up to 25 code values out.
-* It does not set the primaries or transfer function, and from FFmpeg 7.1 `-color_primaries` and `-color_trc` are ignored, so on 9.0 the example below has neither tag.
-* It is slower than the alternatives.
-
-Example:
+`colormatrix=bt470bg:bt709` converts from BT.601 (`bt470bg`) to BT.709. See the
+[colormatrix documentation](https://www.ffmpeg.org/ffmpeg-filters.html#colormatrix).
 
 <!---
 name: test_colormatch_raw
@@ -240,6 +259,8 @@ ffmpeg -y -i inputfile.png \
     -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 \
     outputfile.mp4
 ```
+
+</details>
 
 ## TV vs. Full range {#tvfull}
 

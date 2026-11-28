@@ -282,3 +282,5 @@ zimg
 zoneplate
 zscale
 zscale's
+autorotate
+noautorotate

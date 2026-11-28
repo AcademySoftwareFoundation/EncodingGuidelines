@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Chroma Siting Tests
-nav_order: 5.85
+nav_order: 6.95
 parent: Test Output
 ---
 
@@ -16,14 +16,14 @@ parent: Test Output
 {:toc}
 </details>
 
-The detail behind [Chroma Siting](ChromaSiting.html): the results for each converter and format, how the test charts
-work, what each player and FFmpeg version did, and how it was measured. If you only want to check a player, start with the
-[quick guide](ChromaSiting.html#quick-guide).
+The detail behind [Chroma Siting](ChromaSiting.html): where each converter puts the chroma, what each format
+records, and how it was measured. To check a player, use the [Chroma Siting Check](sourceimages/chroma_siting_check/README.html)
+files ([more test files](#players)).
 
 ## Results by converter
 
 Converting RGB to 4:2:2 and 4:2:0. Positions are in luma samples: 0 is co-sited, 0.5 is centered. The results
-were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and a 9.1 development build, except where noted.
+were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and 9.1, except where noted.
 
 | Converter | 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | 4:2:0 (horizontal / vertical),<br>should be co-sited / centered ([H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default) | Correct? |
 | :--- | :--- | :--- | :--- |
@@ -33,7 +33,7 @@ were the same on 6.0, 7.0, 7.1, 8.0.1, 8.1, 9.0 and a 9.1 development build, exc
 | `scale=...:flags=unstable` (8.1+) | centered, pair-averaged | centered / centered | **No**, the same as `scale` |
 | `scale=...:out_chroma_loc=left` (7.1+) or `out_h_chr_pos=0` | -0.05, pair-averaged | -0.05 / centered | Close, not exact |
 | as above, plus `-sws_flags +full_chroma_inp` | co-sited | co-sited / centered | Yes |
-| no filter, `-chroma_sample_location left` | centered; **co-sited (-0.05) in 9.1.dev** | the same | Not in any release yet |
+| no filter, `-chroma_sample_location left` | centered; **co-sited (-0.05) from 9.1** | the same | From 9.1: close, not exact |
 
 "Pair-averaged" means the converter averaged each pair of RGB pixels into one chroma value before filtering:
 a line on an even column and a line on the following odd column give exactly the same chroma. libswscale does
@@ -42,21 +42,9 @@ co-sited without that flag only gets to within 0.05 of a pixel. Note that this c
 (including earlier versions of [FFmpeg swscale Filter](EncodeSwsScale.html)) that `full_chroma_inp` does nothing
 for RGB input.
 
-The last row is a change that is coming: in FFmpeg development builds after 9.0, `-chroma_sample_location` is
+The last row is new in FFmpeg 9.1: `-chroma_sample_location` is now
 passed into the filter graph, the way 7.1 started doing for `-colorspace`, so the conversion FFmpeg inserts
 follows it. In 9.0 and earlier it does not affect the conversion.
-
-### Where the chroma samples went
-
-Each bar is one chroma (Cb) sample, drawn where a co-sited format says it is, under the blue marker for the
-source line. Rows: `zscale`, `scale`, `scale` with `out_chroma_loc=left` and `full_chroma_inp`.
-
-![Chroma samples for lines on odd columns](static/chroma-siting/chroma_samples_odd.png)
-
-For a line on an odd column, which falls between two co-sited chroma samples, `zscale` and the corrected `scale`
-put equal amounts in the samples either side. Plain `scale` puts it all in the sample to the left: it has
-averaged the line with its neighbor into a single, centered value. The small red bars on the bottom row are
-the bicubic filter's ringing.
 
 ## What each format records {#recorded-details}
 
@@ -106,376 +94,25 @@ centered.
 | :--- | :--- | :--- | :--- |
 | `zscale` | Correct | Correct | Assumes co-sited: correct |
 | `scale`, or no filter, 6.1 to 9.0 | **Assumes centered: chroma 0.5 to the right** | Correct | **Assumes centered: 0.5 to the right** |
-| `scale`, or no filter, 9.1.dev | Follows the tag (within 0.07) | Correct | **Assumes centered: 0.5 to the right** |
+| `scale`, or no filter, 9.1 | Follows the tag (within 0.07) | Correct | **Assumes centered: 0.5 to the right** |
 
-The results were the same on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1 and 9.0.2; the 9.1 development build (N-127508) is
+The results were the same on 6.1.6, 7.0, 7.1.5, 8.0.1, 8.1 and 9.0.2; 9.1 is
 the only one that differs, and only for coarse detail when converting to packed RGB such as PNG: the finest
-chroma detail still comes out as if centered (see [How it works](#how-it-works)). `-sws_flags +full_chroma_int` (or `scale=flags=...+full_chroma_int`) makes libswscale
+chroma detail still comes out as if centered (see the [4:2:2 player chart](ChromaSitingPlayerChart.html#how-it-works)). `-sws_flags +full_chroma_int` (or `scale=flags=...+full_chroma_int`) makes libswscale
 interpolate the chroma instead of repeating each sample across two pixels, which it otherwise does when converting
 4:2:x to RGB, but it does not change the position it assumes.
 
-## The 4:2:2 player chart
-
-Players and browsers make the same choice when they display 4:2:2, and most of them cannot be measured from a
-script. For those there is a chart you look at instead: [chroma_siting_player_chart_422-prores.mov](sourceimages/chroma_siting_player_chart_422-prores.mov)
-(ProRes 422 HQ), [-hevc.mp4](sourceimages/chroma_siting_player_chart_422-hevc.mp4) (HEVC 4:2:2 10-bit, which browsers play), [-h264.mp4](sourceimages/chroma_siting_player_chart_422-h264.mp4) (lossless H.264 4:2:2
-10-bit) and [-dnxhr.mxf](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/raw/main/sourceimages/chroma_siting_player_chart_422-dnxhr.mxf) (DNxHR HQX), with a lossless FFV1 copy in [chroma_siting_player_chart_422-lossless.mkv](sourceimages/chroma_siting_player_chart_422-lossless.mkv), and two
-deliberately mislabelled files (see [Does the player read the label?](#reading-the-label)). They are made by
-[make_chroma_siting_player_chart.py](sourceimages/make_chroma_siting_player_chart.py). The chroma in every file is co-sited, and the encodes keep the
-pattern intact (`zscale` decodes all of them exactly), so a wrong band is the player, not the file. Do not
-re-encode them: heavier compression blurs the one-pixel stripes. For 4:2:0 there is a second chart, which tests
-across and down separately; see [The 4:2:0 chart](#chart-420). To look at the pixels themselves, see [Checking the pixels](#pixel-chart).
-
-### Reading the chart
-
-1. **Show it at exactly 100%**: one image pixel per screen pixel ("1:1" in RV and xStudio, not "fit"; in a
-   browser, page zoom 100% and a window wide enough for the whole frame). The patch at the top right is the
-   check: from a distance its two halves should look equally bright. If the fine half looks darker, the player is
-   scaling the picture, and the bands mean nothing.
-2. **Step back**, or look at it from across the room. Each band is a checkerboard of striped blocks. The band
-   that turns into a uniform field says how the player rebuilds the chroma. For a correct player that is the top
-   one: H.264, HEVC, ProRes and DNxHD/DNxHR 4:2:2 are all co-sited.
-
-| Band | Uniform when the player | Typical of |
-| :--- | :--- | :--- |
-| Co-sited (correct) | treats the chroma as co-sited and interpolates it | `zscale`; xStudio with the fix below |
-| Centered, linear | treats it as centered, linear interpolation | GPU texture sampling (RV); libswscale `bilinear` |
-| Centered, bicubic | treats it as centered, bicubic or lanczos | libswscale to planar RGB, or with `full_chroma_int` |
-| Sample repeat | uses each chroma sample for two pixels | libswscale to packed RGB (e.g. writing a PNG), up to 9.0 |
-
-If no band is uniform, the player is doing something else, for example converting to 4:2:0 or using the nearest
-chroma sample. Look closer for stripes that should not be there (see Safari below).
-
-What the chart looks like from a distance (simulated by averaging in linear light), decoded by `zscale` (left)
-and by libswscale to planar RGB on 9.0 (right):
-
-| `zscale`: top band uniform | libswscale, centered bicubic: third band uniform |
-| :--- | :--- |
-| ![The chart from a distance, decoded with zscale](static/chroma-siting/player_chart_distance_zscale.png) | ![The chart from a distance, decoded with libswscale](static/chroma-siting/player_chart_distance_bicubic.png) |
-
-These are pictures of the result, already converted to RGB, so they look the same in any viewer. The test is the
-video files.
-
-### How it works
-
-The test blocks have vertical stripes in a four-pixel cycle, with the two chroma samples on the even (co-sited)
-columns. 4:2:2 keeps those and drops the odd columns, so the player has to rebuild the odd columns' chroma, and
-how it does that depends on where it thinks the samples are. The reference blocks have the same stripes turned
-through 90 degrees, which 4:2:2 holds exactly, since it has full vertical chroma resolution. Each band's
-reference stripes are set to the pixels one kind of player makes from its test stripes. In the band that matches
-the player, test and reference blocks then contain exactly the same pixels, so they match whatever the display,
-its gamma, or a view transform such as ACES does to them.
-
-The difference between the blocks only appears when the display turns each pixel into light and the eye averages
-it. Y'CbCr to R'G'B' is linear, so the average code value of a test block is the same for every player. A viewer
-that shrinks the picture averages code values before the display does, which removes the difference. At half
-size or less a wrong player then looks right, hence the scale check, which is also pure black and white for the
-same reason. The colors were chosen so that each wrong band differs from the right one by at least 0.04 in Oklab
-(linear-light means, gamma 2.4), with every pixel in gamut for every kind of player, so the result does not
-depend on clipping.
-
-The chart tests the finest chroma detail 4:2:2 can hold. A player can place coarse color correctly and still
-fail here: FFmpeg 9.1.dev, decoding to packed RGB, puts a slow chroma sine within 0.03 pixel of the right place
-but rebuilds the finest detail as a centered filter would, so the chart shows it as centered bicubic, while the
-decode test in [Reading back to RGB](#reading-back-results), which blurs before it measures, sees it as co-sited.
-
-### What players do
-
-Measured on macOS 26 (Apple M2), from window screenshots at 1:1 (`screencapture -o -l`), with
-`tests/chroma_siting_player_chart.py --capture`; Safari, OpenRV and xStudio were also checked by eye.
-
-| Player | ProRes 422 HQ,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | HEVC 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) | H.264 4:2:2,<br>should be co-sited ([BT.709 item 4.3](https://www.itu.int/rec/R-REC-BT.709)) |
-| :--- | :--- | :--- | :--- |
-| Safari 26.6.2 | **None uniform**: nearest sample, see below | Co-sited (correct) | Co-sited (correct) |
-| Chrome 156 | Does not play | Co-sited (correct) | **Centered, linear** |
-| Firefox 152 | Does not play | **None uniform**: vertical chroma also lost, as in 4:2:0 | Does not play |
-| OpenRV 3.1.0 | **Centered, linear** | **Centered, linear** | **Centered, linear** |
-| xStudio 1.4.0 | **Left half co-sited, right half sample repeat** | the same | the same |
-
-FFmpeg, measured on the FFV1 copy with `python tests/chroma_siting_player_chart.py`:
-
-| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
-| :--- | :--- | :--- |
-| `zscale` | Co-sited | Co-sited |
-| No filter, to packed RGB (PNG, `rgb24`, `rgb48`) | **Sample repeat** | **Centered, bicubic** (finest detail only, see above) |
-| No filter, to planar RGB (`gbrp16le`) | **Centered, bicubic** | Co-sited (the file is tagged `left`) |
-| `scale=flags=bilinear+full_chroma_int` | **Centered, linear** | Co-sited |
-| `scale=flags=bicubic+full_chroma_int`, `lanczos+full_chroma_int` | **Centered, bicubic** | Co-sited |
-
-Notes on the players:
-
-* **Chrome** shows HEVC correctly but not H.264 4:2:2. A likely explanation, not confirmed, is that HEVC is
-  decoded and displayed by macOS, while 10-bit 4:2:2 H.264 is decoded in software and converted by Chrome
-  itself. Edge (the same engine) was not measured.
-* **Safari's ProRes** path takes each odd column's chroma from the nearest sample, but every odd column is exactly
-  halfway between two samples, so floating-point rounding decides which one it gets. It switches between left and
-  right in runs, which show as vertical stripes, and along a diagonal where the two triangles that draw the video
-  frame meet. Over an area this is close to right (the top band is nearly uniform), but every odd pixel is wrong.
-  The pattern also changes depending on whether the window is in front, and only one state can be captured.
-
-  ![Safari, ProRes: stripes and a diagonal seam in the centered linear band, at 1:1](static/chroma-siting/player_chart_safari_prores.png)
-* **Firefox** keeps the horizontal siting but smears the chroma vertically, so the reference blocks are wrong too.
-* **OpenRV** stores the file's chroma placement but does not use it: its shader samples the half-width chroma
-  texture with linear filtering, which is centered.
-* **xStudio** interpolates 10/12-bit 4:2:2 chroma correctly, but a bounds check in its YUV shader stopped it at
-  the middle of the picture, and the right half repeats each sample. The same happens with VideoToolbox and with
-  FFmpeg decoding. A [fix](https://github.com/AcademySoftwareFoundation/xstudio/pull/361) has been made (`image_coord.x*2 < frame_width_pixels` becomes `image_coord.x + 1 <
-  frame_width_pixels` in `src/plugin/media_reader/ffmpeg/src/ffmpeg.cpp`) but is not yet merged. Its 8-bit path
-  always repeats each sample.
-
-  | xStudio 1.4.0: the top band changes half way across | With the fix |
-  | :--- | :--- |
-  | ![xStudio before the fix, from a distance](static/chroma-siting/player_chart_distance_xstudio_before.png) | ![xStudio after the fix, from a distance](static/chroma-siting/player_chart_distance_xstudio_after.png) |
-
-### Does the player read the label? {#reading-the-label}
-
-MOV and MP4 have nowhere to record 4:2:2 siting, so with those files a player can only use its own assumption,
-which is what the table above shows. Matroska and MXF can record it (see
-[What each format records](#recorded-details)). To see whether a player reads that label,
-there is a second copy of each with the same co-sited pixels and a label that says centered:
-
-* [chroma_siting_player_chart_422-lossless.mkv](sourceimages/chroma_siting_player_chart_422-lossless.mkv) is labelled `left` (co-sited); [-labelled-center.mkv](sourceimages/chroma_siting_player_chart_422-labelled-center.mkv) is labelled `center`.
-* [-dnxhr.mxf](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/raw/main/sourceimages/chroma_siting_player_chart_422-dnxhr.mxf) has `ColorSiting` 0 (co-sited); [-dnxhr-labelled-center.mxf](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/raw/main/sourceimages/chroma_siting_player_chart_422-dnxhr-labelled-center.mxf) has `ColorSiting` 1 (horizontal
-  mid-point, ST 377-1's value for centered 4:2:2). FFmpeg cannot write 1 (it writes 3 for `center`, a 4:2:0
-  value), so the generator patches that byte.
-
-A player that ignores the label shows the same band for both files of a pair. One that reads it shows a centered
-band for the mislabelled file, which is the right thing to do with a label even when, as here, the label is wrong.
-
-| Player | MKV `left` / `center` | MXF `ColorSiting` 0 / 1 |
-| :--- | :--- | :--- |
-| FFmpeg `zscale` (9.0.2, 9.1.dev) | Co-sited / centered linear: **reads it** | Co-sited / co-sited: does not read it |
-| FFmpeg, no filter, to planar RGB, 9.0.2 | Centered bicubic / centered bicubic: ignores it | Centered bicubic / centered bicubic |
-| FFmpeg, no filter, to planar RGB, 9.1.dev | Co-sited / centered bicubic: **reads it** | Centered bicubic / centered bicubic: no label, so assumes centered |
-| OpenRV 3.1.0 | Centered linear / centered linear: ignores it | Centered linear / centered linear: ignores it |
-
-FFmpeg does not read MXF's `ColorSiting` at all, so neither does anything built on it. An MXF reader that does,
-such as an edit or broadcast system, can be checked with the MXF pair; we have not tested one. Remember also that
-FFmpeg writes 6 ("vertical midpoint", a 4:2:0 value) for 4:2:2 frames tagged `left`
-([DNxHR in MXF](#dnxhr-in-mxf)), which such a reader might take literally.
-
-What a browser draws into a `<canvas>` (`drawImage`) is not what it shows on screen: Safari's canvas was correct
-for ProRes and Chrome's was wrong for HEVC, the reverse of the screen. So a page that reads the video back cannot
-measure a browser; use screenshots, or your eyes.
-
-## The 4:2:0 chart {#chart-420}
-
-4:2:0 halves the chroma down as well as across, and the two can be wrong independently, so its chart has two
-pairs of bands. It is [chroma_siting_player_chart_420-hevc.mp4](sourceimages/chroma_siting_player_chart_420-hevc.mp4) (HEVC Main 10, which browsers play)
-and [-h264.mp4](sourceimages/chroma_siting_player_chart_420-h264.mp4) (8-bit H.264 High, the most common delivery format), with a lossless FFV1 copy in
-[chroma_siting_player_chart_420-lossless.mkv](sourceimages/chroma_siting_player_chart_420-lossless.mkv), made by [make_chroma_siting_player_chart_420.py](sourceimages/make_chroma_siting_player_chart_420.py). Read it the
-same way (exactly 100%, the same scale check, from a distance), but expect two uniform bands, one per pair:
-
-| Band | Uniform when the player treats the chroma as | Right for |
-| :--- | :--- | :--- |
-| Across: co-sited | co-sited across | H.264, HEVC, AV1 and BT.2020 4:2:0 |
-| Across: centered | centered across (also sample repeat) | JPEG, MPEG-1 |
-| Down: centered ("left") | centered down | H.264, HEVC and AV1 by default (FFmpeg's `left`) |
-| Down: co-sited ("topleft") | co-sited down | BT.2020, and files tagged `topleft` |
-
-So an ordinary H.264 or HEVC file should give "Across: co-sited" and "Down: centered". From a distance, decoded by
-`zscale` (left, correct) and by libswscale on 9.0 (right, centered both ways):
-
-| `zscale`: across co-sited, down centered | libswscale: across centered, down centered |
-| :--- | :--- |
-| ![The 4:2:0 chart from a distance, decoded with zscale](static/chroma-siting/player_chart_420_distance_zscale.png) | ![The 4:2:0 chart from a distance, decoded with libswscale](static/chroma-siting/player_chart_420_distance_libswscale.png) |
-
-**How it works.** There is no direction in which 4:2:0 holds a reference block exactly, so each band compares a
-striped pattern with its mirror image instead. The stripes run one way only (vertical stripes test across,
-horizontal ones test down), so the other direction does not matter. If the mirror passes through a chroma sample,
-any player that treats the samples as co-sited, with any symmetric filter, rebuilds the mirrored block as the
-exact mirror image of the original: the two contain the same pixels and the band is uniform. A player that thinks
-the samples are centered pairs luma and chroma differently in the two blocks, and the checkerboard shows. Mirrored
-between two pixels instead, it is the other way round. The right band matches exactly whatever the filter, and
-the colors were chosen so the wrong one differs by at least 0.065 (Oklab, linear light), all in gamut. Each band
-has its own colors, so a uniform band's color means nothing; only which bands are uniform does. Unlike the
-4:2:2 chart, it does not tell linear from bicubic; it only answers where the player thinks the samples are.
-
-The chroma in these files has no true position: the bands show what the player assumes, and which is right
-depends on the label. In 4:2:0, H.264 and HEVC can carry a chroma location in the VUI, so there are deliberately
-tagged copies with the same pixels: [-hevc-topleft.mp4](sourceimages/chroma_siting_player_chart_420-hevc-topleft.mp4), [-hevc-center.mp4](sourceimages/chroma_siting_player_chart_420-hevc-center.mp4), [-h264-topleft.mp4](sourceimages/chroma_siting_player_chart_420-h264-topleft.mp4) and
-[-h264-center.mp4](sourceimages/chroma_siting_player_chart_420-h264-center.mp4). A player that reads the tag should switch to "Down: co-sited" for `topleft`, and to "Across:
-centered" for `center`. The H.264 files are 8-bit, so that browsers play them; [-h264-10bit.mp4](sourceimages/chroma_siting_player_chart_420-h264-10bit.mp4) (High 10, with
-[-topleft](sourceimages/chroma_siting_player_chart_420-h264-10bit-topleft.mp4) and [-center](sourceimages/chroma_siting_player_chart_420-h264-10bit-center.mp4) copies) and [-hevc-8bit.mp4](sourceimages/chroma_siting_player_chart_420-hevc-8bit.mp4) separate the codec from the bit depth in a player that
-treats them differently.
-
-Measured on macOS 26 (Apple M2) from window screenshots at 1:1, as for 4:2:2. Each file should be shown as its tag
-says, and an untagged file as `left`, the [H.264](https://www.itu.int/rec/T-REC-H.264)/[H.265](https://www.itu.int/rec/T-REC-H.265) Annex E default. `left` is co-sited across and centered down,
-`topleft` co-sited both ways, `center` centered both ways:
-
-| Player | HEVC 10-bit, `left`,<br>should be `left` | HEVC 10-bit, `topleft`,<br>should be `topleft` | H.264 8-bit, untagged,<br>should be `left` | H.264 10-bit, untagged,<br>should be `left` | H.264 8-bit, `topleft`,<br>should be `topleft` | H.264 8-bit, `center`,<br>should be `center` |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Safari 26.6.2 | Correct | Follows the tag | Correct | Correct | **Centered both ways** | Follows the tag |
-| Chrome 156 | Correct | Follows the tag | Correct | **Centered across** | **Centered both ways** | Follows the tag |
-| Firefox 152 | Correct | **Ignores the tag** | Correct | Correct | **Ignores the tag** | **Ignores the tag** |
-| OpenRV 3.1.0 | **Centered across** | **Centered both ways** | **Centered across** | **Centered across** | **Centered both ways** | Centered both ways |
-| xStudio, with the 4:2:2 fix | Correct | **Ignores the tag** | **Centered across** | Correct | **Ignores the tag** | not tested |
-
-All of them play 10-bit H.264, but Chrome shows it centered
-across, though it gets 8-bit H.264 right. Otherwise Safari and Chrome agree, including an H.264 file tagged
-`topleft` coming out centered both ways, which matches neither the tag nor the default; both decode H.264 and HEVC
-through macOS, which is the likely common cause, but that is not confirmed. In xStudio it is the bit
-depth, not the codec, that matters: 10-bit H.264 is correct and 8-bit HEVC is centered across. Its shader averages
-neighboring chroma samples across only in its 10/12-bit path, and repeats rows (centered down) in both; it ignored
-every tag we tried (HEVC `topleft` and `center`, 8-bit H.264 `topleft`, 10-bit H.264 `center`). OpenRV is centered
-both ways whatever the file says.
-
-The other tagged copies were measured later, with the HDR10 files (Safari 26.6.2 and Chrome 157, on the laptop's
-built-in screen; Chrome 157 gave the same results as 156 for the untagged and `topleft` HEVC files):
-
-* `-hevc-center.mp4`: both follow the tag (centered both ways).
-* `-h264-10bit-topleft.mp4`: both show it **centered both ways**, as with the 8-bit H.264 `topleft` file.
-* `-h264-10bit-center.mp4`: both show it centered both ways. In Safari that is following the tag, since it shows the
-  untagged 10-bit file correctly. In Chrome it proves nothing, since Chrome shows every 10-bit H.264 file centered
-  across, and centered down is the default anyway.
-
-FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-...`:
-
-| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
-| :--- | :--- | :--- |
-| `zscale` | Follows the tag (`left`, `topleft`, `center`) | Follows the tag |
-| No filter, to planar RGB | **Centered both ways**, whatever the tag | Follows the tag |
-| No filter, to packed RGB (PNG) | **Centered both ways**, whatever the tag | **Centered both ways**, whatever the tag (the finest detail; see [How it works](#how-it-works)) |
-| `scale=flags=...+full_chroma_int` | **Centered both ways** | Follows the tag |
-
-### The HDR10 copies {#chart-420-hdr10}
-
-HDR video often takes a different path through a player (tone mapping, macOS EDR, a TV's HDR mode), so the SDR
-results above do not necessarily carry over, and HDR10 is where the specifications disagree most (see
-[What specifications ask for](ChromaSiting.html#what-specifications-ask-for)). There is an HDR10 version of the 4:2:0 chart with
-the same bands: [chroma_siting_player_chart_420-hevc-pq.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq.mp4) (HEVC Main 10, BT.2020, PQ, with
-mastering display and content light level SEI), with a lossless FFV1 copy in [-pq-lossless.mkv](sourceimages/chroma_siting_player_chart_420-pq-lossless.mkv). There are three
-HEVC files with the same pixels; only the VUI differs:
-
-| File | VUI chroma location | Should show |
-| :--- | :--- | :--- |
-| [-hevc-pq.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq.mp4) | None (so `left`, the default) | Across: co-sited, Down: centered |
-| [-hevc-pq-left.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq-left.mp4) | 0 (`left`), written explicitly | Across: co-sited, Down: centered |
-| [-hevc-pq-topleft.mp4](sourceimages/chroma_siting_player_chart_420-hevc-pq-topleft.mp4) | 2 (`topleft`), as Ultra HD Blu-ray, ATSC 3.0 and DVB BT.2020 use | Across: co-sited, **Down: co-sited** |
-
-A player that shows `-hevc-pq-topleft.mp4` the same as the other two ignores the tag, and would show `topleft`
-HDR10 material with the color half a line too low.
-
-The colors had to be chosen again for PQ. Every pixel is between 1 and 100 cd/m<sup>2</sup> (MaxCLL 100, MaxFALL
-31) and inside the BT.709 gamut. So no display tone maps it, gamut maps it, or crushes it into its black level, and
-a screenshot does not clip it. The wrong band differs by at least 0.071 in Oklab, against 0.065 for the SDR chart.
-[`chroma_siting_420_colours.py`](sourceimages/chroma_siting_420_colours.py) checks both sets of colors with the same player models, and found the
-PQ ones (`--search --seed 3`).
-
-**Viewing it:**
-
-* Use an HDR display in its HDR mode, and keep the player window entirely on that display. On a Mac with external
-  SDR monitors, a window on (or partly on) an SDR screen is tone mapped to SDR. Disconnecting the other displays
-  removes any doubt.
-* It still has to be shown at exactly 100%, with the same scale check. On a Retina laptop screen at its default
-  scaling a 1920x1080 frame at 100% is 3840 screen pixels wide and does not fit. Switch the display to its native
-  resolution, without HiDPI (System Settings > Displays > Advanced > Show resolutions as list, then Show all
-  resolutions), so one image pixel is one screen pixel.
-* On a TV, turn off dynamic tone mapping, sharpening and noise reduction, and use a mode with no picture
-  processing (Filmmaker or Cinema mode). Play the file from USB or a media server; the TV's own player is often
-  what you want to test.
-
-FFmpeg, with `python tests/chroma_siting_player_chart.py --chart sourceimages/chroma_siting_player_chart_420-hevc-pq...`
-(the script uses the PQ EOTF for files with `-pq` in the name), on 6.1.6, 9.0.2 and 9.1.dev, gives the same
-answers as for the SDR chart:
-
-| Conversion | 6.1.6 and 9.0.2 | 9.1.dev |
-| :--- | :--- | :--- |
-| `zscale` | Follows the tag (`left`, `topleft`) | Follows the tag |
-| No filter, to planar RGB | **Centered both ways**, whatever the tag | Follows the tag |
-
-Measured on macOS 26.6.2 (Apple M2 Max, built-in Liquid Retina XDR display at its native 3024x1964, no other
-displays) from full-screen screenshots, analyzed with `--420 --capture`. OpenRV and xStudio are left out: they do
-not display HDR.
-
-| Player | `-hevc-pq.mp4`,<br>should be `left` | `-hevc-pq-left.mp4`,<br>should be `left` | `-hevc-pq-topleft.mp4`,<br>should be `topleft` |
-| :--- | :--- | :--- | :--- |
-| Safari 26.6.2 | Co-sited across; **down: neither** | Co-sited across; **down: neither** | Follows the tag |
-| Chrome 157 | Co-sited across; **down: neither** | Co-sited across; **down: neither** | Follows the tag |
-| Firefox 159 | Correct | Correct | **Ignores the tag** (shown as `left`) |
-| QuickTime Player 10.5 | Co-sited across; **down: neither** | Co-sited across; **down: neither** | Follows the tag |
-| A TV's own player | not yet tested | not yet tested | not yet tested |
-
-Safari, Chrome and QuickTime Player agree, as Safari and Chrome do for SDR, so the cause is probably the macOS
-HDR video path they share (not confirmed). Across is right in every file, and a `topleft` tag is followed exactly. But the untagged and `left`
-files, which should be centered down, match neither: both "Down" bands keep a faint checkerboard, at about a
-quarter (centered band) and a third (co-sited band) of the contrast of a wrong band, so the chroma is placed
-between the two positions or blurred vertically; we have not worked out which. The same SDR files, captured the
-same way, came out right, and the SDR `topleft` file followed its tag (QuickTime Player as well). So on a Mac,
-HDR10 tagged `topleft` is shown as intended by these three, and HDR10 at the H.264/HEVC default is not. Firefox is
-the opposite: it shows HDR10 as `left` whatever the tag, which is right for the untagged and `left` files and wrong
-for `topleft`. In SDR, Firefox also ignored the HEVC `center` and 10-bit H.264 `topleft` and `center` tags.
-
-## Checking the pixels {#pixel-chart}
-
-The charts above depend on display gamma and the eye. To check their answer directly, or to show that a particular
-player is wrong, there are also tiny 64x64 charts to zoom in on. In each, the luma is flat gray and single chroma
-samples are raised, so the only thing that can spread the color is the player's chroma reconstruction:
-
-| The player assumes | Weight of the sample in the columns tick-1, tick, tick+1, tick+2 | The color is centered |
-| :--- | :--- | :--- |
-| Co-sited, interpolated | .5, 1, .5, 0 | **on the tick** |
-| Centered, linear | .25, .75, .75, .25 | between the tick and the next column |
-| Sample repeat | 0, 1, 1, 0 | between the tick and the next column |
-
-The long ticks in the luma rulers mark the column (and, in 4:2:0, the row) of the raised sample; the short ones mark
-every chroma site. There are three cells across, so a fault in only part of the picture shows. For 4:2:0 the same
-reading applies down the picture against the left ruler, where the `left` default is centered *between* the tick and
-the next row.
-
-Open the test file and its reference in the same player and flip between them at the same zoom. The reference is
-4:4:4, so the player has no chroma to reconstruct, and it goes through the same view transform. These are the
-references, enlarged:
-
-| 4:2:2: one assumption per row | 4:2:0: across by column, down by row |
-| :--- | :--- |
-| ![The 4:2:2 reference: co-sited, centered linear and sample repeat](static/chroma-siting/pixel_chart_422_reference.png) | ![The 4:2:0 reference: three assumptions across, by three down](static/chroma-siting/pixel_chart_420_reference.png) |
-
-Most of each reference shows what wrong players do. Only the top row of the 4:2:2 reference and the top-left square of
-the 4:2:0 reference are correct for H.264, HEVC, ProRes and DNxHD/DNxHR. A correct player makes every cell of the test
-file look like that:
-
-| 4:2:2: what a correct player shows | 4:2:0: what a correct player shows |
-| :--- | :--- |
-| ![Every 4:2:2 cell co-sited: three columns wide, the brightest on the tick](static/chroma-siting/pixel_chart_422_correct.png) | ![All nine 4:2:0 cells co-sited across and centered down](static/chroma-siting/pixel_chart_420_correct.png) |
-
-These are the exact pixels, enlarged without smoothing. They match the test files decoded with `zscale` to within about
-1 code value in 10 bits, or about one 8-bit code for the 8-bit files (FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and the 9.1
-development build, N-127508).
-
-The files are in `sourceimages/`, lossless FFV1 in Matroska, so they are for desktop players and not browsers:
-[_422-10bit.mkv](sourceimages/chroma_siting_pixel_chart_422-10bit.mkv), [_422-8bit.mkv](sourceimages/chroma_siting_pixel_chart_422-8bit.mkv), [_420-10bit.mkv](sourceimages/chroma_siting_pixel_chart_420-10bit.mkv), [_420-8bit.mkv](sourceimages/chroma_siting_pixel_chart_420-8bit.mkv), and
-[_422-reference.mkv](sourceimages/chroma_siting_pixel_chart_422-reference.mkv), [_420-reference.mkv](sourceimages/chroma_siting_pixel_chart_420-reference.mkv).
-
-How a player zooms matters:
-
-* **xStudio** computes each image pixel in its shader, so any zoom shows the real values. Trust the screen, not the
-  pixel probe: the probe is separate code, and did not have the half-width bug that the screen did.
-* **OpenRV** applies its filter setting (`n` toggles it) to the chroma planes as well as the luma. Under Linear, the
-  default, a zoomed view is smooth, but the peak of the color is where the chroma is. Under Nearest the chroma
-  becomes sample repeat across, which is not what RV shows at normal playback, although the color is still centered
-  half a pixel to the right. Down the picture, 8-bit 4:2:0 is repeated too, but 10-bit 4:2:0 stays blended, so the two
-  look different (OpenRV 3.1.0). Check the chroma position, not the pixel shapes, or use Linear.
-
-Players were measured on macOS 26 (Apple M2) from window screenshots, sampled at the center of each image pixel, with
-`tests/chroma_siting_pixel_chart.py --capture`. FFmpeg was measured by the same script on 6.1.6, 7.1.5, 8.1, 9.0.2 and
-the 9.1 development build (N-127508); the results are the same on all of them except where a row says so:
-
-| Player or conversion | 4:2:2 10-bit | 4:2:2 8-bit | 4:2:0 10-bit | 4:2:0 8-bit |
-| :--- | :--- | :--- | :--- | :--- |
-| `zscale` | Co-sited | Co-sited | Co-sited across, centered down | Co-sited across, centered down |
-| No filter, to planar RGB, up to 9.0.2 | **Centered** | **Centered** | **Centered both ways** | **Centered both ways** |
-| No filter, to planar RGB, 9.1.dev (the files are tagged `left`) | Co-sited | Co-sited | Co-sited across, centered down | Co-sited across, centered down |
-| No filter, to packed RGB | **Sample repeat** (see below for 9.1.dev) | **Sample repeat** | **Repeat across**, centered down (see below for 9.1.dev) | **Repeat both ways** |
-| OpenRV 3.1.0 (Linear) | **Centered** | **Centered** | **Centered both ways** | **Centered both ways** |
-| xStudio, with the 4:2:2 fix | Co-sited | **Sample repeat** | Co-sited across, repeat down | **Repeat both ways** |
-| xStudio 1.4.0 | **Co-sited at x=16, mixed at 32, repeat at 48** | **Sample repeat** | **Across as for 4:2:2**, repeat down | **Repeat both ways** |
-
-Wherever a larger chart covers the same case the two agree, so each confirms the other (the 4:2:2 chart has no
-8-bit version, so 8-bit 4:2:2 is only measured here). 10-bit to packed RGB is the exception on 9.1.dev: sample repeat
-is still the nearest of the patterns this chart models, but it is a poor match, and the 4:2:2 player chart reads that
-conversion as centered bicubic. "Repeat down" puts the 4:2:0
-chroma in the right place for H.264 and HEVC (centered between the rows) but without interpolating it.
+## Checking players {#players}
+
+Players and browsers make the same choice when they display 4:2:x, and most of them cannot be measured from a
+script. There are three sets of test files for them, each with its own page:
+
+* [Chroma Siting Check](sourceimages/chroma_siting_check/README.html): small files, one per label, codec and
+  orientation, including HDR10 and rotated copies, with a [viewer page](sourceimages/chroma_siting_check/view.html).
+  A player that follows the label shows a blank field, any other shows the word **WRONG**. Start here.
+* [4:2:2 Player Chart](ChromaSitingPlayerChart.html): full HD, for what a 4:2:2 player does instead (centered linear,
+  centered bicubic, or sample repeat), and whether it reads the MKV and MXF labels.
+* [Pixel Charts](ChromaSitingPixelChart.html): 64x64 charts to zoom in on, to show single pixels.
 
 ## How this was tested
 
@@ -500,6 +137,7 @@ Each script measures whichever `ffmpeg` is on the `PATH` (or `FFMPEG_BIN` and `F
 FFmpeg version with `--label`, then `--summarize` combines the runs into the script's `summary.md`. With a rez
 setup that has an `ffmpeg-<version>` package per version, `--rez 6.0 7.0 ...` does both. The scripts need numpy
 and the OpenImageIO Python bindings (`requirements.txt`).
+The combined results for every version are on [Chroma Siting by Version](FFmpegChangesChromaSiting.html).
 
 The same measurements, and the reverse direction, are also part of the encoding test framework, so they are re-run
 for each FFmpeg version (`enctests/test_configs/chroma_siting_tests.yml` and `decode_siting_tests.yml`). For the
@@ -507,12 +145,6 @@ reverse direction, [make_chroma_siting_sources.py](sourceimages/make_chroma_siti
 and stores it as FFV1 in Matroska. The decoded RGB is converted back to full-resolution chroma, and compared with
 the ideal chroma of the chart shifted by a fraction of a pixel; the shift that matches best is how far the
 decoder moved the chroma. Both are blurred first, so the converter's own filter does not affect the result.
-
-The player chart is measured with `tests/chroma_siting_player_chart.py`: on its own it decodes the FFV1 copy with
-`zscale` and libswscale; with `--capture` it reads screenshots instead. For each band it gives the difference
-between the test and reference blocks as they would look from a distance (Oklab distance between their
-linear-light means), the scale check, and, for the top band, which blocks match pixel for pixel, left to right,
-which is how the xStudio bug showed.
 
 ## Where this is specified
 

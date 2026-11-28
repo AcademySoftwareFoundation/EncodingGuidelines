@@ -125,7 +125,7 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.exr -pix_fmt yuv420p10le \
 | **zscale=...,setparams=...** | The same conversion and tags as the [command above](#h264-encoding-from-an-image-sequence-for-web-review). `setparams` matters even more here: FFmpeg tags EXR frames as linear, and the OCIO filter does not change the tags. |
 
 This needs an FFmpeg built with OCIO (`ffmpeg -filters | grep ocio`); the [Conan recipes](conan/README.html)
-in this repository build one. On FFmpeg 8.1, 9.0.2 and 9.1-dev, the result matched converting the same frames with
+in this repository build one. On FFmpeg 8.1, 9.0.2 and 9.1, the result matched converting the same frames with
 `oiiotool --ociodisplay` and then using the command above, to within 1 code value at 10-bit.
 
 For more details, including HDR, resizing, and slates and burn-ins, see [FFmpeg OCIO Filter](FfmpegOcio.html).

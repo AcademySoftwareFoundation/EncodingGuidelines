@@ -45,7 +45,7 @@ Has no support in web browsers, but there is limited support in players such as 
 The x264 library can encode RGB, but FFmpeg only offers it through the separate `libx264rgb` encoder (`bgr0`, `bgr24`
 or `rgb24` in, stored as `gbrp`). `-c:v libx264` has no RGB pixel formats: asking it for `-pix_fmt rgb24` or `gbrp`
 does not fail, it logs "Incompatible pixel format ... auto-selecting format 'yuv444p'" and writes Y'CbCr 4:4:4 instead.
-Tested on FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and a 9.1 development build.
+Tested on FFmpeg 6.1.6, 7.1.5, 8.1, 9.0.2 and 9.1.
 
 ## mjpeg RGB Encoding
 
@@ -93,8 +93,8 @@ ffmpeg -r 24 -start_number 1 -i inputfile.%04d.png -frames:v 200 -c:v libvpx-vp9
 
 These are the settings behind the graphs below, kept as a record of that comparison. Do not copy them: from
 FFmpeg 7.1 `-color_primaries` and `-color_trc` are ignored, so the files have no primaries or transfer (measured with
-the same flags and filter on `libx265` `gbrp10le`: tagged on 6.1.6 and 7.0, untagged on 7.1.5, 8.1, 9.0.2 and a 9.1
-development build). Set them with `setparams`, as in the [VP9 example](#vp9-rgb-encoding).
+the same flags and filter on `libx265` `gbrp10le`: tagged on 6.1.6 and 7.0, untagged on 7.1.5, 8.1, 9.0.2 and 9.1).
+Set them with `setparams`, as in the [VP9 example](#vp9-rgb-encoding).
 
 | *label* | *Codec Params* |
 | --- | --- |

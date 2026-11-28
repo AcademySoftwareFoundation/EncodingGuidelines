@@ -774,7 +774,7 @@ test_colormatch_zscale:
       string: nclx 1/13/1 tv
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 114
+  description: Test from ../ColorPreservation.md line 115
   app: ffmpeg
   wedges:
     wedge0:
@@ -807,7 +807,7 @@ test_colormatch_libswscale:
       less: 5
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 158
+  description: Test from ../ColorPreservation.md line 159
   app: ffmpeg
   wedges:
     wedge0:
@@ -840,7 +840,7 @@ test_colormatch_colorspace:
       less: 5
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 197
+  description: Test from ../ColorPreservation.md line 230
   app: ffmpeg
   wedges:
     wedge0:
@@ -870,7 +870,7 @@ test_colormatch_raw:
       - 12
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 235
+  description: Test from ../ColorPreservation.md line 254
   app: ffmpeg
   wedges:
     wedge0:
@@ -919,7 +919,7 @@ test_fullrange:
       string: nclx 1/13/1 pc
   encoding_template: 'ffmpeg -y {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mp4
-  description: Test from ../ColorPreservation.md line 309
+  description: Test from ../ColorPreservation.md line 330
   app: ffmpeg
   wedges:
     wedge0:
@@ -1003,7 +1003,7 @@ test_pq1000:
       string: smpte2084
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../enctests/HDR_Encoding.md line 316
+  description: Test from ../enctests/HDR_Encoding.md line 385
   app: ffmpeg
   wedges:
     wedge0:
@@ -1045,7 +1045,7 @@ test_hlg:
       string: arib-std-b67
   encoding_template: 'ffmpeg {input_args} -i {source} {encoding_args} -y {outfile} '
   suffix: .mov
-  description: Test from ../enctests/HDR_Encoding.md line 452
+  description: Test from ../enctests/HDR_Encoding.md line 521
   app: ffmpeg
   wedges:
     wedge0:
