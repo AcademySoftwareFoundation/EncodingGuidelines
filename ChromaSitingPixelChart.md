@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Chroma Siting Pixel Charts
-nav_order: 5.88
+nav_order: 6.97
 parent: Test Output
 ---
 

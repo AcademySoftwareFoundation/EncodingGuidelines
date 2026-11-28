@@ -245,26 +245,11 @@ from 8.1; that is a change in what the decoder reports, not in the file.
 ## libswscale white level for high-bit-depth input
 
 Converting full-range RGB to limited-range Y'CbCr, libswscale (the `scale` filter, and the `scale` that
-`ffmpeg` inserts automatically) puts white above the specification value when the source is more than 8 bits.
-This has not changed in any version from 6.0 to 9.0:
-
-| Source | Output | `scale` | `scale=...:flags=unstable` (8.1+) | `zscale` | Specification |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| 8-bit RGB | 10-bit | 940 | 940 | 940 | 940 |
-| 10-bit RGB | 10-bit | **943** | 940 (4:4:4 only) | 940 | 940 |
-| 10-bit RGB | 12-bit | **3770** | 3760 (4:4:4 only) | 3760 | 3760 |
-| 16-bit RGB | 12-bit | **3774** | 3760 (4:4:4 only) | 3760 | 3760 |
-
-* The error is in luma and grows with brightness and bit depth: up to 3 code values at 10-bit and 14 at 12-bit.
-* **8-bit sources are not affected**, which is why tests with 8-bit images do not show it.
-* `-sws_flags spline+accurate_rnd+full_chroma_int` makes no difference to it.
-* `flags=unstable` (8.1 and later) fixes it for 4:4:4 output only. For 4:2:2 and 4:2:0, the output is identical
-  to plain `scale`.
-* `zscale` was exact for every combination we tested: 8-, 10- and 16-bit RGB to 8-, 10- and 12-bit Y'CbCr, in
-  4:4:4, 4:2:2 and 4:2:0.
-
-See [FFmpeg swscale Filter](EncodeSwsScale.html#color-conversion-use-zscale) for
-more on the cause.
+`ffmpeg` inserts automatically) puts white above the specification value when the source is more than 8 bits:
+10-bit RGB to 10-bit Y'CbCr puts 100% white at 943 instead of 940. This is not a version change: it is the same on
+every version from 6.0 to 9.1. 8-bit sources are not affected, `zscale` is exact, and `scale=...:flags=unstable`
+(8.1 and later) fixes it for 4:4:4 output only. The measurements at each bit depth are in
+[FFmpeg swscale Filter](EncodeSwsScale.html#color-conversion-use-zscale).
 
 Thanks to John Joumaa for reporting this.
 

@@ -42,7 +42,7 @@ the same result.
 
 ```console
 export OCIO=ocio://studio-config-v1.0.0_aces-v1.3_ocio-v2.1 # A built-in config (OCIO 2.2 or newer), or the path to your own config.
-oiiotool --parallel-frames --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize 1920x0 \
+oiiotool --parallel-frames --framepadding 5 --frames 1-100 sourcefilename_acescg.#.exr --resize:highlightcomp=1 1920x0 \
        --ociodisplay "sRGB - Display" "ACES 1.0 - SDR Video" -d uint16 --cicp "1,13,0,1" -o outputimage.#.png
 ```
 
@@ -51,7 +51,7 @@ oiiotool --parallel-frames --framepadding 5 --frames 1-100 sourcefilename_acescg
 | `--parallel-frames` | Process several frames at once rather than one after another. In our tests (24 UHD EXRs to HD PNGs, Apple M2) it was 3.7 times faster, with identical pixels. |
 | `--frames 1-100` | The frame range of the source media. |
 | `--framepadding 5` | Set the frame padding to 5 (i.e. outputimage.00001.png) |
-| [`--resize 1920x0`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-resize) | Resize the image so that the width is 1920 wide, and adjust the height so that the aspect ratio stays the same. (Note you may want to use [`--fit`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-fit) too). This uses the lanczos3 filter for decreasing resolution, and the blackman-harris filter for increasing it. Where in the chain to resize, and in which color space, is covered on the [Downscaling](Resizing.html) page. |
+| [`--resize:highlightcomp=1 1920x0`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-resize) | Resize the image so that the width is 1920 wide, and adjust the height so that the aspect ratio stays the same. (Note you may want to use [`--fit`](https://openimageio.readthedocs.io/en/master/oiiotool.html?highlight=resize%20filter#cmdoption-fit) too). This uses the lanczos3 filter for decreasing resolution, and the blackman-harris filter for increasing it. The resize is done before the view transform, in scene-linear light; `highlightcomp=1` compresses values above 0.18 before filtering and expands them afterwards, which stops lanczos leaving dark halos around bright highlights, at the cost of slightly dimmer highlights and fine detail. Resizing in a log space such as ACEScct is the other common choice; see [Downscaling](Resizing.html#scene-linear-openexrs). |
 | `--ociodisplay "sRGB - Display" "ACES 1.0 - SDR Video"` | Apply the ACES display and view transform for an sRGB monitor, as a review tool would. |
 | `-d uint16` | Write 16-bit files rather than the 8-bit default. 16-bit intermediates make the RGB to Y'CbCr conversion more accurate, even for 8-bit encodes. |
 | `--cicp "1,13,0,1"` | Tag the PNG files as BT.709 primaries with the sRGB transfer function (see [below](#tagging-the-frames-with---cicp)). |

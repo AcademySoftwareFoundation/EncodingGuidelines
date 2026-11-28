@@ -34,58 +34,74 @@ use it.
 {: .warning }
 > libswscale has a systematic bias when converting between full range and limited (studio) range from 10-bit and
 > higher sources: the result is slightly too bright. Use `zscale` for range and matrix conversions. This is not fixed
-> in any release up to and including FFmpeg 9.0. The opt-in `scale=…:flags=unstable` (8.1 and later) fixes it for
-> 4:4:4 output only; that new code is still under development, and should eventually be faster than both `zscale`
-> and the current libswscale.
+> in any release up to and including FFmpeg 9.1.
 
-Converting full-range RGB white to limited-range Y'CbCr from a 10-bit or 16-bit source, `scale` puts white above the
-value the specification calls for, at every output bit depth (8-bit sources are not affected; see
-[FFmpeg Version Changes](FFmpegChanges.html#libswscale-white-level-for-high-bit-depth-input)):
+This is the detailed table; the other pages give the 10-bit figure and link here. Converting full-range RGB white
+to limited-range Y'CbCr, `scale` puts white above the value the specification calls for whenever the source is
+more than 8 bits, at every output bit depth. The 100% white patch of the SMPTE RP 219 bars, on every version from
+6.0 to 9.1:
 
-| Output bit depth (16-bit source) | scale (libswscale) | zscale | BT.709 specification |
-| :--- | :--- | :--- | :--- |
-| 8-bit | 236 | 235 | 235 |
-| 10-bit | 943 | 940 | 940 |
-| 12-bit | 3774 | 3760 | 3760 |
+| Source | Output | `scale` | `scale=...:flags=unstable` (8.1+) | `zscale` | BT.709 specification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 8-bit | 8-bit | 235 | 235 | 235 | 235 |
+| 8-bit | 10-bit | 940 | 940 | 940 | 940 |
+| 16-bit | 8-bit | 235 | 235 | 235 | 235 |
+| 10-bit | 10-bit | **943** | 940 (4:4:4 only) | 940 | 940 |
+| 16-bit | 10-bit | **943** | 940 (4:4:4 only) | 940 | 940 |
+| 10-bit | 12-bit | **3770** | 3760 (4:4:4 only) | 3760 | 3760 |
+| 16-bit | 12-bit | **3774** | 3760 (4:4:4 only) | 3760 | 3760 |
 
-The error is one-sided and largest in luma, growing with brightness; black is correct. The chroma gain is slightly
-too high as well (up to 2 code values at 10-bit; see [RGB to Y'CbCr Conversion](ColorPreservation.html#zscale-filter)).
-It is a gain error, not rounding noise: libswscale derives the scale factor as a ratio of full scale rather than as
-the bit-shifted narrow-range span. The same bias appears in the other direction: limited-range Y'CbCr white (940 at
-10-bit) comes back as 65283 in 16-bit RGB with `scale`, where the specification calls for 65535 (`zscale` gives
-65472, the difference being how a 10-bit value is expanded to 16 bits). One code value is below the threshold of
-visibility in a single pass, but the error is systematic, it accumulates over round trips, and it grows with bit
-depth. You can see it in the [Y'CbCr conversion comparison](tests/chip-chart-yuvconvert/compare.html#src=bars&a=splinecolormatrix&b=zscale&mode=wipe&zoom=0)
-with the pixel probe on the 100% white patch.
-
-- **Affected**: any conversion that produces limited range. That includes `out_range=tv`, and it includes leaving
-  the range unset, because FFmpeg defaults to limited range for Y'CbCr output.
-- **Full range depends on the version**: RGB to full-range Y'CbCr (`out_range=full`) was exact up to FFmpeg 7.1, but
-  from 8.0 it is about 3 code values too bright at 10-bit; see
+- **The error is a gain error**, not rounding noise: one-sided, largest in luma and growing with brightness; black
+  is correct. The worst errors from a 16-bit source are 3 / 2 / 2 code values (Y'/Cb/Cr) at 10-bit and 14 / 7 / 7
+  at 12-bit. libswscale derives the scale factor as a ratio of full scale rather than as the bit-shifted
+  narrow-range span.
+- **8-bit sources are not affected**, which is why tests with 8-bit images do not show it. Neither
+  `-sws_flags spline+accurate_rnd+full_chroma_int` nor any other flag changes it.
+- **It works in both directions**: limited-range Y'CbCr white (940 at 10-bit) comes back as 65283 in 16-bit RGB
+  with `scale`, where the specification calls for 65535 (`zscale` gives 65472, the difference being how a 10-bit
+  value is expanded to 16 bits).
+- **It applies whenever the output is limited range**, including when the range is left unset, because FFmpeg
+  defaults to limited range for Y'CbCr output.
+- **Full range depends on the version**: RGB to full-range Y'CbCr (`out_range=full`) was exact up to FFmpeg 7.1,
+  but from 8.0 it is about 3 code values too bright at 10-bit; see
   [FFmpeg Version Changes](FFmpegChanges.html#libswscale-full-range-80).
-- **Not a workaround**: the `unstable` flag ("allow experimental new code") corrects the range scaling, but only for
-  4:4:4 formats; for 4:2:2 and 4:2:0, which most delivery formats use, it makes no difference. It has to be set on the
-  filter itself, as `scale=…:flags=unstable`; the global `-sws_flags unstable` has no effect on this.
+- **`flags=unstable`** (libswscale's new conversion code, 8.1 and later) corrects it for 4:4:4 only; for 4:2:2 and
+  4:2:0, which most delivery formats use, the output is identical to plain `scale`. It has to be set on the
+  filter, as `scale=...:flags=unstable`; the global `-sws_flags unstable` has no effect. See
+  [RGB to Y'CbCr Conversion](ColorPreservation.html#the-new-libswscale-code-flagsunstable).
 
-These measurements were taken against a float64 reference implementation of the BT.709 conversion, and cross-checked
-against uncompressed reference renders from Nuke. The behavior is the same on FFmpeg 8.1 and on 9.1, so the libswscale rewrite in FFmpeg 9 does not change it.
+One code value is below the threshold of visibility in a single pass, but the error is systematic, it accumulates
+over round trips, and it grows with bit depth. You can see it in the
+[Y'CbCr conversion comparison](tests/chip-chart-yuvconvert/compare.html#src=bars&a=splinecolormatrix&b=zscale&mode=wipe&zoom=0)
+with the pixel probe on the 100% white patch. The measurements were taken against a float64 reference
+implementation of the BT.709 conversion with
+[`tests/rgb2ycbcr_accuracy.py`](https://github.com/AcademySoftwareFoundation/EncodingGuidelines/blob/main/tests/rgb2ycbcr_accuracy.py),
+and cross-checked against uncompressed reference renders from Nuke. Every combination, by version and subsampling, is in
+[RGB to Y'CbCr Accuracy by Version](FFmpegChangesRGBToYCbCr.html).
 
-### Replacing scale with zscale
+## What scale can do that zscale cannot
 
-Where a command line uses `scale` for a matrix or range conversion:
+`zscale` is the better converter, but it is not a drop-in replacement for every use of `scale`. Keep `scale` (or
+another filter) for:
 
-```console
--vf "scale=out_color_matrix=bt709:out_range=tv"
-```
+- **Fitting and padding.** `scale` has `force_original_aspect_ratio` (fit inside or fill a size) and
+  `force_divisible_by` (round to an even size, for encoders that need one), and is usually combined with `pad` for
+  letterboxing. `zscale` only takes a width and height.
+- **Pixel aspect ratio.** `scale` can reset the sample aspect ratio (`reset_sar`) when squeezing anamorphic
+  material; with `zscale`, add `setsar` yourself.
+- **Interlaced material.** `scale` can scale each field separately (`interl=1`).
+- **Sizes that change mid-stream**, with `eval=frame`.
+- **Any pixel format.** libswscale reads and writes packed, semi-planar and paletted formats; `zscale` only planar
+  ones, and FFmpeg silently adds libswscale around it for the rest (see
+  [Make sure zscale is doing the conversion](EncodeZscale.html#make-sure-zscale-is-doing-the-conversion)).
+- **Availability and hardware.** libswscale is in every FFmpeg build, `zscale` needs `--enable-libzimg`, and there
+  are hardware versions of `scale` (`scale_vt`, `scale_cuda`, `scale_vaapi` and others) that keep frames on the GPU.
 
-the `zscale` equivalent is:
-
-```console
--vf "zscale=matrix=709:range=limited:filter=lanczos,setparams=color_primaries=bt709:color_trc=iec61966-2-1"
-```
-
-`zscale` is not a drop-in replacement for every use of `scale`: it does not pad or fit to an aspect ratio; see
-[Geometry](EncodeZscale.html#geometry).
+None of these needs `scale` to do the color conversion: let `zscale` convert the color and `scale` (or `pad`,
+`setsar`) handle the geometry, for example
+`-vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:-1:-1,zscale=matrix=709:range=limited:filter=lanczos,format=yuv420p10le,setparams=color_primaries=bt709:color_trc=iec61966-2-1"`.
+Resizing on the RGB frames, before the conversion, is the order we use; on resizing itself, see
+[Downscaling](Resizing.html).
 
 ## libswscale options
 

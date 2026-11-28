@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Chroma Siting 4:2:2 Player Chart
-nav_order: 5.87
+nav_order: 6.96
 parent: Test Output
 ---
 
